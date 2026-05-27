@@ -89,7 +89,10 @@ class SettingsScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              'Pending sync (${actions.length})',
+                              AppLocalizations.of(context).tParams(
+                                'settingsPendingSync',
+                                {'count': actions.length.toString()},
+                              ),
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),

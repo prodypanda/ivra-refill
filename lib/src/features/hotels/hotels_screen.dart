@@ -5,6 +5,7 @@ import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
@@ -353,6 +354,17 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
           ),
         );
       }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+            fallbackKey: 'hotelCreateFailed',
+          )),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -584,6 +596,17 @@ class _HotelEditRequestDialogState
           ),
         );
       }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizeAuthError(
+            l10n,
+            error,
+            fallbackKey: 'hotelUpdateFailed',
+          )),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

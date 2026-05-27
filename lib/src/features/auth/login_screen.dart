@@ -273,6 +273,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _signOut() async {
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _isLoading = true;
       _error = null;
@@ -281,6 +282,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await Supabase.instance.client.auth.signOut();
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);
+    } catch (error) {
+      if (mounted) {
+        setState(() => _error = localizeAuthError(
+              l10n,
+              error,
+              fallbackKey: 'accountSignOutFailed',
+            ));
+      }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

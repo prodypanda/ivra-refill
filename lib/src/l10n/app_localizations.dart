@@ -133,6 +133,21 @@ class AppLocalizations {
       'settingsPayloadInvalidJson': 'Payload must be a JSON object.',
       'exportDownloadStarted': '{fileName} download started',
       'exportSaved': 'Saved {fileName} to {path}',
+      'settingsPendingSync': 'Pending sync ({count})',
+      'splashTagline': 'Sustainable Hospitality Solutions',
+      'accountSaveFailed': 'Could not save your profile. Please try again.',
+      'accountPasswordChangeFailed':
+          'Could not change your password. Please try again.',
+      'accountSignOutFailed':
+          'Could not sign out. Check your connection and try again.',
+      'hotelCreateFailed':
+          'Could not create the hotel. Please try again.',
+      'hotelUpdateFailed':
+          'Could not update the hotel. Please try again.',
+      'teamInviteFailed':
+          'Could not send the invitation. Please try again.',
+      'teamHotelsUpdateFailed':
+          'Could not update hotel assignments. Please try again.',
       'roomsTooltipCreateTemplate': 'Create room template',
       'roomsNoRoomsFound': 'No rooms or products found.',
       'roomsSearchEmptyHint': 'Try adjusting your search query or filters.',
@@ -289,7 +304,6 @@ class AppLocalizations {
       'settingsSupabaseConnected': 'Supabase connected',
       'settingsSupabaseHint': 'The app is using live Supabase data.',
       'settingsNoSupabaseHint': 'Add SUPABASE_URL and SUPABASE_ANON_KEY to use live data.',
-      'settingsPendingSync': 'Pending sync',
       'settingsEditAction': 'Edit queued action',
       'settingsResolveConflict': 'Resolve sync conflict',
       'settingsActionSynced': 'Action synced',
@@ -481,6 +495,22 @@ class AppLocalizations {
       'settingsPayloadInvalidJson': 'La charge utile doit être un objet JSON.',
       'exportDownloadStarted': 'Téléchargement de {fileName} commencé',
       'exportSaved': '{fileName} enregistré dans {path}',
+      'settingsPendingSync': 'Synchronisation en attente ({count})',
+      'splashTagline': 'Solutions d\'hôtellerie durable',
+      'accountSaveFailed':
+          'Impossible d\'enregistrer votre profil. Réessayez.',
+      'accountPasswordChangeFailed':
+          'Impossible de changer votre mot de passe. Réessayez.',
+      'accountSignOutFailed':
+          'Impossible de se déconnecter. Vérifiez votre connexion et réessayez.',
+      'hotelCreateFailed':
+          'Impossible de créer l\'hôtel. Réessayez.',
+      'hotelUpdateFailed':
+          'Impossible de mettre à jour l\'hôtel. Réessayez.',
+      'teamInviteFailed':
+          'Impossible d\'envoyer l\'invitation. Réessayez.',
+      'teamHotelsUpdateFailed':
+          'Impossible de mettre à jour les affectations d\'hôtels. Réessayez.',
       'roomsTooltipCreateTemplate': 'Créer un modèle de chambre',
       'roomsNoRoomsFound': 'Aucune chambre ni produit trouvé.',
       'roomsSearchEmptyHint': 'Essayez de modifier votre recherche ou vos filtres.',
@@ -637,7 +667,6 @@ class AppLocalizations {
       'settingsSupabaseConnected': 'Supabase connecté',
       'settingsSupabaseHint': 'L\'app utilise les données Supabase en direct.',
       'settingsNoSupabaseHint': 'Ajoutez SUPABASE_URL et SUPABASE_ANON_KEY pour les données en direct.',
-      'settingsPendingSync': 'Synchronisation en attente',
       'settingsEditAction': 'Modifier l\'action en file',
       'settingsResolveConflict': 'Résoudre le conflit de sync',
       'settingsActionSynced': 'Action synchronisée',
@@ -832,6 +861,22 @@ class AppLocalizations {
       'settingsPayloadInvalidJson': 'يجب أن تكون الحمولة كائن JSON.',
       'exportDownloadStarted': 'بدأ تنزيل {fileName}',
       'exportSaved': 'تمّ حفظ {fileName} في {path}',
+      'settingsPendingSync': 'في انتظار المزامنة ({count})',
+      'splashTagline': 'حلول ضيافة مستدامة',
+      'accountSaveFailed':
+          'تعذّر حفظ ملفّك. حاول مرّة أخرى.',
+      'accountPasswordChangeFailed':
+          'تعذّر تغيير كلمة المرور. حاول مرّة أخرى.',
+      'accountSignOutFailed':
+          'تعذّر تسجيل الخروج. تحقّق من الاتّصال ثمّ أعد المحاولة.',
+      'hotelCreateFailed':
+          'تعذّر إنشاء الفندق. حاول مرّة أخرى.',
+      'hotelUpdateFailed':
+          'تعذّر تحديث بيانات الفندق. حاول مرّة أخرى.',
+      'teamInviteFailed':
+          'تعذّر إرسال الدّعوة. حاول مرّة أخرى.',
+      'teamHotelsUpdateFailed':
+          'تعذّر تحديث تعيينات الفنادق. حاول مرّة أخرى.',
       'roomsTooltipCreateTemplate': 'إنشاء نموذج غرفة',
       'roomsNoRoomsFound': 'لم يتم العثور على غرف أو منتجات.',
       'roomsSearchEmptyHint': 'جرّب تعديل استفسار البحث أو العوامل التصفية.',
@@ -988,7 +1033,6 @@ class AppLocalizations {
       'settingsSupabaseConnected': 'Supabase متصل',
       'settingsSupabaseHint': 'التطبيق يستخدم بيانات Supabase المباشرة.',
       'settingsNoSupabaseHint': 'أضف SUPABASE_URL و SUPABASE_ANON_KEY لاستخدام البيانات المباشرة.',
-      'settingsPendingSync': 'مزامنة معلقة',
       'settingsEditAction': 'تعديل الإجراء المنتظر',
       'settingsResolveConflict': 'حل تعارض المزامنة',
       'settingsActionSynced': 'تمت مزامنة الإجراء',
@@ -1183,6 +1227,22 @@ class AppLocalizations {
       'settingsPayloadInvalidJson': 'Il payload deve essere un oggetto JSON.',
       'exportDownloadStarted': 'Download di {fileName} avviato',
       'exportSaved': '{fileName} salvato in {path}',
+      'settingsPendingSync': 'Sincronizzazione in attesa ({count})',
+      'splashTagline': 'Soluzioni di ospitalità sostenibile',
+      'accountSaveFailed':
+          'Impossibile salvare il profilo. Riprova.',
+      'accountPasswordChangeFailed':
+          'Impossibile cambiare la password. Riprova.',
+      'accountSignOutFailed':
+          'Impossibile uscire. Controlla la connessione e riprova.',
+      'hotelCreateFailed':
+          'Impossibile creare l\'hotel. Riprova.',
+      'hotelUpdateFailed':
+          'Impossibile aggiornare l\'hotel. Riprova.',
+      'teamInviteFailed':
+          'Impossibile inviare l\'invito. Riprova.',
+      'teamHotelsUpdateFailed':
+          'Impossibile aggiornare le assegnazioni hotel. Riprova.',
       'roomsTooltipCreateTemplate': 'Crea modello camera',
       'roomsNoRoomsFound': 'Nessuna camera o prodotto trovato.',
       'roomsSearchEmptyHint': 'Prova a modificare la ricerca o i filtri.',
@@ -1339,7 +1399,6 @@ class AppLocalizations {
       'settingsSupabaseConnected': 'Supabase connesso',
       'settingsSupabaseHint': 'L\'app utilizza dati Supabase live.',
       'settingsNoSupabaseHint': 'Aggiungi SUPABASE_URL e SUPABASE_ANON_KEY per i dati live.',
-      'settingsPendingSync': 'Sincronizzazione in attesa',
       'settingsEditAction': 'Modifica azione in coda',
       'settingsResolveConflict': 'Risolvi conflitto di sync',
       'settingsActionSynced': 'Azione sincronizzata',

@@ -106,6 +106,17 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).t('accountProfileUpdated'))),
       );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+            fallbackKey: 'accountSaveFailed',
+          )),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSavingProfile = false);
     }
@@ -123,6 +134,17 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppLocalizations.of(context).t('accountPasswordUpdated'))),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+            fallbackKey: 'accountPasswordChangeFailed',
+          )),
+        ),
       );
     } finally {
       if (mounted) setState(() => _isChangingPassword = false);
@@ -146,6 +168,17 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       ref.invalidate(teamMembersProvider);
       ref.invalidate(teamInvitationsProvider);
       if (mounted) context.go(LoginScreen.route);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+            fallbackKey: 'accountSignOutFailed',
+          )),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSigningOut = false);
     }
