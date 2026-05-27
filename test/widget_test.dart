@@ -11,8 +11,11 @@ import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:ivra_refill/src/features/products/products_screen.dart';
 import 'package:ivra_refill/src/features/rooms/rooms_screen.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  SharedPreferences.setMockInitialValues({});
+
   testWidgets('Ivra app starts in demo mode', (tester) async {
     await _pumpIvraApp(tester);
 

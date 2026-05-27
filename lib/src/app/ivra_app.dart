@@ -47,25 +47,11 @@ class _GlobalSplashGate extends ConsumerStatefulWidget {
 }
 
 class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
-  bool _minSplashTimeElapsed = false;
-
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          _minSplashTimeElapsed = true;
-        });
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final currentUserAsync = ref.watch(currentUserProvider);
-    
-    if ((currentUserAsync.isLoading && !currentUserAsync.hasValue) || !_minSplashTimeElapsed) {
+
+    if (currentUserAsync.isLoading && !currentUserAsync.hasValue) {
       return const IvraSplashScreen();
     }
     return widget.child;

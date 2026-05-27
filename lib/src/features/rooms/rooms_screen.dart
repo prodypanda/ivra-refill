@@ -75,11 +75,18 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
             );
           }
 
-          // Handle automatic selection if only 1 hotel exists
+          // Auto-select the hotel when there is no choice to make:
+          //  - hotel-scoped users (staff/manager) always work in their own hotel
+          //  - app-wide users (admin/manager) auto-select when only one hotel exists
           if (selectedHotelId == null) {
-            if (hotels.length == 1) {
+            final userHotelId = currentUser?.hotelId;
+            final autoSelectId = userHotelId != null &&
+                    hotels.any((hotel) => hotel.id == userHotelId)
+                ? userHotelId
+                : (hotels.length == 1 ? hotels.first.id : null);
+            if (autoSelectId != null) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                ref.read(selectedHotelIdProvider.notifier).state = hotels.first.id;
+                ref.read(selectedHotelIdProvider.notifier).state = autoSelectId;
               });
             }
           }
@@ -301,8 +308,14 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     UserProfile? currentUser,
     String? selectedHotelId,
   ) {
-    // If the user has only 1 hotel, we scope them to it.
-    final isScoped = hotels.length == 1;
+    // Lock the hotel selector when the user has nothing to choose between:
+    // hotel-scoped users (staff/manager with hotelId) always work in their own
+    // hotel, and app-wide users with a single visible hotel have no choice to
+    // make either.
+    final userHotelId = currentUser?.hotelId;
+    final userIsHotelScoped =
+        userHotelId != null && hotels.any((hotel) => hotel.id == userHotelId);
+    final isScoped = userIsHotelScoped || hotels.length == 1;
 
     return GlassCard(
       padding: const EdgeInsets.all(16),
