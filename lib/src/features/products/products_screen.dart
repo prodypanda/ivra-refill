@@ -17,6 +17,10 @@ class ProductsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     return PageScaffold(
       title: l10n.t('productsCatalogTitle'),
+      onRefresh: () async {
+        ref.invalidate(productsProvider);
+        await ref.read(productsProvider.future);
+      },
       actions: [
         IconButton(
           tooltip: l10n.t('productsBtnCreate'),

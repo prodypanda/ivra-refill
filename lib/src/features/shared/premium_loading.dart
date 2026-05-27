@@ -490,20 +490,57 @@ class _IvraSplashScreenState extends State<IvraSplashScreen>
             child: child,
           );
         },
-        child: const SafeArea(
+        child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Column(
               children: [
                 Expanded(
-                  child: PremiumLoadingWidget(showBrand: true),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 360),
+                      child: const _SplashLoadingCard(),
+                    ),
+                  ),
                 ),
-                SizedBox(height: 16),
-                _BottomTagline(),
+                const SizedBox(height: 16),
+                const _BottomTagline(),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SplashLoadingCard extends StatelessWidget {
+  const _SplashLoadingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color:
+            theme.colorScheme.surface.withValues(alpha: isLight ? 0.78 : 0.9),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.35),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.primary.withValues(alpha: 0.12),
+            blurRadius: 36,
+            offset: const Offset(0, 18),
+          ),
+        ],
+      ),
+      child: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+        child: PremiumLoadingWidget(showBrand: true),
       ),
     );
   }

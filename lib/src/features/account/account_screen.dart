@@ -47,6 +47,10 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     final l10n = AppLocalizations.of(context);
     return PageScaffold(
       title: l10n.t('account'),
+      onRefresh: () async {
+        ref.invalidate(currentUserProvider);
+        await ref.read(currentUserProvider.future);
+      },
       child: AsyncValueView(
         value: ref.watch(currentUserProvider),
         onRetry: () => ref.invalidate(currentUserProvider),
@@ -105,7 +109,9 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       ref.invalidate(teamMembersProvider);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).t('accountProfileUpdated'))),
+        SnackBar(
+            content:
+                Text(AppLocalizations.of(context).t('accountProfileUpdated'))),
       );
     } catch (error) {
       if (!mounted) return;
@@ -134,7 +140,9 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       _confirmPasswordController.clear();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).t('accountPasswordUpdated'))),
+        SnackBar(
+            content:
+                Text(AppLocalizations.of(context).t('accountPasswordUpdated'))),
       );
     } catch (error) {
       if (!mounted) return;
@@ -242,10 +250,13 @@ class _ProfileCard extends ConsumerWidget {
               const SizedBox(height: 18),
               TextFormField(
                 controller: fullNameController,
-                decoration: InputDecoration(labelText: AppLocalizations.of(context).t('accountFullName')),
+                decoration: InputDecoration(
+                    labelText:
+                        AppLocalizations.of(context).t('accountFullName')),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return AppLocalizations.of(context).t('accountFullNameRequired');
+                    return AppLocalizations.of(context)
+                        .t('accountFullNameRequired');
                   }
                   return null;
                 },
@@ -263,7 +274,8 @@ class _ProfileCard extends ConsumerWidget {
                   _InfoChip(
                     icon: Icons.admin_panel_settings_outlined,
                     label: AppLocalizations.of(context).t('accountRole'),
-                    value: AppLocalizations.of(context).userRoleLabel(user.role),
+                    value:
+                        AppLocalizations.of(context).userRoleLabel(user.role),
                   ),
                   _InfoChip(
                     icon: Icons.apartment_outlined,
@@ -277,7 +289,9 @@ class _ProfileCard extends ConsumerWidget {
                         ? Icons.check_circle_outline
                         : Icons.block_outlined,
                     label: AppLocalizations.of(context).t('accountStatus'),
-                    value: user.isActive ? AppLocalizations.of(context).t('accountActive') : AppLocalizations.of(context).t('accountInactive'),
+                    value: user.isActive
+                        ? AppLocalizations.of(context).t('accountActive')
+                        : AppLocalizations.of(context).t('accountInactive'),
                   ),
                 ],
               ),
@@ -330,8 +344,10 @@ class _PasswordCard extends StatelessWidget {
                         ),
                         Text(
                           useSupabase
-                              ? AppLocalizations.of(context).t('accountPasswordHintSupabase')
-                              : AppLocalizations.of(context).t('accountPasswordHintDemo'),
+                              ? AppLocalizations.of(context)
+                                  .t('accountPasswordHintSupabase')
+                              : AppLocalizations.of(context)
+                                  .t('accountPasswordHintDemo'),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -353,15 +369,18 @@ class _PasswordCard extends StatelessWidget {
               TextFormField(
                 controller: passwordController,
                 obscureText: true,
-                decoration: InputDecoration(labelText: AppLocalizations.of(context).t('accountNewPassword')),
+                decoration: InputDecoration(
+                    labelText:
+                        AppLocalizations.of(context).t('accountNewPassword')),
                 validator: (value) => AuthValidation.password(value ?? ''),
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: confirmPasswordController,
                 obscureText: true,
-                decoration:
-                    InputDecoration(labelText: AppLocalizations.of(context).t('accountConfirmPassword')),
+                decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)
+                        .t('accountConfirmPassword')),
                 validator: (value) => AuthValidation.matchingPasswords(
                   passwordController.text,
                   value ?? '',
@@ -394,18 +413,22 @@ class _SignOutCard extends StatelessWidget {
             const Icon(Icons.logout_outlined),
             const SizedBox(width: 12),
             Expanded(
-              child: Builder(builder: (context) => Text(AppLocalizations.of(context).t('accountSignOutHint'))),
+              child: Builder(
+                  builder: (context) => Text(
+                      AppLocalizations.of(context).t('accountSignOutHint'))),
             ),
-            Builder(builder: (context) => FilledButton.icon(
-              onPressed: isSigningOut ? null : onSignOut,
-              icon: isSigningOut
-                  ? const SizedBox.square(
-                      dimension: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.logout_outlined),
-              label: Text(AppLocalizations.of(context).t('accountSignOut')),
-            )),
+            Builder(
+                builder: (context) => FilledButton.icon(
+                      onPressed: isSigningOut ? null : onSignOut,
+                      icon: isSigningOut
+                          ? const SizedBox.square(
+                              dimension: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.logout_outlined),
+                      label: Text(
+                          AppLocalizations.of(context).t('accountSignOut')),
+                    )),
           ],
         ),
       ),
@@ -432,5 +455,3 @@ class _InfoChip extends StatelessWidget {
     );
   }
 }
-
-

@@ -93,8 +93,10 @@ class AppLocalizations {
       'btnCancel': 'Cancel',
       'btnSave': 'Save',
       'btnSubmitRequest': 'Submit request',
-      'demoModeDescription': 'Local simulations using offline database templates.',
-      'offlineModeDescription': 'Queues actions when disconnected and syncs later.',
+      'demoModeDescription':
+          'Local simulations using offline database templates.',
+      'offlineModeDescription':
+          'Queues actions when disconnected and syncs later.',
       'syncQueueHeader': 'Sync Queue',
       'syncNow': 'Sync now',
       'itemsToSync': 'actions pending sync',
@@ -110,6 +112,8 @@ class AppLocalizations {
       'authBtnSignOut': 'Sign out',
       'authLabelEmail': 'Email',
       'authLabelPassword': 'Password',
+      'authShowPassword': 'Show password',
+      'authHidePassword': 'Hide password',
       'authBtnSignIn': 'Sign in',
       'authBtnForgotPassword': 'Forgot password?',
       'authResetPasswordTitle': 'Reset password',
@@ -118,7 +122,8 @@ class AppLocalizations {
       'authValidationEmailRequired': 'Email is required',
       'authValidationEmailInvalid': 'Enter a valid email address',
       'authValidationPasswordRequired': 'Password is required',
-      'authValidationPasswordTooShort': 'Password must be at least 8 characters',
+      'authValidationPasswordTooShort':
+          'Password must be at least 8 characters',
       'authValidationPasswordsDoNotMatch': 'Passwords do not match',
       'authResetNewPasswordTitle': 'Create new password',
       'authLabelNewPassword': 'New password',
@@ -142,12 +147,9 @@ class AppLocalizations {
           'Could not change your password. Please try again.',
       'accountSignOutFailed':
           'Could not sign out. Check your connection and try again.',
-      'hotelCreateFailed':
-          'Could not create the hotel. Please try again.',
-      'hotelUpdateFailed':
-          'Could not update the hotel. Please try again.',
-      'teamInviteFailed':
-          'Could not send the invitation. Please try again.',
+      'hotelCreateFailed': 'Could not create the hotel. Please try again.',
+      'hotelUpdateFailed': 'Could not update the hotel. Please try again.',
+      'teamInviteFailed': 'Could not send the invitation. Please try again.',
       'teamHotelsUpdateFailed':
           'Could not update hotel assignments. Please try again.',
       'roomsTooltipCreateTemplate': 'Create room template',
@@ -236,9 +238,11 @@ class AppLocalizations {
       'inventoryAddHotelHint': 'Add a hotel to get started.',
       'inventoryNoItemsToAdjust': 'No inventory items available to adjust.',
       'inventoryNoInventoryYet': 'No inventory yet',
-      'inventoryNoProductsInInventory': 'There are no products in the inventory.',
+      'inventoryNoProductsInInventory':
+          'There are no products in the inventory.',
       'inventoryNoSuggestedOrders': 'No suggested orders',
-      'inventoryLevelsSufficient': 'Your inventory levels are currently sufficient.',
+      'inventoryLevelsSufficient':
+          'Your inventory levels are currently sufficient.',
       'teamAccounts': 'Team accounts',
       'teamNoMembers': 'No team members found.',
       'teamTableColumnName': 'Name',
@@ -263,7 +267,7 @@ class AppLocalizations {
       'teamHotelsUpdated': 'Hotel assignments updated',
       'teamSelectHotels': 'Select hotels',
       'teamHotelsAssigned': 'hotels assigned',
-          'accountTitle': 'Account',
+      'accountTitle': 'Account',
       'accountProfile': 'Profile',
       'accountProfileUpdated': 'Profile updated',
       'accountPassword': 'Password',
@@ -305,7 +309,8 @@ class AppLocalizations {
       'settingsDemoUser': 'Demo user',
       'settingsSupabaseConnected': 'Supabase connected',
       'settingsSupabaseHint': 'The app is using live Supabase data.',
-      'settingsNoSupabaseHint': 'Add SUPABASE_URL and SUPABASE_ANON_KEY to use live data.',
+      'settingsNoSupabaseHint':
+          'Add SUPABASE_URL and SUPABASE_ANON_KEY to use live data.',
       'settingsEditAction': 'Edit queued action',
       'settingsResolveConflict': 'Resolve sync conflict',
       'settingsActionSynced': 'Action synced',
@@ -371,7 +376,8 @@ class AppLocalizations {
       'inviteAcceptHeading': 'Accept Ivra invitation',
       'inviteSubtitleWithHotel': '{name} was invited as {role} for {hotel}.',
       'inviteSubtitleNoHotel': '{name} was invited as {role}.',
-      'inviteEmailMismatch': 'Use the email address this invitation was sent to.',
+      'inviteEmailMismatch':
+          'Use the email address this invitation was sent to.',
       'inviteAccountCreatedConfirm':
           'Account created. Confirm your email, then return to this invitation link and enter the same password to finish joining.',
       'inviteInvalidHeading': 'Invitation unavailable',
@@ -386,7 +392,7 @@ class AppLocalizations {
       'teamResendInvitation': 'Resend invitation',
       'teamCancelInvitation': 'Cancel invitation',
       'btnUpdate': 'Update',
-},
+    },
     'fr': {
       'dashboard': 'Tableau de bord',
       'dashboardRefillActivity': 'Activité de recharge (7 derniers jours)',
@@ -457,8 +463,10 @@ class AppLocalizations {
       'btnCancel': 'Annuler',
       'btnSave': 'Enregistrer',
       'btnSubmitRequest': 'Soumettre la demande',
-      'demoModeDescription': 'Simulations locales utilisant des modèles de base de données.',
-      'offlineModeDescription': 'File d\'attente des actions hors ligne pour synchronisation ultérieure.',
+      'demoModeDescription':
+          'Simulations locales utilisant des modèles de base de données.',
+      'offlineModeDescription':
+          'File d\'attente des actions hors ligne pour synchronisation ultérieure.',
       'syncQueueHeader': 'File de synchronisation',
       'syncNow': 'Synchroniser',
       'itemsToSync': 'actions en attente',
@@ -474,6 +482,8 @@ class AppLocalizations {
       'authBtnSignOut': 'Se déconnecter',
       'authLabelEmail': 'E-mail',
       'authLabelPassword': 'Mot de passe',
+      'authShowPassword': 'Afficher le mot de passe',
+      'authHidePassword': 'Masquer le mot de passe',
       'authBtnSignIn': 'Se connecter',
       'authBtnForgotPassword': 'Mot de passe oublié ?',
       'authResetPasswordTitle': 'Réinitialiser le mot de passe',
@@ -482,8 +492,10 @@ class AppLocalizations {
       'authValidationEmailRequired': 'L\'e-mail est requis',
       'authValidationEmailInvalid': 'Entrez une adresse e-mail valide',
       'authValidationPasswordRequired': 'Le mot de passe est requis',
-      'authValidationPasswordTooShort': 'Le mot de passe doit comporter au moins 8 caractères',
-      'authValidationPasswordsDoNotMatch': 'Les mots de passe ne correspondent pas',
+      'authValidationPasswordTooShort':
+          'Le mot de passe doit comporter au moins 8 caractères',
+      'authValidationPasswordsDoNotMatch':
+          'Les mots de passe ne correspondent pas',
       'authResetNewPasswordTitle': 'Créer un nouveau mot de passe',
       'authLabelNewPassword': 'Nouveau mot de passe',
       'authLabelConfirmPassword': 'Confirmer le mot de passe',
@@ -501,23 +513,20 @@ class AppLocalizations {
       'exportSaved': '{fileName} enregistré dans {path}',
       'settingsPendingSync': 'Synchronisation en attente ({count})',
       'splashTagline': 'Solutions d\'hôtellerie durable',
-      'accountSaveFailed':
-          'Impossible d\'enregistrer votre profil. Réessayez.',
+      'accountSaveFailed': 'Impossible d\'enregistrer votre profil. Réessayez.',
       'accountPasswordChangeFailed':
           'Impossible de changer votre mot de passe. Réessayez.',
       'accountSignOutFailed':
           'Impossible de se déconnecter. Vérifiez votre connexion et réessayez.',
-      'hotelCreateFailed':
-          'Impossible de créer l\'hôtel. Réessayez.',
-      'hotelUpdateFailed':
-          'Impossible de mettre à jour l\'hôtel. Réessayez.',
-      'teamInviteFailed':
-          'Impossible d\'envoyer l\'invitation. Réessayez.',
+      'hotelCreateFailed': 'Impossible de créer l\'hôtel. Réessayez.',
+      'hotelUpdateFailed': 'Impossible de mettre à jour l\'hôtel. Réessayez.',
+      'teamInviteFailed': 'Impossible d\'envoyer l\'invitation. Réessayez.',
       'teamHotelsUpdateFailed':
           'Impossible de mettre à jour les affectations d\'hôtels. Réessayez.',
       'roomsTooltipCreateTemplate': 'Créer un modèle de chambre',
       'roomsNoRoomsFound': 'Aucune chambre ni produit trouvé.',
-      'roomsSearchEmptyHint': 'Essayez de modifier votre recherche ou vos filtres.',
+      'roomsSearchEmptyHint':
+          'Essayez de modifier votre recherche ou vos filtres.',
       'roomsEmptyHotelWithTemplate':
           'Ajoutez votre première chambre via le bouton de modèle ci-dessus.',
       'roomsEmptyHotelNoTemplate':
@@ -534,7 +543,8 @@ class AppLocalizations {
       'roomsBtnRoomEdit': 'Modifier la chambre',
       'roomsBtnHistory': 'Historique',
       'roomsBtnMoreActions': 'Plus d\'actions',
-      'roomsReplacementQueued': 'Remplacement de bouteille mis en attente pour la chambre',
+      'roomsReplacementQueued':
+          'Remplacement de bouteille mis en attente pour la chambre',
       'roomsReplacementRecorded': 'Bouteille remplacée pour la chambre',
       'roomsReplacementNotes': 'Bouteille remplacée depuis le flux chambre',
       'roomsStatusAllOk': 'Tout est OK',
@@ -545,22 +555,27 @@ class AppLocalizations {
       'roomsViewDetailed': 'Vue détaillée',
       'roomsViewCompact': 'Vue compacte',
       'roomsFilterAll': 'Tout',
-      'roomsDialogBottleEditTitle': 'Demander la modification de bouteille pour la chambre',
+      'roomsDialogBottleEditTitle':
+          'Demander la modification de bouteille pour la chambre',
       'roomsLabelBottleStatus': 'Statut de la bouteille',
       'roomsLabelBottleStartDate': 'Date de début de la bouteille',
       'roomsValidationEnterValidDate': 'Entrez une date valide',
-      'roomsMsgEditRequestQueued': 'Demande de modification de bouteille mise en attente',
+      'roomsMsgEditRequestQueued':
+          'Demande de modification de bouteille mise en attente',
       'roomsMsgDetailsUpdated': 'Détails de la bouteille mis à jour',
-      'roomsMsgEditRequestSubmitted': 'Demande de modification de bouteille soumise',
+      'roomsMsgEditRequestSubmitted':
+          'Demande de modification de bouteille soumise',
       'roomsDialogRoomEditTitle': 'Demander la modification pour la chambre',
       'roomsLabelRoomNumber': 'Numéro de chambre',
       'roomsLabelFloorNumber': 'Numéro d\'étage',
-      'roomsMsgRoomEditQueued': 'Demande de modification de chambre mise en attente',
+      'roomsMsgRoomEditQueued':
+          'Demande de modification de chambre mise en attente',
       'roomsMsgRoomDetailsUpdated': 'Détails de la chambre mis à jour',
       'roomsMsgRoomEditSubmitted': 'Demande de modification de chambre soumise',
       'roomsMsgRequestRoomEdit': 'Mettre à jour la chambre',
       'roomsDialogHistoryTitle': 'historique',
-      'roomsNoHistoryRecorded': 'Aucun historique de recharge n\'a encore été enregistré.',
+      'roomsNoHistoryRecorded':
+          'Aucun historique de recharge n\'a encore été enregistré.',
       'roomsMsgUndoQueued': 'Annulation mise en attente',
       'roomsMsgRefillUndone': 'Recharge annulée',
       'roomsBtnClose': 'Fermer',
@@ -599,11 +614,14 @@ class AppLocalizations {
       'refills': 'recharges',
       'inventoryNoHotels': 'Aucun hôtel trouvé',
       'inventoryAddHotelHint': 'Ajoutez un hôtel pour commencer.',
-      'inventoryNoItemsToAdjust': 'Aucun article de stock disponible à ajuster.',
+      'inventoryNoItemsToAdjust':
+          'Aucun article de stock disponible à ajuster.',
       'inventoryNoInventoryYet': 'Pas encore de stock',
-      'inventoryNoProductsInInventory': 'Il n\'y a pas de produits dans le stock.',
+      'inventoryNoProductsInInventory':
+          'Il n\'y a pas de produits dans le stock.',
       'inventoryNoSuggestedOrders': 'Aucune commande suggérée',
-      'inventoryLevelsSufficient': 'Vos niveaux de stock sont actuellement suffisants.',
+      'inventoryLevelsSufficient':
+          'Vos niveaux de stock sont actuellement suffisants.',
       'teamAccounts': 'Comptes d\'équipe',
       'teamNoMembers': 'Aucun membre d\'équipe trouvé.',
       'teamTableColumnName': 'Nom',
@@ -628,7 +646,7 @@ class AppLocalizations {
       'teamHotelsUpdated': 'Affectations mises à jour',
       'teamSelectHotels': 'Sélectionner les hôtels',
       'teamHotelsAssigned': 'hôtels assignés',
-          'accountTitle': 'Compte',
+      'accountTitle': 'Compte',
       'accountProfile': 'Profil',
       'accountProfileUpdated': 'Profil mis à jour',
       'accountPassword': 'Mot de passe',
@@ -638,7 +656,8 @@ class AppLocalizations {
       'accountNewPassword': 'Nouveau mot de passe',
       'accountConfirmPassword': 'Confirmer le mot de passe',
       'accountPasswordHintSupabase': 'Met à jour votre mot de passe Supabase.',
-      'accountPasswordHintDemo': 'Le mode démo accepte le changement localement.',
+      'accountPasswordHintDemo':
+          'Le mode démo accepte le changement localement.',
       'accountSignOutHint': 'Terminer la session Supabase sur cet appareil.',
       'accountSignOut': 'Se déconnecter',
       'accountEmail': 'E-mail',
@@ -670,16 +689,20 @@ class AppLocalizations {
       'settingsDemoUser': 'Utilisateur démo',
       'settingsSupabaseConnected': 'Supabase connecté',
       'settingsSupabaseHint': 'L\'app utilise les données Supabase en direct.',
-      'settingsNoSupabaseHint': 'Ajoutez SUPABASE_URL et SUPABASE_ANON_KEY pour les données en direct.',
+      'settingsNoSupabaseHint':
+          'Ajoutez SUPABASE_URL et SUPABASE_ANON_KEY pour les données en direct.',
       'settingsEditAction': 'Modifier l\'action en file',
       'settingsResolveConflict': 'Résoudre le conflit de sync',
       'settingsActionSynced': 'Action synchronisée',
       'offlineBannerTitle': 'Vous \u00eates hors ligne',
-      'offlineBannerSubtitle': 'Les donn\u00e9es peuvent ne pas \u00eatre \u00e0 jour',
+      'offlineBannerSubtitle':
+          'Les donn\u00e9es peuvent ne pas \u00eatre \u00e0 jour',
       'offlineBannerPending': 'actions en attente',
       'offlineBannerSyncBtn': 'Synchroniser',
-      'offlineBannerAutoSynced': 'De retour en ligne ! {count} actions synchronis\u00e9es',
-      'offlineBannerSyncFailed': 'La synchronisation a \u00e9chou\u00e9 pour certaines actions',
+      'offlineBannerAutoSynced':
+          'De retour en ligne ! {count} actions synchronis\u00e9es',
+      'offlineBannerSyncFailed':
+          'La synchronisation a \u00e9chou\u00e9 pour certaines actions',
       'teamInvitationCancelled': 'Invitation annul\u00e9e pour {email}',
       'teamInvitationResent': 'Invitation renvoy\u00e9e \u00e0 {email}',
       'teamInvitationCopied': 'Lien d\'invitation copi\u00e9 pour {email}',
@@ -749,12 +772,13 @@ class AppLocalizations {
       'teamMemberDeactivated': '{name} désactivé',
       'settingsActionLastTried': 'Dernière tentative {datetime}',
       'settingsActionNeedsReview': 'L\'action nécessite encore une révision',
-      'teamInviteLinkUnavailable': 'Le lien d\'invitation n\'est pas disponible',
+      'teamInviteLinkUnavailable':
+          'Le lien d\'invitation n\'est pas disponible',
       'teamCopyLink': 'Copier le lien d\'invitation',
       'teamResendInvitation': 'Renvoyer l\'invitation',
       'teamCancelInvitation': 'Annuler l\'invitation',
       'btnUpdate': 'Mettre à jour',
-},
+    },
     'ar': {
       'dashboard': 'لوحة التحكم',
       'dashboardRefillActivity': 'نشاط التعبئة (آخر 7 أيام)',
@@ -826,7 +850,8 @@ class AppLocalizations {
       'btnSave': 'حفظ',
       'btnSubmitRequest': 'تقديم الطلب',
       'demoModeDescription': 'محاكاة محلية باستخدام قواعد البيانات الافتراضية.',
-      'offlineModeDescription': 'جدولة العمليات عند انقطاع الاتصال ومزامنتها لاحقاً.',
+      'offlineModeDescription':
+          'جدولة العمليات عند انقطاع الاتصال ومزامنتها لاحقاً.',
       'syncQueueHeader': 'قائمة الانتظار',
       'syncNow': 'مزامنة الآن',
       'itemsToSync': 'عمليات قيد المزامنة',
@@ -842,6 +867,8 @@ class AppLocalizations {
       'authBtnSignOut': 'تسجيل الخروج',
       'authLabelEmail': 'البريد الإلكتروني',
       'authLabelPassword': 'كلمة المرور',
+      'authShowPassword': 'إظهار كلمة المرور',
+      'authHidePassword': 'إخفاء كلمة المرور',
       'authBtnSignIn': 'تسجيل الدخول',
       'authBtnForgotPassword': 'هل نسيت كلمة المرور؟',
       'authResetPasswordTitle': 'إعادة تعيين كلمة المرور',
@@ -850,7 +877,8 @@ class AppLocalizations {
       'authValidationEmailRequired': 'البريد الإلكتروني مطلوب',
       'authValidationEmailInvalid': 'أدخل بريداً إلكترونياً صالحاً',
       'authValidationPasswordRequired': 'كلمة المرور مطلوبة',
-      'authValidationPasswordTooShort': 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل',
+      'authValidationPasswordTooShort':
+          'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل',
       'authValidationPasswordsDoNotMatch': 'كلمات المرور غير متطابقة',
       'authResetNewPasswordTitle': 'إنشاء كلمة مرور جديدة',
       'authLabelNewPassword': 'كلمة المرور الجديدة',
@@ -869,27 +897,20 @@ class AppLocalizations {
       'exportSaved': 'تمّ حفظ {fileName} في {path}',
       'settingsPendingSync': 'في انتظار المزامنة ({count})',
       'splashTagline': 'حلول ضيافة مستدامة',
-      'accountSaveFailed':
-          'تعذّر حفظ ملفّك. حاول مرّة أخرى.',
-      'accountPasswordChangeFailed':
-          'تعذّر تغيير كلمة المرور. حاول مرّة أخرى.',
+      'accountSaveFailed': 'تعذّر حفظ ملفّك. حاول مرّة أخرى.',
+      'accountPasswordChangeFailed': 'تعذّر تغيير كلمة المرور. حاول مرّة أخرى.',
       'accountSignOutFailed':
           'تعذّر تسجيل الخروج. تحقّق من الاتّصال ثمّ أعد المحاولة.',
-      'hotelCreateFailed':
-          'تعذّر إنشاء الفندق. حاول مرّة أخرى.',
-      'hotelUpdateFailed':
-          'تعذّر تحديث بيانات الفندق. حاول مرّة أخرى.',
-      'teamInviteFailed':
-          'تعذّر إرسال الدّعوة. حاول مرّة أخرى.',
-      'teamHotelsUpdateFailed':
-          'تعذّر تحديث تعيينات الفنادق. حاول مرّة أخرى.',
+      'hotelCreateFailed': 'تعذّر إنشاء الفندق. حاول مرّة أخرى.',
+      'hotelUpdateFailed': 'تعذّر تحديث بيانات الفندق. حاول مرّة أخرى.',
+      'teamInviteFailed': 'تعذّر إرسال الدّعوة. حاول مرّة أخرى.',
+      'teamHotelsUpdateFailed': 'تعذّر تحديث تعيينات الفنادق. حاول مرّة أخرى.',
       'roomsTooltipCreateTemplate': 'إنشاء نموذج غرفة',
       'roomsNoRoomsFound': 'لم يتم العثور على غرف أو منتجات.',
       'roomsSearchEmptyHint': 'جرّب تعديل استفسار البحث أو العوامل التصفية.',
       'roomsEmptyHotelWithTemplate':
           'أضف غرفتك الأولى باستخدام زر القالب في الأعلى.',
-      'roomsEmptyHotelNoTemplate':
-          'لم يتمّ تعيين أي غرفة لهذا الفندق بعد.',
+      'roomsEmptyHotelNoTemplate': 'لم يتمّ تعيين أي غرفة لهذا الفندق بعد.',
       'roomsLabelRoom': 'غرفة',
       'roomsLabelFloor': 'الطابق',
       'roomsLabelRefills': 'التعبئة',
@@ -996,7 +1017,7 @@ class AppLocalizations {
       'teamHotelsUpdated': 'تم تحديث التعيينات',
       'teamSelectHotels': 'اختر الفنادق',
       'teamHotelsAssigned': 'فنادق معينة',
-          'accountTitle': 'الحساب',
+      'accountTitle': 'الحساب',
       'accountProfile': 'الملف الشخصي',
       'accountProfileUpdated': 'تم تحديث الملف الشخصي',
       'accountPassword': 'كلمة المرور',
@@ -1038,23 +1059,34 @@ class AppLocalizations {
       'settingsDemoUser': 'مستخدم تجريبي',
       'settingsSupabaseConnected': 'Supabase متصل',
       'settingsSupabaseHint': 'التطبيق يستخدم بيانات Supabase المباشرة.',
-      'settingsNoSupabaseHint': 'أضف SUPABASE_URL و SUPABASE_ANON_KEY لاستخدام البيانات المباشرة.',
+      'settingsNoSupabaseHint':
+          'أضف SUPABASE_URL و SUPABASE_ANON_KEY لاستخدام البيانات المباشرة.',
       'settingsEditAction': 'تعديل الإجراء المنتظر',
       'settingsResolveConflict': 'حل تعارض المزامنة',
       'settingsActionSynced': 'تمت مزامنة الإجراء',
-      'offlineBannerTitle': '\u0623\u0646\u062a \u063a\u064a\u0631 \u0645\u062a\u0635\u0644',
-      'offlineBannerSubtitle': '\u0642\u062f \u0644\u0627 \u062a\u0643\u0648\u0646 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0645\u062d\u062f\u062b\u0629',
-      'offlineBannerPending': '\u0625\u062c\u0631\u0627\u0621\u0627\u062a \u0645\u0639\u0644\u0642\u0629',
+      'offlineBannerTitle':
+          '\u0623\u0646\u062a \u063a\u064a\u0631 \u0645\u062a\u0635\u0644',
+      'offlineBannerSubtitle':
+          '\u0642\u062f \u0644\u0627 \u062a\u0643\u0648\u0646 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0645\u062d\u062f\u062b\u0629',
+      'offlineBannerPending':
+          '\u0625\u062c\u0631\u0627\u0621\u0627\u062a \u0645\u0639\u0644\u0642\u0629',
       'offlineBannerSyncBtn': '\u0645\u0632\u0627\u0645\u0646\u0629',
-      'offlineBannerAutoSynced': '\u0639\u0648\u062f\u0629 \u0644\u0644\u0627\u062a\u0635\u0627\u0644! \u062a\u0645\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {count} \u0625\u062c\u0631\u0627\u0621\u0627\u062a',
-      'offlineBannerSyncFailed': '\u0641\u0634\u0644\u062a \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629 \u0644\u0628\u0639\u0636 \u0627\u0644\u0625\u062c\u0631\u0627\u0621\u0627\u062a',
-      'teamInvitationCancelled': '\u062a\u0645 \u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u062f\u0639\u0648\u0629 \u0644\u0640 {email}',
-      'teamInvitationResent': '\u062a\u0645\u062a \u0625\u0639\u0627\u062f\u0629 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u062f\u0639\u0648\u0629 \u0625\u0644\u0649 {email}',
-      'teamInvitationCopied': '\u062a\u0645 \u0646\u0633\u062e \u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0639\u0648\u0629 \u0644\u0640 {email}',
-      'approvalsRequestedBy': '\u0637\u0644\u0628 \u0645\u0646 \u0642\u0628\u0644 {name}',
+      'offlineBannerAutoSynced':
+          '\u0639\u0648\u062f\u0629 \u0644\u0644\u0627\u062a\u0635\u0627\u0644! \u062a\u0645\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {count} \u0625\u062c\u0631\u0627\u0621\u0627\u062a',
+      'offlineBannerSyncFailed':
+          '\u0641\u0634\u0644\u062a \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629 \u0644\u0628\u0639\u0636 \u0627\u0644\u0625\u062c\u0631\u0627\u0621\u0627\u062a',
+      'teamInvitationCancelled':
+          '\u062a\u0645 \u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u062f\u0639\u0648\u0629 \u0644\u0640 {email}',
+      'teamInvitationResent':
+          '\u062a\u0645\u062a \u0625\u0639\u0627\u062f\u0629 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u062f\u0639\u0648\u0629 \u0625\u0644\u0649 {email}',
+      'teamInvitationCopied':
+          '\u062a\u0645 \u0646\u0633\u062e \u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0639\u0648\u0629 \u0644\u0640 {email}',
+      'approvalsRequestedBy':
+          '\u0637\u0644\u0628 \u0645\u0646 \u0642\u0628\u0644 {name}',
       'approvalsOldValue': '\u0627\u0644\u0642\u062f\u064a\u0645: {value}',
       'approvalsNewValue': '\u0627\u0644\u062c\u062f\u064a\u062f: {value}',
-      'alertsSeverityLabel': '\u0627\u0644\u062e\u0637\u0648\u0631\u0629 {severity}',
+      'alertsSeverityLabel':
+          '\u0627\u0644\u062e\u0637\u0648\u0631\u0629 {severity}',
       'alertsStatusResolved': '\u062a\u0645\u0651 \u0627\u0644\u062d\u0644',
       'alertsStatusOpen': '\u0645\u0641\u062a\u0648\u062d',
       'alertsMetricCritical': '\u062d\u0631\u062c',
@@ -1062,67 +1094,105 @@ class AppLocalizations {
           '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0625\u062c\u0631\u0627\u0621 \u0627\u0644\u0645\u0639\u0644\u0651\u0642',
       'settingsActionConflictTitle':
           '\u062d\u0644\u0651 \u062a\u0639\u0627\u0631\u0636 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629',
-      'settingsActionAttempts': '\u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0627\u062a {count}',
-      'settingsActionListAttempts': '\u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0627\u062a: {count}',
+      'settingsActionAttempts':
+          '\u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0627\u062a {count}',
+      'settingsActionListAttempts':
+          '\u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0627\u062a: {count}',
       'settingsActionListError': '\u062e\u0637\u0623: {message}',
-      'syncActionRefill': '\u0625\u0639\u0627\u062f\u0629 \u062a\u0639\u0628\u0626\u0629',
-      'syncActionUndoRefill': '\u062a\u0631\u0627\u062c\u0639 \u0639\u0646 \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629',
-      'syncActionCorrectionRequest': '\u0637\u0644\u0628 \u062a\u0635\u062d\u064a\u062d',
-      'syncActionBottleReplacement': '\u0627\u0633\u062a\u0628\u062f\u0627\u0644 \u0627\u0644\u0639\u0628\u0648\u0629',
-      'syncActionStockAdjustment': '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u062e\u0632\u0648\u0646',
-      'syncActionPendingEdit': '\u062a\u0639\u062f\u064a\u0644 \u0645\u0639\u0644\u0651\u0642',
-      'userRoleAppAdmin': '\u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u062a\u0637\u0628\u064a\u0642',
-      'userRoleAppManager': '\u0645\u062f\u064a\u0631 \u0627\u0644\u062a\u0637\u0628\u064a\u0642',
-      'userRoleHotelManager': '\u0645\u062f\u064a\u0631 \u0627\u0644\u0641\u0646\u062f\u0642',
-      'userRoleHotelStaff': '\u0645\u0648\u0638\u0641 \u0627\u0644\u0641\u0646\u062f\u0642',
+      'syncActionRefill':
+          '\u0625\u0639\u0627\u062f\u0629 \u062a\u0639\u0628\u0626\u0629',
+      'syncActionUndoRefill':
+          '\u062a\u0631\u0627\u062c\u0639 \u0639\u0646 \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629',
+      'syncActionCorrectionRequest':
+          '\u0637\u0644\u0628 \u062a\u0635\u062d\u064a\u062d',
+      'syncActionBottleReplacement':
+          '\u0627\u0633\u062a\u0628\u062f\u0627\u0644 \u0627\u0644\u0639\u0628\u0648\u0629',
+      'syncActionStockAdjustment':
+          '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u062e\u0632\u0648\u0646',
+      'syncActionPendingEdit':
+          '\u062a\u0639\u062f\u064a\u0644 \u0645\u0639\u0644\u0651\u0642',
+      'userRoleAppAdmin':
+          '\u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u062a\u0637\u0628\u064a\u0642',
+      'userRoleAppManager':
+          '\u0645\u062f\u064a\u0631 \u0627\u0644\u062a\u0637\u0628\u064a\u0642',
+      'userRoleHotelManager':
+          '\u0645\u062f\u064a\u0631 \u0627\u0644\u0641\u0646\u062f\u0642',
+      'userRoleHotelStaff':
+          '\u0645\u0648\u0638\u0641 \u0627\u0644\u0641\u0646\u062f\u0642',
       'teamStatusActive': '\u0646\u0634\u0637',
       'teamStatusInactive': '\u063a\u064a\u0631 \u0646\u0634\u0637',
-      'teamHotelAll': '\u062c\u0645\u064a\u0639 \u0627\u0644\u0641\u0646\u0627\u062f\u0642',
+      'teamHotelAll':
+          '\u062c\u0645\u064a\u0639 \u0627\u0644\u0641\u0646\u0627\u062f\u0642',
       'teamHotelNone': '\u2014',
-      'invitationStatusPending': '\u0642\u064a\u062f \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631',
+      'invitationStatusPending':
+          '\u0642\u064a\u062f \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631',
       'invitationStatusAccepted': '\u0645\u0642\u0628\u0648\u0644\u0629',
       'invitationStatusCancelled': '\u0645\u0644\u063a\u0627\u0629',
       'invitationStatusExpired': '\u0645\u0646\u062a\u0647\u064a\u0629',
-      'alertResolvedToast': '\u062a\u0645\u0651 \u062d\u0644\u0651 \u0627\u0644\u062a\u0646\u0628\u064a\u0647',
-      'alertsRefreshedToast': '\u062a\u0645\u0651 \u0625\u0646\u0634\u0627\u0621 {count} \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0630\u0643\u064a\u0651\u0629',
-      'alertsEmptyTitle': '\u0644\u0627 \u062a\u0648\u062c\u062f \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0628\u0639\u062f',
+      'alertResolvedToast':
+          '\u062a\u0645\u0651 \u062d\u0644\u0651 \u0627\u0644\u062a\u0646\u0628\u064a\u0647',
+      'alertsRefreshedToast':
+          '\u062a\u0645\u0651 \u0625\u0646\u0634\u0627\u0621 {count} \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0630\u0643\u064a\u0651\u0629',
+      'alertsEmptyTitle':
+          '\u0644\u0627 \u062a\u0648\u062c\u062f \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0628\u0639\u062f',
       'alertsEmptyMessage':
           '\u062d\u062f\u0651\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0630\u0643\u064a\u0651\u0629 \u0644\u0641\u062d\u0635 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u062d\u062f\u0648\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629 \u0648\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0627\u062a \u0648\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0627\u062a \u0627\u0644\u0645\u0639\u0644\u0651\u0642\u0629.',
-      'alertsEmptyAction': '\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a',
-      'alertTypeLowBidonStock': '\u0645\u062e\u0632\u0648\u0646 \u0628\u064a\u062f\u0648\u0646\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
-      'alertTypeLowBottleStock': '\u0645\u062e\u0632\u0648\u0646 \u0632\u062c\u0627\u062c\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
-      'alertTypeBottleAgeLimit': '\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0629',
-      'alertTypeRefillLimit': '\u062d\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629',
+      'alertsEmptyAction':
+          '\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a',
+      'alertTypeLowBidonStock':
+          '\u0645\u062e\u0632\u0648\u0646 \u0628\u064a\u062f\u0648\u0646\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
+      'alertTypeLowBottleStock':
+          '\u0645\u062e\u0632\u0648\u0646 \u0632\u062c\u0627\u062c\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
+      'alertTypeBottleAgeLimit':
+          '\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0629',
+      'alertTypeRefillLimit':
+          '\u062d\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629',
       'alertTypePendingApproval': '\u0645\u0648\u0627\u0641\u0642\u0629',
-      'alertTypeSuspiciousActivity': '\u0646\u0634\u0627\u0637 \u0645\u0634\u0628\u0648\u0647',
-      'alertTypeInactiveHotel': '\u0641\u0646\u062f\u0642 \u063a\u064a\u0631 \u0646\u0634\u0637',
-      'refillEventApproved': '\u062a\u0645\u0651\u062a \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629',
-      'refillEventRejected': '\u062a\u0645\u0651 \u0627\u0644\u0631\u0641\u0636',
-      'teamDeactivateAccountTooltip': '\u062a\u0639\u0637\u064a\u0644 \u0627\u0644\u062d\u0633\u0627\u0628',
-      'teamReactivateAccountTooltip': '\u0625\u0639\u0627\u062f\u0629 \u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u062d\u0633\u0627\u0628',
-      'settingsSyncedSummary': '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced} \u0625\u062c\u0631\u0627\u0621\u0627\u062a',
-      'settingsSyncedSummarySingular': '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced} \u0625\u062c\u0631\u0627\u0621',
-      'settingsSyncedWithFailures': '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced}\u060c \u0641\u0634\u0644 {failed}',
-      'inviteAcceptHeading': '\u0642\u0628\u0648\u0644 \u062f\u0639\u0648\u0629 Ivra',
-      'inviteSubtitleWithHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role} \u0641\u064a {hotel}.',
-      'inviteSubtitleNoHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role}.',
+      'alertTypeSuspiciousActivity':
+          '\u0646\u0634\u0627\u0637 \u0645\u0634\u0628\u0648\u0647',
+      'alertTypeInactiveHotel':
+          '\u0641\u0646\u062f\u0642 \u063a\u064a\u0631 \u0646\u0634\u0637',
+      'refillEventApproved':
+          '\u062a\u0645\u0651\u062a \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629',
+      'refillEventRejected':
+          '\u062a\u0645\u0651 \u0627\u0644\u0631\u0641\u0636',
+      'teamDeactivateAccountTooltip':
+          '\u062a\u0639\u0637\u064a\u0644 \u0627\u0644\u062d\u0633\u0627\u0628',
+      'teamReactivateAccountTooltip':
+          '\u0625\u0639\u0627\u062f\u0629 \u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u062d\u0633\u0627\u0628',
+      'settingsSyncedSummary':
+          '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced} \u0625\u062c\u0631\u0627\u0621\u0627\u062a',
+      'settingsSyncedSummarySingular':
+          '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced} \u0625\u062c\u0631\u0627\u0621',
+      'settingsSyncedWithFailures':
+          '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced}\u060c \u0641\u0634\u0644 {failed}',
+      'inviteAcceptHeading':
+          '\u0642\u0628\u0648\u0644 \u062f\u0639\u0648\u0629 Ivra',
+      'inviteSubtitleWithHotel':
+          '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role} \u0641\u064a {hotel}.',
+      'inviteSubtitleNoHotel':
+          '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role}.',
       'inviteEmailMismatch':
           '\u0627\u0633\u062a\u062e\u062f\u0645 \u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0627\u0644\u0630\u064a \u0623\u064f\u0631\u0633\u0644\u062a \u0625\u0644\u064a\u0647 \u0647\u0630\u0647 \u0627\u0644\u062f\u0639\u0648\u0629.',
       'inviteAccountCreatedConfirm':
           '\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u062d\u0633\u0627\u0628. \u0623\u0643\u0651\u062f \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u060c \u062b\u0645 \u0639\u064f\u062f \u0625\u0644\u0649 \u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0639\u0648\u0629 \u0648\u0623\u062f\u062e\u0644 \u0646\u0641\u0633 \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u0644\u0625\u0643\u0645\u0627\u0644 \u0627\u0644\u0627\u0646\u0636\u0645\u0627\u0645.',
-      'inviteInvalidHeading': '\u0627\u0644\u062f\u0639\u0648\u0629 \u063a\u064a\u0631 \u0645\u062a\u0627\u062d\u0629',
+      'inviteInvalidHeading':
+          '\u0627\u0644\u062f\u0639\u0648\u0629 \u063a\u064a\u0631 \u0645\u062a\u0627\u062d\u0629',
       'inviteInvalidBody':
           '\u0631\u0628\u0651\u0645\u0627 \u0627\u0646\u062a\u0647\u062a \u0635\u0644\u0627\u062d\u064a\u0629 \u0647\u0630\u0647 \u0627\u0644\u062f\u0639\u0648\u0629\u060c \u0623\u0648 \u0623\u064f\u0644\u063a\u064a\u062a\u060c \u0623\u0648 \u062a\u0645 \u0642\u0628\u0648\u0644\u0647\u0627 \u0645\u0633\u0628\u0642\u064b\u0627.',
-      'teamMemberReactivated': '\u062a\u0645 \u0625\u0639\u0627\u062f\u0629 \u062a\u0641\u0639\u064a\u0644 {name}',
-      'teamMemberDeactivated': '\u062a\u0645 \u062a\u0639\u0637\u064a\u0644 {name}',
-      'settingsActionLastTried': '\u0622\u062e\u0631 \u0645\u062d\u0627\u0648\u0644\u0629 {datetime}',
+      'teamMemberReactivated':
+          '\u062a\u0645 \u0625\u0639\u0627\u062f\u0629 \u062a\u0641\u0639\u064a\u0644 {name}',
+      'teamMemberDeactivated':
+          '\u062a\u0645 \u062a\u0639\u0637\u064a\u0644 {name}',
+      'settingsActionLastTried':
+          '\u0622\u062e\u0631 \u0645\u062d\u0627\u0648\u0644\u0629 {datetime}',
       'settingsActionNeedsReview': 'الإجراء لا يزال بحاجة للمراجعة',
       'teamInviteLinkUnavailable': 'رابط الدعوة غير متاح',
       'teamCopyLink': 'نسخ رابط الدعوة',
       'teamResendInvitation': 'إعادة إرسال الدعوة',
       'teamCancelInvitation': 'إلغاء الدعوة',
       'btnUpdate': 'تحديث',
-},
+    },
     'it': {
       'dashboard': 'Pannello di controllo',
       'dashboardRefillActivity': 'Attività ricariche (ultimi 7 giorni)',
@@ -1193,8 +1263,10 @@ class AppLocalizations {
       'btnCancel': 'Annulla',
       'btnSave': 'Salva',
       'btnSubmitRequest': 'Invia richiesta',
-      'demoModeDescription': 'Simulazioni locali che utilizzano database offline.',
-      'offlineModeDescription': 'Mette in coda le azioni offline e le sincronizza in seguito.',
+      'demoModeDescription':
+          'Simulazioni locali che utilizzano database offline.',
+      'offlineModeDescription':
+          'Mette in coda le azioni offline e le sincronizza in seguito.',
       'syncQueueHeader': 'Coda di sincronizzazione',
       'syncNow': 'Sincronizza ora',
       'itemsToSync': 'azioni in attesa di sincronizzazione',
@@ -1206,10 +1278,13 @@ class AppLocalizations {
       'enterNumberError': 'Inserisci un numero',
       'createHotel': 'Crea hotel',
       'requestHotelEdit': 'Richiedi modifica hotel',
-      'authTitleCannotAccess': 'Questo account connesso non può accedere a Ivra.',
+      'authTitleCannotAccess':
+          'Questo account connesso non può accedere a Ivra.',
       'authBtnSignOut': 'Disconnettersi',
       'authLabelEmail': 'E-mail',
       'authLabelPassword': 'Password',
+      'authShowPassword': 'Mostra password',
+      'authHidePassword': 'Nascondi password',
       'authBtnSignIn': 'Accedi',
       'authBtnForgotPassword': 'Password dimenticata?',
       'authResetPasswordTitle': 'Reimposta la password',
@@ -1218,7 +1293,8 @@ class AppLocalizations {
       'authValidationEmailRequired': 'L\'e-mail è richiesta',
       'authValidationEmailInvalid': 'Inserisci un indirizzo e-mail valido',
       'authValidationPasswordRequired': 'La password è richiesta',
-      'authValidationPasswordTooShort': 'La password deve contenere almeno 8 caratteri',
+      'authValidationPasswordTooShort':
+          'La password deve contenere almeno 8 caratteri',
       'authValidationPasswordsDoNotMatch': 'Le password non corrispondono',
       'authResetNewPasswordTitle': 'Crea una nuova password',
       'authLabelNewPassword': 'Nuova password',
@@ -1237,18 +1313,14 @@ class AppLocalizations {
       'exportSaved': '{fileName} salvato in {path}',
       'settingsPendingSync': 'Sincronizzazione in attesa ({count})',
       'splashTagline': 'Soluzioni di ospitalità sostenibile',
-      'accountSaveFailed':
-          'Impossibile salvare il profilo. Riprova.',
+      'accountSaveFailed': 'Impossibile salvare il profilo. Riprova.',
       'accountPasswordChangeFailed':
           'Impossibile cambiare la password. Riprova.',
       'accountSignOutFailed':
           'Impossibile uscire. Controlla la connessione e riprova.',
-      'hotelCreateFailed':
-          'Impossibile creare l\'hotel. Riprova.',
-      'hotelUpdateFailed':
-          'Impossibile aggiornare l\'hotel. Riprova.',
-      'teamInviteFailed':
-          'Impossibile inviare l\'invito. Riprova.',
+      'hotelCreateFailed': 'Impossibile creare l\'hotel. Riprova.',
+      'hotelUpdateFailed': 'Impossibile aggiornare l\'hotel. Riprova.',
+      'teamInviteFailed': 'Impossibile inviare l\'invito. Riprova.',
       'teamHotelsUpdateFailed':
           'Impossibile aggiornare le assegnazioni hotel. Riprova.',
       'roomsTooltipCreateTemplate': 'Crea modello camera',
@@ -1335,11 +1407,14 @@ class AppLocalizations {
       'refills': 'ricariche',
       'inventoryNoHotels': 'Nessun hotel trovato',
       'inventoryAddHotelHint': 'Aggiungi un hotel per iniziare.',
-      'inventoryNoItemsToAdjust': 'Nessun articolo di inventario disponibile da regolare.',
+      'inventoryNoItemsToAdjust':
+          'Nessun articolo di inventario disponibile da regolare.',
       'inventoryNoInventoryYet': 'Nessun inventario ancora',
-      'inventoryNoProductsInInventory': 'Non ci sono prodotti nell\'inventario.',
+      'inventoryNoProductsInInventory':
+          'Non ci sono prodotti nell\'inventario.',
       'inventoryNoSuggestedOrders': 'Nessun ordine suggerito',
-      'inventoryLevelsSufficient': 'I tuoi livelli di inventario sono attualmente sufficienti.',
+      'inventoryLevelsSufficient':
+          'I tuoi livelli di inventario sono attualmente sufficienti.',
       'teamAccounts': 'Account del team',
       'teamNoMembers': 'Nessun membro del team trovato.',
       'teamTableColumnName': 'Nome',
@@ -1364,7 +1439,7 @@ class AppLocalizations {
       'teamHotelsUpdated': 'Assegnazioni aggiornate',
       'teamSelectHotels': 'Seleziona hotel',
       'teamHotelsAssigned': 'hotel assegnati',
-          'accountTitle': 'Account',
+      'accountTitle': 'Account',
       'accountProfile': 'Profilo',
       'accountProfileUpdated': 'Profilo aggiornato',
       'accountPassword': 'Password',
@@ -1373,9 +1448,12 @@ class AppLocalizations {
       'accountFullNameRequired': 'Il nome completo è obbligatorio',
       'accountNewPassword': 'Nuova password',
       'accountConfirmPassword': 'Conferma nuova password',
-      'accountPasswordHintSupabase': 'Aggiorna la password di accesso Supabase.',
-      'accountPasswordHintDemo': 'La modalità demo accetta la modifica localmente.',
-      'accountSignOutHint': 'Termina la sessione Supabase corrente su questo dispositivo.',
+      'accountPasswordHintSupabase':
+          'Aggiorna la password di accesso Supabase.',
+      'accountPasswordHintDemo':
+          'La modalità demo accetta la modifica localmente.',
+      'accountSignOutHint':
+          'Termina la sessione Supabase corrente su questo dispositivo.',
       'accountSignOut': 'Esci',
       'accountEmail': 'Email',
       'accountRole': 'Ruolo',
@@ -1406,7 +1484,8 @@ class AppLocalizations {
       'settingsDemoUser': 'Utente demo',
       'settingsSupabaseConnected': 'Supabase connesso',
       'settingsSupabaseHint': 'L\'app utilizza dati Supabase live.',
-      'settingsNoSupabaseHint': 'Aggiungi SUPABASE_URL e SUPABASE_ANON_KEY per i dati live.',
+      'settingsNoSupabaseHint':
+          'Aggiungi SUPABASE_URL e SUPABASE_ANON_KEY per i dati live.',
       'settingsEditAction': 'Modifica azione in coda',
       'settingsResolveConflict': 'Risolvi conflitto di sync',
       'settingsActionSynced': 'Azione sincronizzata',
@@ -1414,7 +1493,8 @@ class AppLocalizations {
       'offlineBannerSubtitle': 'I dati potrebbero non essere aggiornati',
       'offlineBannerPending': 'azioni in sospeso',
       'offlineBannerSyncBtn': 'Sincronizza ora',
-      'offlineBannerAutoSynced': 'Di nuovo online! {count} azioni sincronizzate',
+      'offlineBannerAutoSynced':
+          'Di nuovo online! {count} azioni sincronizzate',
       'offlineBannerSyncFailed': 'Sincronizzazione fallita per alcune azioni',
       'teamInvitationCancelled': 'Invito annullato per {email}',
       'teamInvitationResent': 'Invito reinviato a {email}',
@@ -1470,7 +1550,8 @@ class AppLocalizations {
       'settingsSyncedSummarySingular': '{synced} azione sincronizzata',
       'settingsSyncedWithFailures': '{synced} sincronizzate, {failed} fallite',
       'inviteAcceptHeading': 'Accetta invito Ivra',
-      'inviteSubtitleWithHotel': '{name} è stato/a invitato/a come {role} per {hotel}.',
+      'inviteSubtitleWithHotel':
+          '{name} è stato/a invitato/a come {role} per {hotel}.',
       'inviteSubtitleNoHotel': '{name} è stato/a invitato/a come {role}.',
       'inviteEmailMismatch':
           'Usa l\'indirizzo email a cui è stato inviato questo invito.',
@@ -1488,7 +1569,7 @@ class AppLocalizations {
       'teamResendInvitation': 'Rinvia l\'invito',
       'teamCancelInvitation': 'Annulla l\'invito',
       'btnUpdate': 'Aggiorna',
-},
+    },
   };
 
   String t(String key) {

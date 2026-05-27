@@ -5,12 +5,14 @@ class PageScaffold extends StatelessWidget {
     required this.title,
     required this.child,
     this.actions = const [],
+    this.onRefresh,
     super.key,
   });
 
   final String title;
   final Widget child;
   final List<Widget> actions;
+  final Future<void> Function()? onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,8 @@ class PageScaffold extends StatelessWidget {
             ? 16.0
             : 24.0;
 
-    return CustomScrollView(
+    final scrollView = CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverAppBar(
           pinned: true,
@@ -40,6 +43,15 @@ class PageScaffold extends StatelessWidget {
           sliver: SliverToBoxAdapter(child: child),
         ),
       ],
+    );
+
+    if (onRefresh == null) {
+      return scrollView;
+    }
+
+    return RefreshIndicator.adaptive(
+      onRefresh: onRefresh!,
+      child: scrollView,
     );
   }
 }

@@ -23,6 +23,14 @@ class SettingsScreen extends ConsumerWidget {
 
     return PageScaffold(
       title: l10n.t('settings'),
+      onRefresh: () async {
+        ref.invalidate(offlineActionsProvider);
+        ref.invalidate(demoUsersProvider);
+        await Future.wait([
+          ref.read(offlineActionsProvider.future),
+          ref.read(demoUsersProvider.future),
+        ]);
+      },
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 760),
         child: Column(
@@ -51,8 +59,9 @@ class SettingsScreen extends ConsumerWidget {
                       ? Icons.cloud_done_outlined
                       : Icons.science_outlined,
                 ),
-                title: Text(
-                    useSupabase ? l10n.t('settingsSupabaseConnected') : l10n.t('demoMode')),
+                title: Text(useSupabase
+                    ? l10n.t('settingsSupabaseConnected')
+                    : l10n.t('demoMode')),
                 subtitle: Text(
                   useSupabase
                       ? l10n.t('settingsSupabaseHint')
@@ -68,8 +77,11 @@ class SettingsScreen extends ConsumerWidget {
             Card(
               child: SwitchListTile(
                 secondary: const Icon(Icons.sync_disabled_outlined),
-                title: Text(AppLocalizations.of(context).t('settingsOfflineMode')),
-                subtitle: Text(offlineMode ? AppLocalizations.of(context).t('settingsOfflineQueue') : AppLocalizations.of(context).t('settingsOfflineSend')),
+                title:
+                    Text(AppLocalizations.of(context).t('settingsOfflineMode')),
+                subtitle: Text(offlineMode
+                    ? AppLocalizations.of(context).t('settingsOfflineQueue')
+                    : AppLocalizations.of(context).t('settingsOfflineSend')),
                 value: offlineMode,
                 onChanged: (value) {
                   ref.read(offlineModeProvider.notifier).state = value;
@@ -151,7 +163,8 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 12),
                       if (actions.isEmpty)
-                        Text(AppLocalizations.of(context).t('settingsNoPendingActions'))
+                        Text(AppLocalizations.of(context)
+                            .t('settingsNoPendingActions'))
                       else
                         Column(
                           children: [
@@ -235,7 +248,9 @@ class SettingsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(didSync ? AppLocalizations.of(context).t('settingsActionSynced') : AppLocalizations.of(context).t('settingsActionNeedsReview')),
+        content: Text(didSync
+            ? AppLocalizations.of(context).t('settingsActionSynced')
+            : AppLocalizations.of(context).t('settingsActionNeedsReview')),
       ),
     );
   }
@@ -263,7 +278,9 @@ class SettingsScreen extends ConsumerWidget {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).t('settingsActionUpdated'))),
+      SnackBar(
+          content:
+              Text(AppLocalizations.of(context).t('settingsActionUpdated'))),
     );
   }
 
@@ -276,7 +293,9 @@ class SettingsScreen extends ConsumerWidget {
     ref.invalidate(offlineActionsProvider);
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).t('settingsActionRemoved'))),
+      SnackBar(
+          content:
+              Text(AppLocalizations.of(context).t('settingsActionRemoved'))),
     );
   }
 
@@ -285,10 +304,11 @@ class SettingsScreen extends ConsumerWidget {
     ref.invalidate(offlineActionsProvider);
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).t('settingsQueueCleared'))),
+      SnackBar(
+          content:
+              Text(AppLocalizations.of(context).t('settingsQueueCleared'))),
     );
   }
-
 }
 
 class _OfflineActionTile extends StatelessWidget {
@@ -390,7 +410,8 @@ class _DemoUserSwitcher extends ConsumerWidget {
               DropdownButtonFormField<String>(
                 initialValue: currentUser?.id,
                 decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context).t('settingsTestAccessAs'),
+                  labelText:
+                      AppLocalizations.of(context).t('settingsTestAccessAs'),
                   prefixIcon: Icon(Icons.manage_accounts_outlined),
                 ),
                 items: [
@@ -410,7 +431,9 @@ class _DemoUserSwitcher extends ConsumerWidget {
                   _refreshAppData(ref);
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(AppLocalizations.of(context).t('settingsDemoUserChanged'))),
+                    SnackBar(
+                        content: Text(AppLocalizations.of(context)
+                            .t('settingsDemoUserChanged'))),
                   );
                 },
               ),
@@ -530,7 +553,8 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 minLines: 8,
                 maxLines: 14,
                 decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context).t('settingsPayloadJson'),
+                  labelText:
+                      AppLocalizations.of(context).t('settingsPayloadJson'),
                   alignLabelWithHint: true,
                   errorText: _error,
                 ),
