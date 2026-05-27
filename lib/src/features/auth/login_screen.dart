@@ -264,7 +264,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context.go(DashboardScreen.route);
       }
     } catch (error) {
-      setState(() => _error = localizeAuthError(l10n, error));
+      if (mounted) setState(() => _error = localizeAuthError(l10n, error));
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
