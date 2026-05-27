@@ -70,174 +70,185 @@ class _ProductsTable extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final columns = constraints.maxWidth >= 1100
+        final contentWidth = constraints.maxWidth.clamp(0, 1280).toDouble();
+        final columns = contentWidth >= 1100
             ? 3
-            : constraints.maxWidth >= 720
+            : contentWidth >= 720
                 ? 2
                 : 1;
-        final spacing = constraints.maxWidth < 420 ? 12.0 : 20.0;
-        final cardWidth =
-            (constraints.maxWidth - (spacing * (columns - 1))) / columns;
+        final spacing = contentWidth < 420 ? 12.0 : 20.0;
+        final cardWidth = (contentWidth - (spacing * (columns - 1))) / columns;
 
-        return Wrap(
-          spacing: spacing,
-          runSpacing: spacing,
-          children: [
-            for (final product in products)
-              SizedBox(
-                width: cardWidth.clamp(0, 360).toDouble(),
-                child: Card(
-                  clipBehavior: Clip.antiAlias,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 180,
-                        width: double.infinity,
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Image.asset(
-                                product.imagePath,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Color(0xFF0C4A3A),
-                                        Color(0xFF267D65),
-                                        Color(0xFF3EA47E),
-                                      ],
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.spa_outlined,
-                                          size: 48,
-                                          color: Colors.white
-                                              .withValues(alpha: 0.95),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          product.sku,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: 'monospace',
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.2,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 12,
-                              left: 12,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.6),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  product.sku,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w800,
-                                    fontFamily: 'monospace',
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(18),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              product.label(language),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                  ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 16),
-                            _RuleRow(
-                                Icons.pin_drop_outlined,
-                                l10n.t('productsLabelBottleVolume'),
-                                '${product.bottleVolumeMl} ml'),
-                            _RuleRow(
-                                Icons.propane_tank_outlined,
-                                l10n.t('productsLabelBidonVolume'),
-                                '${product.bidonVolumeMl} ml'),
-                            _RuleRow(
-                                Icons.loop_outlined,
-                                l10n.t('productsLabelMaxRefill'),
-                                '${product.maxRefillCount} ${l10n.t('refills')}'),
-                            _RuleRow(
-                                Icons.calendar_today_outlined,
-                                l10n.t('productsLabelMaxAge'),
-                                '${product.maxBottleAgeDays} ${l10n.t('days')}'),
-                            _RuleRow(
-                              Icons.warning_amber_outlined,
-                              l10n.t('productsLabelLowStock'),
-                              '${product.lowBottleThreshold} ${l10n.t('bottles').toLowerCase()} / ${product.lowBidonThreshold} ${l10n.t('bidons').toLowerCase()}',
-                            ),
-                            const Divider(height: 32),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+        return Align(
+          alignment: AlignmentDirectional.topStart,
+          child: SizedBox(
+            width: contentWidth,
+            child: Wrap(
+              spacing: spacing,
+              runSpacing: spacing,
+              children: [
+                for (final product in products)
+                  SizedBox(
+                    width: cardWidth,
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 180,
+                            width: double.infinity,
+                            child: Stack(
                               children: [
-                                Flexible(
-                                  child: TextButton.icon(
-                                    icon: const Icon(Icons.edit_outlined),
-                                    label: Text(
-                                      l10n.t('productsBtnEdit'),
-                                      overflow: TextOverflow.ellipsis,
+                                Positioned.fill(
+                                  child: Image.asset(
+                                    product.imagePath,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            Color(0xFF0C4A3A),
+                                            Color(0xFF267D65),
+                                            Color(0xFF3EA47E),
+                                          ],
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.spa_outlined,
+                                              size: 48,
+                                              color: Colors.white
+                                                  .withValues(alpha: 0.95),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              product.sku,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'monospace',
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 1.2,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                    onPressed: () => showDialog<void>(
-                                      context: context,
-                                      builder: (context) =>
-                                          _ProductDialog(product: product),
-                                    ).then((_) {
-                                      ref.invalidate(productsProvider);
-                                      ref.invalidate(roomProductsProvider);
-                                      ref.invalidate(inventoryProvider);
-                                      ref.invalidate(suggestedOrdersProvider);
-                                    }),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 12,
+                                  left: 12,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.black.withValues(alpha: 0.6),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      product.sku,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w800,
+                                        fontFamily: 'monospace',
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(18),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.label(language),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w800,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                      ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 16),
+                                _RuleRow(
+                                    Icons.pin_drop_outlined,
+                                    l10n.t('productsLabelBottleVolume'),
+                                    '${product.bottleVolumeMl} ml'),
+                                _RuleRow(
+                                    Icons.propane_tank_outlined,
+                                    l10n.t('productsLabelBidonVolume'),
+                                    '${product.bidonVolumeMl} ml'),
+                                _RuleRow(
+                                    Icons.loop_outlined,
+                                    l10n.t('productsLabelMaxRefill'),
+                                    '${product.maxRefillCount} ${l10n.t('refills')}'),
+                                _RuleRow(
+                                    Icons.calendar_today_outlined,
+                                    l10n.t('productsLabelMaxAge'),
+                                    '${product.maxBottleAgeDays} ${l10n.t('days')}'),
+                                _RuleRow(
+                                  Icons.warning_amber_outlined,
+                                  l10n.t('productsLabelLowStock'),
+                                  '${product.lowBottleThreshold} ${l10n.t('bottles').toLowerCase()} / ${product.lowBidonThreshold} ${l10n.t('bidons').toLowerCase()}',
+                                ),
+                                const Divider(height: 32),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Flexible(
+                                      child: TextButton.icon(
+                                        icon: const Icon(Icons.edit_outlined),
+                                        label: Text(
+                                          l10n.t('productsBtnEdit'),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        onPressed: () => showDialog<void>(
+                                          context: context,
+                                          builder: (context) =>
+                                              _ProductDialog(product: product),
+                                        ).then((_) {
+                                          ref.invalidate(productsProvider);
+                                          ref.invalidate(roomProductsProvider);
+                                          ref.invalidate(inventoryProvider);
+                                          ref.invalidate(
+                                              suggestedOrdersProvider);
+                                          ref.invalidate(dashboardProvider);
+                                        }),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-          ],
+              ],
+            ),
+          ),
         );
       },
     );
