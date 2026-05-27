@@ -85,7 +85,7 @@ class _ProductsTable extends ConsumerWidget {
           children: [
             for (final product in products)
               SizedBox(
-                width: cardWidth.clamp(0, 360).toDouble(),
+                width: cardWidth,
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   child: Column(
@@ -225,6 +225,7 @@ class _ProductsTable extends ConsumerWidget {
                                       ref.invalidate(roomProductsProvider);
                                       ref.invalidate(inventoryProvider);
                                       ref.invalidate(suggestedOrdersProvider);
+                                      ref.invalidate(dashboardProvider);
                                     }),
                                   ),
                                 ),
