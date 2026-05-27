@@ -9,51 +9,92 @@ import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/premium_snackbar.dart';
 
+const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+
+String? _supabaseHostFromEnv() {
+  if (_supabaseUrl.isEmpty) return null;
+  try {
+    final uri = Uri.parse(_supabaseUrl);
+    if (uri.host.isEmpty) return null;
+    return uri.host;
+  } catch (_) {
+    return null;
+  }
+}
+
 /// A provider that tracks whether the device currently has internet connectivity.
-/// It pings the Supabase host periodically to verify real connectivity.
+/// On native platforms it periodically resolves the configured Supabase host;
+/// when no host is configured (e.g. demo mode or tests) it stays optimistically
+/// online and is updated only by explicit `recheck()` calls or repository
+/// errors.
 final connectivityProvider = StateNotifierProvider<ConnectivityNotifier, bool>(
-  (ref) => ConnectivityNotifier(),
+  (ref) => ConnectivityNotifier(host: _supabaseHostFromEnv()),
 );
 
 class ConnectivityNotifier extends StateNotifier<bool> {
-  ConnectivityNotifier() : super(true) {
-    _startChecking();
+  ConnectivityNotifier({
+    String? host,
+    Duration pollInterval = const Duration(seconds: 30),
+    Duration lookupTimeout = const Duration(seconds: 5),
+  })  : _host = host,
+        _pollInterval = pollInterval,
+        _lookupTimeout = lookupTimeout,
+        super(true) {
+    if (_host != null && !kIsWeb) {
+      _timer = Timer.periodic(_pollInterval, (_) => _check());
+    }
   }
 
+  final String? _host;
+  final Duration _pollInterval;
+  final Duration _lookupTimeout;
   Timer? _timer;
-
-  void _startChecking() {
-    _check();
-    _timer = Timer.periodic(const Duration(seconds: 15), (_) => _check());
-  }
+  Timer? _timeoutTimer;
+  bool _disposed = false;
 
   Future<void> _check() async {
-    try {
-      if (kIsWeb) {
-        // On web, we can't use InternetAddress.lookup.
-        // Instead, just trust the browser's online status via a simple fetch.
-        // The _fetchWithCache mechanism already handles web offline errors.
-        state = true;
-      } else {
-        final result = await InternetAddress.lookup('tozmdkasyzdzrbhvfxis.supabase.co')
-            .timeout(const Duration(seconds: 5));
-        state = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-      }
-    } on SocketException {
-      state = false;
-    } on TimeoutException {
-      state = false;
-    } catch (_) {
-      state = false;
-    }
+    if (_disposed) return;
+    final host = _host;
+    if (host == null || kIsWeb) return;
+
+    final completer = Completer<bool>();
+    _timeoutTimer?.cancel();
+    _timeoutTimer = Timer(_lookupTimeout, () {
+      if (!completer.isCompleted) completer.complete(false);
+    });
+    InternetAddress.lookup(host).then((result) {
+      if (completer.isCompleted) return;
+      completer.complete(
+        result.isNotEmpty && result.first.rawAddress.isNotEmpty,
+      );
+    }).catchError((_) {
+      if (!completer.isCompleted) completer.complete(false);
+    });
+
+    final reachable = await completer.future;
+    _timeoutTimer?.cancel();
+    _timeoutTimer = null;
+    if (_disposed || !mounted) return;
+    state = reachable;
   }
 
   /// Force a re-check now (e.g. after user taps "Sync").
   Future<void> recheck() => _check();
 
+  /// Update the connectivity state from an external signal (e.g. a repository
+  /// network error). Use this in addition to or instead of the periodic poll.
+  void reportConnectivity({required bool isOnline}) {
+    if (_disposed || !mounted) return;
+    state = isOnline;
+  }
+
   @override
   void dispose() {
+    _disposed = true;
     _timer?.cancel();
+    _timer = null;
+    _timeoutTimer?.cancel();
+    _timeoutTimer = null;
     super.dispose();
   }
 }

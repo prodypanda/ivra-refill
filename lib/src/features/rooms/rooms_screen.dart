@@ -75,11 +75,18 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
             );
           }
 
-          // Handle automatic selection if only 1 hotel exists
+          // Auto-select the hotel when there is no choice to make:
+          //  - hotel-scoped users (staff/manager) always work in their own hotel
+          //  - app-wide users (admin/manager) auto-select when only one hotel exists
           if (selectedHotelId == null) {
-            if (hotels.length == 1) {
+            final userHotelId = currentUser?.hotelId;
+            final autoSelectId = userHotelId != null &&
+                    hotels.any((hotel) => hotel.id == userHotelId)
+                ? userHotelId
+                : (hotels.length == 1 ? hotels.first.id : null);
+            if (autoSelectId != null) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                ref.read(selectedHotelIdProvider.notifier).state = hotels.first.id;
+                ref.read(selectedHotelIdProvider.notifier).state = autoSelectId;
               });
             }
           }
