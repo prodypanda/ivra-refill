@@ -284,6 +284,17 @@ class AppLocalizations {
       'offlineBannerSyncBtn': 'Sync now',
       'offlineBannerAutoSynced': 'Back online! Synced {count} actions',
       'offlineBannerSyncFailed': 'Sync failed for some actions',
+      'teamInvitationCancelled': 'Invitation cancelled for {email}',
+      'teamInvitationResent': 'Invitation resent to {email}',
+      'teamInvitationCopied': 'Invitation link copied for {email}',
+      'approvalsRequestedBy': 'Requested by {name}',
+      'approvalsOldValue': 'Old: {value}',
+      'approvalsNewValue': 'New: {value}',
+      'alertsSeverityLabel': 'Severity {severity}',
+      'settingsActionAttempts': 'Attempts {count}',
+      'teamMemberReactivated': '{name} reactivated',
+      'teamMemberDeactivated': '{name} deactivated',
+      'settingsActionLastTried': 'Last tried {datetime}',
       'settingsActionNeedsReview': 'Action still needs review',
       'teamInviteLinkUnavailable': 'Invitation link is unavailable',
       'teamCopyLink': 'Copy invitation link',
@@ -554,6 +565,17 @@ class AppLocalizations {
       'offlineBannerSyncBtn': 'Synchroniser',
       'offlineBannerAutoSynced': 'De retour en ligne ! {count} actions synchronis\u00e9es',
       'offlineBannerSyncFailed': 'La synchronisation a \u00e9chou\u00e9 pour certaines actions',
+      'teamInvitationCancelled': 'Invitation annul\u00e9e pour {email}',
+      'teamInvitationResent': 'Invitation renvoy\u00e9e \u00e0 {email}',
+      'teamInvitationCopied': 'Lien d\'invitation copi\u00e9 pour {email}',
+      'approvalsRequestedBy': 'Demand\u00e9 par {name}',
+      'approvalsOldValue': 'Ancien : {value}',
+      'approvalsNewValue': 'Nouveau : {value}',
+      'alertsSeverityLabel': 'S\u00e9v\u00e9rit\u00e9 {severity}',
+      'settingsActionAttempts': 'Tentatives {count}',
+      'teamMemberReactivated': '{name} réactivé',
+      'teamMemberDeactivated': '{name} désactivé',
+      'settingsActionLastTried': 'Dernière tentative {datetime}',
       'settingsActionNeedsReview': 'L\'action nécessite encore une révision',
       'teamInviteLinkUnavailable': 'Le lien d\'invitation n\'est pas disponible',
       'teamCopyLink': 'Copier le lien d\'invitation',
@@ -824,6 +846,17 @@ class AppLocalizations {
       'offlineBannerSyncBtn': '\u0645\u0632\u0627\u0645\u0646\u0629',
       'offlineBannerAutoSynced': '\u0639\u0648\u062f\u0629 \u0644\u0644\u0627\u062a\u0635\u0627\u0644! \u062a\u0645\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {count} \u0625\u062c\u0631\u0627\u0621\u0627\u062a',
       'offlineBannerSyncFailed': '\u0641\u0634\u0644\u062a \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629 \u0644\u0628\u0639\u0636 \u0627\u0644\u0625\u062c\u0631\u0627\u0621\u0627\u062a',
+      'teamInvitationCancelled': '\u062a\u0645 \u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u062f\u0639\u0648\u0629 \u0644\u0640 {email}',
+      'teamInvitationResent': '\u062a\u0645\u062a \u0625\u0639\u0627\u062f\u0629 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u062f\u0639\u0648\u0629 \u0625\u0644\u0649 {email}',
+      'teamInvitationCopied': '\u062a\u0645 \u0646\u0633\u062e \u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0639\u0648\u0629 \u0644\u0640 {email}',
+      'approvalsRequestedBy': '\u0637\u0644\u0628 \u0645\u0646 \u0642\u0628\u0644 {name}',
+      'approvalsOldValue': '\u0627\u0644\u0642\u062f\u064a\u0645: {value}',
+      'approvalsNewValue': '\u0627\u0644\u062c\u062f\u064a\u062f: {value}',
+      'alertsSeverityLabel': '\u0627\u0644\u062e\u0637\u0648\u0631\u0629 {severity}',
+      'settingsActionAttempts': '\u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0627\u062a {count}',
+      'teamMemberReactivated': '\u062a\u0645 \u0625\u0639\u0627\u062f\u0629 \u062a\u0641\u0639\u064a\u0644 {name}',
+      'teamMemberDeactivated': '\u062a\u0645 \u062a\u0639\u0637\u064a\u0644 {name}',
+      'settingsActionLastTried': '\u0622\u062e\u0631 \u0645\u062d\u0627\u0648\u0644\u0629 {datetime}',
       'settingsActionNeedsReview': 'الإجراء لا يزال بحاجة للمراجعة',
       'teamInviteLinkUnavailable': 'رابط الدعوة غير متاح',
       'teamCopyLink': 'نسخ رابط الدعوة',
@@ -1094,6 +1127,17 @@ class AppLocalizations {
       'offlineBannerSyncBtn': 'Sincronizza ora',
       'offlineBannerAutoSynced': 'Di nuovo online! {count} azioni sincronizzate',
       'offlineBannerSyncFailed': 'Sincronizzazione fallita per alcune azioni',
+      'teamInvitationCancelled': 'Invito annullato per {email}',
+      'teamInvitationResent': 'Invito reinviato a {email}',
+      'teamInvitationCopied': 'Link di invito copiato per {email}',
+      'approvalsRequestedBy': 'Richiesto da {name}',
+      'approvalsOldValue': 'Vecchio: {value}',
+      'approvalsNewValue': 'Nuovo: {value}',
+      'alertsSeverityLabel': 'Gravit\u00e0 {severity}',
+      'settingsActionAttempts': 'Tentativi {count}',
+      'teamMemberReactivated': '{name} riattivato',
+      'teamMemberDeactivated': '{name} disattivato',
+      'settingsActionLastTried': 'Ultimo tentativo {datetime}',
       'settingsActionNeedsReview': 'Azione ancora da rivedere',
       'teamInviteLinkUnavailable': 'Il link dell\'invito non è disponibile',
       'teamCopyLink': 'Copia il link dell\'invito',
@@ -1105,6 +1149,15 @@ class AppLocalizations {
 
   String t(String key) {
     return _values[locale.languageCode]?[key] ?? _values['en']![key] ?? key;
+  }
+
+  /// Resolves [key] and substitutes any `{name}` placeholders from [params].
+  String tParams(String key, Map<String, String> params) {
+    var value = t(key);
+    for (final entry in params.entries) {
+      value = value.replaceAll('{${entry.key}}', entry.value);
+    }
+    return value;
   }
 }
 

@@ -42,13 +42,32 @@ class ApprovalsScreen extends ConsumerWidget {
                                   ),
                         ),
                         const SizedBox(height: 8),
-                        Text('Requested by ${request.requestedByName}'),
+                        Text(
+                          l10n.tParams(
+                            'approvalsRequestedBy',
+                            {'name': request.requestedByName},
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            Expanded(child: Text('Old: ${request.oldValue}')),
+                            Expanded(
+                              child: Text(
+                                l10n.tParams(
+                                  'approvalsOldValue',
+                                  {'value': request.oldValue},
+                                ),
+                              ),
+                            ),
                             const SizedBox(width: 12),
-                            Expanded(child: Text('New: ${request.newValue}')),
+                            Expanded(
+                              child: Text(
+                                l10n.tParams(
+                                  'approvalsNewValue',
+                                  {'value': request.newValue},
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),

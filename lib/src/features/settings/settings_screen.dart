@@ -407,11 +407,24 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 runSpacing: 8,
                 children: [
                   Chip(label: Text(widget.action.type.value)),
-                  Chip(label: Text('Attempts ${widget.action.attemptCount}')),
+                  Chip(
+                    label: Text(
+                      AppLocalizations.of(context).tParams(
+                        'settingsActionAttempts',
+                        {'count': '${widget.action.attemptCount}'},
+                      ),
+                    ),
+                  ),
                   if (widget.action.lastAttemptAt != null)
                     Chip(
                       label: Text(
-                        'Last tried ${_formatDateTime(widget.action.lastAttemptAt!)}',
+                        AppLocalizations.of(context).tParams(
+                          'settingsActionLastTried',
+                          {
+                            'datetime':
+                                _formatDateTime(widget.action.lastAttemptAt!)
+                          },
+                        ),
                       ),
                     ),
                 ],

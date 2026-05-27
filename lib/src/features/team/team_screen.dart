@@ -22,7 +22,7 @@ class TeamScreen extends ConsumerWidget {
         currentUser != null && currentUser.role != UserRole.hotelStaff;
 
     return PageScaffold(
-      title: 'Team',
+      title: AppLocalizations.of(context).t('team'),
       actions: [
         if (canInvite)
           IconButton(
@@ -127,9 +127,10 @@ class TeamScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          isActive
-              ? '${member.fullName} reactivated'
-              : '${member.fullName} deactivated',
+          AppLocalizations.of(context).tParams(
+            isActive ? 'teamMemberReactivated' : 'teamMemberDeactivated',
+            {'name': member.fullName},
+          ),
         ),
       ),
     );
@@ -146,7 +147,14 @@ class TeamScreen extends ConsumerWidget {
     ref.invalidate(teamInvitationsProvider);
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Invitation cancelled for ${invitation.email}')),
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context).tParams(
+            'teamInvitationCancelled',
+            {'email': invitation.email},
+          ),
+        ),
+      ),
     );
   }
 
@@ -161,7 +169,14 @@ class TeamScreen extends ConsumerWidget {
     ref.invalidate(teamInvitationsProvider);
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Invitation resent to ${invitation.email}')),
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context).tParams(
+            'teamInvitationResent',
+            {'email': invitation.email},
+          ),
+        ),
+      ),
     );
   }
 
@@ -186,7 +201,14 @@ class TeamScreen extends ConsumerWidget {
     await Clipboard.setData(ClipboardData(text: link));
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Invitation link copied for ${invitation.email}')),
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context).tParams(
+            'teamInvitationCopied',
+            {'email': invitation.email},
+          ),
+        ),
+      ),
     );
   }
 }
