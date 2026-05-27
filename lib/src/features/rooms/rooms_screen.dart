@@ -130,8 +130,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         icon: Icons.meeting_room_outlined,
                         title: l10n.t('roomsNoRoomsFound'),
                         message: canCreateRoomsFromTemplate
-                            ? 'Add your first room using the template button above.'
-                            : 'No rooms have been assigned to this hotel yet.',
+                            ? l10n.t('roomsEmptyHotelWithTemplate')
+                            : l10n.t('roomsEmptyHotelNoTemplate'),
                       );
                     }
 

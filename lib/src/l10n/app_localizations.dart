@@ -129,6 +129,10 @@ class AppLocalizations {
       'roomsTooltipCreateTemplate': 'Create room template',
       'roomsNoRoomsFound': 'No rooms or products found.',
       'roomsSearchEmptyHint': 'Try adjusting your search query or filters.',
+      'roomsEmptyHotelWithTemplate':
+          'Add your first room using the template button above.',
+      'roomsEmptyHotelNoTemplate':
+          'No rooms have been assigned to this hotel yet.',
       'roomsLabelRoom': 'Room',
       'roomsLabelFloor': 'Floor',
       'roomsLabelRefills': 'Refills',
@@ -466,6 +470,10 @@ class AppLocalizations {
       'roomsTooltipCreateTemplate': 'Créer un modèle de chambre',
       'roomsNoRoomsFound': 'Aucune chambre ni produit trouvé.',
       'roomsSearchEmptyHint': 'Essayez de modifier votre recherche ou vos filtres.',
+      'roomsEmptyHotelWithTemplate':
+          'Ajoutez votre première chambre via le bouton de modèle ci-dessus.',
+      'roomsEmptyHotelNoTemplate':
+          'Aucune chambre n\'a encore été attribuée à cet hôtel.',
       'roomsLabelRoom': 'Chambre',
       'roomsLabelFloor': 'Étage',
       'roomsLabelRefills': 'Recharges',
@@ -806,6 +814,10 @@ class AppLocalizations {
       'roomsTooltipCreateTemplate': 'إنشاء نموذج غرفة',
       'roomsNoRoomsFound': 'لم يتم العثور على غرف أو منتجات.',
       'roomsSearchEmptyHint': 'جرّب تعديل استفسار البحث أو العوامل التصفية.',
+      'roomsEmptyHotelWithTemplate':
+          'أضف غرفتك الأولى باستخدام زر القالب في الأعلى.',
+      'roomsEmptyHotelNoTemplate':
+          'لم يتمّ تعيين أي غرفة لهذا الفندق بعد.',
       'roomsLabelRoom': 'غرفة',
       'roomsLabelFloor': 'الطابق',
       'roomsLabelRefills': 'التعبئة',
@@ -1146,6 +1158,10 @@ class AppLocalizations {
       'roomsTooltipCreateTemplate': 'Crea modello camera',
       'roomsNoRoomsFound': 'Nessuna camera o prodotto trovato.',
       'roomsSearchEmptyHint': 'Prova a modificare la ricerca o i filtri.',
+      'roomsEmptyHotelWithTemplate':
+          'Aggiungi la tua prima camera con il pulsante modello in alto.',
+      'roomsEmptyHotelNoTemplate':
+          'Nessuna camera è ancora stata assegnata a questo hotel.',
       'roomsLabelRoom': 'Camera',
       'roomsLabelFloor': 'Piano',
       'roomsLabelRefills': 'Ricariche',
@@ -1355,6 +1371,9 @@ class AppLocalizations {
       'refillEventRejected': 'Rifiutato',
       'teamDeactivateAccountTooltip': 'Disattiva account',
       'teamReactivateAccountTooltip': 'Riattiva account',
+      'settingsSyncedSummary': '{synced} azioni sincronizzate',
+      'settingsSyncedSummarySingular': '{synced} azione sincronizzata',
+      'settingsSyncedWithFailures': '{synced} sincronizzate, {failed} fallite',
       'inviteAcceptHeading': 'Accetta invito Ivra',
       'inviteSubtitleWithHotel': '{name} è stato/a invitato/a come {role} per {hotel}.',
       'inviteSubtitleNoHotel': '{name} è stato/a invitato/a come {role}.',
