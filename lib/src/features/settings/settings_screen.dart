@@ -85,33 +85,68 @@ class SettingsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              AppLocalizations.of(context).tParams(
-                                'settingsPendingSync',
-                                {'count': actions.length.toString()},
-                              ),
-                              style: Theme.of(context).textTheme.titleMedium,
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isNarrow = constraints.maxWidth < 420;
+                          final title = Text(
+                            AppLocalizations.of(context).tParams(
+                              'settingsPendingSync',
+                              {'count': actions.length.toString()},
                             ),
-                          ),
-                          TextButton.icon(
-                            onPressed: actions.isEmpty
-                                ? null
-                                : () => _clearQueue(context, ref),
-                            icon: const Icon(Icons.delete_sweep_outlined),
-                            label: Text(AppLocalizations.of(context).t('settingsBtnClear')),
-                          ),
-                          const SizedBox(width: 8),
-                          FilledButton.icon(
-                            onPressed: actions.isEmpty
-                                ? null
-                                : () => _syncQueue(context, ref),
-                            icon: const Icon(Icons.sync_outlined),
-                            label: Text(AppLocalizations.of(context).t('settingsBtnSyncNow')),
-                          ),
-                        ],
+                            style: Theme.of(context).textTheme.titleMedium,
+                          );
+                          final actionsBar = Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            alignment: isNarrow
+                                ? WrapAlignment.start
+                                : WrapAlignment.end,
+                            children: [
+                              TextButton.icon(
+                                onPressed: actions.isEmpty
+                                    ? null
+                                    : () => _clearQueue(context, ref),
+                                icon: const Icon(Icons.delete_sweep_outlined),
+                                label: Text(
+                                  AppLocalizations.of(context).t(
+                                    'settingsBtnClear',
+                                  ),
+                                ),
+                              ),
+                              FilledButton.icon(
+                                onPressed: actions.isEmpty
+                                    ? null
+                                    : () => _syncQueue(context, ref),
+                                icon: const Icon(Icons.sync_outlined),
+                                label: Text(
+                                  AppLocalizations.of(context).t(
+                                    'settingsBtnSyncNow',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+
+                          if (isNarrow) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                title,
+                                const SizedBox(height: 8),
+                                actionsBar,
+                              ],
+                            );
+                          }
+
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: title),
+                              const SizedBox(width: 12),
+                              actionsBar,
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 12),
                       if (actions.isEmpty)
@@ -120,65 +155,17 @@ class SettingsScreen extends ConsumerWidget {
                         Column(
                           children: [
                             for (final action in actions)
-                              ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                leading: Icon(
-                                  action.lastError == null
-                                      ? Icons.pending_actions
-                                      : Icons.error_outline,
-                                  color: action.lastError == null
-                                      ? null
-                                      : Theme.of(context).colorScheme.error,
+                              _OfflineActionTile(
+                                action: action,
+                                onEdit: () => _resolveAction(
+                                  context,
+                                  ref,
+                                  action,
                                 ),
-                                title:
-                                    Text(l10n.syncActionTypeLabel(action.type)),
-                                subtitle: Text(
-                                  [
-                                    _payloadSummary(action.payload),
-                                    if (action.attemptCount > 0)
-                                      l10n.tParams(
-                                        'settingsActionListAttempts',
-                                        {'count': '${action.attemptCount}'},
-                                      ),
-                                    if (action.lastError != null)
-                                      l10n.tParams(
-                                        'settingsActionListError',
-                                        {'message': '${action.lastError}'},
-                                      ),
-                                  ].join('\n'),
-                                ),
-                                trailing: Wrap(
-                                  spacing: 4,
-                                  children: [
-                                    IconButton(
-                                      tooltip: action.lastError == null
-                                          ? l10n.t('settingsEditAction')
-                                          : l10n.t('settingsResolveConflict'),
-                                      icon: Icon(
-                                        action.lastError == null
-                                            ? Icons.edit_note_outlined
-                                            : Icons.tune_outlined,
-                                      ),
-                                      onPressed: () => _resolveAction(
-                                        context,
-                                        ref,
-                                        action,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      tooltip: l10n.t('settingsRetryAction'),
-                                      icon: const Icon(Icons.sync_outlined),
-                                      onPressed: () =>
-                                          _retryAction(context, ref, action.id),
-                                    ),
-                                    IconButton(
-                                      tooltip: l10n.t('settingsRemoveAction'),
-                                      icon: const Icon(Icons.delete_outline),
-                                      onPressed: () => _removeAction(
-                                          context, ref, action.id),
-                                    ),
-                                  ],
-                                ),
+                                onRetry: () =>
+                                    _retryAction(context, ref, action.id),
+                                onRemove: () =>
+                                    _removeAction(context, ref, action.id),
                               ),
                           ],
                         ),
@@ -298,6 +285,75 @@ class SettingsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(AppLocalizations.of(context).t('settingsQueueCleared'))),
+    );
+  }
+
+}
+
+class _OfflineActionTile extends StatelessWidget {
+  const _OfflineActionTile({
+    required this.action,
+    required this.onEdit,
+    required this.onRetry,
+    required this.onRemove,
+  });
+
+  final OfflineAction action;
+  final VoidCallback onEdit;
+  final VoidCallback onRetry;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final hasError = action.lastError != null;
+    final summary = [
+      _payloadSummary(action.payload),
+      if (action.attemptCount > 0)
+        l10n.tParams(
+          'settingsActionListAttempts',
+          {'count': '${action.attemptCount}'},
+        ),
+      if (hasError)
+        l10n.tParams(
+          'settingsActionListError',
+          {'message': '${action.lastError}'},
+        ),
+    ].join('\n');
+
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      isThreeLine: summary.contains('\n'),
+      leading: Icon(
+        hasError ? Icons.error_outline : Icons.pending_actions,
+        color: hasError ? Theme.of(context).colorScheme.error : null,
+      ),
+      title: Text(l10n.syncActionTypeLabel(action.type)),
+      subtitle: Text(summary),
+      trailing: Wrap(
+        spacing: 4,
+        children: [
+          IconButton(
+            tooltip: hasError
+                ? l10n.t('settingsResolveConflict')
+                : l10n.t('settingsEditAction'),
+            icon: Icon(
+              hasError ? Icons.tune_outlined : Icons.edit_note_outlined,
+            ),
+            onPressed: onEdit,
+          ),
+          IconButton(
+            tooltip: l10n.t('settingsRetryAction'),
+            icon: const Icon(Icons.sync_outlined),
+            onPressed: onRetry,
+          ),
+          IconButton(
+            tooltip: l10n.t('settingsRemoveAction'),
+            icon: const Icon(Icons.delete_outline),
+            onPressed: onRemove,
+          ),
+        ],
+      ),
     );
   }
 
