@@ -39,6 +39,7 @@ class TeamScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           AsyncValueView(
             value: ref.watch(teamMembersProvider),
+            onRetry: () => ref.invalidate(teamMembersProvider),
             builder: (members) => _MembersTable(
               currentUser: currentUser,
               members: members,
@@ -56,6 +57,7 @@ class TeamScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           AsyncValueView(
             value: ref.watch(teamInvitationsProvider),
+            onRetry: () => ref.invalidate(teamInvitationsProvider),
             builder: (invitations) => _InvitationsTable(
               currentUser: currentUser,
               invitations: invitations,

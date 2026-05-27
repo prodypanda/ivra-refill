@@ -79,6 +79,7 @@ class SettingsScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             AsyncValueView(
               value: ref.watch(offlineActionsProvider),
+              onRetry: () => ref.invalidate(offlineActionsProvider),
               builder: (actions) => Card(
                 child: Padding(
                   padding: const EdgeInsets.all(18),
@@ -374,6 +375,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
 
     return AsyncValueView(
       value: ref.watch(demoUsersProvider),
+      onRetry: () => ref.invalidate(demoUsersProvider),
       builder: (users) => Card(
         child: Padding(
           padding: const EdgeInsets.all(18),

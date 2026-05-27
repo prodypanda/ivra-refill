@@ -26,6 +26,7 @@ class ProductsScreen extends ConsumerWidget {
       ],
       child: AsyncValueView(
         value: ref.watch(productsProvider),
+        onRetry: () => ref.invalidate(productsProvider),
         builder: (products) => _ProductsTable(products: products),
       ),
     );

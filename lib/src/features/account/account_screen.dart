@@ -49,6 +49,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       title: l10n.t('account'),
       child: AsyncValueView(
         value: ref.watch(currentUserProvider),
+        onRetry: () => ref.invalidate(currentUserProvider),
         builder: (user) {
           _hydrateProfile(user);
           return ConstrainedBox(
