@@ -7,6 +7,7 @@ import '../features/shared/premium_loading.dart';
 import '../l10n/app_localizations.dart';
 import '../routing/app_router.dart';
 import '../state/app_state.dart';
+import 'deep_link_listener.dart';
 import 'theme.dart';
 
 class IvraApp extends ConsumerWidget {
@@ -32,7 +33,9 @@ class IvraApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       builder: (context, child) {
-        return _GlobalSplashGate(child: child!);
+        return DeepLinkListener(
+          child: _GlobalSplashGate(child: child!),
+        );
       },
       routerConfig: router,
     );
