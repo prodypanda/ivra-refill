@@ -391,9 +391,11 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        widget.action.lastError == null
-            ? 'Edit queued action'
-            : 'Resolve sync conflict',
+        AppLocalizations.of(context).t(
+          widget.action.lastError == null
+              ? 'settingsActionEditTitle'
+              : 'settingsActionConflictTitle',
+        ),
       ),
       content: SizedBox(
         width: 640,

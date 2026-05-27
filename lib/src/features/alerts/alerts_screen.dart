@@ -214,7 +214,13 @@ class _AlertCard extends StatelessWidget {
                         : Icons.radio_button_unchecked,
                     size: 18,
                   ),
-                  label: Text(alert.isResolved ? 'Resolved' : 'Open'),
+                  label: Text(
+                    AppLocalizations.of(context).t(
+                      alert.isResolved
+                          ? 'alertsStatusResolved'
+                          : 'alertsStatusOpen',
+                    ),
+                  ),
                 ),
                 Chip(label: Text(_typeLabel(alert.type))),
                 Chip(

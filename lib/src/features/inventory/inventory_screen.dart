@@ -501,11 +501,7 @@ class _StockAdjustmentDialogState
       (item) => item.id == _inventoryItemId,
     );
 
-    final emptyBidonsLabel = l10n.t('inventoryTableEmptyBottles')
-        .replaceAll('bottles', 'bidons')
-        .replaceAll('Bouteilles', 'Bidons')
-        .replaceAll('العبوات', 'الجالونات')
-        .replaceAll('Bottiglie', 'Bidoni');
+    final emptyBidonsLabel = l10n.t('inventoryTableEmptyBidons');
 
     return AlertDialog(
       title: Text(l10n.t('adjustStockTitle')),

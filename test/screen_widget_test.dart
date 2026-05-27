@@ -10,6 +10,7 @@ import 'package:ivra_refill/src/features/inventory/inventory_screen.dart';
 import 'package:ivra_refill/src/features/reports/reports_screen.dart';
 import 'package:ivra_refill/src/features/settings/settings_screen.dart';
 import 'package:ivra_refill/src/features/account/account_screen.dart';
+import 'package:ivra_refill/src/features/shared/offline_banner.dart';
 import 'package:ivra_refill/src/features/team/team_screen.dart';
 import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
@@ -658,6 +659,13 @@ Future<void> _pumpIvraApp(
         localeProvider.overrideWith((ref) => locale ?? const Locale('en')),
         if (currentUser != null)
           currentUserProvider.overrideWith((ref) async => currentUser),
+        // Force connectivity to be deterministically "online" in widget
+        // tests so we don't depend on the optional SUPABASE_URL
+        // --dart-define or the host-lookup timer scheduling between
+        // pumpAndSettle frames.
+        connectivityProvider.overrideWith(
+          (ref) => ConnectivityNotifier(host: null),
+        ),
       ],
       child: const IvraApp(),
     ),

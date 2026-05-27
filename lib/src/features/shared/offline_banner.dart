@@ -106,7 +106,6 @@ class OfflineBanner extends ConsumerStatefulWidget {
 
 class _OfflineBannerState extends ConsumerState<OfflineBanner>
     with SingleTickerProviderStateMixin {
-  bool _wasOffline = false;
   bool _isSyncing = false;
 
   @override
@@ -119,15 +118,39 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
 
     final isEffectivelyOffline = !isOnline || hasManualOffline;
 
-    // Auto-sync when coming back online
-    if (_wasOffline && isOnline && !hasManualOffline && pendingCount > 0) {
-      _wasOffline = false;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _autoSync(pendingCount);
-      });
-    }
-
-    _wasOffline = isEffectivelyOffline;
+    // Auto-sync when coming back online. Triggering this from `ref.listen`
+    // (and not from inline build-time state mutation) keeps the build pure
+    // and avoids spurious rebuilds being interpreted as connectivity
+    // transitions — for example, when the pending-actions list changes
+    // while we are still offline.
+    ref.listen<bool>(connectivityProvider, (previous, next) {
+      final wasOffline = previous == false;
+      final isNowOnline = next == true;
+      if (wasOffline &&
+          isNowOnline &&
+          !ref.read(offlineModeProvider) &&
+          (ref.read(offlineActionsProvider).valueOrNull?.length ?? 0) > 0) {
+        final count =
+            ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _autoSync(count);
+        });
+      }
+    });
+    ref.listen<bool>(offlineModeProvider, (previous, next) {
+      final wasManualOffline = previous == true;
+      final isNoLongerManualOffline = next == false;
+      if (wasManualOffline &&
+          isNoLongerManualOffline &&
+          ref.read(connectivityProvider) == true &&
+          (ref.read(offlineActionsProvider).valueOrNull?.length ?? 0) > 0) {
+        final count =
+            ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _autoSync(count);
+        });
+      }
+    });
 
     // Don't show anything if online and no pending actions
     if (!isEffectivelyOffline && pendingCount == 0) {
@@ -246,7 +269,10 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
         } else if (summary.synced > 0) {
           PremiumSnackbar.show(
             context,
-            l10n.t('offlineBannerAutoSynced').replaceAll('{count}', '${summary.synced}'),
+            l10n.tParams(
+              'offlineBannerAutoSynced',
+              {'count': '${summary.synced}'},
+            ),
             icon: Icons.cloud_done_outlined,
           );
         }
@@ -278,10 +304,13 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
             l10n.t('offlineBannerSyncFailed'),
             icon: Icons.warning_amber_outlined,
           );
-        } else {
+        } else if (summary.synced > 0) {
           PremiumSnackbar.show(
             context,
-            l10n.t('offlineBannerAutoSynced').replaceAll('{count}', '${summary.synced}'),
+            l10n.tParams(
+              'offlineBannerAutoSynced',
+              {'count': '${summary.synced}'},
+            ),
             icon: Icons.cloud_done_outlined,
           );
         }
