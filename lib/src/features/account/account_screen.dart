@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
@@ -153,7 +152,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
   }
 }
 
-class _ProfileCard extends StatelessWidget {
+class _ProfileCard extends ConsumerWidget {
   const _ProfileCard({
     required this.formKey,
     required this.user,
@@ -169,7 +168,13 @@ class _ProfileCard extends StatelessWidget {
   final VoidCallback onSave;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hotelName = user.hotelId == null
+        ? null
+        : (ref.watch(hotelsProvider).valueOrNull ?? const <Hotel>[])
+            .where((hotel) => hotel.id == user.hotelId)
+            .map((hotel) => hotel.name)
+            .firstOrNull;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -224,12 +229,14 @@ class _ProfileCard extends StatelessWidget {
                   _InfoChip(
                     icon: Icons.admin_panel_settings_outlined,
                     label: AppLocalizations.of(context).t('accountRole'),
-                    value: _roleLabel(user.role),
+                    value: AppLocalizations.of(context).userRoleLabel(user.role),
                   ),
                   _InfoChip(
                     icon: Icons.apartment_outlined,
                     label: AppLocalizations.of(context).t('accountScope'),
-                    value: user.hotelId ?? AppLocalizations.of(context).t('accountIvraGlobal'),
+                    value: user.hotelId != null
+                        ? (hotelName ?? user.hotelId!)
+                        : AppLocalizations.of(context).t('accountIvraGlobal'),
                   ),
                   _InfoChip(
                     icon: user.isActive
@@ -392,11 +399,4 @@ class _InfoChip extends StatelessWidget {
   }
 }
 
-String _roleLabel(UserRole role) {
-  return switch (role) {
-    UserRole.appAdmin => 'App Admin',
-    UserRole.appManager => 'App Manager',
-    UserRole.hotelManager => 'Hotel Manager',
-    UserRole.hotelStaff => 'Hotel Staff',
-  };
-}
+

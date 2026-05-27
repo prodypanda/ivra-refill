@@ -63,15 +63,15 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
             onPressed: () => _showRoomTemplateDialog(context, ref),
           ),
       ],
-      child: hotelsAsync.when(
-        loading: () => const PremiumLoadingWidget(),
-        error: (err, stack) => Center(child: Text('Error: $err')),
-        data: (hotels) {
+      child: AsyncValueView(
+        value: hotelsAsync,
+        loadingWidget: const PremiumLoadingWidget(),
+        builder: (hotels) {
           if (hotels.isEmpty) {
-            return const EmptyState(
+            return EmptyState(
               icon: Icons.hotel_outlined,
-              title: 'No Hotels Found',
-              message: 'Add a hotel to get started.',
+              title: l10n.t('inventoryNoHotels'),
+              message: l10n.t('inventoryAddHotelHint'),
             );
           }
 
@@ -173,7 +173,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       return EmptyState(
                         icon: Icons.search_off_outlined,
                         title: l10n.t('roomsNoRoomsFound'),
-                        message: 'Try adjusting your search query or filters.',
+                        message: l10n.t('roomsSearchEmptyHint'),
                       );
                     }
 
@@ -1647,8 +1647,8 @@ class _RefillHistoryDialog extends ConsumerWidget {
       RefillEventType.refill => l10n.t('refill'),
       RefillEventType.undo => l10n.t('undo'),
       RefillEventType.correctionRequested => l10n.t('metricPendingApprovals'),
-      RefillEventType.correctionApproved => 'Approved',
-      RefillEventType.correctionRejected => 'Rejected',
+      RefillEventType.correctionApproved => l10n.t('refillEventApproved'),
+      RefillEventType.correctionRejected => l10n.t('refillEventRejected'),
       RefillEventType.bottleReplaced => l10n.t('roomsBtnReplaceBottle'),
     };
   }

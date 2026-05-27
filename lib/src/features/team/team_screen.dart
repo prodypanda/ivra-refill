@@ -599,7 +599,9 @@ class _MemberActions extends StatelessWidget {
             onPressed: onManageHotels,
           ),
         IconButton.outlined(
-          tooltip: member.isActive ? 'Deactivate account' : 'Reactivate account',
+          tooltip: member.isActive
+              ? l10n.t('teamDeactivateAccountTooltip')
+              : l10n.t('teamReactivateAccountTooltip'),
           icon: Icon(
             member.isActive
                 ? Icons.person_off_outlined

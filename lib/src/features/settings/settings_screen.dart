@@ -204,14 +204,23 @@ class SettingsScreen extends ConsumerWidget {
     ref.invalidate(dashboardProvider);
 
     if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final String message;
+    if (summary.hasFailures) {
+      message = l10n.tParams(
+        'settingsSyncedWithFailures',
+        {'synced': '${summary.synced}', 'failed': '${summary.failed}'},
+      );
+    } else {
+      message = l10n.tParams(
+        summary.synced == 1
+            ? 'settingsSyncedSummarySingular'
+            : 'settingsSyncedSummary',
+        {'synced': '${summary.synced}'},
+      );
+    }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          summary.hasFailures
-              ? 'Synced ${summary.synced}, ${summary.failed} failed'
-              : 'Synced ${summary.synced} action${summary.synced == 1 ? '' : 's'}',
-        ),
-      ),
+      SnackBar(content: Text(message)),
     );
   }
 

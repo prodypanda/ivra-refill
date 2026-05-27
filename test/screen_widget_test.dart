@@ -303,7 +303,7 @@ void main() {
       expect(find.text('Account'), findsWidgets);
       expect(find.text('Profile'), findsWidgets);
       expect(find.textContaining('admin@ivra.example'), findsWidgets);
-      expect(find.textContaining('App Admin'), findsWidgets);
+      expect(find.textContaining('App admin'), findsWidgets);
     });
 
     testWidgets('shows password change section', (tester) async {
@@ -337,8 +337,8 @@ void main() {
           .go(AccountScreen.route);
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Hotel Staff'), findsWidgets);
-      expect(find.textContaining('hotel-seaside'), findsWidgets);
+      expect(find.textContaining('Hotel staff'), findsWidgets);
+      expect(find.textContaining('Seaside Hotel'), findsWidgets);
     });
 
     testWidgets('save button exists on profile card', (tester) async {

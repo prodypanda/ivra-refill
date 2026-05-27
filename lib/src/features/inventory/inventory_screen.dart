@@ -11,7 +11,6 @@ import '../shared/page_scaffold.dart';
 import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
-import '../shared/premium_loading.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
   const InventoryScreen({super.key});
@@ -60,10 +59,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           onPressed: () => _showStockAdjustmentDialog(context),
         ),
       ],
-      child: hotelsAsync.when(
-        loading: () => const Center(child: PremiumLoadingWidget()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
-        data: (hotels) {
+      child: AsyncValueView(
+        value: hotelsAsync,
+        builder: (hotels) {
           if (hotels.isEmpty) {
             return EmptyState(
               icon: Icons.hotel_outlined,

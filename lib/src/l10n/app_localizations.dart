@@ -128,6 +128,7 @@ class AppLocalizations {
       'authPasswordUpdatedSuccess': 'Password updated successfully.',
       'roomsTooltipCreateTemplate': 'Create room template',
       'roomsNoRoomsFound': 'No rooms or products found.',
+      'roomsSearchEmptyHint': 'Try adjusting your search query or filters.',
       'roomsLabelRoom': 'Room',
       'roomsLabelFloor': 'Floor',
       'roomsLabelRefills': 'Refills',
@@ -320,6 +321,26 @@ class AppLocalizations {
       'invitationStatusAccepted': 'Accepted',
       'invitationStatusCancelled': 'Cancelled',
       'invitationStatusExpired': 'Expired',
+      'alertResolvedToast': 'Alert resolved',
+      'alertsRefreshedToast': '{count} smart alerts created',
+      'alertsEmptyTitle': 'No alerts yet',
+      'alertsEmptyMessage':
+          'Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.',
+      'alertsEmptyAction': 'Refresh alerts',
+      'alertTypeLowBidonStock': 'Low bidons',
+      'alertTypeLowBottleStock': 'Low bottles',
+      'alertTypeBottleAgeLimit': 'Bottle age',
+      'alertTypeRefillLimit': 'Refill limit',
+      'alertTypePendingApproval': 'Approval',
+      'alertTypeSuspiciousActivity': 'Suspicious activity',
+      'alertTypeInactiveHotel': 'Inactive hotel',
+      'refillEventApproved': 'Approved',
+      'refillEventRejected': 'Rejected',
+      'teamDeactivateAccountTooltip': 'Deactivate account',
+      'teamReactivateAccountTooltip': 'Reactivate account',
+      'settingsSyncedSummary': 'Synced {synced} actions',
+      'settingsSyncedSummarySingular': 'Synced {synced} action',
+      'settingsSyncedWithFailures': 'Synced {synced}, {failed} failed',
       'inviteAcceptHeading': 'Accept Ivra invitation',
       'inviteSubtitleWithHotel': '{name} was invited as {role} for {hotel}.',
       'inviteSubtitleNoHotel': '{name} was invited as {role}.',
@@ -444,6 +465,7 @@ class AppLocalizations {
       'authPasswordUpdatedSuccess': 'Mot de passe mis à jour avec succès.',
       'roomsTooltipCreateTemplate': 'Créer un modèle de chambre',
       'roomsNoRoomsFound': 'Aucune chambre ni produit trouvé.',
+      'roomsSearchEmptyHint': 'Essayez de modifier votre recherche ou vos filtres.',
       'roomsLabelRoom': 'Chambre',
       'roomsLabelFloor': 'Étage',
       'roomsLabelRefills': 'Recharges',
@@ -637,6 +659,26 @@ class AppLocalizations {
       'invitationStatusAccepted': 'Acceptée',
       'invitationStatusCancelled': 'Annulée',
       'invitationStatusExpired': 'Expirée',
+      'alertResolvedToast': 'Alerte résolue',
+      'alertsRefreshedToast': '{count} alertes intelligentes créées',
+      'alertsEmptyTitle': 'Aucune alerte pour le moment',
+      'alertsEmptyMessage':
+          'Actualisez les alertes intelligentes pour analyser le stock, les limites de recharge, l\'âge des bouteilles et les approbations en attente.',
+      'alertsEmptyAction': 'Actualiser les alertes',
+      'alertTypeLowBidonStock': 'Stock bas (bidons)',
+      'alertTypeLowBottleStock': 'Stock bas (bouteilles)',
+      'alertTypeBottleAgeLimit': 'Âge bouteille',
+      'alertTypeRefillLimit': 'Limite de recharges',
+      'alertTypePendingApproval': 'Approbation',
+      'alertTypeSuspiciousActivity': 'Activité suspecte',
+      'alertTypeInactiveHotel': 'Hôtel inactif',
+      'refillEventApproved': 'Approuvé',
+      'refillEventRejected': 'Rejeté',
+      'teamDeactivateAccountTooltip': 'Désactiver le compte',
+      'teamReactivateAccountTooltip': 'Réactiver le compte',
+      'settingsSyncedSummary': '{synced} actions synchronisées',
+      'settingsSyncedSummarySingular': '{synced} action synchronisée',
+      'settingsSyncedWithFailures': '{synced} synchronisées, {failed} échec(s)',
       'inviteAcceptHeading': 'Accepter l\'invitation Ivra',
       'inviteSubtitleWithHotel':
           '{name} a été invité(e) en tant que {role} pour {hotel}.',
@@ -763,6 +805,7 @@ class AppLocalizations {
       'authPasswordUpdatedSuccess': 'تم تحديث كلمة المرور بنجاح.',
       'roomsTooltipCreateTemplate': 'إنشاء نموذج غرفة',
       'roomsNoRoomsFound': 'لم يتم العثور على غرف أو منتجات.',
+      'roomsSearchEmptyHint': 'جرّب تعديل استفسار البحث أو العوامل التصفية.',
       'roomsLabelRoom': 'غرفة',
       'roomsLabelFloor': 'الطابق',
       'roomsLabelRefills': 'التعبئة',
@@ -957,6 +1000,26 @@ class AppLocalizations {
       'invitationStatusAccepted': '\u0645\u0642\u0628\u0648\u0644\u0629',
       'invitationStatusCancelled': '\u0645\u0644\u063a\u0627\u0629',
       'invitationStatusExpired': '\u0645\u0646\u062a\u0647\u064a\u0629',
+      'alertResolvedToast': '\u062a\u0645\u0651 \u062d\u0644\u0651 \u0627\u0644\u062a\u0646\u0628\u064a\u0647',
+      'alertsRefreshedToast': '\u062a\u0645\u0651 \u0625\u0646\u0634\u0627\u0621 {count} \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0630\u0643\u064a\u0651\u0629',
+      'alertsEmptyTitle': '\u0644\u0627 \u062a\u0648\u062c\u062f \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0628\u0639\u062f',
+      'alertsEmptyMessage':
+          '\u062d\u062f\u0651\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0630\u0643\u064a\u0651\u0629 \u0644\u0641\u062d\u0635 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u062d\u062f\u0648\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629 \u0648\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0627\u062a \u0648\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0627\u062a \u0627\u0644\u0645\u0639\u0644\u0651\u0642\u0629.',
+      'alertsEmptyAction': '\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a',
+      'alertTypeLowBidonStock': '\u0645\u062e\u0632\u0648\u0646 \u0628\u064a\u062f\u0648\u0646\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
+      'alertTypeLowBottleStock': '\u0645\u062e\u0632\u0648\u0646 \u0632\u062c\u0627\u062c\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
+      'alertTypeBottleAgeLimit': '\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0629',
+      'alertTypeRefillLimit': '\u062d\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629',
+      'alertTypePendingApproval': '\u0645\u0648\u0627\u0641\u0642\u0629',
+      'alertTypeSuspiciousActivity': '\u0646\u0634\u0627\u0637 \u0645\u0634\u0628\u0648\u0647',
+      'alertTypeInactiveHotel': '\u0641\u0646\u062f\u0642 \u063a\u064a\u0631 \u0646\u0634\u0637',
+      'refillEventApproved': '\u062a\u0645\u0651\u062a \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629',
+      'refillEventRejected': '\u062a\u0645\u0651 \u0627\u0644\u0631\u0641\u0636',
+      'teamDeactivateAccountTooltip': '\u062a\u0639\u0637\u064a\u0644 \u0627\u0644\u062d\u0633\u0627\u0628',
+      'teamReactivateAccountTooltip': '\u0625\u0639\u0627\u062f\u0629 \u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u062d\u0633\u0627\u0628',
+      'settingsSyncedSummary': '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced} \u0625\u062c\u0631\u0627\u0621\u0627\u062a',
+      'settingsSyncedSummarySingular': '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced} \u0625\u062c\u0631\u0627\u0621',
+      'settingsSyncedWithFailures': '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced}\u060c \u0641\u0634\u0644 {failed}',
       'inviteAcceptHeading': '\u0642\u0628\u0648\u0644 \u062f\u0639\u0648\u0629 Ivra',
       'inviteSubtitleWithHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role} \u0641\u064a {hotel}.',
       'inviteSubtitleNoHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role}.',
@@ -1082,6 +1145,7 @@ class AppLocalizations {
       'authPasswordUpdatedSuccess': 'Password aggiornata con successo.',
       'roomsTooltipCreateTemplate': 'Crea modello camera',
       'roomsNoRoomsFound': 'Nessuna camera o prodotto trovato.',
+      'roomsSearchEmptyHint': 'Prova a modificare la ricerca o i filtri.',
       'roomsLabelRoom': 'Camera',
       'roomsLabelFloor': 'Piano',
       'roomsLabelRefills': 'Ricariche',
@@ -1274,6 +1338,23 @@ class AppLocalizations {
       'invitationStatusAccepted': 'Accettato',
       'invitationStatusCancelled': 'Annullato',
       'invitationStatusExpired': 'Scaduto',
+      'alertResolvedToast': 'Avviso risolto',
+      'alertsRefreshedToast': '{count} avvisi intelligenti creati',
+      'alertsEmptyTitle': 'Nessun avviso al momento',
+      'alertsEmptyMessage':
+          'Aggiorna gli avvisi intelligenti per scansionare scorte, limiti di ricarica, et\u00e0 delle bottiglie e approvazioni in sospeso.',
+      'alertsEmptyAction': 'Aggiorna avvisi',
+      'alertTypeLowBidonStock': 'Scorte basse (bidoni)',
+      'alertTypeLowBottleStock': 'Scorte basse (bottiglie)',
+      'alertTypeBottleAgeLimit': 'Et\u00e0 bottiglia',
+      'alertTypeRefillLimit': 'Limite ricariche',
+      'alertTypePendingApproval': 'Approvazione',
+      'alertTypeSuspiciousActivity': 'Attivit\u00e0 sospetta',
+      'alertTypeInactiveHotel': 'Hotel inattivo',
+      'refillEventApproved': 'Approvato',
+      'refillEventRejected': 'Rifiutato',
+      'teamDeactivateAccountTooltip': 'Disattiva account',
+      'teamReactivateAccountTooltip': 'Riattiva account',
       'inviteAcceptHeading': 'Accetta invito Ivra',
       'inviteSubtitleWithHotel': '{name} è stato/a invitato/a come {role} per {hotel}.',
       'inviteSubtitleNoHotel': '{name} è stato/a invitato/a come {role}.',
@@ -1307,6 +1388,27 @@ class AppLocalizations {
       value = value.replaceAll('{${entry.key}}', entry.value);
     }
     return value;
+  }
+
+  /// Localized label for an `AlertType` so the alert-type chip in the alerts
+  /// list doesn't display hardcoded English to French/Arabic/Italian users.
+  String alertTypeLabel(AlertType type) {
+    switch (type) {
+      case AlertType.lowBidonStock:
+        return t('alertTypeLowBidonStock');
+      case AlertType.lowBottleStock:
+        return t('alertTypeLowBottleStock');
+      case AlertType.bottleAgeLimit:
+        return t('alertTypeBottleAgeLimit');
+      case AlertType.refillLimit:
+        return t('alertTypeRefillLimit');
+      case AlertType.pendingApproval:
+        return t('alertTypePendingApproval');
+      case AlertType.suspiciousActivity:
+        return t('alertTypeSuspiciousActivity');
+      case AlertType.inactiveHotel:
+        return t('alertTypeInactiveHotel');
+    }
   }
 
   /// Localized label for a raw team-invitation status string (`pending`,
