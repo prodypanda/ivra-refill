@@ -7,6 +7,7 @@ import '../../domain/models.dart';
 import '../../state/app_state.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/accept_invitation_screen.dart';
+import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 
@@ -440,10 +441,8 @@ class _InviteTeamMemberDialogState
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(labelText: l10n.t('teamTableColumnEmail')),
                   validator: (value) {
-                    final text = value?.trim() ?? '';
-                    if (text.isEmpty) return 'Required';
-                    if (!text.contains('@')) return 'Enter an email';
-                    return null;
+                    final errorKey = AuthValidation.email(value ?? '');
+                    return errorKey == null ? null : l10n.t(errorKey);
                   },
                 ),
                 const SizedBox(height: 12),
@@ -539,7 +538,9 @@ class _InviteTeamMemberDialogState
   }
 
   String? _required(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Required';
+    if (value == null || value.trim().isEmpty) {
+      return AppLocalizations.of(context).t('requiredField');
+    }
     return null;
   }
 

@@ -157,10 +157,12 @@ class _AcceptInvitationScreenState
       ref.invalidate(teamInvitationsProvider);
       if (!mounted) return;
       context.go(DashboardScreen.route);
-    } on AuthException catch (error) {
-      if (mounted) setState(() => _error = error.message);
     } catch (error) {
-      if (mounted) setState(() => _error = error.toString());
+      if (!mounted) return;
+      setState(() => _error = localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+          ));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

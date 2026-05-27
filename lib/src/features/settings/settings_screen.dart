@@ -513,7 +513,8 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
     try {
       final decoded = jsonDecode(_payloadController.text);
       if (decoded is! Map) {
-        setState(() => _error = 'Payload must be a JSON object');
+        setState(() => _error =
+            AppLocalizations.of(context).t('settingsPayloadInvalidJson'));
         return null;
       }
       setState(() => _error = null);

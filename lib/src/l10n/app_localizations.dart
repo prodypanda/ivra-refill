@@ -126,6 +126,13 @@ class AppLocalizations {
       'authBtnUpdatePassword': 'Update password',
       'authBtnReturnToApp': 'Return to app',
       'authPasswordUpdatedSuccess': 'Password updated successfully.',
+      'authUnexpectedError':
+          'Something went wrong. Please try again, or contact support if the problem persists.',
+      'authAccountDeactivated':
+          'This account has been deactivated. Contact your administrator for access.',
+      'settingsPayloadInvalidJson': 'Payload must be a JSON object.',
+      'exportDownloadStarted': '{fileName} download started',
+      'exportSaved': 'Saved {fileName} to {path}',
       'roomsTooltipCreateTemplate': 'Create room template',
       'roomsNoRoomsFound': 'No rooms or products found.',
       'roomsSearchEmptyHint': 'Try adjusting your search query or filters.',
@@ -467,6 +474,13 @@ class AppLocalizations {
       'authBtnUpdatePassword': 'Mettre à jour le mot de passe',
       'authBtnReturnToApp': 'Retourner à l\'application',
       'authPasswordUpdatedSuccess': 'Mot de passe mis à jour avec succès.',
+      'authUnexpectedError':
+          'Une erreur est survenue. Réessayez ou contactez le support si le problème persiste.',
+      'authAccountDeactivated':
+          'Ce compte a été désactivé. Contactez votre administrateur pour y accéder.',
+      'settingsPayloadInvalidJson': 'La charge utile doit être un objet JSON.',
+      'exportDownloadStarted': 'Téléchargement de {fileName} commencé',
+      'exportSaved': '{fileName} enregistré dans {path}',
       'roomsTooltipCreateTemplate': 'Créer un modèle de chambre',
       'roomsNoRoomsFound': 'Aucune chambre ni produit trouvé.',
       'roomsSearchEmptyHint': 'Essayez de modifier votre recherche ou vos filtres.',
@@ -811,6 +825,13 @@ class AppLocalizations {
       'authBtnUpdatePassword': 'تحديث كلمة المرور',
       'authBtnReturnToApp': 'العودة إلى التطبيق',
       'authPasswordUpdatedSuccess': 'تم تحديث كلمة المرور بنجاح.',
+      'authUnexpectedError':
+          'حدث خطأ غير متوقّع. حاول مرّة أخرى أو تواصل مع الدّعم إذا استمرّت المشكلة.',
+      'authAccountDeactivated':
+          'تمّ تعطيل هذا الحساب. تواصل مع المدير لاستعادة الوصول.',
+      'settingsPayloadInvalidJson': 'يجب أن تكون الحمولة كائن JSON.',
+      'exportDownloadStarted': 'بدأ تنزيل {fileName}',
+      'exportSaved': 'تمّ حفظ {fileName} في {path}',
       'roomsTooltipCreateTemplate': 'إنشاء نموذج غرفة',
       'roomsNoRoomsFound': 'لم يتم العثور على غرف أو منتجات.',
       'roomsSearchEmptyHint': 'جرّب تعديل استفسار البحث أو العوامل التصفية.',
@@ -1155,6 +1176,13 @@ class AppLocalizations {
       'authBtnUpdatePassword': 'Aggiorna password',
       'authBtnReturnToApp': 'Torna all\'applicazione',
       'authPasswordUpdatedSuccess': 'Password aggiornata con successo.',
+      'authUnexpectedError':
+          'Si è verificato un errore. Riprova o contatta l\'assistenza se il problema persiste.',
+      'authAccountDeactivated':
+          'Questo account è stato disattivato. Contatta l\'amministratore per riaccedere.',
+      'settingsPayloadInvalidJson': 'Il payload deve essere un oggetto JSON.',
+      'exportDownloadStarted': 'Download di {fileName} avviato',
+      'exportSaved': '{fileName} salvato in {path}',
       'roomsTooltipCreateTemplate': 'Crea modello camera',
       'roomsNoRoomsFound': 'Nessuna camera o prodotto trovato.',
       'roomsSearchEmptyHint': 'Prova a modificare la ricerca o i filtri.',
