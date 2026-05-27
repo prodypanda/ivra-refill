@@ -217,7 +217,14 @@ class _AlertCard extends StatelessWidget {
                   label: Text(alert.isResolved ? 'Resolved' : 'Open'),
                 ),
                 Chip(label: Text(_typeLabel(alert.type))),
-                Chip(label: Text('Severity ${alert.severity}')),
+                Chip(
+                  label: Text(
+                    AppLocalizations.of(context).tParams(
+                      'alertsSeverityLabel',
+                      {'severity': '${alert.severity}'},
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),

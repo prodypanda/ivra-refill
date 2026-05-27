@@ -23,7 +23,6 @@ class InventoryScreen extends ConsumerStatefulWidget {
 }
 
 class _InventoryScreenState extends ConsumerState<InventoryScreen> {
-  String? _selectedHotelId;
   String _searchQuery = '';
   String _statusFilter = 'all'; // 'all', 'lowStock'
   late final TextEditingController _searchController;
@@ -47,6 +46,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final primaryColor = const Color(0xFFF2A900); // Golden yellow/orange
 
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final hotelsAsync = ref.watch(hotelsProvider);
     final inventoryAsync = ref.watch(inventoryProvider);
     final suggestedOrdersAsync = ref.watch(suggestedOrdersProvider);
@@ -72,21 +72,43 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             );
           }
 
-          // Handle automatic selection
-          if (_selectedHotelId == null) {
-            if (currentUser?.hotelId != null) {
-              _selectedHotelId = currentUser!.hotelId;
-            } else if (hotels.isNotEmpty) {
-              _selectedHotelId = hotels.first.id;
+          // Inventory has no cross-hotel aggregate view, so we narrow down
+          // to a single hotel automatically when there is no ambiguity:
+          //   - hotel-bound users are already scoped by the splash gate, but
+          //     re-confirm here in case the list filter changes their hotel
+          //     out of view;
+          //   - admin / app-wide users only get auto-selected when exactly
+          //     one hotel is visible. With multiple hotels the dropdown
+          //     stays as the explicit choice so we never silently turn the
+          //     dashboard/rooms/alerts cross-hotel view into a single-hotel
+          //     view as a side effect of visiting Inventory.
+          if (selectedHotelId == null && hotels.isNotEmpty) {
+            final userHotelId = currentUser?.hotelId;
+            final autoSelectId = userHotelId != null &&
+                    hotels.any((hotel) => hotel.id == userHotelId)
+                ? userHotelId
+                : (hotels.length == 1 ? hotels.first.id : null);
+            if (autoSelectId != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ref.read(selectedHotelIdProvider.notifier).state =
+                    autoSelectId;
+              });
             }
           }
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildControlPanel(hotels, l10n, theme, primaryColor, currentUser),
+              _buildControlPanel(
+                hotels,
+                l10n,
+                theme,
+                primaryColor,
+                currentUser,
+                selectedHotelId,
+              ),
               const SizedBox(height: 20),
-              if (_selectedHotelId == null)
+              if (selectedHotelId == null)
                 Padding(
                   padding: const EdgeInsets.only(top: 40),
                   child: Center(
@@ -113,7 +135,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   ),
                   builder: (items) {
                     // Filter items by hotel
-                    final hotelItems = items.where((item) => item.hotelId == _selectedHotelId).toList();
+                    final hotelItems = items
+                        .where((item) => item.hotelId == selectedHotelId)
+                        .toList();
 
                     // Apply search query
                     final searchedItems = hotelItems.where((item) {
@@ -151,7 +175,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   builder: (orders) {
                     // Filter orders by hotel and search query
                     final filteredOrders = orders.where((order) {
-                      final matchHotel = order.hotelId == _selectedHotelId;
+                      final matchHotel = order.hotelId == selectedHotelId;
                       if (!matchHotel) return false;
 
                       if (_searchQuery.isEmpty) return true;
@@ -177,7 +201,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     ThemeData theme,
     Color primaryColor,
     UserProfile? currentUser,
+    String? selectedHotelId,
   ) {
+    // Lock the hotel selector to a static label for users who have nothing to
+    // choose between (hotel-scoped users, or app-wide users with a single
+    // visible hotel).
+    final userHotelId = currentUser?.hotelId;
+    final userIsHotelScoped =
+        userHotelId != null && hotels.any((hotel) => hotel.id == userHotelId);
+    final isScoped = userIsHotelScoped || hotels.length == 1;
+
     return GlassCard(
       padding: const EdgeInsets.all(16),
       color: theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.4),
@@ -190,30 +223,44 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 Icon(Icons.business_outlined, color: primaryColor),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _selectedHotelId,
-                      hint: Text(l10n.t('roomsSelectHotelFirst')),
-                      icon: Icon(Icons.arrow_drop_down, color: primaryColor),
-                      items: [
-                        for (final hotel in hotels)
-                          DropdownMenuItem(
-                            value: hotel.id,
-                            child: Text(
-                              hotel.name,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
-                            ),
+                  child: isScoped
+                      ? Text(
+                          hotels
+                              .firstWhere(
+                                (h) => h.id == selectedHotelId,
+                                orElse: () => hotels.first,
+                              )
+                              .name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) {
-                          setState(() {
-                            _selectedHotelId = val;
-                          });
-                        }
-                      },
-                    ),
-                  ),
+                        )
+                      : DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedHotelId,
+                            hint: Text(l10n.t('roomsSelectHotelFirst')),
+                            icon: Icon(Icons.arrow_drop_down,
+                                color: primaryColor),
+                            items: [
+                              for (final hotel in hotels)
+                                DropdownMenuItem(
+                                  value: hotel.id,
+                                  child: Text(
+                                    hotel.name,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) {
+                                ref
+                                    .read(selectedHotelIdProvider.notifier)
+                                    .state = val;
+                              }
+                            },
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -305,9 +352,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     if (!context.mounted) return;
 
     final l10n = AppLocalizations.of(context);
+    final selectedHotelId = ref.read(selectedHotelIdProvider);
 
     // Filter available adjustment items to only the currently selected hotel's inventory items!
-    final hotelItems = items.where((item) => item.hotelId == _selectedHotelId).toList();
+    final hotelItems =
+        items.where((item) => item.hotelId == selectedHotelId).toList();
 
     if (hotelItems.isEmpty) {
       PremiumSnackbar.show(

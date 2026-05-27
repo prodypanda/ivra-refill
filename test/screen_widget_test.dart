@@ -96,7 +96,11 @@ void main() {
 
   group('InventoryScreen', () {
     testWidgets('navigates to inventory and shows data table', (tester) async {
-      await _pumpIvraApp(tester, size: const Size(1280, 900));
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.hotelStaff),
+      );
 
       GoRouter.of(tester.element(find.text('Dashboard').first))
           .go(InventoryScreen.route);
@@ -110,7 +114,11 @@ void main() {
     });
 
     testWidgets('shows stock status for inventory items', (tester) async {
-      await _pumpIvraApp(tester, size: const Size(1280, 900));
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.hotelStaff),
+      );
 
       GoRouter.of(tester.element(find.text('Dashboard').first))
           .go(InventoryScreen.route);
@@ -121,7 +129,11 @@ void main() {
     });
 
     testWidgets('shows adjust stock button', (tester) async {
-      await _pumpIvraApp(tester, size: const Size(1280, 900));
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.hotelStaff),
+      );
 
       GoRouter.of(tester.element(find.text('Dashboard').first))
           .go(InventoryScreen.route);
@@ -131,7 +143,11 @@ void main() {
     });
 
     testWidgets('shows suggested orders section', (tester) async {
-      await _pumpIvraApp(tester, size: const Size(1280, 900));
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.hotelStaff),
+      );
 
       GoRouter.of(tester.element(find.text('Dashboard').first))
           .go(InventoryScreen.route);
