@@ -566,6 +566,17 @@ class _InviteTeamMemberDialogState
       // Additional hotels will be assigned after the user accepts the invitation
       // and their profile is created. We store the intent locally for now.
       if (mounted) Navigator.of(context).pop();
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+            fallbackKey: 'teamInviteFailed',
+          )),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -752,6 +763,17 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
           SnackBar(content: Text(AppLocalizations.of(context).t('teamHotelsUpdated'))),
         );
       }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+            fallbackKey: 'teamHotelsUpdateFailed',
+          )),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

@@ -28,11 +28,19 @@ class AuthValidation {
   }
 }
 
-/// Maps an arbitrary error thrown during a Supabase auth call into a
-/// user-facing localized message. Falls back to the generic
-/// `authUnexpectedError` instead of dumping `Exception:` / `StateError:`
+/// Maps an arbitrary error thrown during a Supabase call (auth or
+/// repository) into a user-facing localized message. Falls back to a
+/// generic message instead of dumping `Exception:` / `StateError:`
 /// prefixes and internal diagnostics straight into the UI.
-String localizeAuthError(AppLocalizations l10n, Object error) {
+///
+/// If a caller wants a context-specific fallback (e.g.
+/// `accountSaveFailed` instead of the generic `authUnexpectedError`),
+/// pass the key via [fallbackKey].
+String localizeAuthError(
+  AppLocalizations l10n,
+  Object error, {
+  String fallbackKey = 'authUnexpectedError',
+}) {
   if (error is AuthException) {
     return error.message;
   }
@@ -40,5 +48,5 @@ String localizeAuthError(AppLocalizations l10n, Object error) {
   if (raw.contains('This account has been deactivated')) {
     return l10n.t('authAccountDeactivated');
   }
-  return l10n.t('authUnexpectedError');
+  return l10n.t(fallbackKey);
 }

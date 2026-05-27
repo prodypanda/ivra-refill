@@ -191,7 +191,10 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
                     Text(
                       isEffectivelyOffline
                           ? l10n.t('offlineBannerTitle')
-                          : l10n.t('settingsPendingSync'),
+                          : l10n.tParams(
+                              'settingsPendingSync',
+                              {'count': pendingCount.toString()},
+                            ),
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,

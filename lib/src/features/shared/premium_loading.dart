@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+
 /// A premium, fully-animated loading widget with the Ivra brand identity.
 ///
 /// Features:
@@ -483,7 +485,7 @@ class _BottomTagline extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Sustainable Hospitality Solutions',
+          AppLocalizations.of(context).t('splashTagline'),
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
             letterSpacing: 1.5,
