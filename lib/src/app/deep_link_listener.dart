@@ -49,12 +49,28 @@ class _DeepLinkListenerState extends ConsumerState<DeepLinkListener> {
     if (!mounted) return;
     if (uri.scheme != 'ivra' || uri.host != 'app') return;
 
-    final path = uri.path.isEmpty ? '/' : uri.path;
-    final target = uri.queryParameters.isEmpty
-        ? path
-        : Uri(path: path, queryParameters: uri.queryParameters).toString();
+    final target = _toRouterLocation(uri.path, uri.queryParameters);
+    final router = ref.read(routerProvider);
 
-    ref.read(routerProvider).go(target);
+    // On cold-start, Flutter's `flutter_deeplinking_enabled` integration
+    // sets the initial location and `AppLinks().uriLinkStream` emits the
+    // same URI. Skip the redundant navigation so slow devices don't see
+    // a flicker. The hot-state case still works because the stream will
+    // continue emitting subsequent intents.
+    final currentUri = router.routeInformationProvider.value.uri;
+    final current = _toRouterLocation(currentUri.path, currentUri.queryParameters);
+    if (current == target) return;
+
+    router.go(target);
+  }
+
+  static String _toRouterLocation(
+    String path,
+    Map<String, String> queryParameters,
+  ) {
+    final normalisedPath = path.isEmpty ? '/' : path;
+    if (queryParameters.isEmpty) return normalisedPath;
+    return Uri(path: normalisedPath, queryParameters: queryParameters).toString();
   }
 
   @override
