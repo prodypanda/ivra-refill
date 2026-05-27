@@ -1,0 +1,1228 @@
+import 'dart:math';
+
+import 'package:uuid/uuid.dart';
+
+import '../domain/app_enums.dart';
+import '../domain/models.dart';
+import 'ivra_repository.dart';
+
+class MockIvraRepository implements IvraRepository {
+  MockIvraRepository() {
+    _hotels = [
+      const Hotel(
+        id: 'hotel-seaside',
+        name: 'Seaside Hotel',
+        legalName: 'Seaside Hotel Limited',
+        city: 'Sousse',
+        country: 'Tunisia',
+        contactName: 'Amina Bello',
+        email: 'ops@seaside.example',
+        phone: '+234 800 000 0000',
+        address: '12 Ocean Drive, Victoria Island',
+        notes: 'Pilot hotel for refill lifecycle operations.',
+        roomCount: 84,
+        pendingEdits: 2,
+      ),
+      const Hotel(
+        id: 'hotel-palms',
+        name: 'Palms Residence',
+        legalName: 'Palms Residence Ltd',
+        city: 'Tunis',
+        country: 'Tunisia',
+        contactName: 'Daniel Okeke',
+        email: 'manager@palms.example',
+        phone: '+234 811 000 0000',
+        address: '8 Palm Avenue, Maitama',
+        roomCount: 46,
+        pendingEdits: 0,
+      ),
+    ];
+
+    _rooms = [
+      const RoomInfo(
+        id: 'room-101',
+        hotelId: 'hotel-seaside',
+        floorId: 'floor-1',
+        roomNumber: '101',
+        floorNumber: 1,
+        productCount: 4,
+      ),
+      const RoomInfo(
+        id: 'room-205',
+        hotelId: 'hotel-seaside',
+        floorId: 'floor-2',
+        roomNumber: '205',
+        floorNumber: 2,
+        productCount: 5,
+      ),
+    ];
+
+    _roomProducts = [
+      RoomProduct(
+        id: 'rp-101-shampoo',
+        hotelId: _hotels.first.id,
+        roomId: 'room-101',
+        roomNumber: '101',
+        floorNumber: 1,
+        product: _products[0],
+        refillCount: 7,
+        lastRefillAt: DateTime.now().subtract(const Duration(days: 3)),
+        bottleStartedAt: DateTime.now().subtract(const Duration(days: 145)),
+        status: BottleStatus.refilled,
+      ),
+      RoomProduct(
+        id: 'rp-101-wash',
+        hotelId: _hotels.first.id,
+        roomId: 'room-101',
+        roomNumber: '101',
+        floorNumber: 1,
+        product: _products[3],
+        refillCount: 11,
+        lastRefillAt: DateTime.now().subtract(const Duration(hours: 4)),
+        bottleStartedAt: DateTime.now().subtract(const Duration(days: 260)),
+        status: BottleStatus.refillLimitReached,
+      ),
+      RoomProduct(
+        id: 'rp-205-gel',
+        hotelId: _hotels.first.id,
+        roomId: 'room-205',
+        roomNumber: '205',
+        floorNumber: 2,
+        product: _products[2],
+        refillCount: 2,
+        lastRefillAt: DateTime.now().subtract(const Duration(days: 10)),
+        bottleStartedAt: DateTime.now().subtract(const Duration(days: 60)),
+        status: BottleStatus.needsRefill,
+      ),
+    ];
+
+    _inventory = [
+      InventoryItem(
+        id: 'inv-shampoo',
+        hotelId: 'hotel-seaside',
+        product: _products[0],
+        fullBottles: 9,
+        emptyBottles: 17,
+        fullBidons: 3,
+        openBidons: 1,
+        emptyBidons: 5,
+      ),
+      InventoryItem(
+        id: 'inv-gel',
+        hotelId: 'hotel-seaside',
+        product: _products[2],
+        fullBottles: 22,
+        emptyBottles: 6,
+        fullBidons: 7,
+        openBidons: 1,
+        emptyBidons: 2,
+      ),
+    ];
+
+    _approvalRequests = [
+      ApprovalRequest(
+        id: 'apr-room-205',
+        hotelId: 'hotel-seaside',
+        title: 'Move room 205 to floor 3',
+        targetTable: 'rooms',
+        status: ApprovalStatus.pending,
+        requestedByName: 'Amina Bello',
+        requestedAt: DateTime.now().subtract(const Duration(hours: 7)),
+        oldValue: 'Floor 2',
+        newValue: 'Floor 3',
+      ),
+      ApprovalRequest(
+        id: 'apr-contact',
+        hotelId: 'hotel-seaside',
+        title: 'Update hotel phone number',
+        targetTable: 'hotels',
+        status: ApprovalStatus.pending,
+        requestedByName: 'Amina Bello',
+        requestedAt: DateTime.now().subtract(const Duration(days: 1)),
+        oldValue: '+234 800 000 0000',
+        newValue: '+234 800 111 2222',
+      ),
+    ];
+
+    _alerts = [
+      AlertItem(
+        id: 'alert-stock',
+        hotelId: 'hotel-seaside',
+        productId: 'prod-shampoo',
+        type: AlertType.lowBidonStock,
+        severity: 2,
+        title: 'Low shampoo bidon stock',
+        body: 'Seaside Hotel has 3 full shampoo bidons remaining.',
+        createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+        isResolved: false,
+      ),
+      AlertItem(
+        id: 'alert-limit',
+        hotelId: 'hotel-seaside',
+        roomProductId: 'rp-101-wash',
+        productId: 'prod-hand-wash',
+        type: AlertType.refillLimit,
+        severity: 3,
+        title: 'Hand wash bottle reached refill limit',
+        body: 'Room 101 hand wash bottle must be replaced.',
+        createdAt: DateTime.now().subtract(const Duration(hours: 6)),
+        isResolved: false,
+      ),
+    ];
+
+    _teamMembers = [
+      _currentUser,
+      const UserProfile(
+        id: 'demo-manager',
+        fullName: 'Ivra Manager',
+        email: 'manager@ivra.example',
+        role: UserRole.appManager,
+      ),
+      const UserProfile(
+        id: 'hotel-manager-seaside',
+        fullName: 'Amina Bello',
+        email: 'amina@seaside.example',
+        role: UserRole.hotelManager,
+        hotelId: 'hotel-seaside',
+      ),
+      const UserProfile(
+        id: 'hotel-staff-seaside',
+        fullName: 'Housekeeping Lead',
+        email: 'housekeeping@seaside.example',
+        role: UserRole.hotelStaff,
+        hotelId: 'hotel-seaside',
+      ),
+    ];
+
+    _teamInvitations = [
+      TeamInvitation(
+        id: 'invite-palms-manager',
+        email: 'opslead@palms.example',
+        fullName: 'Palms Ops Lead',
+        role: UserRole.hotelManager,
+        status: 'pending',
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+        inviteToken: 'demo-palms-invite',
+        hotelId: 'hotel-palms',
+        hotelName: 'Palms Residence',
+      ),
+    ];
+  }
+
+  final _uuid = const Uuid();
+
+  var _currentUser = const UserProfile(
+    id: 'demo-admin',
+    fullName: 'Ivra Admin',
+    email: 'admin@ivra.example',
+    role: UserRole.appAdmin,
+  );
+
+  final _products = [
+    Product(
+      id: 'prod-shampoo',
+      sku: 'IVR-SHA-1L',
+      nameEn: 'Shampoo',
+      nameFr: 'Shampooing',
+      nameAr: 'شامبو',
+      nameIt: 'Shampoo',
+      maxRefillCount: 10,
+      maxBottleAgeDays: 240,
+      lowBottleThreshold: 12,
+      lowBidonThreshold: 4,
+    ),
+    Product(
+      id: 'prod-conditioner',
+      sku: 'IVR-CON-1L',
+      nameEn: 'Conditioner',
+      nameFr: 'Après-shampooing',
+      nameAr: 'بلسم',
+      nameIt: 'Balsamo',
+      maxRefillCount: 10,
+      maxBottleAgeDays: 240,
+      lowBottleThreshold: 12,
+      lowBidonThreshold: 4,
+    ),
+    Product(
+      id: 'prod-shower-gel',
+      sku: 'IVR-GEL-1L',
+      nameEn: 'Shower Gel',
+      nameFr: 'Gel douche',
+      nameAr: 'جل الاستحمام',
+      nameIt: 'Bagnoschiuma',
+      maxRefillCount: 10,
+      maxBottleAgeDays: 240,
+      lowBottleThreshold: 12,
+      lowBidonThreshold: 4,
+    ),
+    Product(
+      id: 'prod-hand-wash',
+      sku: 'IVR-HWA-1L',
+      nameEn: 'Hand Wash',
+      nameFr: 'Savon mains',
+      nameAr: 'غسول اليدين',
+      nameIt: 'Sapone Mani',
+      maxRefillCount: 10,
+      maxBottleAgeDays: 240,
+      lowBottleThreshold: 12,
+      lowBidonThreshold: 4,
+    ),
+    Product(
+      id: 'prod-lotion',
+      sku: 'IVR-LOT-1L',
+      nameEn: 'Hand and Body Lotion',
+      nameFr: 'Lait mains et corps',
+      nameAr: 'لوشن اليد والجسم',
+      nameIt: 'Crema Mani e Corpo',
+      maxRefillCount: 10,
+      maxBottleAgeDays: 240,
+      lowBottleThreshold: 12,
+      lowBidonThreshold: 4,
+    ),
+  ];
+
+  late final List<Hotel> _hotels;
+  late final List<RoomInfo> _rooms;
+  late final List<RoomProduct> _roomProducts;
+  late final List<InventoryItem> _inventory;
+  late final List<ApprovalRequest> _approvalRequests;
+  late final List<AlertItem> _alerts;
+  late final List<UserProfile> _teamMembers;
+  late final List<TeamInvitation> _teamInvitations;
+  final List<RefillEvent> _events = [];
+  final Set<String> _processedClientRequestIds = {};
+
+  @override
+  Future<UserProfile> currentUser() async => _currentUser;
+
+  @override
+  Future<void> updateCurrentUserProfile({required String fullName}) async {
+    final trimmedName = fullName.trim();
+    if (trimmedName.isEmpty) {
+      throw ArgumentError('Full name is required.');
+    }
+
+    _currentUser = _currentUser.copyWith(fullName: trimmedName);
+    final index = _teamMembers.indexWhere(
+      (member) => member.id == _currentUser.id,
+    );
+    if (index != -1) {
+      _teamMembers[index] = _teamMembers[index].copyWith(
+        fullName: trimmedName,
+      );
+    }
+  }
+
+  @override
+  Future<void> changeCurrentUserPassword({required String password}) async {
+    if (password.length < 8) {
+      throw ArgumentError('Password must be at least 8 characters.');
+    }
+  }
+
+  @override
+  Future<void> switchDemoUser({required String userId}) async {
+    final member = _teamMembers.firstWhere((item) => item.id == userId);
+    _currentUser = member;
+  }
+
+  @override
+  Future<DashboardMetrics> dashboardMetrics({String? hotelId}) async {
+    final lowStock = (await inventory()).where(
+      (item) => item.lowBidons || item.lowBottles,
+    );
+    return DashboardMetrics(
+      hotelCount: _hotels.length,
+      roomCount: _rooms.length,
+      pendingApprovals: _approvalRequests
+          .where((item) => item.status == ApprovalStatus.pending)
+          .length,
+      openAlerts: _alerts.where((alert) => !alert.isResolved).length,
+      bottlesToReplace: _roomProducts
+          .where((item) =>
+              item.status == BottleStatus.refillLimitReached ||
+              item.status == BottleStatus.tooOld)
+          .length,
+      lowStockProducts: lowStock.length,
+    );
+  }
+
+  @override
+  Future<List<Hotel>> hotels() async => List.unmodifiable(_hotels);
+
+  @override
+  Future<List<UserProfile>> teamMembers({String? hotelId}) async {
+    return _teamMembers
+        .where((member) => hotelId == null || member.hotelId == hotelId)
+        .toList();
+  }
+
+  @override
+  Future<List<TeamInvitation>> teamInvitations({String? hotelId}) async {
+    return _teamInvitations
+        .where((invite) =>
+            invite.status == 'pending' &&
+            (hotelId == null || invite.hotelId == hotelId))
+        .toList();
+  }
+
+  @override
+  Future<List<Product>> products() async => List.unmodifiable(_products);
+
+  @override
+  Future<List<RoomInfo>> rooms({String? hotelId}) async {
+    return _rooms
+        .where((room) => hotelId == null || room.hotelId == hotelId)
+        .toList();
+  }
+
+  @override
+  Future<List<RoomProduct>> roomProducts({
+    String? hotelId,
+    String? roomId,
+  }) async {
+    return _roomProducts.where((item) {
+      return (hotelId == null || item.hotelId == hotelId) &&
+          (roomId == null || item.roomId == roomId);
+    }).toList();
+  }
+
+  @override
+  Future<List<InventoryItem>> inventory({String? hotelId}) async {
+    return _inventory
+        .where((item) => hotelId == null || item.hotelId == hotelId)
+        .toList();
+  }
+
+  @override
+  Future<List<SuggestedOrder>> suggestedOrders({String? hotelId}) async {
+    final scopedInventory = await inventory(hotelId: hotelId);
+    return scopedInventory
+        .map((item) {
+          final recycleCount = _roomProducts
+              .where((roomProduct) =>
+                  roomProduct.hotelId == item.hotelId &&
+                  roomProduct.product.id == item.product.id &&
+                  (roomProduct.status == BottleStatus.refillLimitReached ||
+                      roomProduct.status == BottleStatus.tooOld ||
+                      roomProduct.status == BottleStatus.needsReplacement))
+              .length;
+          return SuggestedOrder(
+            hotelId: item.hotelId,
+            product: item.product,
+            bottlesToOrder:
+                max(item.product.lowBottleThreshold * 2 - item.fullBottles, 0),
+            bidonsToOrder:
+                max(item.product.lowBidonThreshold * 2 - item.fullBidons, 0),
+            bottlesToRecycle: recycleCount,
+          );
+        })
+        .where((order) =>
+            order.bottlesToOrder > 0 ||
+            order.bidonsToOrder > 0 ||
+            order.bottlesToRecycle > 0)
+        .toList();
+  }
+
+  @override
+  Future<List<ApprovalRequest>> approvalRequests({String? hotelId}) async {
+    return _approvalRequests
+        .where((item) => hotelId == null || item.hotelId == hotelId)
+        .toList();
+  }
+
+  @override
+  Future<List<AlertItem>> alerts({String? hotelId}) async {
+    return _alerts
+        .where((item) => hotelId == null || item.hotelId == hotelId)
+        .toList();
+  }
+
+  @override
+  Future<int> refreshSmartAlerts({String? hotelId}) async {
+    var created = 0;
+    final now = DateTime.now();
+
+    for (final item in await inventory(hotelId: hotelId)) {
+      if (item.lowBottles) {
+        created += _insertAlertIfMissing(
+          AlertItem(
+            id: _uuid.v4(),
+            hotelId: item.hotelId,
+            productId: item.product.id,
+            type: AlertType.lowBottleStock,
+            severity: 2,
+            title: 'Low ${item.product.nameEn.toLowerCase()} bottle stock',
+            body:
+                '${item.fullBottles} full bottles remain. Threshold is ${item.product.lowBottleThreshold}.',
+            createdAt: now,
+            isResolved: false,
+          ),
+        );
+      }
+
+      if (item.lowBidons) {
+        created += _insertAlertIfMissing(
+          AlertItem(
+            id: _uuid.v4(),
+            hotelId: item.hotelId,
+            productId: item.product.id,
+            type: AlertType.lowBidonStock,
+            severity: 2,
+            title: 'Low ${item.product.nameEn.toLowerCase()} bidon stock',
+            body:
+                '${item.fullBidons} full bidons remain. Threshold is ${item.product.lowBidonThreshold}.',
+            createdAt: now,
+            isResolved: false,
+          ),
+        );
+      }
+    }
+
+    for (final roomProduct in await roomProducts(hotelId: hotelId)) {
+      if (roomProduct.refillCount >= roomProduct.product.maxRefillCount ||
+          roomProduct.status == BottleStatus.refillLimitReached ||
+          roomProduct.status == BottleStatus.needsReplacement) {
+        created += _insertAlertIfMissing(
+          AlertItem(
+            id: _uuid.v4(),
+            hotelId: roomProduct.hotelId,
+            roomProductId: roomProduct.id,
+            productId: roomProduct.product.id,
+            type: AlertType.refillLimit,
+            severity: 3,
+            title:
+                'Room ${roomProduct.roomNumber} ${roomProduct.product.nameEn} reached refill limit',
+            body:
+                '${roomProduct.refillCount}/${roomProduct.product.maxRefillCount} refills used. Replace and recycle the bottle.',
+            createdAt: now,
+            isResolved: false,
+          ),
+        );
+      }
+
+      final ageDays = roomProduct.bottleAgeDays(now);
+      if (ageDays >= roomProduct.product.maxBottleAgeDays) {
+        created += _insertAlertIfMissing(
+          AlertItem(
+            id: _uuid.v4(),
+            hotelId: roomProduct.hotelId,
+            roomProductId: roomProduct.id,
+            productId: roomProduct.product.id,
+            type: AlertType.bottleAgeLimit,
+            severity: 3,
+            title:
+                'Room ${roomProduct.roomNumber} ${roomProduct.product.nameEn} bottle is too old',
+            body:
+                'Bottle age is $ageDays days. Limit is ${roomProduct.product.maxBottleAgeDays} days.',
+            createdAt: now,
+            isResolved: false,
+          ),
+        );
+      }
+    }
+
+    for (final request in await approvalRequests(hotelId: hotelId)) {
+      if (request.status == ApprovalStatus.pending) {
+        created += _insertAlertIfMissing(
+          AlertItem(
+            id: _uuid.v4(),
+            hotelId: request.hotelId,
+            type: AlertType.pendingApproval,
+            severity: 1,
+            title: 'Pending approval: ${request.title}',
+            body: 'Requested by ${request.requestedByName}.',
+            createdAt: now,
+            isResolved: false,
+          ),
+        );
+      }
+    }
+
+    return created;
+  }
+
+  @override
+  Future<void> resolveAlert({required String alertId}) async {
+    final index = _alerts.indexWhere((alert) => alert.id == alertId);
+    if (index == -1) return;
+    _alerts[index] = _alerts[index].copyWith(isResolved: true);
+  }
+
+  // In-memory user→hotel assignments for multi-hotel support
+  final Map<String, Set<String>> _userHotelAssignments = {
+    'user-admin': {'hotel-seaside', 'hotel-palms'},
+    'user-manager': {'hotel-seaside'},
+    'user-staff': {'hotel-seaside'},
+  };
+
+  @override
+  Future<List<Hotel>> userHotels({required String userId}) async {
+    final hotelIds = _userHotelAssignments[userId] ?? {};
+    return _hotels.where((h) => hotelIds.contains(h.id)).toList();
+  }
+
+  @override
+  Future<void> assignUserHotel({
+    required String userId,
+    required String hotelId,
+  }) async {
+    _userHotelAssignments.putIfAbsent(userId, () => {}).add(hotelId);
+  }
+
+  @override
+  Future<void> unassignUserHotel({
+    required String userId,
+    required String hotelId,
+  }) async {
+    _userHotelAssignments[userId]?.remove(hotelId);
+  }
+
+  @override
+  Future<List<RefillEvent>> recentRefillEvents({String? hotelId}) async {
+    if (hotelId == null) return _events;
+    final roomProductIds = _roomProducts
+        .where((item) => item.hotelId == hotelId)
+        .map((item) => item.id)
+        .toSet();
+    return _events
+        .where((event) => roomProductIds.contains(event.roomProductId))
+        .toList();
+  }
+
+  @override
+  Future<void> createHotel({
+    required String name,
+    String legalName = '',
+    required String city,
+    required String country,
+    required String contactName,
+    required String email,
+    required String phone,
+    String address = '',
+    String notes = '',
+  }) async {
+    _hotels.add(
+      Hotel(
+        id: _uuid.v4(),
+        name: name,
+        legalName: legalName,
+        city: city,
+        country: country,
+        contactName: contactName,
+        email: email,
+        phone: phone,
+        address: address,
+        notes: notes,
+        roomCount: 0,
+        pendingEdits: 0,
+      ),
+    );
+  }
+
+  @override
+  Future<void> createRoomsFromTemplate({
+    required String hotelId,
+    required int floorNumber,
+    required int firstRoomNumber,
+    required int roomCount,
+    required List<String> productIds,
+  }) async {
+    final floorId = 'floor-$hotelId-$floorNumber';
+    final products = _products
+        .where((product) => productIds.contains(product.id))
+        .toList(growable: false);
+
+    for (var index = 0; index < roomCount; index += 1) {
+      final roomNumber = '${firstRoomNumber + index}';
+      final roomId = _uuid.v4();
+      _rooms.add(
+        RoomInfo(
+          id: roomId,
+          hotelId: hotelId,
+          floorId: floorId,
+          roomNumber: roomNumber,
+          floorNumber: floorNumber,
+          productCount: products.length,
+        ),
+      );
+
+      for (final product in products) {
+        _roomProducts.add(
+          RoomProduct(
+            id: _uuid.v4(),
+            hotelId: hotelId,
+            roomId: roomId,
+            roomNumber: roomNumber,
+            floorNumber: floorNumber,
+            product: product,
+            refillCount: 0,
+            lastRefillAt: null,
+            bottleStartedAt: DateTime.now(),
+            status: BottleStatus.active,
+          ),
+        );
+      }
+    }
+
+    final hotelIndex = _hotels.indexWhere((hotel) => hotel.id == hotelId);
+    if (hotelIndex != -1) {
+      _hotels[hotelIndex] = _hotels[hotelIndex].copyWith(
+        roomCount: _rooms.where((room) => room.hotelId == hotelId).length,
+      );
+    }
+  }
+
+  @override
+  Future<void> inviteTeamMember({
+    required String email,
+    required String fullName,
+    required String role,
+    String? hotelId,
+  }) async {
+    Hotel? hotel;
+    for (final item in _hotels) {
+      if (item.id == hotelId) hotel = item;
+    }
+    _teamInvitations.insert(
+      0,
+      TeamInvitation(
+        id: _uuid.v4(),
+        email: email,
+        fullName: fullName,
+        role: UserRole.fromValue(role),
+        status: 'pending',
+        createdAt: DateTime.now(),
+        inviteToken: _uuid.v4(),
+        hotelId: hotelId,
+        hotelName: hotel?.name,
+      ),
+    );
+  }
+
+  @override
+  Future<TeamInvitation?> invitationByToken({required String token}) async {
+    for (final invitation in _teamInvitations) {
+      if (invitation.inviteToken == token && invitation.status == 'pending') {
+        return invitation;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<void> acceptTeamInvitation({required String token}) async {
+    final index = _teamInvitations.indexWhere(
+      (invite) => invite.inviteToken == token && invite.status == 'pending',
+    );
+    if (index == -1) {
+      throw StateError('Pending invitation not found.');
+    }
+
+    final invitation = _teamInvitations[index];
+    _teamInvitations[index] = invitation.copyWith(status: 'accepted');
+    _teamMembers.add(
+      UserProfile(
+        id: _uuid.v4(),
+        fullName: invitation.fullName,
+        email: invitation.email,
+        role: invitation.role,
+        hotelId: invitation.hotelId,
+      ),
+    );
+  }
+
+  @override
+  Future<void> cancelTeamInvitation({required String invitationId}) async {
+    final index =
+        _teamInvitations.indexWhere((invite) => invite.id == invitationId);
+    if (index == -1) return;
+    _teamInvitations[index] = _teamInvitations[index].copyWith(
+      status: 'cancelled',
+    );
+  }
+
+  @override
+  Future<void> resendTeamInvitation({required String invitationId}) async {
+    final index =
+        _teamInvitations.indexWhere((invite) => invite.id == invitationId);
+    if (index == -1) return;
+    _teamInvitations[index] = _teamInvitations[index].copyWith(
+      status: 'pending',
+      createdAt: DateTime.now(),
+    );
+  }
+
+  @override
+  Future<void> setTeamMemberActive({
+    required String userId,
+    required bool isActive,
+  }) async {
+    final index = _teamMembers.indexWhere((member) => member.id == userId);
+    if (index == -1 || userId == _currentUser.id) return;
+    _teamMembers[index] = _teamMembers[index].copyWith(isActive: isActive);
+  }
+
+  @override
+  Future<void> createProduct({
+    required String sku,
+    required String nameEn,
+    required String nameFr,
+    required String nameAr,
+    String nameIt = '',
+    required int bottleVolumeMl,
+    required int bidonVolumeMl,
+    required int maxRefillCount,
+    required int maxBottleAgeDays,
+    required int lowBottleThreshold,
+    required int lowBidonThreshold,
+    String? imageUrl,
+  }) async {
+    _products.add(
+      Product(
+        id: _uuid.v4(),
+        sku: sku,
+        nameEn: nameEn,
+        nameFr: nameFr,
+        nameAr: nameAr,
+        nameIt: nameIt.isEmpty ? nameEn : nameIt,
+        bottleVolumeMl: bottleVolumeMl,
+        bidonVolumeMl: bidonVolumeMl,
+        maxRefillCount: maxRefillCount,
+        maxBottleAgeDays: maxBottleAgeDays,
+        lowBottleThreshold: lowBottleThreshold,
+        lowBidonThreshold: lowBidonThreshold,
+        imageUrl: imageUrl,
+      ),
+    );
+  }
+
+  @override
+  Future<void> updateProduct({
+    required String productId,
+    required String sku,
+    required String nameEn,
+    required String nameFr,
+    required String nameAr,
+    String nameIt = '',
+    required int bottleVolumeMl,
+    required int bidonVolumeMl,
+    required int maxRefillCount,
+    required int maxBottleAgeDays,
+    required int lowBottleThreshold,
+    required int lowBidonThreshold,
+    String? imageUrl,
+  }) async {
+    final index = _products.indexWhere((product) => product.id == productId);
+    if (index == -1) return;
+
+    _products[index] = _products[index].copyWith(
+      sku: sku,
+      nameEn: nameEn,
+      nameFr: nameFr,
+      nameAr: nameAr,
+      nameIt: nameIt.isEmpty ? nameEn : nameIt,
+      bottleVolumeMl: bottleVolumeMl,
+      bidonVolumeMl: bidonVolumeMl,
+      maxRefillCount: maxRefillCount,
+      maxBottleAgeDays: maxBottleAgeDays,
+      lowBottleThreshold: lowBottleThreshold,
+      lowBidonThreshold: lowBidonThreshold,
+      imageUrl: imageUrl,
+    );
+  }
+
+  @override
+  Future<void> recordRefill({
+    required String roomProductId,
+    String? notes,
+    String? clientRequestId,
+  }) async {
+    if (_hasProcessedClientRequest(clientRequestId)) return;
+
+    final index = _roomProducts.indexWhere((item) => item.id == roomProductId);
+    if (index == -1) {
+      throw StateError('Room product not found.');
+    }
+
+    final item = _roomProducts[index];
+    final newCount = item.refillCount + 1;
+    final status = newCount >= item.product.maxRefillCount
+        ? BottleStatus.refillLimitReached
+        : BottleStatus.refilled;
+    final event = RefillEvent(
+      id: _uuid.v4(),
+      roomProductId: roomProductId,
+      type: RefillEventType.refill,
+      previousRefillCount: item.refillCount,
+      newRefillCount: newCount,
+      occurredAt: DateTime.now(),
+      performedBy: _currentUser.id,
+      notes: notes,
+    );
+
+    _events.insert(0, event);
+    _roomProducts[index] = item.copyWith(
+      refillCount: newCount,
+      lastRefillAt: event.occurredAt,
+      status: status,
+    );
+    _markClientRequestProcessed(clientRequestId);
+  }
+
+  @override
+  Future<void> undoRefill({
+    required String refillEventId,
+    String? clientRequestId,
+  }) async {
+    if (_hasProcessedClientRequest(clientRequestId)) return;
+
+    final event = _events.firstWhere((item) => item.id == refillEventId);
+    if (!event.canUndo(DateTime.now(), _currentUser.id)) {
+      throw StateError('Undo is only available for 30 minutes.');
+    }
+
+    final index = _roomProducts.indexWhere(
+      (item) => item.id == event.roomProductId,
+    );
+    if (index == -1) return;
+
+    final item = _roomProducts[index];
+    _events.insert(
+      0,
+      RefillEvent(
+        id: _uuid.v4(),
+        roomProductId: item.id,
+        type: RefillEventType.undo,
+        previousRefillCount: item.refillCount,
+        newRefillCount: event.previousRefillCount,
+        occurredAt: DateTime.now(),
+        performedBy: _currentUser.id,
+      ),
+    );
+    _roomProducts[index] = item.copyWith(
+      refillCount: event.previousRefillCount,
+      status: BottleStatus.active,
+    );
+    _markClientRequestProcessed(clientRequestId);
+  }
+
+  @override
+  Future<void> requestCorrection({
+    required String refillEventId,
+    required String reason,
+    String? clientRequestId,
+  }) async {
+    if (_hasProcessedClientRequest(clientRequestId)) return;
+
+    final event = _events.firstWhere((item) => item.id == refillEventId);
+    final roomProduct = _roomProducts.firstWhere(
+      (item) => item.id == event.roomProductId,
+    );
+    _approvalRequests.insert(
+      0,
+      ApprovalRequest(
+        id: _uuid.v4(),
+        hotelId: roomProduct.hotelId,
+        title: 'Correction request for room ${roomProduct.roomNumber}',
+        targetTable: 'correction_requests',
+        status: ApprovalStatus.pending,
+        requestedByName: _currentUser.fullName,
+        requestedAt: DateTime.now(),
+        oldValue: 'Refill count ${event.newRefillCount}',
+        newValue: reason,
+      ),
+    );
+    _markClientRequestProcessed(clientRequestId);
+  }
+
+  @override
+  Future<void> replaceBottle({
+    required String roomProductId,
+    String? notes,
+    String? clientRequestId,
+  }) async {
+    if (_hasProcessedClientRequest(clientRequestId)) return;
+
+    final index = _roomProducts.indexWhere((item) => item.id == roomProductId);
+    if (index == -1) {
+      throw StateError('Room product not found.');
+    }
+
+    final item = _roomProducts[index];
+    final now = DateTime.now();
+    _events.insert(
+      0,
+      RefillEvent(
+        id: _uuid.v4(),
+        roomProductId: item.id,
+        type: RefillEventType.bottleReplaced,
+        previousRefillCount: item.refillCount,
+        newRefillCount: 0,
+        occurredAt: now,
+        performedBy: _currentUser.id,
+        notes: notes,
+      ),
+    );
+    _roomProducts[index] = RoomProduct(
+      id: item.id,
+      hotelId: item.hotelId,
+      roomId: item.roomId,
+      roomNumber: item.roomNumber,
+      floorNumber: item.floorNumber,
+      product: item.product,
+      refillCount: 0,
+      lastRefillAt: null,
+      bottleStartedAt: now,
+      status: BottleStatus.active,
+    );
+
+    final inventoryIndex = _inventory.indexWhere(
+      (stock) =>
+          stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+    );
+    if (inventoryIndex != -1) {
+      final stock = _inventory[inventoryIndex];
+      _inventory[inventoryIndex] = stock.copyWith(
+        fullBottles: max(stock.fullBottles - 1, 0),
+        emptyBottles: stock.emptyBottles + 1,
+      );
+    }
+    _markClientRequestProcessed(clientRequestId);
+  }
+
+  @override
+  Future<String?> submitChangeRequest({
+    required String hotelId,
+    required String title,
+    required String targetTable,
+    required String targetId,
+    required Map<String, dynamic> oldData,
+    required Map<String, dynamic> newData,
+    String? clientRequestId,
+  }) async {
+    if (_hasProcessedClientRequest(clientRequestId)) {
+      for (final request in _approvalRequests) {
+        if (request.targetId == targetId) return request.id;
+      }
+      return null;
+    }
+
+    final requestId = _uuid.v4();
+    _approvalRequests.insert(
+      0,
+      ApprovalRequest(
+        id: requestId,
+        hotelId: hotelId,
+        title: title,
+        targetTable: targetTable,
+        targetId: targetId,
+        status: ApprovalStatus.pending,
+        requestedByName: _currentUser.fullName,
+        requestedAt: DateTime.now(),
+        oldValue: oldData.entries
+            .map((entry) => '${entry.key}: ${entry.value}')
+            .join(', '),
+        newValue: newData.entries
+            .map((entry) => '${entry.key}: ${entry.value}')
+            .join(', '),
+        oldData: Map<String, dynamic>.from(oldData),
+        newData: Map<String, dynamic>.from(newData),
+      ),
+    );
+    _insertAlertIfMissing(
+      AlertItem(
+        id: _uuid.v4(),
+        hotelId: hotelId,
+        type: AlertType.pendingApproval,
+        severity: 1,
+        title: 'Pending approval: $title',
+        body: 'Requested by ${_currentUser.fullName}.',
+        createdAt: DateTime.now(),
+        isResolved: false,
+      ),
+    );
+
+    final hotelIndex = _hotels.indexWhere((hotel) => hotel.id == hotelId);
+    if (hotelIndex != -1) {
+      _hotels[hotelIndex] = _hotels[hotelIndex].copyWith(
+        pendingEdits: _hotels[hotelIndex].pendingEdits + 1,
+      );
+    }
+    _markClientRequestProcessed(clientRequestId);
+    return requestId;
+  }
+
+  @override
+  Future<void> recordStockAdjustment({
+    required String hotelId,
+    required String productId,
+    int fullBottlesDelta = 0,
+    int emptyBottlesDelta = 0,
+    int fullBidonsDelta = 0,
+    int openBidonsDelta = 0,
+    int emptyBidonsDelta = 0,
+    String reason = '',
+    String? clientRequestId,
+  }) async {
+    if (_hasProcessedClientRequest(clientRequestId)) return;
+
+    final index = _inventory.indexWhere(
+      (item) => item.hotelId == hotelId && item.product.id == productId,
+    );
+    if (index == -1) return;
+
+    final item = _inventory[index];
+    _inventory[index] = item.copyWith(
+      fullBottles: max(item.fullBottles + fullBottlesDelta, 0),
+      emptyBottles: max(item.emptyBottles + emptyBottlesDelta, 0),
+      fullBidons: max(item.fullBidons + fullBidonsDelta, 0),
+      openBidons: max(item.openBidons + openBidonsDelta, 0),
+      emptyBidons: max(item.emptyBidons + emptyBidonsDelta, 0),
+    );
+    _markClientRequestProcessed(clientRequestId);
+  }
+
+  bool _hasProcessedClientRequest(String? clientRequestId) {
+    if (clientRequestId == null || clientRequestId.trim().isEmpty) {
+      return false;
+    }
+    return _processedClientRequestIds.contains(clientRequestId);
+  }
+
+  void _markClientRequestProcessed(String? clientRequestId) {
+    if (clientRequestId == null || clientRequestId.trim().isEmpty) {
+      return;
+    }
+    _processedClientRequestIds.add(clientRequestId);
+  }
+
+  @override
+  Future<void> approveRequest({
+    required String approvalRequestId,
+    String? notes,
+  }) async {
+    final request = _approvalRequests.firstWhere(
+      (item) => item.id == approvalRequestId,
+    );
+    _applyApprovedChange(request);
+    _resolveRelatedApprovalAlerts(approvalRequestId);
+    _approvalRequests.removeWhere((item) => item.id == approvalRequestId);
+  }
+
+  @override
+  Future<void> rejectRequest({
+    required String approvalRequestId,
+    String? notes,
+  }) async {
+    _resolveRelatedApprovalAlerts(approvalRequestId);
+    _approvalRequests.removeWhere((item) => item.id == approvalRequestId);
+  }
+
+  int _insertAlertIfMissing(AlertItem alert) {
+    final exists = _alerts.any((item) {
+      return !item.isResolved &&
+          item.hotelId == alert.hotelId &&
+          item.roomProductId == alert.roomProductId &&
+          item.productId == alert.productId &&
+          item.type == alert.type &&
+          item.title == alert.title;
+    });
+    if (exists) return 0;
+    _alerts.insert(0, alert);
+    return 1;
+  }
+
+  void _resolveRelatedApprovalAlerts(String approvalRequestId) {
+    ApprovalRequest? request;
+    for (final item in _approvalRequests) {
+      if (item.id == approvalRequestId) request = item;
+    }
+    if (request == null) return;
+
+    for (var index = 0; index < _alerts.length; index += 1) {
+      final alert = _alerts[index];
+      if (alert.hotelId == request.hotelId &&
+          alert.type == AlertType.pendingApproval &&
+          !alert.isResolved &&
+          (alert.title == 'Pending approval: ${request.title}' ||
+              alert.body == request.title)) {
+        _alerts[index] = alert.copyWith(isResolved: true);
+      }
+    }
+  }
+
+  void _applyApprovedChange(ApprovalRequest request) {
+    switch (request.targetTable) {
+      case 'hotels':
+        final index =
+            _hotels.indexWhere((hotel) => hotel.id == request.targetId);
+        if (index == -1) return;
+        final hotel = _hotels[index];
+        _hotels[index] = hotel.copyWith(
+          name: request.newData['name'] as String?,
+          legalName: request.newData['legal_name'] as String?,
+          city: request.newData['city'] as String?,
+          country: request.newData['country'] as String?,
+          contactName: request.newData['contact_name'] as String?,
+          email: request.newData['email'] as String?,
+          phone: request.newData['phone'] as String?,
+          address: request.newData['address'] as String?,
+          notes: request.newData['notes'] as String?,
+          pendingEdits: max(hotel.pendingEdits - 1, 0),
+        );
+        return;
+      case 'rooms':
+        final roomNumber = request.newData['room_number'] as String?;
+        final floorNumber = request.newData['floor_number'] as int?;
+        final roomIndex =
+            _rooms.indexWhere((room) => room.id == request.targetId);
+        if (roomIndex != -1) {
+          final room = _rooms[roomIndex];
+          _rooms[roomIndex] = RoomInfo(
+            id: room.id,
+            hotelId: room.hotelId,
+            floorId: room.floorId,
+            roomNumber: roomNumber ?? room.roomNumber,
+            floorNumber: floorNumber ?? room.floorNumber,
+            productCount: room.productCount,
+          );
+        }
+        for (var index = 0; index < _roomProducts.length; index += 1) {
+          final item = _roomProducts[index];
+          if (item.roomId == request.targetId) {
+            _roomProducts[index] = item.copyWith(
+              roomNumber: roomNumber,
+              floorNumber: floorNumber,
+            );
+          }
+        }
+        _decrementHotelPendingEdits(request.hotelId);
+        return;
+      case 'room_products':
+        final index =
+            _roomProducts.indexWhere((item) => item.id == request.targetId);
+        if (index == -1) return;
+        final item = _roomProducts[index];
+        final statusValue = request.newData['status'] as String?;
+        final startValue = request.newData['bottle_started_at'] as String?;
+        _roomProducts[index] = item.copyWith(
+          status:
+              statusValue == null ? null : BottleStatus.fromValue(statusValue),
+          bottleStartedAt:
+              startValue == null ? null : DateTime.tryParse(startValue),
+        );
+        _decrementHotelPendingEdits(request.hotelId);
+        return;
+    }
+  }
+
+  void _decrementHotelPendingEdits(String hotelId) {
+    final index = _hotels.indexWhere((hotel) => hotel.id == hotelId);
+    if (index == -1) return;
+    final hotel = _hotels[index];
+    _hotels[index] = hotel.copyWith(
+      pendingEdits: max(hotel.pendingEdits - 1, 0),
+    );
+  }
+}

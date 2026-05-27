@@ -1,0 +1,201 @@
+<!DOCTYPE html><html><head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Ivra hotel refill operations and inventory tracking.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#137C6B">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <title>Ivra Refill</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      background-color: #FFFDF8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #09090B;
+      }
+    }
+    
+    .splash-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+      background-color: #FFFDF8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .splash-container {
+        background-color: #09090B;
+      }
+    }
+    
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    
+    .orbit-spinner {
+      width: 48px;
+      height: 48px;
+      position: relative;
+      animation: spin 3s linear infinite;
+    }
+    
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: #F2A900;
+      border-radius: 50%;
+      position: absolute;
+      box-shadow: 0 0 8px rgba(242, 169, 0, 0.4);
+    }
+    
+    .dot:nth-child(1) { top: 0; left: 20px; }
+    .dot:nth-child(2) { bottom: 10px; left: 0; }
+    .dot:nth-child(3) { bottom: 10px; right: 0; }
+    
+    .app-name {
+      font-size: 42px;
+      font-weight: 900;
+      color: #111;
+      letter-spacing: 2px;
+    }
+    @media (prefers-color-scheme: dark) {
+      .app-name {
+        color: #EEE;
+      }
+    }
+    
+    .subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      color: #F2A900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  <style id="splash-screen-style">
+    html {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      background-color: #FFFFFF;
+          background-size: 100% 100%;
+    }
+
+    .center {
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+
+    .contain {
+      display:block;
+      width:100%; height:100%;
+      object-fit: contain;
+    }
+
+    .stretch {
+      display:block;
+      width:100%; height:100%;
+    }
+
+    .cover {
+      display:block;
+      width:100%; height:100%;
+      object-fit: cover;
+    }
+
+    .bottom {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      -ms-transform: translate(-50%, 0);
+      transform: translate(-50%, 0);
+    }
+
+    .bottomLeft {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    .bottomRight {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+  </style>
+  <script id="splash-screen-script">
+    function removeSplashFromWeb() {
+      document.getElementById("splash")?.remove();
+      document.getElementById("splash-branding")?.remove();
+      document.body.style.background = "transparent";
+    }
+  </script>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+</head>
+<body>
+  <picture id="splash">
+      <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x" media="(prefers-color-scheme: light)">
+      <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
+      <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="">
+  </picture>
+  <div class="splash-container" id="splash-screen">
+    <div class="logo-row">
+      <div class="orbit-spinner">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div class="app-name">Ivra</div>
+    </div>
+    <div class="subtitle">REFILL MANAGEMENT</div>
+  </div>
+
+  <script>
+    // The standard, foolproof way to hide the HTML splash screen the EXACT moment Flutter is ready!
+    window.addEventListener('flutter-first-frame', function() {
+      const splash = document.getElementById('splash-screen');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.transition = 'opacity 0.4s ease-out';
+        setTimeout(() => splash.remove(), 400);
+      }
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async=""></script>
+
+
+</body></html>
