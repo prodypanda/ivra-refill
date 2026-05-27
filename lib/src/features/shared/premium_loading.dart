@@ -79,185 +79,191 @@ class _PremiumLoadingWidgetState extends State<PremiumLoadingWidget>
       return _buildCompact(theme, primary);
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final height = constraints.maxHeight.isFinite
-            ? constraints.maxHeight
-            : MediaQuery.sizeOf(context).height;
-        final scale = height < 360 ? 0.72 : 1.0;
+    return FadeTransition(
+      opacity: CurvedAnimation(
+        parent: _fadeController,
+        curve: Curves.easeOutCubic,
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final height = constraints.maxHeight.isFinite
+              ? constraints.maxHeight
+              : MediaQuery.sizeOf(context).height;
+          final scale = height < 360 ? 0.72 : 1.0;
 
-        return Center(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: SizedBox(
-              width: 220,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (widget.showBrand) ...[
-                    SizedBox(
-                      width: 120 * scale,
-                      height: 120 * scale,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          AnimatedBuilder(
-                            animation: _pulseController,
-                            builder: (context, child) {
-                              final pulseScale =
-                                  1.0 + (_pulseController.value * 0.15);
-                              final opacity =
-                                  0.15 + (_pulseController.value * 0.1);
-                              return Transform.scale(
-                                scale: pulseScale,
-                                child: Container(
-                                  width: 80 * scale,
-                                  height: 80 * scale,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        primary.withValues(alpha: opacity),
-                                        primary.withValues(alpha: 0.0),
-                                      ],
+          return Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: SizedBox(
+                width: 220,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.showBrand) ...[
+                      SizedBox(
+                        width: 120 * scale,
+                        height: 120 * scale,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            AnimatedBuilder(
+                              animation: _pulseController,
+                              builder: (context, child) {
+                                final pulseScale =
+                                    1.0 + (_pulseController.value * 0.15);
+                                final opacity =
+                                    0.15 + (_pulseController.value * 0.1);
+                                return Transform.scale(
+                                  scale: pulseScale,
+                                  child: Container(
+                                    width: 80 * scale,
+                                    height: 80 * scale,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: RadialGradient(
+                                        colors: [
+                                          primary.withValues(alpha: opacity),
+                                          primary.withValues(alpha: 0.0),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                          Container(
-                            width: 56 * scale,
-                            height: 56 * scale,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  primary,
-                                  Color.lerp(
+                                );
+                              },
+                            ),
+                            Container(
+                              width: 56 * scale,
+                              height: 56 * scale,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
                                     primary,
-                                    Colors.orange.shade700,
-                                    0.3,
-                                  )!,
+                                    Color.lerp(
+                                      primary,
+                                      Colors.orange.shade700,
+                                      0.3,
+                                    )!,
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(14 * scale),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF92400E)
+                                        .withValues(alpha: 0.15),
+                                    blurRadius: 20 * scale,
+                                    offset: Offset(0, 8 * scale),
+                                  ),
                                 ],
                               ),
-                              borderRadius: BorderRadius.circular(14 * scale),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF92400E)
-                                      .withValues(alpha: 0.15),
-                                  blurRadius: 20 * scale,
-                                  offset: Offset(0, 8 * scale),
+                              child: Text(
+                                'I',
+                                style: theme.textTheme.headlineMedium?.copyWith(
+                                  color: theme.colorScheme.onPrimary,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -1,
                                 ),
-                              ],
-                            ),
-                            child: Text(
-                              'I',
-                              style: theme.textTheme.headlineMedium?.copyWith(
-                                color: theme.colorScheme.onPrimary,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -1,
                               ),
                             ),
-                          ),
-                          AnimatedBuilder(
-                            animation: _orbitController,
-                            builder: (context, child) {
-                              return CustomPaint(
-                                size: Size(120 * scale, 120 * scale),
-                                painter: _OrbitingDotsPainter(
-                                  progress: _orbitController.value,
-                                  color: primary,
-                                  dotCount: 3,
-                                  radius: 48 * scale,
-                                  isLight: isLight,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20 * scale),
-                  ],
-                  if (widget.showBrand) ...[
-                    Text(
-                      'Ivra',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    SizedBox(height: 6 * scale),
-                    Text(
-                      'REFILL MANAGEMENT',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 4,
-                        color: theme.colorScheme.onSurfaceVariant
-                            .withValues(alpha: 0.6),
-                      ),
-                    ),
-                    SizedBox(height: 24 * scale),
-                  ],
-                  SizedBox(
-                    width: 180,
-                    height: 3,
-                    child: AnimatedBuilder(
-                      animation: _orbitController,
-                      builder: (context, child) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(2),
-                          child: CustomPaint(
-                            size: const Size(180, 3),
-                            painter: _GradientProgressPainter(
-                              progress: _orbitController.value,
-                              color: primary,
-                              isLight: isLight,
+                            AnimatedBuilder(
+                              animation: _orbitController,
+                              builder: (context, child) {
+                                return CustomPaint(
+                                  size: Size(120 * scale, 120 * scale),
+                                  painter: _OrbitingDotsPainter(
+                                    progress: _orbitController.value,
+                                    color: primary,
+                                    dotCount: 3,
+                                    radius: 48 * scale,
+                                    isLight: isLight,
+                                  ),
+                                );
+                              },
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 16 * scale),
-                  if (widget.message != null || widget.showBrand)
-                    AnimatedBuilder(
-                      animation: _shimmerController,
-                      builder: (context, child) {
-                        final shimmerOpacity = 0.4 +
-                            0.6 *
-                                ((math.sin(
-                                          _shimmerController.value *
-                                              math.pi *
-                                              2,
-                                        ) +
-                                        1) /
-                                    2);
-                        return Opacity(
-                          opacity: shimmerOpacity,
-                          child: Text(
-                            widget.message ?? 'Loading...',
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: primary.withValues(alpha: 0.8),
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.5,
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20 * scale),
+                    ],
+                    if (widget.showBrand) ...[
+                      Text(
+                        'Ivra',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      SizedBox(height: 6 * scale),
+                      Text(
+                        'REFILL MANAGEMENT',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 4,
+                          color: theme.colorScheme.onSurfaceVariant
+                              .withValues(alpha: 0.6),
+                        ),
+                      ),
+                      SizedBox(height: 24 * scale),
+                    ],
+                    SizedBox(
+                      width: 180,
+                      height: 3,
+                      child: AnimatedBuilder(
+                        animation: _orbitController,
+                        builder: (context, child) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(2),
+                            child: CustomPaint(
+                              size: const Size(180, 3),
+                              painter: _GradientProgressPainter(
+                                progress: _orbitController.value,
+                                color: primary,
+                                isLight: isLight,
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                ],
+                    SizedBox(height: 16 * scale),
+                    if (widget.message != null || widget.showBrand)
+                      AnimatedBuilder(
+                        animation: _shimmerController,
+                        builder: (context, child) {
+                          final shimmerOpacity = 0.4 +
+                              0.6 *
+                                  ((math.sin(
+                                            _shimmerController.value *
+                                                math.pi *
+                                                2,
+                                          ) +
+                                          1) /
+                                      2);
+                          return Opacity(
+                            opacity: shimmerOpacity,
+                            child: Text(
+                              widget.message ?? 'Loading...',
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: primary.withValues(alpha: 0.8),
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
