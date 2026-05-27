@@ -119,10 +119,18 @@ class _AlertsList extends StatelessWidget {
           spacing: 12,
           runSpacing: 12,
           children: [
-            _AlertMetric(label: 'Open', value: '$openCount'),
-            _AlertMetric(label: 'Critical', value: '$highCount'),
             _AlertMetric(
-                label: 'Resolved', value: '${alerts.length - openCount}'),
+              label: AppLocalizations.of(context).t('alertsStatusOpen'),
+              value: '$openCount',
+            ),
+            _AlertMetric(
+              label: AppLocalizations.of(context).t('alertsMetricCritical'),
+              value: '$highCount',
+            ),
+            _AlertMetric(
+              label: AppLocalizations.of(context).t('alertsStatusResolved'),
+              value: '${alerts.length - openCount}',
+            ),
           ],
         ),
         const SizedBox(height: 18),

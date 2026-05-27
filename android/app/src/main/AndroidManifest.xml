@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for release builds to reach Supabase, fetch images, and check
+         connectivity. Debug/profile manifests add this separately for the
+         Flutter tooling, so without it here release APKs would have no
+         network access. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="Ivra Refill"
         android:name="${applicationName}"

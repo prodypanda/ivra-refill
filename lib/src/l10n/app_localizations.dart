@@ -296,6 +296,7 @@ class AppLocalizations {
       'alertsSeverityLabel': 'Severity {severity}',
       'alertsStatusResolved': 'Resolved',
       'alertsStatusOpen': 'Open',
+      'alertsMetricCritical': 'Critical',
       'settingsActionEditTitle': 'Edit queued action',
       'settingsActionConflictTitle': 'Resolve sync conflict',
       'settingsActionAttempts': 'Attempts {count}',
@@ -311,6 +312,14 @@ class AppLocalizations {
       'userRoleAppManager': 'App manager',
       'userRoleHotelManager': 'Hotel manager',
       'userRoleHotelStaff': 'Hotel staff',
+      'teamStatusActive': 'Active',
+      'teamStatusInactive': 'Inactive',
+      'teamHotelAll': 'All hotels',
+      'teamHotelNone': '—',
+      'invitationStatusPending': 'Pending',
+      'invitationStatusAccepted': 'Accepted',
+      'invitationStatusCancelled': 'Cancelled',
+      'invitationStatusExpired': 'Expired',
       'inviteAcceptHeading': 'Accept Ivra invitation',
       'inviteSubtitleWithHotel': '{name} was invited as {role} for {hotel}.',
       'inviteSubtitleNoHotel': '{name} was invited as {role}.',
@@ -603,6 +612,7 @@ class AppLocalizations {
       'alertsSeverityLabel': 'S\u00e9v\u00e9rit\u00e9 {severity}',
       'alertsStatusResolved': 'R\u00e9solu',
       'alertsStatusOpen': 'Ouvert',
+      'alertsMetricCritical': 'Critique',
       'settingsActionEditTitle': 'Modifier l\'action en file d\'attente',
       'settingsActionConflictTitle':
           'R\u00e9soudre le conflit de synchronisation',
@@ -619,6 +629,14 @@ class AppLocalizations {
       'userRoleAppManager': 'Gérant de l\'appli',
       'userRoleHotelManager': 'Gérant d\'hôtel',
       'userRoleHotelStaff': 'Personnel de l\'hôtel',
+      'teamStatusActive': 'Actif',
+      'teamStatusInactive': 'Inactif',
+      'teamHotelAll': 'Tous les hôtels',
+      'teamHotelNone': '—',
+      'invitationStatusPending': 'En attente',
+      'invitationStatusAccepted': 'Acceptée',
+      'invitationStatusCancelled': 'Annulée',
+      'invitationStatusExpired': 'Expirée',
       'inviteAcceptHeading': 'Accepter l\'invitation Ivra',
       'inviteSubtitleWithHotel':
           '{name} a été invité(e) en tant que {role} pour {hotel}.',
@@ -913,6 +931,7 @@ class AppLocalizations {
       'alertsSeverityLabel': '\u0627\u0644\u062e\u0637\u0648\u0631\u0629 {severity}',
       'alertsStatusResolved': '\u062a\u0645\u0651 \u0627\u0644\u062d\u0644',
       'alertsStatusOpen': '\u0645\u0641\u062a\u0648\u062d',
+      'alertsMetricCritical': '\u062d\u0631\u062c',
       'settingsActionEditTitle':
           '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0625\u062c\u0631\u0627\u0621 \u0627\u0644\u0645\u0639\u0644\u0651\u0642',
       'settingsActionConflictTitle':
@@ -930,6 +949,14 @@ class AppLocalizations {
       'userRoleAppManager': '\u0645\u062f\u064a\u0631 \u0627\u0644\u062a\u0637\u0628\u064a\u0642',
       'userRoleHotelManager': '\u0645\u062f\u064a\u0631 \u0627\u0644\u0641\u0646\u062f\u0642',
       'userRoleHotelStaff': '\u0645\u0648\u0638\u0641 \u0627\u0644\u0641\u0646\u062f\u0642',
+      'teamStatusActive': '\u0646\u0634\u0637',
+      'teamStatusInactive': '\u063a\u064a\u0631 \u0646\u0634\u0637',
+      'teamHotelAll': '\u062c\u0645\u064a\u0639 \u0627\u0644\u0641\u0646\u0627\u062f\u0642',
+      'teamHotelNone': '\u2014',
+      'invitationStatusPending': '\u0642\u064a\u062f \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631',
+      'invitationStatusAccepted': '\u0645\u0642\u0628\u0648\u0644\u0629',
+      'invitationStatusCancelled': '\u0645\u0644\u063a\u0627\u0629',
+      'invitationStatusExpired': '\u0645\u0646\u062a\u0647\u064a\u0629',
       'inviteAcceptHeading': '\u0642\u0628\u0648\u0644 \u062f\u0639\u0648\u0629 Ivra',
       'inviteSubtitleWithHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role} \u0641\u064a {hotel}.',
       'inviteSubtitleNoHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role}.',
@@ -1223,6 +1250,7 @@ class AppLocalizations {
       'alertsSeverityLabel': 'Gravit\u00e0 {severity}',
       'alertsStatusResolved': 'Risolto',
       'alertsStatusOpen': 'Aperto',
+      'alertsMetricCritical': 'Critico',
       'settingsActionEditTitle': 'Modifica azione in coda',
       'settingsActionConflictTitle': 'Risolvi conflitto di sincronizzazione',
       'settingsActionAttempts': 'Tentativi {count}',
@@ -1238,6 +1266,14 @@ class AppLocalizations {
       'userRoleAppManager': 'Responsabile app',
       'userRoleHotelManager': 'Responsabile hotel',
       'userRoleHotelStaff': 'Personale hotel',
+      'teamStatusActive': 'Attivo',
+      'teamStatusInactive': 'Inattivo',
+      'teamHotelAll': 'Tutti gli hotel',
+      'teamHotelNone': '\u2014',
+      'invitationStatusPending': 'In attesa',
+      'invitationStatusAccepted': 'Accettato',
+      'invitationStatusCancelled': 'Annullato',
+      'invitationStatusExpired': 'Scaduto',
       'inviteAcceptHeading': 'Accetta invito Ivra',
       'inviteSubtitleWithHotel': '{name} è stato/a invitato/a come {role} per {hotel}.',
       'inviteSubtitleNoHotel': '{name} è stato/a invitato/a come {role}.',
@@ -1271,6 +1307,25 @@ class AppLocalizations {
       value = value.replaceAll('{${entry.key}}', entry.value);
     }
     return value;
+  }
+
+  /// Localized label for a raw team-invitation status string (`pending`,
+  /// `accepted`, `cancelled`, `expired`). Unknown values fall back to the
+  /// original string so we never silently swallow new statuses from the
+  /// backend, but the known set is translated.
+  String invitationStatusLabel(String status) {
+    switch (status) {
+      case 'pending':
+        return t('invitationStatusPending');
+      case 'accepted':
+        return t('invitationStatusAccepted');
+      case 'cancelled':
+        return t('invitationStatusCancelled');
+      case 'expired':
+        return t('invitationStatusExpired');
+      default:
+        return status;
+    }
   }
 
   /// Localized label for a `UserRole`. The raw enum value (`hotel_staff`,
