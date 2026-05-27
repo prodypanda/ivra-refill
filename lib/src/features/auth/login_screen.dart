@@ -418,6 +418,10 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
           .replace(path: '/', query: '', fragment: ResetPasswordScreen.route)
           .toString();
     }
-    return ResetPasswordScreen.route;
+    // Mobile / native build: Supabase requires an absolute URL with a
+    // scheme, so we hand it the custom `ivra://app/...` URI registered
+    // by AndroidManifest.xml. The OS routes the redirect back into the
+    // running app via Flutter's deep-link integration.
+    return 'ivra://app${ResetPasswordScreen.route}';
   }
 }

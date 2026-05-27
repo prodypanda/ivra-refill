@@ -32,9 +32,10 @@ android {
 
     defaultConfig {
         applicationId = "com.ivra.refill"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // Android 7.0 (Nougat) is the floor we support. Below this, the
+        // Supabase TLS stack and several Flutter plugins (notably share_plus
+        // and printing) are not validated.
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -53,12 +54,24 @@ android {
 
     buildTypes {
         release {
-            signingConfig =
-                if (hasReleaseKeystore) {
-                    signingConfigs.getByName("release")
-                } else {
-                    signingConfigs.getByName("debug")
+            signingConfig = if (hasReleaseKeystore) {
+                signingConfigs.getByName("release")
+            } else {
+                gradle.taskGraph.whenReady {
+                    if (allTasks.any { it.name.contains("Release", ignoreCase = true) }) {
+                        logger.warn(
+                            "WARNING: android/key.properties is missing or " +
+                                "incomplete. Falling back to debug signing " +
+                                "for the release build type. The resulting " +
+                                "APK is debuggable, signed with the Android " +
+                                "debug key, and will be rejected by the Play " +
+                                "Store. Run scripts/setup_android_signing.ps1 " +
+                                "to provision a real release keystore."
+                        )
+                    }
                 }
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
