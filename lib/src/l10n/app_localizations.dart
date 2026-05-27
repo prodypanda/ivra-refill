@@ -25,6 +25,7 @@ class AppLocalizations {
   static const _values = {
     'en': {
       'dashboard': 'Dashboard',
+      'dashboardHeroTitle': 'Today at Ivra',
       'dashboardRefillActivity': 'Refill Activity (Last 7 Days)',
       'hotels': 'Hotels',
       'rooms': 'Rooms',
@@ -36,6 +37,7 @@ class AppLocalizations {
       'alerts': 'Alerts',
       'reports': 'Reports',
       'settings': 'Settings',
+      'more': 'More',
       'refill': 'Refill',
       'undo': 'Undo',
       'correction': 'Correction',
@@ -395,6 +397,7 @@ class AppLocalizations {
     },
     'fr': {
       'dashboard': 'Tableau de bord',
+      'dashboardHeroTitle': 'Aujourd’hui chez Ivra',
       'dashboardRefillActivity': 'Activité de recharge (7 derniers jours)',
       'hotels': 'Hôtels',
       'rooms': 'Chambres',
@@ -406,6 +409,7 @@ class AppLocalizations {
       'alerts': 'Alertes',
       'reports': 'Rapports',
       'settings': 'Paramètres',
+      'more': 'Plus',
       'refill': 'Remplir',
       'undo': 'Annuler',
       'correction': 'Correction',
@@ -781,6 +785,7 @@ class AppLocalizations {
     },
     'ar': {
       'dashboard': 'لوحة التحكم',
+      'dashboardHeroTitle': 'اليوم في Ivra',
       'dashboardRefillActivity': 'نشاط التعبئة (آخر 7 أيام)',
       'hotels': 'الفنادق',
       'rooms': 'الغرف',
@@ -792,6 +797,7 @@ class AppLocalizations {
       'alerts': 'التنبيهات',
       'reports': 'التقارير',
       'settings': 'الإعدادات',
+      'more': 'المزيد',
       'refill': 'إعادة تعبئة',
       'undo': 'تراجع',
       'correction': 'تصحيح',
@@ -1195,6 +1201,7 @@ class AppLocalizations {
     },
     'it': {
       'dashboard': 'Pannello di controllo',
+      'dashboardHeroTitle': 'Oggi in Ivra',
       'dashboardRefillActivity': 'Attività ricariche (ultimi 7 giorni)',
       'hotels': 'Hotel',
       'rooms': 'Camere',
@@ -1206,6 +1213,7 @@ class AppLocalizations {
       'alerts': 'Avvisi',
       'reports': 'Rapporti',
       'settings': 'Impostazioni',
+      'more': 'Altro',
       'refill': 'Ricaricare',
       'undo': 'Annulla',
       'correction': 'Correzione',

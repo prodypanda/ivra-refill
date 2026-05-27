@@ -249,8 +249,9 @@ class _MobileShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryItems = navItems.take(4).toList();
-    final moreItems = navItems.skip(4).toList();
+    final l10n = AppLocalizations.of(context);
+    final primaryItems = navItems.take(3).toList();
+    final moreItems = navItems.skip(3).toList();
     final primaryIndex = selectedIndex < primaryItems.length
         ? selectedIndex
         : primaryItems.length - 1;
@@ -306,7 +307,7 @@ class _MobileShell extends StatelessWidget {
                     ),
                     label:
                         index == primaryItems.length - 1 && moreItems.isNotEmpty
-                            ? 'More'
+                            ? l10n.t('more')
                             : primaryItems[index].label,
                   ),
               ],

@@ -637,6 +637,7 @@ void main() {
       expect(find.byType(BottomSheet), findsOneWidget);
       expect(find.text('Team'), findsWidgets);
       expect(find.text('Account'), findsWidgets);
+      expect(find.text('Inventory'), findsWidgets);
     });
 
     testWidgets('extended rail appears at wide width', (tester) async {
@@ -708,6 +709,8 @@ void main() {
         'alerts',
         'reports',
         'settings',
+        'more',
+        'dashboardHeroTitle',
         'refill',
         'undo',
         'correction',

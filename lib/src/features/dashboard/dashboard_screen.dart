@@ -61,7 +61,7 @@ class DashboardScreen extends ConsumerWidget {
         ),
         builder: (data) => LayoutBuilder(
           builder: (context, constraints) {
-            final isMobile = constraints.maxWidth < 640;
+            final isMobile = MediaQuery.sizeOf(context).width < 720;
             final columns = constraints.maxWidth >= 1000
                 ? 3
                 : constraints.maxWidth >= 640
@@ -235,7 +235,7 @@ class _MobileHero extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Today at Ivra',
+                l10n.t('dashboardHeroTitle'),
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w900,
                   letterSpacing: -0.8,
