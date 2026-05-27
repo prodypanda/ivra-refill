@@ -31,6 +31,7 @@ class DashboardScreen extends ConsumerWidget {
                 : constraints.maxWidth >= 640
                     ? 2
                     : 1;
+            final aspectRatio = _metricAspectRatio(constraints.maxWidth);
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -40,7 +41,7 @@ class DashboardScreen extends ConsumerWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 2.5,
+                  childAspectRatio: aspectRatio,
                   children: List.generate(
                     6,
                     (index) => const MetricCardShimmer(),
@@ -59,6 +60,7 @@ class DashboardScreen extends ConsumerWidget {
                 : constraints.maxWidth >= 640
                     ? 2
                     : 1;
+            final aspectRatio = _metricAspectRatio(constraints.maxWidth);
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -68,7 +70,7 @@ class DashboardScreen extends ConsumerWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 2.5,
+                  childAspectRatio: aspectRatio,
                   children: [
                     _MetricCard(
                       l10n.t('metricHotels'),
@@ -118,6 +120,12 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+
+  double _metricAspectRatio(double width) {
+    if (width < 360) return 2.2;
+    if (width < 640) return 2.7;
+    return 2.5;
+  }
 }
 
 class _MetricCard extends StatelessWidget {
@@ -132,20 +140,20 @@ class _MetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return GlassCard(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
               color: iconColor.withValues(alpha: 0.08),
               shape: BoxShape.circle,
               border: Border.all(color: iconColor.withValues(alpha: 0.15)),
             ),
-            child: Icon(icon, size: 28, color: iconColor),
+            child: Icon(icon, size: 24, color: iconColor),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -163,9 +171,12 @@ class _MetricCard extends StatelessWidget {
                 Text(
                   label,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                    color: theme.colorScheme.onSurfaceVariant.withValues(
+                      alpha: 0.8,
+                    ),
                     fontWeight: FontWeight.w500,
                   ),
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -201,8 +212,10 @@ class _ActivityChart extends StatelessWidget {
               LineChartData(
                 gridData: const FlGridData(show: false),
                 titlesData: const FlTitlesData(
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -210,7 +223,8 @@ class _ActivityChart extends StatelessWidget {
                       interval: 1,
                     ),
                   ),
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
                 borderData: FlBorderData(show: false),
                 minX: 0,
