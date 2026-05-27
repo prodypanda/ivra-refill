@@ -20,7 +20,6 @@ class ReportsScreen extends ConsumerWidget {
 
     return PageScaffold(
       title: l10n.t('reports'),
-      onRefresh: () async {},
       child: Wrap(
         spacing: 16,
         runSpacing: 16,
