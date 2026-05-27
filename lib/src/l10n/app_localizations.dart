@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../domain/app_enums.dart';
+
 class AppLocalizations {
   const AppLocalizations(this.locale);
 
@@ -72,9 +74,9 @@ class AppLocalizations {
       'inventoryTableStatus': 'Status',
       'inventoryStatusHealthy': 'Healthy',
       'inventoryStatusLowStock': 'Low stock',
-      'orderNewBottlesText': 'Order new 1L bottles',
-      'orderNewBidonsText': 'Order new 5L bidons',
-      'recycleBottlesText': 'Recycle bottles',
+      'orderNewBottlesText': 'Order {count} new 1L bottles',
+      'orderNewBidonsText': 'Order {count} new 5L bidons',
+      'recycleBottlesText': 'Recycle {count} bottles',
       'adjustStockTitle': 'Adjust stock',
       'hotelRoomsTracked': 'rooms tracked',
       'hotelPendingChip': 'pending',
@@ -297,6 +299,27 @@ class AppLocalizations {
       'settingsActionEditTitle': 'Edit queued action',
       'settingsActionConflictTitle': 'Resolve sync conflict',
       'settingsActionAttempts': 'Attempts {count}',
+      'settingsActionListAttempts': 'Attempts: {count}',
+      'settingsActionListError': 'Error: {message}',
+      'syncActionRefill': 'Refill',
+      'syncActionUndoRefill': 'Undo refill',
+      'syncActionCorrectionRequest': 'Correction request',
+      'syncActionBottleReplacement': 'Bottle replacement',
+      'syncActionStockAdjustment': 'Stock adjustment',
+      'syncActionPendingEdit': 'Pending edit',
+      'userRoleAppAdmin': 'App admin',
+      'userRoleAppManager': 'App manager',
+      'userRoleHotelManager': 'Hotel manager',
+      'userRoleHotelStaff': 'Hotel staff',
+      'inviteAcceptHeading': 'Accept Ivra invitation',
+      'inviteSubtitleWithHotel': '{name} was invited as {role} for {hotel}.',
+      'inviteSubtitleNoHotel': '{name} was invited as {role}.',
+      'inviteEmailMismatch': 'Use the email address this invitation was sent to.',
+      'inviteAccountCreatedConfirm':
+          'Account created. Confirm your email, then return to this invitation link and enter the same password to finish joining.',
+      'inviteInvalidHeading': 'Invitation unavailable',
+      'inviteInvalidBody':
+          'This invitation may have expired, been cancelled, or already been accepted.',
       'teamMemberReactivated': '{name} reactivated',
       'teamMemberDeactivated': '{name} deactivated',
       'settingsActionLastTried': 'Last tried {datetime}',
@@ -358,9 +381,9 @@ class AppLocalizations {
       'inventoryTableStatus': 'Statut',
       'inventoryStatusHealthy': 'Sain',
       'inventoryStatusLowStock': 'Stock bas',
-      'orderNewBottlesText': 'Commander de nouvelles bouteilles 1L',
-      'orderNewBidonsText': 'Commander de nouveaux bidons 5L',
-      'recycleBottlesText': 'Recycler des bouteilles',
+      'orderNewBottlesText': 'Commander {count} nouvelles bouteilles 1L',
+      'orderNewBidonsText': 'Commander {count} nouveaux bidons 5L',
+      'recycleBottlesText': 'Recycler {count} bouteilles',
       'adjustStockTitle': 'Ajuster le stock',
       'hotelRoomsTracked': 'chambres suivies',
       'hotelPendingChip': 'en attente',
@@ -584,6 +607,29 @@ class AppLocalizations {
       'settingsActionConflictTitle':
           'R\u00e9soudre le conflit de synchronisation',
       'settingsActionAttempts': 'Tentatives {count}',
+      'settingsActionListAttempts': 'Tentatives : {count}',
+      'settingsActionListError': 'Erreur : {message}',
+      'syncActionRefill': 'Recharge',
+      'syncActionUndoRefill': 'Annulation de recharge',
+      'syncActionCorrectionRequest': 'Demande de correction',
+      'syncActionBottleReplacement': 'Remplacement de bouteille',
+      'syncActionStockAdjustment': 'Ajustement du stock',
+      'syncActionPendingEdit': 'Modification en attente',
+      'userRoleAppAdmin': 'Admin appli',
+      'userRoleAppManager': 'Gérant de l\'appli',
+      'userRoleHotelManager': 'Gérant d\'hôtel',
+      'userRoleHotelStaff': 'Personnel de l\'hôtel',
+      'inviteAcceptHeading': 'Accepter l\'invitation Ivra',
+      'inviteSubtitleWithHotel':
+          '{name} a été invité(e) en tant que {role} pour {hotel}.',
+      'inviteSubtitleNoHotel': '{name} a été invité(e) en tant que {role}.',
+      'inviteEmailMismatch':
+          'Utilisez l\'adresse e-mail à laquelle cette invitation a été envoyée.',
+      'inviteAccountCreatedConfirm':
+          'Compte créé. Confirmez votre e-mail, puis revenez à ce lien d\'invitation et entrez le même mot de passe pour terminer.',
+      'inviteInvalidHeading': 'Invitation indisponible',
+      'inviteInvalidBody':
+          'Cette invitation a peut-être expiré, été annulée ou déjà acceptée.',
       'teamMemberReactivated': '{name} réactivé',
       'teamMemberDeactivated': '{name} désactivé',
       'settingsActionLastTried': 'Dernière tentative {datetime}',
@@ -645,9 +691,9 @@ class AppLocalizations {
       'inventoryTableStatus': 'الحالة',
       'inventoryStatusHealthy': 'سليم',
       'inventoryStatusLowStock': 'مخزون منخفض',
-      'orderNewBottlesText': 'طلب عبوات جديدة 1 لتر',
-      'orderNewBidonsText': 'طلب جالونات جديدة 5 لتر',
-      'recycleBottlesText': 'إعادة تدوير العبوات',
+      'orderNewBottlesText': 'طلب {count} عبوات جديدة 1 لتر',
+      'orderNewBidonsText': 'طلب {count} جالونات جديدة 5 لتر',
+      'recycleBottlesText': 'إعادة تدوير {count} عبوات',
       'adjustStockTitle': 'تعديل المخزون',
       'hotelRoomsTracked': 'غرف متبعة',
       'hotelPendingChip': 'قيد الانتظار',
@@ -872,6 +918,28 @@ class AppLocalizations {
       'settingsActionConflictTitle':
           '\u062d\u0644\u0651 \u062a\u0639\u0627\u0631\u0636 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629',
       'settingsActionAttempts': '\u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0627\u062a {count}',
+      'settingsActionListAttempts': '\u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0627\u062a: {count}',
+      'settingsActionListError': '\u062e\u0637\u0623: {message}',
+      'syncActionRefill': '\u0625\u0639\u0627\u062f\u0629 \u062a\u0639\u0628\u0626\u0629',
+      'syncActionUndoRefill': '\u062a\u0631\u0627\u062c\u0639 \u0639\u0646 \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629',
+      'syncActionCorrectionRequest': '\u0637\u0644\u0628 \u062a\u0635\u062d\u064a\u062d',
+      'syncActionBottleReplacement': '\u0627\u0633\u062a\u0628\u062f\u0627\u0644 \u0627\u0644\u0639\u0628\u0648\u0629',
+      'syncActionStockAdjustment': '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u062e\u0632\u0648\u0646',
+      'syncActionPendingEdit': '\u062a\u0639\u062f\u064a\u0644 \u0645\u0639\u0644\u0651\u0642',
+      'userRoleAppAdmin': '\u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u062a\u0637\u0628\u064a\u0642',
+      'userRoleAppManager': '\u0645\u062f\u064a\u0631 \u0627\u0644\u062a\u0637\u0628\u064a\u0642',
+      'userRoleHotelManager': '\u0645\u062f\u064a\u0631 \u0627\u0644\u0641\u0646\u062f\u0642',
+      'userRoleHotelStaff': '\u0645\u0648\u0638\u0641 \u0627\u0644\u0641\u0646\u062f\u0642',
+      'inviteAcceptHeading': '\u0642\u0628\u0648\u0644 \u062f\u0639\u0648\u0629 Ivra',
+      'inviteSubtitleWithHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role} \u0641\u064a {hotel}.',
+      'inviteSubtitleNoHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role}.',
+      'inviteEmailMismatch':
+          '\u0627\u0633\u062a\u062e\u062f\u0645 \u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0627\u0644\u0630\u064a \u0623\u064f\u0631\u0633\u0644\u062a \u0625\u0644\u064a\u0647 \u0647\u0630\u0647 \u0627\u0644\u062f\u0639\u0648\u0629.',
+      'inviteAccountCreatedConfirm':
+          '\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u062d\u0633\u0627\u0628. \u0623\u0643\u0651\u062f \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u060c \u062b\u0645 \u0639\u064f\u062f \u0625\u0644\u0649 \u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0639\u0648\u0629 \u0648\u0623\u062f\u062e\u0644 \u0646\u0641\u0633 \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u0644\u0625\u0643\u0645\u0627\u0644 \u0627\u0644\u0627\u0646\u0636\u0645\u0627\u0645.',
+      'inviteInvalidHeading': '\u0627\u0644\u062f\u0639\u0648\u0629 \u063a\u064a\u0631 \u0645\u062a\u0627\u062d\u0629',
+      'inviteInvalidBody':
+          '\u0631\u0628\u0651\u0645\u0627 \u0627\u0646\u062a\u0647\u062a \u0635\u0644\u0627\u062d\u064a\u0629 \u0647\u0630\u0647 \u0627\u0644\u062f\u0639\u0648\u0629\u060c \u0623\u0648 \u0623\u064f\u0644\u063a\u064a\u062a\u060c \u0623\u0648 \u062a\u0645 \u0642\u0628\u0648\u0644\u0647\u0627 \u0645\u0633\u0628\u0642\u064b\u0627.',
       'teamMemberReactivated': '\u062a\u0645 \u0625\u0639\u0627\u062f\u0629 \u062a\u0641\u0639\u064a\u0644 {name}',
       'teamMemberDeactivated': '\u062a\u0645 \u062a\u0639\u0637\u064a\u0644 {name}',
       'settingsActionLastTried': '\u0622\u062e\u0631 \u0645\u062d\u0627\u0648\u0644\u0629 {datetime}',
@@ -933,9 +1001,9 @@ class AppLocalizations {
       'inventoryTableStatus': 'Stato',
       'inventoryStatusHealthy': 'Ottimo',
       'inventoryStatusLowStock': 'Stock basso',
-      'orderNewBottlesText': 'Ordina nuove bottiglie da 1L',
-      'orderNewBidonsText': 'Ordina nuovi bidoni da 5L',
-      'recycleBottlesText': 'Ricicla bottiglie',
+      'orderNewBottlesText': 'Ordina {count} nuove bottiglie da 1L',
+      'orderNewBidonsText': 'Ordina {count} nuovi bidoni da 5L',
+      'recycleBottlesText': 'Ricicla {count} bottiglie',
       'adjustStockTitle': 'Regola stock',
       'hotelRoomsTracked': 'camere tracciate',
       'hotelPendingChip': 'in attesa',
@@ -1158,6 +1226,28 @@ class AppLocalizations {
       'settingsActionEditTitle': 'Modifica azione in coda',
       'settingsActionConflictTitle': 'Risolvi conflitto di sincronizzazione',
       'settingsActionAttempts': 'Tentativi {count}',
+      'settingsActionListAttempts': 'Tentativi: {count}',
+      'settingsActionListError': 'Errore: {message}',
+      'syncActionRefill': 'Ricarica',
+      'syncActionUndoRefill': 'Annulla ricarica',
+      'syncActionCorrectionRequest': 'Richiesta di correzione',
+      'syncActionBottleReplacement': 'Sostituzione bottiglia',
+      'syncActionStockAdjustment': 'Aggiustamento del magazzino',
+      'syncActionPendingEdit': 'Modifica in attesa',
+      'userRoleAppAdmin': 'Amministratore app',
+      'userRoleAppManager': 'Responsabile app',
+      'userRoleHotelManager': 'Responsabile hotel',
+      'userRoleHotelStaff': 'Personale hotel',
+      'inviteAcceptHeading': 'Accetta invito Ivra',
+      'inviteSubtitleWithHotel': '{name} è stato/a invitato/a come {role} per {hotel}.',
+      'inviteSubtitleNoHotel': '{name} è stato/a invitato/a come {role}.',
+      'inviteEmailMismatch':
+          'Usa l\'indirizzo email a cui è stato inviato questo invito.',
+      'inviteAccountCreatedConfirm':
+          'Account creato. Conferma la tua email, poi torna a questo link di invito e inserisci la stessa password per completare.',
+      'inviteInvalidHeading': 'Invito non disponibile',
+      'inviteInvalidBody':
+          'Questo invito potrebbe essere scaduto, annullato o già accettato.',
       'teamMemberReactivated': '{name} riattivato',
       'teamMemberDeactivated': '{name} disattivato',
       'settingsActionLastTried': 'Ultimo tentativo {datetime}',
@@ -1181,6 +1271,41 @@ class AppLocalizations {
       value = value.replaceAll('{${entry.key}}', entry.value);
     }
     return value;
+  }
+
+  /// Localized label for a `UserRole`. The raw enum value (`hotel_staff`,
+  /// `app_admin`, etc.) is a serialization detail and should never be shown
+  /// directly to end users.
+  String userRoleLabel(UserRole role) {
+    switch (role) {
+      case UserRole.appAdmin:
+        return t('userRoleAppAdmin');
+      case UserRole.appManager:
+        return t('userRoleAppManager');
+      case UserRole.hotelManager:
+        return t('userRoleHotelManager');
+      case UserRole.hotelStaff:
+        return t('userRoleHotelStaff');
+    }
+  }
+
+  /// Localized label for a `SyncActionType` so we don't display raw
+  /// snake_case enum values to end users in the settings queue.
+  String syncActionTypeLabel(SyncActionType type) {
+    switch (type) {
+      case SyncActionType.refill:
+        return t('syncActionRefill');
+      case SyncActionType.undoRefill:
+        return t('syncActionUndoRefill');
+      case SyncActionType.correctionRequest:
+        return t('syncActionCorrectionRequest');
+      case SyncActionType.bottleReplacement:
+        return t('syncActionBottleReplacement');
+      case SyncActionType.stockAdjustment:
+        return t('syncActionStockAdjustment');
+      case SyncActionType.pendingEdit:
+        return t('syncActionPendingEdit');
+    }
   }
 }
 

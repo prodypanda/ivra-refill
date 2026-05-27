@@ -747,19 +747,28 @@ class _SuggestedOrders extends StatelessWidget {
                     const Divider(height: 24),
                     _SuggestedOrderRow(
                       Icons.water_drop_outlined,
-                      l10n.t('orderNewBottlesText').replaceAll('{count}', order.bottlesToOrder.toString()),
+                      l10n.tParams(
+                        'orderNewBottlesText',
+                        {'count': '${order.bottlesToOrder}'},
+                      ),
                       Colors.orange,
                     ),
                     const SizedBox(height: 8),
                     _SuggestedOrderRow(
                       Icons.propane_tank_outlined,
-                      l10n.t('orderNewBidonsText').replaceAll('{count}', order.bidonsToOrder.toString()),
+                      l10n.tParams(
+                        'orderNewBidonsText',
+                        {'count': '${order.bidonsToOrder}'},
+                      ),
                       theme.colorScheme.primary,
                     ),
                     const SizedBox(height: 8),
                     _SuggestedOrderRow(
                       Icons.recycling_outlined,
-                      l10n.t('recycleBottlesText').replaceAll('{count}', order.bottlesToRecycle.toString()),
+                      l10n.tParams(
+                        'recycleBottlesText',
+                        {'count': '${order.bottlesToRecycle}'},
+                      ),
                       theme.colorScheme.error,
                     ),
                   ],

@@ -127,14 +127,21 @@ class SettingsScreen extends ConsumerWidget {
                                       ? null
                                       : Theme.of(context).colorScheme.error,
                                 ),
-                                title: Text(action.type.value),
+                                title:
+                                    Text(l10n.syncActionTypeLabel(action.type)),
                                 subtitle: Text(
                                   [
                                     _payloadSummary(action.payload),
                                     if (action.attemptCount > 0)
-                                      'Attempts: ${action.attemptCount}',
+                                      l10n.tParams(
+                                        'settingsActionListAttempts',
+                                        {'count': '${action.attemptCount}'},
+                                      ),
                                     if (action.lastError != null)
-                                      'Error: ${action.lastError}',
+                                      l10n.tParams(
+                                        'settingsActionListError',
+                                        {'message': '${action.lastError}'},
+                                      ),
                                   ].join('\n'),
                                 ),
                                 trailing: Wrap(
@@ -320,7 +327,9 @@ class _DemoUserSwitcher extends ConsumerWidget {
                   for (final user in users)
                     DropdownMenuItem(
                       value: user.id,
-                      child: Text('${user.fullName} (${user.role.value})'),
+                      child: Text(
+                        '${user.fullName} (${AppLocalizations.of(context).userRoleLabel(user.role)})',
+                      ),
                     ),
                 ],
                 onChanged: (value) async {
@@ -408,7 +417,12 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  Chip(label: Text(widget.action.type.value)),
+                  Chip(
+                    label: Text(
+                      AppLocalizations.of(context)
+                          .syncActionTypeLabel(widget.action.type),
+                    ),
+                  ),
                   Chip(
                     label: Text(
                       AppLocalizations.of(context).tParams(
