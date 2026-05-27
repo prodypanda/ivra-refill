@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ivra_refill/src/app/ivra_app.dart';
+import 'package:ivra_refill/src/data/ivra_repository.dart';
+import 'package:ivra_refill/src/data/mock_ivra_repository.dart';
 import 'package:ivra_refill/src/domain/app_enums.dart';
 import 'package:ivra_refill/src/domain/models.dart';
 import 'package:ivra_refill/src/features/alerts/alerts_screen.dart';
@@ -46,6 +48,19 @@ void main() {
       );
 
       expect(find.text('Tableau de bord'), findsWidgets);
+    });
+
+    testWidgets('shows retryable error state when data loading fails',
+        (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        repository: _ThrowingRepository(),
+      );
+
+      expect(find.text('Could not load this section'), findsOneWidget);
+      expect(find.text('Retry'), findsOneWidget);
+      expect(find.byIcon(Icons.cloud_off_outlined), findsOneWidget);
     });
   });
 
@@ -647,6 +662,7 @@ Future<void> _pumpIvraApp(
   Size size = const Size(1024, 768),
   Locale? locale,
   UserProfile? currentUser,
+  IvraRepository? repository,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -657,6 +673,8 @@ Future<void> _pumpIvraApp(
     ProviderScope(
       overrides: [
         localeProvider.overrideWith((ref) => locale ?? const Locale('en')),
+        if (repository != null)
+          repositoryProvider.overrideWithValue(repository),
         if (currentUser != null)
           currentUserProvider.overrideWith((ref) async => currentUser),
         // Force connectivity to be deterministically "online" in widget
@@ -671,6 +689,13 @@ Future<void> _pumpIvraApp(
     ),
   );
   await tester.pumpAndSettle();
+}
+
+class _ThrowingRepository extends MockIvraRepository {
+  @override
+  Future<DashboardMetrics> dashboardMetrics({String? hotelId}) {
+    throw Exception('Network unavailable');
+  }
 }
 
 UserProfile _userForRole(UserRole role) {

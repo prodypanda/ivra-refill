@@ -24,6 +24,7 @@ class DashboardScreen extends ConsumerWidget {
       title: l10n.t('dashboard'),
       child: AsyncValueView(
         value: metrics,
+        onRetry: () => ref.invalidate(dashboardProvider),
         loadingWidget: LayoutBuilder(
           builder: (context, constraints) {
             final columns = constraints.maxWidth >= 1000

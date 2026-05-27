@@ -29,6 +29,7 @@ class AlertsScreen extends ConsumerWidget {
       ],
       child: AsyncValueView(
         value: ref.watch(alertsProvider),
+        onRetry: () => ref.invalidate(alertsProvider),
         loadingWidget: ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),

@@ -65,6 +65,10 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
       ],
       child: AsyncValueView(
         value: hotelsAsync,
+        onRetry: () {
+          ref.invalidate(hotelsProvider);
+          ref.invalidate(roomProductsProvider);
+        },
         loadingWidget: const PremiumLoadingWidget(),
         builder: (hotels) {
           if (hotels.isEmpty) {
@@ -111,6 +115,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               else
                 AsyncValueView(
                   value: roomProductsAsync,
+                  onRetry: () => ref.invalidate(roomProductsProvider),
                   loadingWidget: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),

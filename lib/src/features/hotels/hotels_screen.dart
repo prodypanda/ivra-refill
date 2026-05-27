@@ -34,6 +34,7 @@ class HotelsScreen extends ConsumerWidget {
       ],
       child: AsyncValueView(
         value: ref.watch(hotelsProvider),
+        onRetry: () => ref.invalidate(hotelsProvider),
         builder: (hotels) => Wrap(
           spacing: 20,
           runSpacing: 20,

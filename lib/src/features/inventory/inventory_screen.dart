@@ -61,6 +61,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       ],
       child: AsyncValueView(
         value: hotelsAsync,
+        onRetry: () {
+          ref.invalidate(hotelsProvider);
+          ref.invalidate(inventoryProvider);
+          ref.invalidate(suggestedOrdersProvider);
+        },
         builder: (hotels) {
           if (hotels.isEmpty) {
             return EmptyState(
@@ -121,6 +126,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               else ...[
                 AsyncValueView(
                   value: inventoryAsync,
+                  onRetry: () => ref.invalidate(inventoryProvider),
                   loadingWidget: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -166,6 +172,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 const SizedBox(height: 12),
                 AsyncValueView(
                   value: suggestedOrdersAsync,
+                  onRetry: () => ref.invalidate(suggestedOrdersProvider),
                   loadingWidget: const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: CardShimmer(),

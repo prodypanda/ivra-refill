@@ -23,6 +23,7 @@ class ApprovalsScreen extends ConsumerWidget {
       title: l10n.t('approvals'),
       child: AsyncValueView(
         value: ref.watch(approvalsProvider),
+        onRetry: () => ref.invalidate(approvalsProvider),
         builder: (requests) => Column(
           children: [
             for (final request in requests)
