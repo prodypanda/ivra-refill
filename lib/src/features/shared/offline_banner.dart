@@ -25,8 +25,7 @@ String? _supabaseHostFromEnv() {
 /// A provider that tracks whether the device currently has internet connectivity.
 /// On native platforms it periodically resolves the configured Supabase host;
 /// when no host is configured (e.g. demo mode or tests) it stays optimistically
-/// online and is updated only by explicit `recheck()` calls or repository
-/// errors.
+/// online and is only updated by explicit `recheck()` calls.
 final connectivityProvider = StateNotifierProvider<ConnectivityNotifier, bool>(
   (ref) => ConnectivityNotifier(host: _supabaseHostFromEnv()),
 );
@@ -41,6 +40,10 @@ class ConnectivityNotifier extends StateNotifier<bool> {
         _lookupTimeout = lookupTimeout,
         super(true) {
     if (_host != null && !kIsWeb) {
+      // Kick off an immediate check so the offline banner appears quickly
+      // when the device is offline at app launch, in addition to the periodic
+      // poll.
+      _check();
       _timer = Timer.periodic(_pollInterval, (_) => _check());
     }
   }
@@ -80,13 +83,6 @@ class ConnectivityNotifier extends StateNotifier<bool> {
 
   /// Force a re-check now (e.g. after user taps "Sync").
   Future<void> recheck() => _check();
-
-  /// Update the connectivity state from an external signal (e.g. a repository
-  /// network error). Use this in addition to or instead of the periodic poll.
-  void reportConnectivity({required bool isOnline}) {
-    if (_disposed || !mounted) return;
-    state = isOnline;
-  }
 
   @override
   void dispose() {
