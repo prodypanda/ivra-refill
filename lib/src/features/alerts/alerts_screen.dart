@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
@@ -59,7 +58,8 @@ class AlertsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     PremiumSnackbar.show(
       context,
-      '$created smart alerts created',
+      AppLocalizations.of(context)
+          .tParams('alertsRefreshedToast', {'count': '$created'}),
       icon: Icons.auto_awesome,
     );
   }
@@ -75,7 +75,7 @@ class AlertsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     PremiumSnackbar.show(
       context,
-      'Alert resolved',
+      AppLocalizations.of(context).t('alertResolvedToast'),
       icon: Icons.check_circle_outline,
     );
   }
@@ -119,10 +119,18 @@ class _AlertsList extends StatelessWidget {
           spacing: 12,
           runSpacing: 12,
           children: [
-            _AlertMetric(label: 'Open', value: '$openCount'),
-            _AlertMetric(label: 'Critical', value: '$highCount'),
             _AlertMetric(
-                label: 'Resolved', value: '${alerts.length - openCount}'),
+              label: AppLocalizations.of(context).t('alertsStatusOpen'),
+              value: '$openCount',
+            ),
+            _AlertMetric(
+              label: AppLocalizations.of(context).t('alertsMetricCritical'),
+              value: '$highCount',
+            ),
+            _AlertMetric(
+              label: AppLocalizations.of(context).t('alertsStatusResolved'),
+              value: '${alerts.length - openCount}',
+            ),
           ],
         ),
         const SizedBox(height: 18),
@@ -214,9 +222,19 @@ class _AlertCard extends StatelessWidget {
                         : Icons.radio_button_unchecked,
                     size: 18,
                   ),
-                  label: Text(alert.isResolved ? 'Resolved' : 'Open'),
+                  label: Text(
+                    AppLocalizations.of(context).t(
+                      alert.isResolved
+                          ? 'alertsStatusResolved'
+                          : 'alertsStatusOpen',
+                    ),
+                  ),
                 ),
-                Chip(label: Text(_typeLabel(alert.type))),
+                Chip(
+                  label: Text(
+                    AppLocalizations.of(context).alertTypeLabel(alert.type),
+                  ),
+                ),
                 Chip(
                   label: Text(
                     AppLocalizations.of(context).tParams(
@@ -256,17 +274,6 @@ class _AlertCard extends StatelessWidget {
     );
   }
 
-  String _typeLabel(AlertType type) {
-    return switch (type) {
-      AlertType.lowBidonStock => 'Low bidons',
-      AlertType.lowBottleStock => 'Low bottles',
-      AlertType.bottleAgeLimit => 'Bottle age',
-      AlertType.refillLimit => 'Refill limit',
-      AlertType.pendingApproval => 'Approval',
-      AlertType.suspiciousActivity => 'Suspicious activity',
-      AlertType.inactiveHotel => 'Inactive hotel',
-    };
-  }
 }
 
 class _EmptyAlerts extends StatelessWidget {
@@ -276,11 +283,12 @@ class _EmptyAlerts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return EmptyState(
       icon: Icons.notifications_off_outlined,
-      title: 'No alerts yet',
-      message: 'Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.',
-      actionLabel: 'Refresh alerts',
+      title: l10n.t('alertsEmptyTitle'),
+      message: l10n.t('alertsEmptyMessage'),
+      actionLabel: l10n.t('alertsEmptyAction'),
       onAction: onRefresh,
     );
   }

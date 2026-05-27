@@ -127,14 +127,21 @@ class SettingsScreen extends ConsumerWidget {
                                       ? null
                                       : Theme.of(context).colorScheme.error,
                                 ),
-                                title: Text(action.type.value),
+                                title:
+                                    Text(l10n.syncActionTypeLabel(action.type)),
                                 subtitle: Text(
                                   [
                                     _payloadSummary(action.payload),
                                     if (action.attemptCount > 0)
-                                      'Attempts: ${action.attemptCount}',
+                                      l10n.tParams(
+                                        'settingsActionListAttempts',
+                                        {'count': '${action.attemptCount}'},
+                                      ),
                                     if (action.lastError != null)
-                                      'Error: ${action.lastError}',
+                                      l10n.tParams(
+                                        'settingsActionListError',
+                                        {'message': '${action.lastError}'},
+                                      ),
                                   ].join('\n'),
                                 ),
                                 trailing: Wrap(
@@ -197,14 +204,23 @@ class SettingsScreen extends ConsumerWidget {
     ref.invalidate(dashboardProvider);
 
     if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final String message;
+    if (summary.hasFailures) {
+      message = l10n.tParams(
+        'settingsSyncedWithFailures',
+        {'synced': '${summary.synced}', 'failed': '${summary.failed}'},
+      );
+    } else {
+      message = l10n.tParams(
+        summary.synced == 1
+            ? 'settingsSyncedSummarySingular'
+            : 'settingsSyncedSummary',
+        {'synced': '${summary.synced}'},
+      );
+    }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          summary.hasFailures
-              ? 'Synced ${summary.synced}, ${summary.failed} failed'
-              : 'Synced ${summary.synced} action${summary.synced == 1 ? '' : 's'}',
-        ),
-      ),
+      SnackBar(content: Text(message)),
     );
   }
 
@@ -320,7 +336,9 @@ class _DemoUserSwitcher extends ConsumerWidget {
                   for (final user in users)
                     DropdownMenuItem(
                       value: user.id,
-                      child: Text('${user.fullName} (${user.role.value})'),
+                      child: Text(
+                        '${user.fullName} (${AppLocalizations.of(context).userRoleLabel(user.role)})',
+                      ),
                     ),
                 ],
                 onChanged: (value) async {
@@ -391,9 +409,11 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        widget.action.lastError == null
-            ? 'Edit queued action'
-            : 'Resolve sync conflict',
+        AppLocalizations.of(context).t(
+          widget.action.lastError == null
+              ? 'settingsActionEditTitle'
+              : 'settingsActionConflictTitle',
+        ),
       ),
       content: SizedBox(
         width: 640,
@@ -406,7 +426,12 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  Chip(label: Text(widget.action.type.value)),
+                  Chip(
+                    label: Text(
+                      AppLocalizations.of(context)
+                          .syncActionTypeLabel(widget.action.type),
+                    ),
+                  ),
                   Chip(
                     label: Text(
                       AppLocalizations.of(context).tParams(
@@ -488,7 +513,8 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
     try {
       final decoded = jsonDecode(_payloadController.text);
       if (decoded is! Map) {
-        setState(() => _error = 'Payload must be a JSON object');
+        setState(() => _error =
+            AppLocalizations.of(context).t('settingsPayloadInvalidJson'));
         return null;
       }
       setState(() => _error = null);

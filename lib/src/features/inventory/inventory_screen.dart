@@ -11,7 +11,6 @@ import '../shared/page_scaffold.dart';
 import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
-import '../shared/premium_loading.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
   const InventoryScreen({super.key});
@@ -60,10 +59,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           onPressed: () => _showStockAdjustmentDialog(context),
         ),
       ],
-      child: hotelsAsync.when(
-        loading: () => const Center(child: PremiumLoadingWidget()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
-        data: (hotels) {
+      child: AsyncValueView(
+        value: hotelsAsync,
+        builder: (hotels) {
           if (hotels.isEmpty) {
             return EmptyState(
               icon: Icons.hotel_outlined,
@@ -501,11 +499,7 @@ class _StockAdjustmentDialogState
       (item) => item.id == _inventoryItemId,
     );
 
-    final emptyBidonsLabel = l10n.t('inventoryTableEmptyBottles')
-        .replaceAll('bottles', 'bidons')
-        .replaceAll('Bouteilles', 'Bidons')
-        .replaceAll('العبوات', 'الجالونات')
-        .replaceAll('Bottiglie', 'Bidoni');
+    final emptyBidonsLabel = l10n.t('inventoryTableEmptyBidons');
 
     return AlertDialog(
       title: Text(l10n.t('adjustStockTitle')),
@@ -751,19 +745,28 @@ class _SuggestedOrders extends StatelessWidget {
                     const Divider(height: 24),
                     _SuggestedOrderRow(
                       Icons.water_drop_outlined,
-                      l10n.t('orderNewBottlesText').replaceAll('{count}', order.bottlesToOrder.toString()),
+                      l10n.tParams(
+                        'orderNewBottlesText',
+                        {'count': '${order.bottlesToOrder}'},
+                      ),
                       Colors.orange,
                     ),
                     const SizedBox(height: 8),
                     _SuggestedOrderRow(
                       Icons.propane_tank_outlined,
-                      l10n.t('orderNewBidonsText').replaceAll('{count}', order.bidonsToOrder.toString()),
+                      l10n.tParams(
+                        'orderNewBidonsText',
+                        {'count': '${order.bidonsToOrder}'},
+                      ),
                       theme.colorScheme.primary,
                     ),
                     const SizedBox(height: 8),
                     _SuggestedOrderRow(
                       Icons.recycling_outlined,
-                      l10n.t('recycleBottlesText').replaceAll('{count}', order.bottlesToRecycle.toString()),
+                      l10n.tParams(
+                        'recycleBottlesText',
+                        {'count': '${order.bottlesToRecycle}'},
+                      ),
                       theme.colorScheme.error,
                     ),
                   ],

@@ -10,6 +10,7 @@ import 'package:ivra_refill/src/features/inventory/inventory_screen.dart';
 import 'package:ivra_refill/src/features/reports/reports_screen.dart';
 import 'package:ivra_refill/src/features/settings/settings_screen.dart';
 import 'package:ivra_refill/src/features/account/account_screen.dart';
+import 'package:ivra_refill/src/features/shared/offline_banner.dart';
 import 'package:ivra_refill/src/features/team/team_screen.dart';
 import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
@@ -302,7 +303,7 @@ void main() {
       expect(find.text('Account'), findsWidgets);
       expect(find.text('Profile'), findsWidgets);
       expect(find.textContaining('admin@ivra.example'), findsWidgets);
-      expect(find.textContaining('App Admin'), findsWidgets);
+      expect(find.textContaining('App admin'), findsWidgets);
     });
 
     testWidgets('shows password change section', (tester) async {
@@ -336,8 +337,8 @@ void main() {
           .go(AccountScreen.route);
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Hotel Staff'), findsWidgets);
-      expect(find.textContaining('hotel-seaside'), findsWidgets);
+      expect(find.textContaining('Hotel staff'), findsWidgets);
+      expect(find.textContaining('Seaside Hotel'), findsWidgets);
     });
 
     testWidgets('save button exists on profile card', (tester) async {
@@ -658,6 +659,13 @@ Future<void> _pumpIvraApp(
         localeProvider.overrideWith((ref) => locale ?? const Locale('en')),
         if (currentUser != null)
           currentUserProvider.overrideWith((ref) async => currentUser),
+        // Force connectivity to be deterministically "online" in widget
+        // tests so we don't depend on the optional SUPABASE_URL
+        // --dart-define or the host-lookup timer scheduling between
+        // pumpAndSettle frames.
+        connectivityProvider.overrideWith(
+          (ref) => ConnectivityNotifier(host: null),
+        ),
       ],
       child: const IvraApp(),
     ),

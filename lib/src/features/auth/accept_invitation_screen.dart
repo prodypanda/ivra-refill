@@ -120,7 +120,7 @@ class _AcceptInvitationScreenState
     }
     if (email.toLowerCase() != invitation.email.toLowerCase()) {
       setState(() {
-        _error = 'Use the email address this invitation was sent to.';
+        _error = AppLocalizations.of(context).t('inviteEmailMismatch');
         _message = null;
       });
       return;
@@ -142,8 +142,8 @@ class _AcceptInvitationScreenState
         if (Supabase.instance.client.auth.currentSession == null) {
           if (!mounted) return;
           setState(() {
-            _message =
-                'Account created. Confirm your email, then return to this invitation link and enter the same password to finish joining.';
+            _message = AppLocalizations.of(context)
+                .t('inviteAccountCreatedConfirm');
           });
           return;
         }
@@ -157,10 +157,12 @@ class _AcceptInvitationScreenState
       ref.invalidate(teamInvitationsProvider);
       if (!mounted) return;
       context.go(DashboardScreen.route);
-    } on AuthException catch (error) {
-      if (mounted) setState(() => _error = error.message);
     } catch (error) {
-      if (mounted) setState(() => _error = error.toString());
+      if (!mounted) return;
+      setState(() => _error = localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+          ));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -230,7 +232,7 @@ class _InvitationForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Accept Ivra invitation',
+          AppLocalizations.of(context).t('inviteAcceptHeading'),
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
               ),
@@ -238,8 +240,24 @@ class _InvitationForm extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          '${invitation.fullName} was invited as ${invitation.role.value.replaceAll('_', ' ')}'
-          '${invitation.hotelName == null ? '' : ' for ${invitation.hotelName}'}.',
+          invitation.hotelName == null
+              ? AppLocalizations.of(context).tParams(
+                  'inviteSubtitleNoHotel',
+                  {
+                    'name': invitation.fullName,
+                    'role':
+                        AppLocalizations.of(context).userRoleLabel(invitation.role),
+                  },
+                )
+              : AppLocalizations.of(context).tParams(
+                  'inviteSubtitleWithHotel',
+                  {
+                    'name': invitation.fullName,
+                    'role':
+                        AppLocalizations.of(context).userRoleLabel(invitation.role),
+                    'hotel': invitation.hotelName!,
+                  },
+                ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
@@ -315,15 +333,15 @@ class _InvalidInvitation extends StatelessWidget {
         const Icon(Icons.mark_email_unread_outlined, size: 48),
         const SizedBox(height: 12),
         Text(
-          'Invitation unavailable',
+          AppLocalizations.of(context).t('inviteInvalidHeading'),
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.w800,
               ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
-        const Text(
-          'This invitation may have expired, been cancelled, or already been accepted.',
+        Text(
+          AppLocalizations.of(context).t('inviteInvalidBody'),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),

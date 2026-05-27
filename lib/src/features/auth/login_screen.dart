@@ -40,7 +40,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         useSupabase && Supabase.instance.client.auth.currentSession != null;
     final profileError = hasSession
         ? ref.watch(currentUserProvider).whenOrNull(
-              error: (error, stackTrace) => error.toString(),
+              error: (error, stackTrace) => localizeAuthError(l10n, error),
             )
         : null;
 
@@ -263,10 +263,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mounted) {
         context.go(DashboardScreen.route);
       }
-    } on AuthException catch (error) {
-      setState(() => _error = error.message);
     } catch (error) {
-      setState(() => _error = error.toString());
+      if (mounted) setState(() => _error = localizeAuthError(l10n, error));
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -397,10 +395,8 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${l10n.t('authResetLinkSent')} $email')),
       );
-    } on AuthException catch (error) {
-      if (mounted) setState(() => _error = error.message);
     } catch (error) {
-      if (mounted) setState(() => _error = error.toString());
+      if (mounted) setState(() => _error = localizeAuthError(l10n, error));
     } finally {
       if (mounted) setState(() => _isSending = false);
     }

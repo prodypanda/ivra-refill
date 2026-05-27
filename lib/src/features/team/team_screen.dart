@@ -7,6 +7,7 @@ import '../../domain/models.dart';
 import '../../state/app_state.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/accept_invitation_screen.dart';
+import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 
@@ -213,7 +214,7 @@ class TeamScreen extends ConsumerWidget {
   }
 }
 
-class _MembersTable extends StatelessWidget {
+class _MembersTable extends ConsumerWidget {
   const _MembersTable({
     required this.currentUser,
     required this.members,
@@ -227,7 +228,7 @@ class _MembersTable extends StatelessWidget {
   final void Function(UserProfile member) onManageHotels;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     if (members.isEmpty) {
       return Card(
@@ -241,6 +242,11 @@ class _MembersTable extends StatelessWidget {
     final canManageHotels = currentUser != null &&
         (currentUser!.role == UserRole.appAdmin ||
             currentUser!.role == UserRole.appManager);
+
+    final hotelsById = <String, String>{
+      for (final hotel in ref.watch(hotelsProvider).valueOrNull ?? const <Hotel>[])
+        hotel.id: hotel.name,
+    };
 
     return Card(
       child: SingleChildScrollView(
@@ -260,13 +266,23 @@ class _MembersTable extends StatelessWidget {
                 cells: [
                   DataCell(Text(member.fullName)),
                   DataCell(Text(member.email)),
-                  DataCell(Chip(label: Text(_roleLabel(member.role)))),
+                  DataCell(Chip(label: Text(l10n.userRoleLabel(member.role)))),
                   DataCell(
-                    Text(member.hotelId ?? (member.isIvraUser ? 'Ivra (All)' : '—')),
+                    Text(
+                      member.hotelId != null
+                          ? (hotelsById[member.hotelId!] ?? member.hotelId!)
+                          : (member.isIvraUser
+                              ? l10n.t('teamHotelAll')
+                              : l10n.t('teamHotelNone')),
+                    ),
                   ),
                   DataCell(
                     Chip(
-                      label: Text(member.isActive ? 'Active' : 'Inactive'),
+                      label: Text(
+                        member.isActive
+                            ? l10n.t('teamStatusActive')
+                            : l10n.t('teamStatusInactive'),
+                      ),
                     ),
                   ),
                   DataCell(
@@ -305,11 +321,12 @@ class _InvitationsTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (invitations.isEmpty) {
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(18),
-          child: Text(AppLocalizations.of(context).t('teamNoPendingInvitations')),
+          child: Text(l10n.t('teamNoPendingInvitations')),
         ),
       );
     }
@@ -332,9 +349,13 @@ class _InvitationsTable extends StatelessWidget {
                 cells: [
                   DataCell(Text(invitation.fullName)),
                   DataCell(Text(invitation.email)),
-                  DataCell(Chip(label: Text(_roleLabel(invitation.role)))),
-                  DataCell(Text(invitation.hotelName ?? 'Ivra')),
-                  DataCell(Text(invitation.status)),
+                  DataCell(
+                    Chip(label: Text(l10n.userRoleLabel(invitation.role))),
+                  ),
+                  DataCell(
+                    Text(invitation.hotelName ?? l10n.t('teamHotelAll')),
+                  ),
+                  DataCell(Text(l10n.invitationStatusLabel(invitation.status))),
                   DataCell(
                     _InvitationActions(
                       canManage: _canManageInvitation(currentUser, invitation),
@@ -420,10 +441,8 @@ class _InviteTeamMemberDialogState
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(labelText: l10n.t('teamTableColumnEmail')),
                   validator: (value) {
-                    final text = value?.trim() ?? '';
-                    if (text.isEmpty) return 'Required';
-                    if (!text.contains('@')) return 'Enter an email';
-                    return null;
+                    final errorKey = AuthValidation.email(value ?? '');
+                    return errorKey == null ? null : l10n.t(errorKey);
                   },
                 ),
                 const SizedBox(height: 12),
@@ -434,7 +453,9 @@ class _InviteTeamMemberDialogState
                     for (final role in availableRoles)
                       DropdownMenuItem(
                         value: role,
-                        child: Text(_roleLabel(role)),
+                        child: Text(
+                          AppLocalizations.of(context).userRoleLabel(role),
+                        ),
                       ),
                   ],
                   onChanged: (value) {
@@ -517,7 +538,9 @@ class _InviteTeamMemberDialogState
   }
 
   String? _required(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Required';
+    if (value == null || value.trim().isEmpty) {
+      return AppLocalizations.of(context).t('requiredField');
+    }
     return null;
   }
 
@@ -577,7 +600,9 @@ class _MemberActions extends StatelessWidget {
             onPressed: onManageHotels,
           ),
         IconButton.outlined(
-          tooltip: member.isActive ? 'Deactivate account' : 'Reactivate account',
+          tooltip: member.isActive
+              ? l10n.t('teamDeactivateAccountTooltip')
+              : l10n.t('teamReactivateAccountTooltip'),
           icon: Icon(
             member.isActive
                 ? Icons.person_off_outlined
@@ -814,11 +839,4 @@ bool _canManageInvitation(
   };
 }
 
-String _roleLabel(UserRole role) {
-  return switch (role) {
-    UserRole.appAdmin => 'App Admin',
-    UserRole.appManager => 'App Manager',
-    UserRole.hotelManager => 'Hotel Manager',
-    UserRole.hotelStaff => 'Hotel Staff',
-  };
-}
+

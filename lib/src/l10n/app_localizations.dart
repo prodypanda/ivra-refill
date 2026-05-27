@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../domain/app_enums.dart';
+
 class AppLocalizations {
   const AppLocalizations(this.locale);
 
@@ -66,14 +68,15 @@ class AppLocalizations {
       'inventoryTableProduct': 'Product',
       'inventoryTableFullBottles': 'Full bottles',
       'inventoryTableEmptyBottles': 'Empty bottles',
+      'inventoryTableEmptyBidons': 'Empty bidons',
       'inventoryTableFullBidons': 'Full bidons',
       'inventoryTableOpenBidons': 'Open bidons',
       'inventoryTableStatus': 'Status',
       'inventoryStatusHealthy': 'Healthy',
       'inventoryStatusLowStock': 'Low stock',
-      'orderNewBottlesText': 'Order new 1L bottles',
-      'orderNewBidonsText': 'Order new 5L bidons',
-      'recycleBottlesText': 'Recycle bottles',
+      'orderNewBottlesText': 'Order {count} new 1L bottles',
+      'orderNewBidonsText': 'Order {count} new 5L bidons',
+      'recycleBottlesText': 'Recycle {count} bottles',
       'adjustStockTitle': 'Adjust stock',
       'hotelRoomsTracked': 'rooms tracked',
       'hotelPendingChip': 'pending',
@@ -123,8 +126,20 @@ class AppLocalizations {
       'authBtnUpdatePassword': 'Update password',
       'authBtnReturnToApp': 'Return to app',
       'authPasswordUpdatedSuccess': 'Password updated successfully.',
+      'authUnexpectedError':
+          'Something went wrong. Please try again, or contact support if the problem persists.',
+      'authAccountDeactivated':
+          'This account has been deactivated. Contact your administrator for access.',
+      'settingsPayloadInvalidJson': 'Payload must be a JSON object.',
+      'exportDownloadStarted': '{fileName} download started',
+      'exportSaved': 'Saved {fileName} to {path}',
       'roomsTooltipCreateTemplate': 'Create room template',
       'roomsNoRoomsFound': 'No rooms or products found.',
+      'roomsSearchEmptyHint': 'Try adjusting your search query or filters.',
+      'roomsEmptyHotelWithTemplate':
+          'Add your first room using the template button above.',
+      'roomsEmptyHotelNoTemplate':
+          'No rooms have been assigned to this hotel yet.',
       'roomsLabelRoom': 'Room',
       'roomsLabelFloor': 'Floor',
       'roomsLabelRefills': 'Refills',
@@ -291,7 +306,61 @@ class AppLocalizations {
       'approvalsOldValue': 'Old: {value}',
       'approvalsNewValue': 'New: {value}',
       'alertsSeverityLabel': 'Severity {severity}',
+      'alertsStatusResolved': 'Resolved',
+      'alertsStatusOpen': 'Open',
+      'alertsMetricCritical': 'Critical',
+      'settingsActionEditTitle': 'Edit queued action',
+      'settingsActionConflictTitle': 'Resolve sync conflict',
       'settingsActionAttempts': 'Attempts {count}',
+      'settingsActionListAttempts': 'Attempts: {count}',
+      'settingsActionListError': 'Error: {message}',
+      'syncActionRefill': 'Refill',
+      'syncActionUndoRefill': 'Undo refill',
+      'syncActionCorrectionRequest': 'Correction request',
+      'syncActionBottleReplacement': 'Bottle replacement',
+      'syncActionStockAdjustment': 'Stock adjustment',
+      'syncActionPendingEdit': 'Pending edit',
+      'userRoleAppAdmin': 'App admin',
+      'userRoleAppManager': 'App manager',
+      'userRoleHotelManager': 'Hotel manager',
+      'userRoleHotelStaff': 'Hotel staff',
+      'teamStatusActive': 'Active',
+      'teamStatusInactive': 'Inactive',
+      'teamHotelAll': 'All hotels',
+      'teamHotelNone': '—',
+      'invitationStatusPending': 'Pending',
+      'invitationStatusAccepted': 'Accepted',
+      'invitationStatusCancelled': 'Cancelled',
+      'invitationStatusExpired': 'Expired',
+      'alertResolvedToast': 'Alert resolved',
+      'alertsRefreshedToast': '{count} smart alerts created',
+      'alertsEmptyTitle': 'No alerts yet',
+      'alertsEmptyMessage':
+          'Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.',
+      'alertsEmptyAction': 'Refresh alerts',
+      'alertTypeLowBidonStock': 'Low bidons',
+      'alertTypeLowBottleStock': 'Low bottles',
+      'alertTypeBottleAgeLimit': 'Bottle age',
+      'alertTypeRefillLimit': 'Refill limit',
+      'alertTypePendingApproval': 'Approval',
+      'alertTypeSuspiciousActivity': 'Suspicious activity',
+      'alertTypeInactiveHotel': 'Inactive hotel',
+      'refillEventApproved': 'Approved',
+      'refillEventRejected': 'Rejected',
+      'teamDeactivateAccountTooltip': 'Deactivate account',
+      'teamReactivateAccountTooltip': 'Reactivate account',
+      'settingsSyncedSummary': 'Synced {synced} actions',
+      'settingsSyncedSummarySingular': 'Synced {synced} action',
+      'settingsSyncedWithFailures': 'Synced {synced}, {failed} failed',
+      'inviteAcceptHeading': 'Accept Ivra invitation',
+      'inviteSubtitleWithHotel': '{name} was invited as {role} for {hotel}.',
+      'inviteSubtitleNoHotel': '{name} was invited as {role}.',
+      'inviteEmailMismatch': 'Use the email address this invitation was sent to.',
+      'inviteAccountCreatedConfirm':
+          'Account created. Confirm your email, then return to this invitation link and enter the same password to finish joining.',
+      'inviteInvalidHeading': 'Invitation unavailable',
+      'inviteInvalidBody':
+          'This invitation may have expired, been cancelled, or already been accepted.',
       'teamMemberReactivated': '{name} reactivated',
       'teamMemberDeactivated': '{name} deactivated',
       'settingsActionLastTried': 'Last tried {datetime}',
@@ -347,14 +416,15 @@ class AppLocalizations {
       'inventoryTableProduct': 'Produit',
       'inventoryTableFullBottles': 'Bouteilles pleines',
       'inventoryTableEmptyBottles': 'Bouteilles vides',
+      'inventoryTableEmptyBidons': 'Bidons vides',
       'inventoryTableFullBidons': 'Bidons pleins',
       'inventoryTableOpenBidons': 'Bidons ouverts',
       'inventoryTableStatus': 'Statut',
       'inventoryStatusHealthy': 'Sain',
       'inventoryStatusLowStock': 'Stock bas',
-      'orderNewBottlesText': 'Commander de nouvelles bouteilles 1L',
-      'orderNewBidonsText': 'Commander de nouveaux bidons 5L',
-      'recycleBottlesText': 'Recycler des bouteilles',
+      'orderNewBottlesText': 'Commander {count} nouvelles bouteilles 1L',
+      'orderNewBidonsText': 'Commander {count} nouveaux bidons 5L',
+      'recycleBottlesText': 'Recycler {count} bouteilles',
       'adjustStockTitle': 'Ajuster le stock',
       'hotelRoomsTracked': 'chambres suivies',
       'hotelPendingChip': 'en attente',
@@ -404,8 +474,20 @@ class AppLocalizations {
       'authBtnUpdatePassword': 'Mettre à jour le mot de passe',
       'authBtnReturnToApp': 'Retourner à l\'application',
       'authPasswordUpdatedSuccess': 'Mot de passe mis à jour avec succès.',
+      'authUnexpectedError':
+          'Une erreur est survenue. Réessayez ou contactez le support si le problème persiste.',
+      'authAccountDeactivated':
+          'Ce compte a été désactivé. Contactez votre administrateur pour y accéder.',
+      'settingsPayloadInvalidJson': 'La charge utile doit être un objet JSON.',
+      'exportDownloadStarted': 'Téléchargement de {fileName} commencé',
+      'exportSaved': '{fileName} enregistré dans {path}',
       'roomsTooltipCreateTemplate': 'Créer un modèle de chambre',
       'roomsNoRoomsFound': 'Aucune chambre ni produit trouvé.',
+      'roomsSearchEmptyHint': 'Essayez de modifier votre recherche ou vos filtres.',
+      'roomsEmptyHotelWithTemplate':
+          'Ajoutez votre première chambre via le bouton de modèle ci-dessus.',
+      'roomsEmptyHotelNoTemplate':
+          'Aucune chambre n\'a encore été attribuée à cet hôtel.',
       'roomsLabelRoom': 'Chambre',
       'roomsLabelFloor': 'Étage',
       'roomsLabelRefills': 'Recharges',
@@ -572,7 +654,64 @@ class AppLocalizations {
       'approvalsOldValue': 'Ancien : {value}',
       'approvalsNewValue': 'Nouveau : {value}',
       'alertsSeverityLabel': 'S\u00e9v\u00e9rit\u00e9 {severity}',
+      'alertsStatusResolved': 'R\u00e9solu',
+      'alertsStatusOpen': 'Ouvert',
+      'alertsMetricCritical': 'Critique',
+      'settingsActionEditTitle': 'Modifier l\'action en file d\'attente',
+      'settingsActionConflictTitle':
+          'R\u00e9soudre le conflit de synchronisation',
       'settingsActionAttempts': 'Tentatives {count}',
+      'settingsActionListAttempts': 'Tentatives : {count}',
+      'settingsActionListError': 'Erreur : {message}',
+      'syncActionRefill': 'Recharge',
+      'syncActionUndoRefill': 'Annulation de recharge',
+      'syncActionCorrectionRequest': 'Demande de correction',
+      'syncActionBottleReplacement': 'Remplacement de bouteille',
+      'syncActionStockAdjustment': 'Ajustement du stock',
+      'syncActionPendingEdit': 'Modification en attente',
+      'userRoleAppAdmin': 'Admin appli',
+      'userRoleAppManager': 'Gérant de l\'appli',
+      'userRoleHotelManager': 'Gérant d\'hôtel',
+      'userRoleHotelStaff': 'Personnel de l\'hôtel',
+      'teamStatusActive': 'Actif',
+      'teamStatusInactive': 'Inactif',
+      'teamHotelAll': 'Tous les hôtels',
+      'teamHotelNone': '—',
+      'invitationStatusPending': 'En attente',
+      'invitationStatusAccepted': 'Acceptée',
+      'invitationStatusCancelled': 'Annulée',
+      'invitationStatusExpired': 'Expirée',
+      'alertResolvedToast': 'Alerte résolue',
+      'alertsRefreshedToast': '{count} alertes intelligentes créées',
+      'alertsEmptyTitle': 'Aucune alerte pour le moment',
+      'alertsEmptyMessage':
+          'Actualisez les alertes intelligentes pour analyser le stock, les limites de recharge, l\'âge des bouteilles et les approbations en attente.',
+      'alertsEmptyAction': 'Actualiser les alertes',
+      'alertTypeLowBidonStock': 'Stock bas (bidons)',
+      'alertTypeLowBottleStock': 'Stock bas (bouteilles)',
+      'alertTypeBottleAgeLimit': 'Âge bouteille',
+      'alertTypeRefillLimit': 'Limite de recharges',
+      'alertTypePendingApproval': 'Approbation',
+      'alertTypeSuspiciousActivity': 'Activité suspecte',
+      'alertTypeInactiveHotel': 'Hôtel inactif',
+      'refillEventApproved': 'Approuvé',
+      'refillEventRejected': 'Rejeté',
+      'teamDeactivateAccountTooltip': 'Désactiver le compte',
+      'teamReactivateAccountTooltip': 'Réactiver le compte',
+      'settingsSyncedSummary': '{synced} actions synchronisées',
+      'settingsSyncedSummarySingular': '{synced} action synchronisée',
+      'settingsSyncedWithFailures': '{synced} synchronisées, {failed} échec(s)',
+      'inviteAcceptHeading': 'Accepter l\'invitation Ivra',
+      'inviteSubtitleWithHotel':
+          '{name} a été invité(e) en tant que {role} pour {hotel}.',
+      'inviteSubtitleNoHotel': '{name} a été invité(e) en tant que {role}.',
+      'inviteEmailMismatch':
+          'Utilisez l\'adresse e-mail à laquelle cette invitation a été envoyée.',
+      'inviteAccountCreatedConfirm':
+          'Compte créé. Confirmez votre e-mail, puis revenez à ce lien d\'invitation et entrez le même mot de passe pour terminer.',
+      'inviteInvalidHeading': 'Invitation indisponible',
+      'inviteInvalidBody':
+          'Cette invitation a peut-être expiré, été annulée ou déjà acceptée.',
       'teamMemberReactivated': '{name} réactivé',
       'teamMemberDeactivated': '{name} désactivé',
       'settingsActionLastTried': 'Dernière tentative {datetime}',
@@ -628,14 +767,15 @@ class AppLocalizations {
       'inventoryTableProduct': 'المنتج',
       'inventoryTableFullBottles': 'العبوات الممتلئة',
       'inventoryTableEmptyBottles': 'العبوات الفارغة',
+      'inventoryTableEmptyBidons': 'الجالونات الفارغة',
       'inventoryTableFullBidons': 'الجالونات الممتلئة',
       'inventoryTableOpenBidons': 'الجالونات المفتوحة',
       'inventoryTableStatus': 'الحالة',
       'inventoryStatusHealthy': 'سليم',
       'inventoryStatusLowStock': 'مخزون منخفض',
-      'orderNewBottlesText': 'طلب عبوات جديدة 1 لتر',
-      'orderNewBidonsText': 'طلب جالونات جديدة 5 لتر',
-      'recycleBottlesText': 'إعادة تدوير العبوات',
+      'orderNewBottlesText': 'طلب {count} عبوات جديدة 1 لتر',
+      'orderNewBidonsText': 'طلب {count} جالونات جديدة 5 لتر',
+      'recycleBottlesText': 'إعادة تدوير {count} عبوات',
       'adjustStockTitle': 'تعديل المخزون',
       'hotelRoomsTracked': 'غرف متبعة',
       'hotelPendingChip': 'قيد الانتظار',
@@ -685,8 +825,20 @@ class AppLocalizations {
       'authBtnUpdatePassword': 'تحديث كلمة المرور',
       'authBtnReturnToApp': 'العودة إلى التطبيق',
       'authPasswordUpdatedSuccess': 'تم تحديث كلمة المرور بنجاح.',
+      'authUnexpectedError':
+          'حدث خطأ غير متوقّع. حاول مرّة أخرى أو تواصل مع الدّعم إذا استمرّت المشكلة.',
+      'authAccountDeactivated':
+          'تمّ تعطيل هذا الحساب. تواصل مع المدير لاستعادة الوصول.',
+      'settingsPayloadInvalidJson': 'يجب أن تكون الحمولة كائن JSON.',
+      'exportDownloadStarted': 'بدأ تنزيل {fileName}',
+      'exportSaved': 'تمّ حفظ {fileName} في {path}',
       'roomsTooltipCreateTemplate': 'إنشاء نموذج غرفة',
       'roomsNoRoomsFound': 'لم يتم العثور على غرف أو منتجات.',
+      'roomsSearchEmptyHint': 'جرّب تعديل استفسار البحث أو العوامل التصفية.',
+      'roomsEmptyHotelWithTemplate':
+          'أضف غرفتك الأولى باستخدام زر القالب في الأعلى.',
+      'roomsEmptyHotelNoTemplate':
+          'لم يتمّ تعيين أي غرفة لهذا الفندق بعد.',
       'roomsLabelRoom': 'غرفة',
       'roomsLabelFloor': 'الطابق',
       'roomsLabelRefills': 'التعبئة',
@@ -853,7 +1005,64 @@ class AppLocalizations {
       'approvalsOldValue': '\u0627\u0644\u0642\u062f\u064a\u0645: {value}',
       'approvalsNewValue': '\u0627\u0644\u062c\u062f\u064a\u062f: {value}',
       'alertsSeverityLabel': '\u0627\u0644\u062e\u0637\u0648\u0631\u0629 {severity}',
+      'alertsStatusResolved': '\u062a\u0645\u0651 \u0627\u0644\u062d\u0644',
+      'alertsStatusOpen': '\u0645\u0641\u062a\u0648\u062d',
+      'alertsMetricCritical': '\u062d\u0631\u062c',
+      'settingsActionEditTitle':
+          '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0625\u062c\u0631\u0627\u0621 \u0627\u0644\u0645\u0639\u0644\u0651\u0642',
+      'settingsActionConflictTitle':
+          '\u062d\u0644\u0651 \u062a\u0639\u0627\u0631\u0636 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629',
       'settingsActionAttempts': '\u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0627\u062a {count}',
+      'settingsActionListAttempts': '\u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0627\u062a: {count}',
+      'settingsActionListError': '\u062e\u0637\u0623: {message}',
+      'syncActionRefill': '\u0625\u0639\u0627\u062f\u0629 \u062a\u0639\u0628\u0626\u0629',
+      'syncActionUndoRefill': '\u062a\u0631\u0627\u062c\u0639 \u0639\u0646 \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629',
+      'syncActionCorrectionRequest': '\u0637\u0644\u0628 \u062a\u0635\u062d\u064a\u062d',
+      'syncActionBottleReplacement': '\u0627\u0633\u062a\u0628\u062f\u0627\u0644 \u0627\u0644\u0639\u0628\u0648\u0629',
+      'syncActionStockAdjustment': '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0645\u062e\u0632\u0648\u0646',
+      'syncActionPendingEdit': '\u062a\u0639\u062f\u064a\u0644 \u0645\u0639\u0644\u0651\u0642',
+      'userRoleAppAdmin': '\u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u062a\u0637\u0628\u064a\u0642',
+      'userRoleAppManager': '\u0645\u062f\u064a\u0631 \u0627\u0644\u062a\u0637\u0628\u064a\u0642',
+      'userRoleHotelManager': '\u0645\u062f\u064a\u0631 \u0627\u0644\u0641\u0646\u062f\u0642',
+      'userRoleHotelStaff': '\u0645\u0648\u0638\u0641 \u0627\u0644\u0641\u0646\u062f\u0642',
+      'teamStatusActive': '\u0646\u0634\u0637',
+      'teamStatusInactive': '\u063a\u064a\u0631 \u0646\u0634\u0637',
+      'teamHotelAll': '\u062c\u0645\u064a\u0639 \u0627\u0644\u0641\u0646\u0627\u062f\u0642',
+      'teamHotelNone': '\u2014',
+      'invitationStatusPending': '\u0642\u064a\u062f \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631',
+      'invitationStatusAccepted': '\u0645\u0642\u0628\u0648\u0644\u0629',
+      'invitationStatusCancelled': '\u0645\u0644\u063a\u0627\u0629',
+      'invitationStatusExpired': '\u0645\u0646\u062a\u0647\u064a\u0629',
+      'alertResolvedToast': '\u062a\u0645\u0651 \u062d\u0644\u0651 \u0627\u0644\u062a\u0646\u0628\u064a\u0647',
+      'alertsRefreshedToast': '\u062a\u0645\u0651 \u0625\u0646\u0634\u0627\u0621 {count} \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0630\u0643\u064a\u0651\u0629',
+      'alertsEmptyTitle': '\u0644\u0627 \u062a\u0648\u062c\u062f \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0628\u0639\u062f',
+      'alertsEmptyMessage':
+          '\u062d\u062f\u0651\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0630\u0643\u064a\u0651\u0629 \u0644\u0641\u062d\u0635 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u062d\u062f\u0648\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629 \u0648\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0627\u062a \u0648\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0627\u062a \u0627\u0644\u0645\u0639\u0644\u0651\u0642\u0629.',
+      'alertsEmptyAction': '\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a',
+      'alertTypeLowBidonStock': '\u0645\u062e\u0632\u0648\u0646 \u0628\u064a\u062f\u0648\u0646\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
+      'alertTypeLowBottleStock': '\u0645\u062e\u0632\u0648\u0646 \u0632\u062c\u0627\u062c\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
+      'alertTypeBottleAgeLimit': '\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0629',
+      'alertTypeRefillLimit': '\u062d\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629',
+      'alertTypePendingApproval': '\u0645\u0648\u0627\u0641\u0642\u0629',
+      'alertTypeSuspiciousActivity': '\u0646\u0634\u0627\u0637 \u0645\u0634\u0628\u0648\u0647',
+      'alertTypeInactiveHotel': '\u0641\u0646\u062f\u0642 \u063a\u064a\u0631 \u0646\u0634\u0637',
+      'refillEventApproved': '\u062a\u0645\u0651\u062a \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629',
+      'refillEventRejected': '\u062a\u0645\u0651 \u0627\u0644\u0631\u0641\u0636',
+      'teamDeactivateAccountTooltip': '\u062a\u0639\u0637\u064a\u0644 \u0627\u0644\u062d\u0633\u0627\u0628',
+      'teamReactivateAccountTooltip': '\u0625\u0639\u0627\u062f\u0629 \u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u062d\u0633\u0627\u0628',
+      'settingsSyncedSummary': '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced} \u0625\u062c\u0631\u0627\u0621\u0627\u062a',
+      'settingsSyncedSummarySingular': '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced} \u0625\u062c\u0631\u0627\u0621',
+      'settingsSyncedWithFailures': '\u062a\u0645\u0651\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {synced}\u060c \u0641\u0634\u0644 {failed}',
+      'inviteAcceptHeading': '\u0642\u0628\u0648\u0644 \u062f\u0639\u0648\u0629 Ivra',
+      'inviteSubtitleWithHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role} \u0641\u064a {hotel}.',
+      'inviteSubtitleNoHotel': '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role}.',
+      'inviteEmailMismatch':
+          '\u0627\u0633\u062a\u062e\u062f\u0645 \u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0627\u0644\u0630\u064a \u0623\u064f\u0631\u0633\u0644\u062a \u0625\u0644\u064a\u0647 \u0647\u0630\u0647 \u0627\u0644\u062f\u0639\u0648\u0629.',
+      'inviteAccountCreatedConfirm':
+          '\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u062d\u0633\u0627\u0628. \u0623\u0643\u0651\u062f \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u060c \u062b\u0645 \u0639\u064f\u062f \u0625\u0644\u0649 \u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0639\u0648\u0629 \u0648\u0623\u062f\u062e\u0644 \u0646\u0641\u0633 \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u0644\u0625\u0643\u0645\u0627\u0644 \u0627\u0644\u0627\u0646\u0636\u0645\u0627\u0645.',
+      'inviteInvalidHeading': '\u0627\u0644\u062f\u0639\u0648\u0629 \u063a\u064a\u0631 \u0645\u062a\u0627\u062d\u0629',
+      'inviteInvalidBody':
+          '\u0631\u0628\u0651\u0645\u0627 \u0627\u0646\u062a\u0647\u062a \u0635\u0644\u0627\u062d\u064a\u0629 \u0647\u0630\u0647 \u0627\u0644\u062f\u0639\u0648\u0629\u060c \u0623\u0648 \u0623\u064f\u0644\u063a\u064a\u062a\u060c \u0623\u0648 \u062a\u0645 \u0642\u0628\u0648\u0644\u0647\u0627 \u0645\u0633\u0628\u0642\u064b\u0627.',
       'teamMemberReactivated': '\u062a\u0645 \u0625\u0639\u0627\u062f\u0629 \u062a\u0641\u0639\u064a\u0644 {name}',
       'teamMemberDeactivated': '\u062a\u0645 \u062a\u0639\u0637\u064a\u0644 {name}',
       'settingsActionLastTried': '\u0622\u062e\u0631 \u0645\u062d\u0627\u0648\u0644\u0629 {datetime}',
@@ -909,14 +1118,15 @@ class AppLocalizations {
       'inventoryTableProduct': 'Prodotto',
       'inventoryTableFullBottles': 'Bottiglie piene',
       'inventoryTableEmptyBottles': 'Bottiglie vuote',
+      'inventoryTableEmptyBidons': 'Bidoni vuoti',
       'inventoryTableFullBidons': 'Bidoni pieni',
       'inventoryTableOpenBidons': 'Bidoni aperti',
       'inventoryTableStatus': 'Stato',
       'inventoryStatusHealthy': 'Ottimo',
       'inventoryStatusLowStock': 'Stock basso',
-      'orderNewBottlesText': 'Ordina nuove bottiglie da 1L',
-      'orderNewBidonsText': 'Ordina nuovi bidoni da 5L',
-      'recycleBottlesText': 'Ricicla bottiglie',
+      'orderNewBottlesText': 'Ordina {count} nuove bottiglie da 1L',
+      'orderNewBidonsText': 'Ordina {count} nuovi bidoni da 5L',
+      'recycleBottlesText': 'Ricicla {count} bottiglie',
       'adjustStockTitle': 'Regola stock',
       'hotelRoomsTracked': 'camere tracciate',
       'hotelPendingChip': 'in attesa',
@@ -966,8 +1176,20 @@ class AppLocalizations {
       'authBtnUpdatePassword': 'Aggiorna password',
       'authBtnReturnToApp': 'Torna all\'applicazione',
       'authPasswordUpdatedSuccess': 'Password aggiornata con successo.',
+      'authUnexpectedError':
+          'Si è verificato un errore. Riprova o contatta l\'assistenza se il problema persiste.',
+      'authAccountDeactivated':
+          'Questo account è stato disattivato. Contatta l\'amministratore per riaccedere.',
+      'settingsPayloadInvalidJson': 'Il payload deve essere un oggetto JSON.',
+      'exportDownloadStarted': 'Download di {fileName} avviato',
+      'exportSaved': '{fileName} salvato in {path}',
       'roomsTooltipCreateTemplate': 'Crea modello camera',
       'roomsNoRoomsFound': 'Nessuna camera o prodotto trovato.',
+      'roomsSearchEmptyHint': 'Prova a modificare la ricerca o i filtri.',
+      'roomsEmptyHotelWithTemplate':
+          'Aggiungi la tua prima camera con il pulsante modello in alto.',
+      'roomsEmptyHotelNoTemplate':
+          'Nessuna camera è ancora stata assegnata a questo hotel.',
       'roomsLabelRoom': 'Camera',
       'roomsLabelFloor': 'Piano',
       'roomsLabelRefills': 'Ricariche',
@@ -1134,7 +1356,62 @@ class AppLocalizations {
       'approvalsOldValue': 'Vecchio: {value}',
       'approvalsNewValue': 'Nuovo: {value}',
       'alertsSeverityLabel': 'Gravit\u00e0 {severity}',
+      'alertsStatusResolved': 'Risolto',
+      'alertsStatusOpen': 'Aperto',
+      'alertsMetricCritical': 'Critico',
+      'settingsActionEditTitle': 'Modifica azione in coda',
+      'settingsActionConflictTitle': 'Risolvi conflitto di sincronizzazione',
       'settingsActionAttempts': 'Tentativi {count}',
+      'settingsActionListAttempts': 'Tentativi: {count}',
+      'settingsActionListError': 'Errore: {message}',
+      'syncActionRefill': 'Ricarica',
+      'syncActionUndoRefill': 'Annulla ricarica',
+      'syncActionCorrectionRequest': 'Richiesta di correzione',
+      'syncActionBottleReplacement': 'Sostituzione bottiglia',
+      'syncActionStockAdjustment': 'Aggiustamento del magazzino',
+      'syncActionPendingEdit': 'Modifica in attesa',
+      'userRoleAppAdmin': 'Amministratore app',
+      'userRoleAppManager': 'Responsabile app',
+      'userRoleHotelManager': 'Responsabile hotel',
+      'userRoleHotelStaff': 'Personale hotel',
+      'teamStatusActive': 'Attivo',
+      'teamStatusInactive': 'Inattivo',
+      'teamHotelAll': 'Tutti gli hotel',
+      'teamHotelNone': '\u2014',
+      'invitationStatusPending': 'In attesa',
+      'invitationStatusAccepted': 'Accettato',
+      'invitationStatusCancelled': 'Annullato',
+      'invitationStatusExpired': 'Scaduto',
+      'alertResolvedToast': 'Avviso risolto',
+      'alertsRefreshedToast': '{count} avvisi intelligenti creati',
+      'alertsEmptyTitle': 'Nessun avviso al momento',
+      'alertsEmptyMessage':
+          'Aggiorna gli avvisi intelligenti per scansionare scorte, limiti di ricarica, et\u00e0 delle bottiglie e approvazioni in sospeso.',
+      'alertsEmptyAction': 'Aggiorna avvisi',
+      'alertTypeLowBidonStock': 'Scorte basse (bidoni)',
+      'alertTypeLowBottleStock': 'Scorte basse (bottiglie)',
+      'alertTypeBottleAgeLimit': 'Et\u00e0 bottiglia',
+      'alertTypeRefillLimit': 'Limite ricariche',
+      'alertTypePendingApproval': 'Approvazione',
+      'alertTypeSuspiciousActivity': 'Attivit\u00e0 sospetta',
+      'alertTypeInactiveHotel': 'Hotel inattivo',
+      'refillEventApproved': 'Approvato',
+      'refillEventRejected': 'Rifiutato',
+      'teamDeactivateAccountTooltip': 'Disattiva account',
+      'teamReactivateAccountTooltip': 'Riattiva account',
+      'settingsSyncedSummary': '{synced} azioni sincronizzate',
+      'settingsSyncedSummarySingular': '{synced} azione sincronizzata',
+      'settingsSyncedWithFailures': '{synced} sincronizzate, {failed} fallite',
+      'inviteAcceptHeading': 'Accetta invito Ivra',
+      'inviteSubtitleWithHotel': '{name} è stato/a invitato/a come {role} per {hotel}.',
+      'inviteSubtitleNoHotel': '{name} è stato/a invitato/a come {role}.',
+      'inviteEmailMismatch':
+          'Usa l\'indirizzo email a cui è stato inviato questo invito.',
+      'inviteAccountCreatedConfirm':
+          'Account creato. Conferma la tua email, poi torna a questo link di invito e inserisci la stessa password per completare.',
+      'inviteInvalidHeading': 'Invito non disponibile',
+      'inviteInvalidBody':
+          'Questo invito potrebbe essere scaduto, annullato o già accettato.',
       'teamMemberReactivated': '{name} riattivato',
       'teamMemberDeactivated': '{name} disattivato',
       'settingsActionLastTried': 'Ultimo tentativo {datetime}',
@@ -1158,6 +1435,81 @@ class AppLocalizations {
       value = value.replaceAll('{${entry.key}}', entry.value);
     }
     return value;
+  }
+
+  /// Localized label for an `AlertType` so the alert-type chip in the alerts
+  /// list doesn't display hardcoded English to French/Arabic/Italian users.
+  String alertTypeLabel(AlertType type) {
+    switch (type) {
+      case AlertType.lowBidonStock:
+        return t('alertTypeLowBidonStock');
+      case AlertType.lowBottleStock:
+        return t('alertTypeLowBottleStock');
+      case AlertType.bottleAgeLimit:
+        return t('alertTypeBottleAgeLimit');
+      case AlertType.refillLimit:
+        return t('alertTypeRefillLimit');
+      case AlertType.pendingApproval:
+        return t('alertTypePendingApproval');
+      case AlertType.suspiciousActivity:
+        return t('alertTypeSuspiciousActivity');
+      case AlertType.inactiveHotel:
+        return t('alertTypeInactiveHotel');
+    }
+  }
+
+  /// Localized label for a raw team-invitation status string (`pending`,
+  /// `accepted`, `cancelled`, `expired`). Unknown values fall back to the
+  /// original string so we never silently swallow new statuses from the
+  /// backend, but the known set is translated.
+  String invitationStatusLabel(String status) {
+    switch (status) {
+      case 'pending':
+        return t('invitationStatusPending');
+      case 'accepted':
+        return t('invitationStatusAccepted');
+      case 'cancelled':
+        return t('invitationStatusCancelled');
+      case 'expired':
+        return t('invitationStatusExpired');
+      default:
+        return status;
+    }
+  }
+
+  /// Localized label for a `UserRole`. The raw enum value (`hotel_staff`,
+  /// `app_admin`, etc.) is a serialization detail and should never be shown
+  /// directly to end users.
+  String userRoleLabel(UserRole role) {
+    switch (role) {
+      case UserRole.appAdmin:
+        return t('userRoleAppAdmin');
+      case UserRole.appManager:
+        return t('userRoleAppManager');
+      case UserRole.hotelManager:
+        return t('userRoleHotelManager');
+      case UserRole.hotelStaff:
+        return t('userRoleHotelStaff');
+    }
+  }
+
+  /// Localized label for a `SyncActionType` so we don't display raw
+  /// snake_case enum values to end users in the settings queue.
+  String syncActionTypeLabel(SyncActionType type) {
+    switch (type) {
+      case SyncActionType.refill:
+        return t('syncActionRefill');
+      case SyncActionType.undoRefill:
+        return t('syncActionUndoRefill');
+      case SyncActionType.correctionRequest:
+        return t('syncActionCorrectionRequest');
+      case SyncActionType.bottleReplacement:
+        return t('syncActionBottleReplacement');
+      case SyncActionType.stockAdjustment:
+        return t('syncActionStockAdjustment');
+      case SyncActionType.pendingEdit:
+        return t('syncActionPendingEdit');
+    }
   }
 }
 

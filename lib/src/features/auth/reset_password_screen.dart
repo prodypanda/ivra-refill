@@ -222,10 +222,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       setState(() {
         _message = l10n.t('authPasswordUpdatedSuccess');
       });
-    } on AuthException catch (error) {
-      if (mounted) setState(() => _error = error.message);
     } catch (error) {
-      if (mounted) setState(() => _error = error.toString());
+      if (mounted) setState(() => _error = localizeAuthError(l10n, error));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

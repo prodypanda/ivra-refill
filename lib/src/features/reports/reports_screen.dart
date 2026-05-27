@@ -252,8 +252,18 @@ class ReportsScreen extends ConsumerWidget {
             mimeType: mimeType,
           );
       if (!context.mounted) return;
+      final l10n = AppLocalizations.of(context);
+      final message = result.path == null
+          ? l10n.tParams(
+              'exportDownloadStarted',
+              {'fileName': result.fileName},
+            )
+          : l10n.tParams(
+              'exportSaved',
+              {'fileName': result.fileName, 'path': result.path!},
+            );
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result.message)),
+        SnackBar(content: Text(message)),
       );
     } on Object catch (error) {
       if (!context.mounted) return;
