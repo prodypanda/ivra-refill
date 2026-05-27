@@ -52,6 +52,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
     return PageScaffold(
       title: l10n.t('inventory'),
+      onRefresh: () async {
+        ref.invalidate(hotelsProvider);
+        ref.invalidate(inventoryProvider);
+        ref.invalidate(suggestedOrdersProvider);
+        await Future.wait([
+          ref.read(hotelsProvider.future),
+          ref.read(inventoryProvider.future),
+          ref.read(suggestedOrdersProvider.future),
+        ]);
+      },
       actions: [
         IconButton(
           tooltip: l10n.t('adjustStockTitle'),
@@ -93,8 +103,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 : (hotels.length == 1 ? hotels.first.id : null);
             if (autoSelectId != null) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                ref.read(selectedHotelIdProvider.notifier).state =
-                    autoSelectId;
+                ref.read(selectedHotelIdProvider.notifier).state = autoSelectId;
               });
             }
           }
@@ -145,10 +154,13 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
                     // Apply search query
                     final searchedItems = hotelItems.where((item) {
-                      final name = item.product.label(Localizations.localeOf(context).languageCode).toLowerCase();
+                      final name = item.product
+                          .label(Localizations.localeOf(context).languageCode)
+                          .toLowerCase();
                       final sku = item.product.sku.toLowerCase();
                       if (_searchQuery.isEmpty) return true;
-                      return name.contains(_searchQuery.toLowerCase()) || sku.contains(_searchQuery.toLowerCase());
+                      return name.contains(_searchQuery.toLowerCase()) ||
+                          sku.contains(_searchQuery.toLowerCase());
                     }).toList();
 
                     // Apply status filter
@@ -184,9 +196,12 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                       if (!matchHotel) return false;
 
                       if (_searchQuery.isEmpty) return true;
-                      final name = order.product.label(Localizations.localeOf(context).languageCode).toLowerCase();
+                      final name = order.product
+                          .label(Localizations.localeOf(context).languageCode)
+                          .toLowerCase();
                       final sku = order.product.sku.toLowerCase();
-                      return name.contains(_searchQuery.toLowerCase()) || sku.contains(_searchQuery.toLowerCase());
+                      return name.contains(_searchQuery.toLowerCase()) ||
+                          sku.contains(_searchQuery.toLowerCase());
                     }).toList();
 
                     return _SuggestedOrders(orders: filteredOrders);
@@ -220,135 +235,147 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       padding: const EdgeInsets.all(16),
       color: theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.4),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Hotel Selector Row
-            Row(
-              children: [
-                Icon(Icons.business_outlined, color: primaryColor),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: isScoped
-                      ? Text(
-                          hotels
-                              .firstWhere(
-                                (h) => h.id == selectedHotelId,
-                                orElse: () => hotels.first,
-                              )
-                              .name,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: selectedHotelId,
-                            hint: Text(l10n.t('roomsSelectHotelFirst')),
-                            icon: Icon(Icons.arrow_drop_down,
-                                color: primaryColor),
-                            items: [
-                              for (final hotel in hotels)
-                                DropdownMenuItem(
-                                  value: hotel.id,
-                                  child: Text(
-                                    hotel.name,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                            ],
-                            onChanged: (val) {
-                              if (val != null) {
-                                ref
-                                    .read(selectedHotelIdProvider.notifier)
-                                    .state = val;
-                              }
-                            },
-                          ),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Hotel Selector Row
+          Row(
+            children: [
+              Icon(Icons.business_outlined, color: primaryColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: isScoped
+                    ? Text(
+                        hotels
+                            .firstWhere(
+                              (h) => h.id == selectedHotelId,
+                              orElse: () => hotels.first,
+                            )
+                            .name,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
+                      )
+                    : DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: selectedHotelId,
+                          hint: Text(l10n.t('roomsSelectHotelFirst')),
+                          icon:
+                              Icon(Icons.arrow_drop_down, color: primaryColor),
+                          items: [
+                            for (final hotel in hotels)
+                              DropdownMenuItem(
+                                value: hotel.id,
+                                child: Text(
+                                  hotel.name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              ref.read(selectedHotelIdProvider.notifier).state =
+                                  val;
+                            }
+                          },
+                        ),
+                      ),
+              ),
+            ],
+          ),
+          const Divider(height: 24),
+          // Search Bar
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return SizedBox(
+                height: 44,
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: l10n.t('roomsSearchPlaceholder'),
+                    prefixIcon:
+                        const Icon(Icons.search, size: 20, color: Colors.grey),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 16),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _searchQuery = '';
+                              });
+                            },
+                          )
+                        : null,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide:
+                          BorderSide(color: theme.colorScheme.outlineVariant),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: primaryColor, width: 2),
+                    ),
+                  ),
+                  onChanged: (val) {
+                    setState(() {
+                      _searchQuery = val.trim();
+                    });
+                  },
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          // Filter Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                FilterChip(
+                  label: Text(l10n.t('roomsFilterAll')),
+                  selected: _statusFilter == 'all',
+                  selectedColor: primaryColor.withValues(alpha: 0.2),
+                  checkmarkColor: primaryColor,
+                  labelStyle: TextStyle(
+                    color: _statusFilter == 'all'
+                        ? primaryColor
+                        : theme.colorScheme.onSurface,
+                    fontWeight: _statusFilter == 'all'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                  onSelected: (selected) {
+                    if (selected) setState(() => _statusFilter = 'all');
+                  },
+                ),
+                const SizedBox(width: 8),
+                FilterChip(
+                  avatar: Icon(Icons.warning_amber_rounded,
+                      size: 16, color: theme.colorScheme.error),
+                  label: Text(l10n.t('inventoryStatusLowStock')),
+                  selected: _statusFilter == 'lowStock',
+                  selectedColor:
+                      theme.colorScheme.error.withValues(alpha: 0.15),
+                  checkmarkColor: theme.colorScheme.error,
+                  labelStyle: TextStyle(
+                    color: _statusFilter == 'lowStock'
+                        ? theme.colorScheme.error
+                        : theme.colorScheme.onSurface,
+                    fontWeight: _statusFilter == 'lowStock'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                  onSelected: (selected) {
+                    if (selected) setState(() => _statusFilter = 'lowStock');
+                  },
                 ),
               ],
             ),
-            const Divider(height: 24),
-            // Search Bar
-            LayoutBuilder(
-              builder: (context, constraints) {
-                return SizedBox(
-                  height: 44,
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: l10n.t('roomsSearchPlaceholder'),
-                      prefixIcon: const Icon(Icons.search, size: 20, color: Colors.grey),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, size: 16),
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() {
-                                  _searchQuery = '';
-                                });
-                              },
-                            )
-                          : null,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: primaryColor, width: 2),
-                      ),
-                    ),
-                    onChanged: (val) {
-                      setState(() {
-                        _searchQuery = val.trim();
-                      });
-                    },
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            // Filter Chips
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  FilterChip(
-                    label: Text(l10n.t('roomsFilterAll')),
-                    selected: _statusFilter == 'all',
-                    selectedColor: primaryColor.withValues(alpha: 0.2),
-                    checkmarkColor: primaryColor,
-                    labelStyle: TextStyle(
-                      color: _statusFilter == 'all' ? primaryColor : theme.colorScheme.onSurface,
-                      fontWeight: _statusFilter == 'all' ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    onSelected: (selected) {
-                      if (selected) setState(() => _statusFilter = 'all');
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  FilterChip(
-                    avatar: Icon(Icons.warning_amber_rounded, size: 16, color: theme.colorScheme.error),
-                    label: Text(l10n.t('inventoryStatusLowStock')),
-                    selected: _statusFilter == 'lowStock',
-                    selectedColor: theme.colorScheme.error.withValues(alpha: 0.15),
-                    checkmarkColor: theme.colorScheme.error,
-                    labelStyle: TextStyle(
-                      color: _statusFilter == 'lowStock' ? theme.colorScheme.error : theme.colorScheme.onSurface,
-                      fontWeight: _statusFilter == 'lowStock' ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    onSelected: (selected) {
-                      if (selected) setState(() => _statusFilter = 'lowStock');
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -407,27 +434,42 @@ class _InventoryTable extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
-          headingRowColor: WidgetStateProperty.all(theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4)),
+          headingRowColor: WidgetStateProperty.all(
+              theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4)),
           columns: [
-            DataColumn(label: Text(l10n.t('inventoryTableProduct'), style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text(l10n.t('inventoryTableFullBottles'), style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text(l10n.t('inventoryTableEmptyBottles'), style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text(l10n.t('inventoryTableFullBidons'), style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text(l10n.t('inventoryTableOpenBidons'), style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(label: Text(l10n.t('inventoryTableStatus'), style: const TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(
+                label: Text(l10n.t('inventoryTableProduct'),
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(
+                label: Text(l10n.t('inventoryTableFullBottles'),
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(
+                label: Text(l10n.t('inventoryTableEmptyBottles'),
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(
+                label: Text(l10n.t('inventoryTableFullBidons'),
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(
+                label: Text(l10n.t('inventoryTableOpenBidons'),
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(
+                label: Text(l10n.t('inventoryTableStatus'),
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
           ],
           rows: [
             for (final item in items)
               DataRow(
                 cells: [
-                  DataCell(Text(item.product.label(language), style: const TextStyle(fontWeight: FontWeight.bold))),
+                  DataCell(Text(item.product.label(language),
+                      style: const TextStyle(fontWeight: FontWeight.bold))),
                   DataCell(Text('${item.fullBottles}')),
                   DataCell(Text('${item.emptyBottles}')),
                   DataCell(Text('${item.fullBidons}')),
                   DataCell(Text('${item.openBidons}')),
                   DataCell(
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: (item.lowBottles || item.lowBidons)
                             ? theme.colorScheme.errorContainer
@@ -520,7 +562,8 @@ class _StockAdjustmentDialogState
               children: [
                 DropdownButtonFormField<String>(
                   initialValue: _inventoryItemId,
-                  decoration: InputDecoration(labelText: l10n.t('inventoryTableProduct')),
+                  decoration: InputDecoration(
+                      labelText: l10n.t('inventoryTableProduct')),
                   items: [
                     for (final item in widget.items)
                       DropdownMenuItem(
@@ -536,16 +579,20 @@ class _StockAdjustmentDialogState
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                    border: Border.all(
+                        color:
+                            theme.colorScheme.primary.withValues(alpha: 0.2)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.inventory_outlined, size: 16, color: theme.colorScheme.primary),
+                      Icon(Icons.inventory_outlined,
+                          size: 16, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         '${l10n.t('bottles')}: ${selectedItem.fullBottles} | ${l10n.t('bidons')}: ${selectedItem.fullBidons}',
@@ -587,7 +634,8 @@ class _StockAdjustmentDialogState
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _reason,
-                  decoration: InputDecoration(labelText: l10n.t('hotelLabelNotes')),
+                  decoration:
+                      InputDecoration(labelText: l10n.t('hotelLabelNotes')),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return l10n.t('requiredField');
@@ -645,7 +693,10 @@ class _StockAdjustmentDialogState
                 reason: payload['reason'] as String,
               );
         } catch (e) {
-          if (e.toString().contains('SocketException') || e.toString().contains('ClientException') || e.toString().contains('Failed host lookup') || e.toString().contains('XMLHttpRequest')) {
+          if (e.toString().contains('SocketException') ||
+              e.toString().contains('ClientException') ||
+              e.toString().contains('Failed host lookup') ||
+              e.toString().contains('XMLHttpRequest')) {
             isOffline = true;
           } else {
             rethrow;
@@ -733,51 +784,52 @@ class _SuggestedOrders extends StatelessWidget {
             child: GlassCard(
               padding: const EdgeInsets.all(18),
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.shopping_cart_outlined, color: theme.colorScheme.primary),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            order.product.label(language),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w900,
-                            ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.shopping_cart_outlined,
+                          color: theme.colorScheme.primary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          order.product.label(language),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
-                      ],
-                    ),
-                    const Divider(height: 24),
-                    _SuggestedOrderRow(
-                      Icons.water_drop_outlined,
-                      l10n.tParams(
-                        'orderNewBottlesText',
-                        {'count': '${order.bottlesToOrder}'},
                       ),
-                      Colors.orange,
+                    ],
+                  ),
+                  const Divider(height: 24),
+                  _SuggestedOrderRow(
+                    Icons.water_drop_outlined,
+                    l10n.tParams(
+                      'orderNewBottlesText',
+                      {'count': '${order.bottlesToOrder}'},
                     ),
-                    const SizedBox(height: 8),
-                    _SuggestedOrderRow(
-                      Icons.propane_tank_outlined,
-                      l10n.tParams(
-                        'orderNewBidonsText',
-                        {'count': '${order.bidonsToOrder}'},
-                      ),
-                      theme.colorScheme.primary,
+                    Colors.orange,
+                  ),
+                  const SizedBox(height: 8),
+                  _SuggestedOrderRow(
+                    Icons.propane_tank_outlined,
+                    l10n.tParams(
+                      'orderNewBidonsText',
+                      {'count': '${order.bidonsToOrder}'},
                     ),
-                    const SizedBox(height: 8),
-                    _SuggestedOrderRow(
-                      Icons.recycling_outlined,
-                      l10n.tParams(
-                        'recycleBottlesText',
-                        {'count': '${order.bottlesToRecycle}'},
-                      ),
-                      theme.colorScheme.error,
+                    theme.colorScheme.primary,
+                  ),
+                  const SizedBox(height: 8),
+                  _SuggestedOrderRow(
+                    Icons.recycling_outlined,
+                    l10n.tParams(
+                      'recycleBottlesText',
+                      {'count': '${order.bottlesToRecycle}'},
                     ),
-                  ],
-                ),
+                    theme.colorScheme.error,
+                  ),
+                ],
+              ),
             ),
           ),
       ],

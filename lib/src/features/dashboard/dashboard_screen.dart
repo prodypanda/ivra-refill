@@ -22,6 +22,10 @@ class DashboardScreen extends ConsumerWidget {
 
     return PageScaffold(
       title: l10n.t('dashboard'),
+      onRefresh: () async {
+        ref.invalidate(dashboardProvider);
+        await ref.read(dashboardProvider.future);
+      },
       child: AsyncValueView(
         value: metrics,
         onRetry: () => ref.invalidate(dashboardProvider),

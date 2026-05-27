@@ -44,7 +44,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final primaryColor = theme.colorScheme.primary; 
+    final primaryColor = theme.colorScheme.primary;
 
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
     final canCreateRoomsFromTemplate = currentUser?.isIvraUser ?? false;
@@ -55,6 +55,14 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
 
     return PageScaffold(
       title: l10n.t('rooms'),
+      onRefresh: () async {
+        ref.invalidate(hotelsProvider);
+        ref.invalidate(roomProductsProvider);
+        await Future.wait([
+          ref.read(hotelsProvider.future),
+          ref.read(roomProductsProvider.future),
+        ]);
+      },
       actions: [
         if (canCreateRoomsFromTemplate)
           IconButton(
@@ -98,7 +106,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildControlPanel(hotels, l10n, theme, primaryColor, currentUser, selectedHotelId),
+              _buildControlPanel(hotels, l10n, theme, primaryColor, currentUser,
+                  selectedHotelId),
               const SizedBox(height: 20),
               if (selectedHotelId == null)
                 Padding(
@@ -128,7 +137,9 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                   ),
                   builder: (items) {
                     // 1. Filter by selected hotel
-                    final hotelItems = items.where((item) => item.hotelId == selectedHotelId).toList();
+                    final hotelItems = items
+                        .where((item) => item.hotelId == selectedHotelId)
+                        .toList();
 
                     if (hotelItems.isEmpty) {
                       return EmptyState(
@@ -147,26 +158,34 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     }
 
                     // Apply search query and status filter at room level
-                    final filteredRoomEntries = groupedRooms.entries.where((entry) {
+                    final filteredRoomEntries =
+                        groupedRooms.entries.where((entry) {
                       final firstItem = entry.value.first;
-                      
+
                       // Search filter
                       if (_searchQuery.isNotEmpty) {
-                        if (!firstItem.roomNumber.toLowerCase().contains(_searchQuery.toLowerCase())) {
+                        if (!firstItem.roomNumber
+                            .toLowerCase()
+                            .contains(_searchQuery.toLowerCase())) {
                           return false;
                         }
                       }
 
                       // Status filter
                       if (_statusFilter != 'all') {
-                        final overallStatus = _getRoomOverallStatus(entry.value);
-                        if (_statusFilter == 'ok' && overallStatus != _RoomOverallStatus.allOk) {
+                        final overallStatus =
+                            _getRoomOverallStatus(entry.value);
+                        if (_statusFilter == 'ok' &&
+                            overallStatus != _RoomOverallStatus.allOk) {
                           return false;
                         }
-                        if (_statusFilter == 'refill' && overallStatus != _RoomOverallStatus.refillNeeded) {
+                        if (_statusFilter == 'refill' &&
+                            overallStatus != _RoomOverallStatus.refillNeeded) {
                           return false;
                         }
-                        if (_statusFilter == 'attention' && overallStatus != _RoomOverallStatus.attentionRequired) {
+                        if (_statusFilter == 'attention' &&
+                            overallStatus !=
+                                _RoomOverallStatus.attentionRequired) {
                           return false;
                         }
                       }
@@ -183,7 +202,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     }
 
                     // Group rooms by floor
-                    final Map<int, List<MapEntry<String, List<RoomProduct>>>> roomsByFloor = {};
+                    final Map<int, List<MapEntry<String, List<RoomProduct>>>>
+                        roomsByFloor = {};
                     for (final entry in filteredRoomEntries) {
                       final floor = entry.value.first.floorNumber;
                       roomsByFloor.putIfAbsent(floor, () => []).add(entry);
@@ -201,7 +221,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                             // Detailed View: Vertical list of full detailed RoomCards
                             Column(
                               children: [
-                                for (final entry in _sortRoomsInFloor(roomsByFloor[floor]!))
+                                for (final entry
+                                    in _sortRoomsInFloor(roomsByFloor[floor]!))
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 16),
                                     child: _RoomCard(
@@ -214,12 +235,14 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                           else
                             // Compact View: Wrap grid of CompactRoomTiles
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
                               child: Wrap(
                                 spacing: 12,
                                 runSpacing: 12,
                                 children: [
-                                  for (final entry in _sortRoomsInFloor(roomsByFloor[floor]!))
+                                  for (final entry in _sortRoomsInFloor(
+                                      roomsByFloor[floor]!))
                                     _CompactRoomTile(
                                       roomNumber: entry.value.first.roomNumber,
                                       roomProducts: entry.value,
@@ -268,13 +291,15 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         item.status == BottleStatus.lost);
     if (hasCritical) return _RoomOverallStatus.attentionRequired;
 
-    final hasWarning = products.any((item) => item.status == BottleStatus.needsRefill);
+    final hasWarning =
+        products.any((item) => item.status == BottleStatus.needsRefill);
     if (hasWarning) return _RoomOverallStatus.refillNeeded;
 
     return _RoomOverallStatus.allOk;
   }
 
-  Widget _buildFloorHeader(int floor, AppLocalizations l10n, ThemeData theme, Color primaryColor) {
+  Widget _buildFloorHeader(
+      int floor, AppLocalizations l10n, ThemeData theme, Color primaryColor) {
     return Padding(
       padding: const EdgeInsets.only(top: 24, bottom: 12),
       child: Row(
@@ -298,7 +323,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Divider(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+            child: Divider(
+                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
           ),
         ],
       ),
@@ -326,203 +352,232 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
       padding: const EdgeInsets.all(16),
       color: theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.4),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Hotel Selector Row
-            Row(
-              children: [
-                Icon(Icons.business_outlined, color: primaryColor),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: isScoped
-                      ? Text(
-                          hotels.firstWhere((h) => h.id == selectedHotelId, orElse: () => hotels.first).name,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: selectedHotelId,
-                            hint: Text(l10n.t('roomsSelectHotelFirst')),
-                            icon: Icon(Icons.arrow_drop_down, color: primaryColor),
-                            items: [
-                              for (final hotel in hotels)
-                                DropdownMenuItem(
-                                  value: hotel.id,
-                                  child: Text(
-                                    hotel.name,
-                                    style: const TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                            ],
-                            onChanged: (val) {
-                              if (val != null) {
-                                ref.read(selectedHotelIdProvider.notifier).state = val;
-                              }
-                            },
-                          ),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Hotel Selector Row
+          Row(
+            children: [
+              Icon(Icons.business_outlined, color: primaryColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: isScoped
+                    ? Text(
+                        hotels
+                            .firstWhere((h) => h.id == selectedHotelId,
+                                orElse: () => hotels.first)
+                            .name,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                ),
-              ],
-            ),
-            const Divider(height: 24),
-            // Search & View Mode Switcher
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final isWide = constraints.maxWidth > 800;
-                final searchField = SizedBox(
-                  width: isWide ? 300 : double.infinity,
-                  height: 44,
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: l10n.t('roomsSearchPlaceholder'),
-                      prefixIcon: const Icon(Icons.search, size: 20, color: Colors.grey),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, size: 16),
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() {
-                                  _searchQuery = '';
-                                });
-                              },
-                            )
-                          : null,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
+                      )
+                    : DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: selectedHotelId,
+                          hint: Text(l10n.t('roomsSelectHotelFirst')),
+                          icon:
+                              Icon(Icons.arrow_drop_down, color: primaryColor),
+                          items: [
+                            for (final hotel in hotels)
+                              DropdownMenuItem(
+                                value: hotel.id,
+                                child: Text(
+                                  hotel.name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              ref.read(selectedHotelIdProvider.notifier).state =
+                                  val;
+                            }
+                          },
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: primaryColor, width: 2),
-                      ),
+              ),
+            ],
+          ),
+          const Divider(height: 24),
+          // Search & View Mode Switcher
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 800;
+              final searchField = SizedBox(
+                width: isWide ? 300 : double.infinity,
+                height: 44,
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: l10n.t('roomsSearchPlaceholder'),
+                    prefixIcon:
+                        const Icon(Icons.search, size: 20, color: Colors.grey),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 16),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _searchQuery = '';
+                              });
+                            },
+                          )
+                        : null,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide:
+                          BorderSide(color: theme.colorScheme.outlineVariant),
                     ),
-                    onChanged: (val) {
-                      setState(() {
-                        _searchQuery = val.trim();
-                      });
-                    },
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: primaryColor, width: 2),
+                    ),
                   ),
-                );
-
-                final viewToggle = SegmentedButton<bool>(
-                  segments: [
-                    ButtonSegment<bool>(
-                      value: true,
-                      label: Text(l10n.t('roomsViewDetailed')),
-                      icon: const Icon(Icons.view_agenda_outlined),
-                    ),
-                    ButtonSegment<bool>(
-                      value: false,
-                      label: Text(l10n.t('roomsViewCompact')),
-                      icon: const Icon(Icons.grid_view_outlined),
-                    ),
-                  ],
-                  selected: {_showDetailedView},
-                  onSelectionChanged: (val) {
+                  onChanged: (val) {
                     setState(() {
-                      _showDetailedView = val.first;
+                      _searchQuery = val.trim();
                     });
                   },
-                  style: SegmentedButton.styleFrom(
-                    selectedBackgroundColor: primaryColor.withValues(alpha: 0.2),
-                    selectedForegroundColor: primaryColor,
-                    visualDensity: VisualDensity.compact,
+                ),
+              );
+
+              final viewToggle = SegmentedButton<bool>(
+                segments: [
+                  ButtonSegment<bool>(
+                    value: true,
+                    label: Text(l10n.t('roomsViewDetailed')),
+                    icon: const Icon(Icons.view_agenda_outlined),
                   ),
-                );
+                  ButtonSegment<bool>(
+                    value: false,
+                    label: Text(l10n.t('roomsViewCompact')),
+                    icon: const Icon(Icons.grid_view_outlined),
+                  ),
+                ],
+                selected: {_showDetailedView},
+                onSelectionChanged: (val) {
+                  setState(() {
+                    _showDetailedView = val.first;
+                  });
+                },
+                style: SegmentedButton.styleFrom(
+                  selectedBackgroundColor: primaryColor.withValues(alpha: 0.2),
+                  selectedForegroundColor: primaryColor,
+                  visualDensity: VisualDensity.compact,
+                ),
+              );
 
-                if (isWide) {
-                  return Row(
-                    children: [
-                      searchField,
-                      const Spacer(),
-                      viewToggle,
-                    ],
-                  );
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+              if (isWide) {
+                return Row(
                   children: [
                     searchField,
-                    const SizedBox(height: 12),
+                    const Spacer(),
                     viewToggle,
                   ],
                 );
-              },
-            ),
-            const SizedBox(height: 16),
-            // Filter Chips
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  FilterChip(
-                    label: Text(l10n.t('roomsFilterAll')),
-                    selected: _statusFilter == 'all',
-                    selectedColor: primaryColor.withValues(alpha: 0.2),
-                    checkmarkColor: primaryColor,
-                    labelStyle: TextStyle(
-                      color: _statusFilter == 'all' ? primaryColor : theme.colorScheme.onSurface,
-                      fontWeight: _statusFilter == 'all' ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    onSelected: (selected) {
-                      if (selected) setState(() => _statusFilter = 'all');
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  FilterChip(
-                    avatar: const Icon(Icons.check_circle_outline, size: 16, color: Colors.green),
-                    label: Text(l10n.t('roomsStatusAllOk')),
-                    selected: _statusFilter == 'ok',
-                    selectedColor: Colors.green.withValues(alpha: 0.15),
-                    checkmarkColor: Colors.green,
-                    labelStyle: TextStyle(
-                      color: _statusFilter == 'ok' ? Colors.green.shade800 : theme.colorScheme.onSurface,
-                      fontWeight: _statusFilter == 'ok' ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    onSelected: (selected) {
-                      if (selected) setState(() => _statusFilter = 'ok');
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  FilterChip(
-                    avatar: Icon(Icons.hourglass_empty_rounded, size: 16, color: Colors.orange.shade700),
-                    label: Text(l10n.t('roomsStatusRefillNeeded')),
-                    selected: _statusFilter == 'refill',
-                    selectedColor: Colors.orange.withValues(alpha: 0.15),
-                    checkmarkColor: Colors.orange.shade700,
-                    labelStyle: TextStyle(
-                      color: _statusFilter == 'refill' ? Colors.orange.shade800 : theme.colorScheme.onSurface,
-                      fontWeight: _statusFilter == 'refill' ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    onSelected: (selected) {
-                      if (selected) setState(() => _statusFilter = 'refill');
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  FilterChip(
-                    avatar: Icon(Icons.warning_amber_rounded, size: 16, color: theme.colorScheme.error),
-                    label: Text(l10n.t('roomsStatusAttentionRequired')),
-                    selected: _statusFilter == 'attention',
-                    selectedColor: theme.colorScheme.error.withValues(alpha: 0.15),
-                    checkmarkColor: theme.colorScheme.error,
-                    labelStyle: TextStyle(
-                      color: _statusFilter == 'attention' ? theme.colorScheme.error : theme.colorScheme.onSurface,
-                      fontWeight: _statusFilter == 'attention' ? FontWeight.bold : FontWeight.normal,
-                    ),
-                    onSelected: (selected) {
-                      if (selected) setState(() => _statusFilter = 'attention');
-                    },
-                  ),
+                  searchField,
+                  const SizedBox(height: 12),
+                  viewToggle,
                 ],
-              ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          // Filter Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                FilterChip(
+                  label: Text(l10n.t('roomsFilterAll')),
+                  selected: _statusFilter == 'all',
+                  selectedColor: primaryColor.withValues(alpha: 0.2),
+                  checkmarkColor: primaryColor,
+                  labelStyle: TextStyle(
+                    color: _statusFilter == 'all'
+                        ? primaryColor
+                        : theme.colorScheme.onSurface,
+                    fontWeight: _statusFilter == 'all'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                  onSelected: (selected) {
+                    if (selected) setState(() => _statusFilter = 'all');
+                  },
+                ),
+                const SizedBox(width: 8),
+                FilterChip(
+                  avatar: const Icon(Icons.check_circle_outline,
+                      size: 16, color: Colors.green),
+                  label: Text(l10n.t('roomsStatusAllOk')),
+                  selected: _statusFilter == 'ok',
+                  selectedColor: Colors.green.withValues(alpha: 0.15),
+                  checkmarkColor: Colors.green,
+                  labelStyle: TextStyle(
+                    color: _statusFilter == 'ok'
+                        ? Colors.green.shade800
+                        : theme.colorScheme.onSurface,
+                    fontWeight: _statusFilter == 'ok'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                  onSelected: (selected) {
+                    if (selected) setState(() => _statusFilter = 'ok');
+                  },
+                ),
+                const SizedBox(width: 8),
+                FilterChip(
+                  avatar: Icon(Icons.hourglass_empty_rounded,
+                      size: 16, color: Colors.orange.shade700),
+                  label: Text(l10n.t('roomsStatusRefillNeeded')),
+                  selected: _statusFilter == 'refill',
+                  selectedColor: Colors.orange.withValues(alpha: 0.15),
+                  checkmarkColor: Colors.orange.shade700,
+                  labelStyle: TextStyle(
+                    color: _statusFilter == 'refill'
+                        ? Colors.orange.shade800
+                        : theme.colorScheme.onSurface,
+                    fontWeight: _statusFilter == 'refill'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                  onSelected: (selected) {
+                    if (selected) setState(() => _statusFilter = 'refill');
+                  },
+                ),
+                const SizedBox(width: 8),
+                FilterChip(
+                  avatar: Icon(Icons.warning_amber_rounded,
+                      size: 16, color: theme.colorScheme.error),
+                  label: Text(l10n.t('roomsStatusAttentionRequired')),
+                  selected: _statusFilter == 'attention',
+                  selectedColor:
+                      theme.colorScheme.error.withValues(alpha: 0.15),
+                  checkmarkColor: theme.colorScheme.error,
+                  labelStyle: TextStyle(
+                    color: _statusFilter == 'attention'
+                        ? theme.colorScheme.error
+                        : theme.colorScheme.onSurface,
+                    fontWeight: _statusFilter == 'attention'
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                  onSelected: (selected) {
+                    if (selected) setState(() => _statusFilter = 'attention');
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -600,7 +655,8 @@ class _CompactRoomTile extends ConsumerWidget {
         item.status == BottleStatus.damaged ||
         item.status == BottleStatus.lost);
 
-    final hasWarning = roomProducts.any((item) => item.status == BottleStatus.needsRefill);
+    final hasWarning =
+        roomProducts.any((item) => item.status == BottleStatus.needsRefill);
 
     if (hasCritical) {
       overallColor = theme.colorScheme.error;
@@ -642,7 +698,8 @@ class _CompactRoomTile extends ConsumerWidget {
                 children: [
                   Icon(overallIcon, size: 16, color: overallColor),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(4),
@@ -675,9 +732,6 @@ class _CompactRoomTile extends ConsumerWidget {
     );
   }
 }
-
-
-
 
 // Extracted top-level private helpers for both product-centric and room-centric views
 Future<void> _showRefillHistory(
@@ -756,7 +810,10 @@ Future<void> _replaceBottle(
             notes: l10n.t('roomsReplacementNotes'),
           );
     } catch (e) {
-      if (e.toString().contains('SocketException') || e.toString().contains('ClientException') || e.toString().contains('Failed host lookup') || e.toString().contains('XMLHttpRequest')) {
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('ClientException') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('XMLHttpRequest')) {
         isOffline = true;
       } else {
         rethrow;
@@ -820,7 +877,8 @@ class _RoomCard extends ConsumerWidget {
         item.status == BottleStatus.damaged ||
         item.status == BottleStatus.lost);
 
-    final hasWarning = roomProducts.any((item) => item.status == BottleStatus.needsRefill);
+    final hasWarning =
+        roomProducts.any((item) => item.status == BottleStatus.needsRefill);
 
     if (hasCritical) {
       overallStatus = l10n.t('roomsStatusAttentionRequired');
@@ -866,7 +924,8 @@ class _RoomCard extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(6),
@@ -881,11 +940,13 @@ class _RoomCard extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Flexible(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: overallColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: overallColor.withValues(alpha: 0.5)),
+                      border: Border.all(
+                          color: overallColor.withValues(alpha: 0.5)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1085,7 +1146,8 @@ class _RoomCardProductRow extends ConsumerWidget {
           children: [
             FilledButton.icon(
               style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 backgroundColor: const Color(0xFF267D65),
                 foregroundColor: Colors.white,
                 minimumSize: const Size(80, 36),
@@ -1099,7 +1161,10 @@ class _RoomCardProductRow extends ConsumerWidget {
                                 roomProductId: item.id,
                               );
                         } catch (e) {
-                          if (e.toString().contains('SocketException') || e.toString().contains('ClientException') || e.toString().contains('Failed host lookup') || e.toString().contains('XMLHttpRequest')) {
+                          if (e.toString().contains('SocketException') ||
+                              e.toString().contains('ClientException') ||
+                              e.toString().contains('Failed host lookup') ||
+                              e.toString().contains('XMLHttpRequest')) {
                             isOffline = true;
                           } else {
                             rethrow;
@@ -1128,7 +1193,8 @@ class _RoomCardProductRow extends ConsumerWidget {
                     }
                   : null,
               icon: const Icon(Icons.water_drop_outlined, size: 14),
-              label: Text(l10n.t('refill'), style: const TextStyle(fontSize: 12)),
+              label:
+                  Text(l10n.t('refill'), style: const TextStyle(fontSize: 12)),
             ),
             const SizedBox(width: 4),
             IconButton(
@@ -1262,7 +1328,8 @@ class _BottleLifecycleEditDialogState
     final l10n = AppLocalizations.of(context);
 
     return AlertDialog(
-      title: Text('${l10n.t('roomsDialogBottleEditTitle')} ${widget.item.roomNumber}'),
+      title: Text(
+          '${l10n.t('roomsDialogBottleEditTitle')} ${widget.item.roomNumber}'),
       content: SizedBox(
         width: 500,
         child: Form(
@@ -1272,7 +1339,8 @@ class _BottleLifecycleEditDialogState
             children: [
               DropdownButtonFormField<BottleStatus>(
                 initialValue: _status,
-                decoration: InputDecoration(labelText: l10n.t('roomsLabelBottleStatus')),
+                decoration: InputDecoration(
+                    labelText: l10n.t('roomsLabelBottleStatus')),
                 items: [
                   for (final status in BottleStatus.values)
                     DropdownMenuItem(
@@ -1293,7 +1361,9 @@ class _BottleLifecycleEditDialogState
                 ),
                 validator: (value) {
                   final parsed = DateTime.tryParse(value?.trim() ?? '');
-                  if (parsed == null) return l10n.t('roomsValidationEnterValidDate');
+                  if (parsed == null) {
+                    return l10n.t('roomsValidationEnterValidDate');
+                  }
                   return null;
                 },
               ),
@@ -1399,7 +1469,8 @@ class _RoomEditRequestDialogState
     final l10n = AppLocalizations.of(context);
 
     return AlertDialog(
-      title: Text('${l10n.t('roomsDialogRoomEditTitle')} ${widget.item.roomNumber}'),
+      title: Text(
+          '${l10n.t('roomsDialogRoomEditTitle')} ${widget.item.roomNumber}'),
       content: SizedBox(
         width: 460,
         child: Form(
@@ -1409,7 +1480,8 @@ class _RoomEditRequestDialogState
             children: [
               TextFormField(
                 controller: _roomNumber,
-                decoration: InputDecoration(labelText: l10n.t('roomsLabelRoomNumber')),
+                decoration:
+                    InputDecoration(labelText: l10n.t('roomsLabelRoomNumber')),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return l10n.t('requiredField');
@@ -1495,7 +1567,7 @@ Future<bool> _submitPendingEditRequest({
   var isOffline = ref.read(offlineModeProvider);
   final currentUser = ref.read(currentUserProvider).valueOrNull;
   final applyImmediately = currentUser?.isIvraUser ?? false;
-  
+
   if (!isOffline) {
     try {
       final requestId = await ref.read(repositoryProvider).submitChangeRequest(
@@ -1513,7 +1585,10 @@ Future<bool> _submitPendingEditRequest({
       }
       return applyImmediately;
     } catch (e) {
-      if (e.toString().contains('SocketException') || e.toString().contains('ClientException') || e.toString().contains('Failed host lookup') || e.toString().contains('XMLHttpRequest')) {
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('ClientException') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('XMLHttpRequest')) {
         isOffline = true;
       } else {
         rethrow;
@@ -1557,7 +1632,8 @@ class _RefillHistoryDialog extends ConsumerWidget {
     final now = DateTime.now();
 
     return AlertDialog(
-      title: Text('${l10n.t('roomsLabelRoom')} ${item.roomNumber} ${item.product.label(language)} ${l10n.t('roomsDialogHistoryTitle')}'),
+      title: Text(
+          '${l10n.t('roomsLabelRoom')} ${item.roomNumber} ${item.product.label(language)} ${l10n.t('roomsDialogHistoryTitle')}'),
       content: SizedBox(
         width: 620,
         child: events.isEmpty
@@ -1610,7 +1686,8 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                           content: Text(
                                             offline
                                                 ? l10n.t('roomsMsgUndoQueued')
-                                                : l10n.t('roomsMsgRefillUndone'),
+                                                : l10n
+                                                    .t('roomsMsgRefillUndone'),
                                           ),
                                         ),
                                       );
@@ -1732,7 +1809,9 @@ class _CorrectionRequestDialogState
             minLines: 3,
             maxLines: 5,
             validator: (value) {
-              if (value == null || value.trim().isEmpty) return l10n.t('requiredField');
+              if (value == null || value.trim().isEmpty) {
+                return l10n.t('requiredField');
+              }
               return null;
             },
           ),
@@ -1879,7 +1958,8 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
                     Expanded(
                       child: _NumberField(
                         controller: _roomCount,
-                        label: '${l10n.t('roomsLabelRoom')} count', // count is universal/clear, or let's use it dynamically
+                        label:
+                            '${l10n.t('roomsLabelRoom')} count', // count is universal/clear, or let's use it dynamically
                       ),
                     ),
                   ],

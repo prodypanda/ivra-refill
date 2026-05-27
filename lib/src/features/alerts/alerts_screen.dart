@@ -20,6 +20,10 @@ class AlertsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     return PageScaffold(
       title: l10n.t('alerts'),
+      onRefresh: () async {
+        ref.invalidate(alertsProvider);
+        await ref.read(alertsProvider.future);
+      },
       actions: [
         IconButton(
           tooltip: l10n.t('alertsRefreshSmart'),
@@ -264,7 +268,8 @@ class _AlertCard extends StatelessWidget {
                 if (!alert.isResolved)
                   FilledButton.icon(
                     icon: const Icon(Icons.check_outlined),
-                    label: Text(AppLocalizations.of(context).t('alertsResolve')),
+                    label:
+                        Text(AppLocalizations.of(context).t('alertsResolve')),
                     onPressed: () => onResolve(alert.id),
                   ),
               ],
@@ -274,7 +279,6 @@ class _AlertCard extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _EmptyAlerts extends StatelessWidget {

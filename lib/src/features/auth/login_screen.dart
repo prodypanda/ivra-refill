@@ -23,6 +23,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   var _isLoading = false;
+  var _obscurePassword = true;
   String? _error;
 
   @override
@@ -164,7 +165,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 16),
                     TextField(
                       controller: _passwordController,
-                      obscureText: true,
+                      obscureText: _obscurePassword,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
@@ -178,6 +179,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         prefixIcon: Icon(
                           Icons.lock_outline,
                           color: Theme.of(context).colorScheme.primary,
+                        ),
+                        suffixIcon: IconButton(
+                          tooltip: l10n.t(
+                            _obscurePassword
+                                ? 'authShowPassword'
+                                : 'authHidePassword',
+                          ),
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                         ),
                       ),
                     ),

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ivra_refill/src/app/ivra_app.dart';
+import 'package:ivra_refill/src/app/theme.dart';
 import 'package:ivra_refill/src/data/ivra_repository.dart';
 import 'package:ivra_refill/src/data/mock_ivra_repository.dart';
 import 'package:ivra_refill/src/domain/app_enums.dart';
 import 'package:ivra_refill/src/domain/models.dart';
 import 'package:ivra_refill/src/features/alerts/alerts_screen.dart';
+import 'package:ivra_refill/src/features/auth/login_screen.dart';
 import 'package:ivra_refill/src/features/inventory/inventory_screen.dart';
 import 'package:ivra_refill/src/features/reports/reports_screen.dart';
 import 'package:ivra_refill/src/features/settings/settings_screen.dart';
@@ -61,6 +64,58 @@ void main() {
       expect(find.text('Could not load this section'), findsOneWidget);
       expect(find.text('Retry'), findsOneWidget);
       expect(find.byIcon(Icons.cloud_off_outlined), findsOneWidget);
+    });
+
+    testWidgets('supports pull to refresh on scrollable pages', (tester) async {
+      await _pumpIvraApp(tester, size: const Size(1280, 900));
+
+      expect(find.byType(RefreshIndicator), findsWidgets);
+    });
+  });
+
+  group('LoginScreen', () {
+    testWidgets('toggles password visibility', (tester) async {
+      final router = GoRouter(
+        initialLocation: LoginScreen.route,
+        routes: [
+          GoRoute(
+            path: LoginScreen.route,
+            builder: (context, state) => const LoginScreen(),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            theme: buildIvraTheme(Brightness.light),
+            locale: const Locale('en'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<TextField>(find.byType(TextField).last).obscureText,
+        isTrue,
+      );
+
+      await tester.tap(find.byTooltip('Show password'));
+      await tester.pumpAndSettle();
+
+      expect(find.byTooltip('Hide password'), findsOneWidget);
+      expect(
+        tester.widget<TextField>(find.byType(TextField).last).obscureText,
+        isFalse,
+      );
     });
   });
 
@@ -629,15 +684,35 @@ void main() {
 
     test('AppLocalizations covers all required keys for all languages', () {
       const keys = [
-        'dashboard', 'hotels', 'rooms', 'inventory', 'products',
-        'team', 'account', 'approvals', 'alerts', 'reports', 'settings',
-        'refill', 'undo', 'correction', 'pending', 'suggestedOrders',
-        'bottles', 'bidons', 'language', 'demoMode',
-        'downloadCsv', 'downloadPdf',
-        'reportRefillHistoryTitle', 'reportRefillHistoryBody',
+        'dashboard',
+        'hotels',
+        'rooms',
+        'inventory',
+        'products',
+        'team',
+        'account',
+        'approvals',
+        'alerts',
+        'reports',
+        'settings',
+        'refill',
+        'undo',
+        'correction',
+        'pending',
+        'suggestedOrders',
+        'bottles',
+        'bidons',
+        'language',
+        'demoMode',
+        'downloadCsv',
+        'downloadPdf',
+        'reportRefillHistoryTitle',
+        'reportRefillHistoryBody',
         'reportSuggestedOrdersBody',
-        'reportInventorySnapshotTitle', 'reportInventorySnapshotBody',
-        'reportOpenAlertsTitle', 'reportOpenAlertsBody',
+        'reportInventorySnapshotTitle',
+        'reportInventorySnapshotBody',
+        'reportOpenAlertsTitle',
+        'reportOpenAlertsBody',
         'exportFailed',
       ];
 
@@ -648,8 +723,7 @@ void main() {
           expect(
             value,
             isNot(equals(key)),
-            reason:
-                'Key "$key" is not translated for language "$languageCode"',
+            reason: 'Key "$key" is not translated for language "$languageCode"',
           );
         }
       }

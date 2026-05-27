@@ -24,6 +24,14 @@ class TeamScreen extends ConsumerWidget {
 
     return PageScaffold(
       title: AppLocalizations.of(context).t('team'),
+      onRefresh: () async {
+        ref.invalidate(teamMembersProvider);
+        ref.invalidate(teamInvitationsProvider);
+        await Future.wait([
+          ref.read(teamMembersProvider.future),
+          ref.read(teamInvitationsProvider.future),
+        ]);
+      },
       actions: [
         if (canInvite)
           IconButton(
@@ -35,7 +43,8 @@ class TeamScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context).t('teamAccounts'), style: Theme.of(context).textTheme.titleLarge),
+          Text(AppLocalizations.of(context).t('teamAccounts'),
+              style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
           AsyncValueView(
             value: ref.watch(teamMembersProvider),
@@ -80,7 +89,8 @@ class TeamScreen extends ConsumerWidget {
     UserProfile member,
   ) async {
     final allHotels = await ref.read(hotelsProvider.future);
-    final assignedHotels = await ref.read(repositoryProvider).userHotels(userId: member.id);
+    final assignedHotels =
+        await ref.read(repositoryProvider).userHotels(userId: member.id);
     if (!context.mounted) return;
 
     await showDialog<void>(
@@ -190,7 +200,9 @@ class TeamScreen extends ConsumerWidget {
     final token = invitation.inviteToken;
     if (token == null || token.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).t('teamInviteLinkUnavailable'))),
+        SnackBar(
+            content: Text(
+                AppLocalizations.of(context).t('teamInviteLinkUnavailable'))),
       );
       return;
     }
@@ -246,7 +258,8 @@ class _MembersTable extends ConsumerWidget {
             currentUser!.role == UserRole.appManager);
 
     final hotelsById = <String, String>{
-      for (final hotel in ref.watch(hotelsProvider).valueOrNull ?? const <Hotel>[])
+      for (final hotel
+          in ref.watch(hotelsProvider).valueOrNull ?? const <Hotel>[])
         hotel.id: hotel.name,
     };
 
@@ -338,12 +351,24 @@ class _InvitationsTable extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: DataTable(
           columns: [
-            DataColumn(label: Text(AppLocalizations.of(context).t('teamTableColumnName'))),
-            DataColumn(label: Text(AppLocalizations.of(context).t('teamTableColumnEmail'))),
-            DataColumn(label: Text(AppLocalizations.of(context).t('teamTableColumnRole'))),
-            DataColumn(label: Text(AppLocalizations.of(context).t('teamTableColumnHotel'))),
-            DataColumn(label: Text(AppLocalizations.of(context).t('teamTableColumnStatus'))),
-            DataColumn(label: Text(AppLocalizations.of(context).t('teamTableColumnActions'))),
+            DataColumn(
+                label: Text(
+                    AppLocalizations.of(context).t('teamTableColumnName'))),
+            DataColumn(
+                label: Text(
+                    AppLocalizations.of(context).t('teamTableColumnEmail'))),
+            DataColumn(
+                label: Text(
+                    AppLocalizations.of(context).t('teamTableColumnRole'))),
+            DataColumn(
+                label: Text(
+                    AppLocalizations.of(context).t('teamTableColumnHotel'))),
+            DataColumn(
+                label: Text(
+                    AppLocalizations.of(context).t('teamTableColumnStatus'))),
+            DataColumn(
+                label: Text(
+                    AppLocalizations.of(context).t('teamTableColumnActions'))),
           ],
           rows: [
             for (final invitation in invitations)
@@ -434,14 +459,16 @@ class _InviteTeamMemberDialogState
               children: [
                 TextFormField(
                   controller: _fullName,
-                  decoration: InputDecoration(labelText: l10n.t('teamLabelFullName')),
+                  decoration:
+                      InputDecoration(labelText: l10n.t('teamLabelFullName')),
                   validator: _required,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(labelText: l10n.t('teamTableColumnEmail')),
+                  decoration: InputDecoration(
+                      labelText: l10n.t('teamTableColumnEmail')),
                   validator: (value) {
                     final errorKey = AuthValidation.email(value ?? '');
                     return errorKey == null ? null : l10n.t(errorKey);
@@ -450,7 +477,8 @@ class _InviteTeamMemberDialogState
                 const SizedBox(height: 12),
                 DropdownButtonFormField<UserRole>(
                   initialValue: _role,
-                  decoration: InputDecoration(labelText: l10n.t('teamTableColumnRole')),
+                  decoration:
+                      InputDecoration(labelText: l10n.t('teamTableColumnRole')),
                   items: [
                     for (final role in availableRoles)
                       DropdownMenuItem(
@@ -483,7 +511,8 @@ class _InviteTeamMemberDialogState
                   const SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.outlineVariant),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     constraints: const BoxConstraints(maxHeight: 200),
@@ -556,9 +585,8 @@ class _InviteTeamMemberDialogState
     try {
       final repo = ref.read(repositoryProvider);
       // Invite with the first selected hotel
-      final primaryHotelId = _selectedHotelIds.isNotEmpty
-          ? _selectedHotelIds.first
-          : null;
+      final primaryHotelId =
+          _selectedHotelIds.isNotEmpty ? _selectedHotelIds.first : null;
       await repo.inviteTeamMember(
         email: _email.text.trim(),
         fullName: _fullName.text.trim(),
@@ -663,7 +691,8 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: Text('${l10n.t('teamAssignHotelsTitle')} — ${widget.member.fullName}'),
+      title: Text(
+          '${l10n.t('teamAssignHotelsTitle')} — ${widget.member.fullName}'),
       content: SizedBox(
         width: 520,
         child: Column(
@@ -724,7 +753,8 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
           icon: _isSaving
               ? const SizedBox.square(
                   dimension: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white),
                 )
               : const Icon(Icons.check),
           label: Text(l10n.t('btnSave')),
@@ -762,7 +792,9 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).t('teamHotelsUpdated'))),
+          SnackBar(
+              content:
+                  Text(AppLocalizations.of(context).t('teamHotelsUpdated'))),
         );
       }
     } catch (error) {
@@ -862,5 +894,3 @@ bool _canManageInvitation(
     UserRole.hotelStaff => false,
   };
 }
-
-

@@ -21,6 +21,10 @@ class ApprovalsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     return PageScaffold(
       title: l10n.t('approvals'),
+      onRefresh: () async {
+        ref.invalidate(approvalsProvider);
+        await ref.read(approvalsProvider.future);
+      },
       child: AsyncValueView(
         value: ref.watch(approvalsProvider),
         onRetry: () => ref.invalidate(approvalsProvider),
