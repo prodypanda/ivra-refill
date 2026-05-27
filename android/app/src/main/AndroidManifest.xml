@@ -5,7 +5,7 @@
          network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="Ivra Refill"
+        android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round">
@@ -26,9 +26,27 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!-- Lets Flutter's platform plugin forward `ivra://app/...`
+                 intents to the Dart-side router so password-reset and
+                 invitation magic links land on the right screen. -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="true" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <!-- Custom URL scheme used by Supabase auth callbacks
+                 (password reset, accept invitation). The route is the URI
+                 path, so `ivra://app/reset-password` opens the reset
+                 screen, `ivra://app/accept-invite?token=...` opens the
+                 invitation acceptance flow. Add the same URLs to the
+                 Supabase project's "Additional Redirect URLs" allowlist. -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ivra" android:host="app" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

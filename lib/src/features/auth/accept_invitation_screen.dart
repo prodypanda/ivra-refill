@@ -183,7 +183,7 @@ class _AcceptInvitationScreenState
     }
 
     final base = Uri.base;
-    String redirectUrl = AcceptInvitationScreen.route;
+    final String redirectUrl;
     if (base.hasScheme && (base.scheme == 'http' || base.scheme == 'https')) {
       redirectUrl = base
           .replace(
@@ -191,6 +191,16 @@ class _AcceptInvitationScreenState
               query: '',
               fragment: '${AcceptInvitationScreen.route}?token=${widget.token.trim()}')
           .toString();
+    } else {
+      // Mobile / native build: hand Supabase the registered custom
+      // scheme URL so it can email a working confirmation link.
+      // See AndroidManifest.xml for the `ivra://app` intent-filter.
+      redirectUrl = Uri(
+        scheme: 'ivra',
+        host: 'app',
+        path: AcceptInvitationScreen.route,
+        queryParameters: {'token': widget.token.trim()},
+      ).toString();
     }
 
     await Supabase.instance.client.auth.signUp(

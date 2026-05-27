@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../auth/auth_validation.dart';
 import '../shared/page_scaffold.dart';
 
 class ReportsScreen extends ConsumerWidget {
@@ -265,12 +266,15 @@ class ReportsScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
-    } on Object catch (error) {
+    } catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text('${AppLocalizations.of(context).t('exportFailed')}: $error'),
+          content: Text(localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+            fallbackKey: 'exportFailed',
+          )),
         ),
       );
     }
