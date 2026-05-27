@@ -17,11 +17,13 @@ class PageScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
+    final isMobile = width < 720;
     final horizontalPadding = width < 420
-        ? 12.0
+        ? 16.0
         : width < 720
-            ? 16.0
+            ? 20.0
             : 24.0;
+    final bottomPadding = isMobile ? 104.0 : 24.0;
 
     final scrollView = CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -30,15 +32,24 @@ class PageScaffold extends StatelessWidget {
           pinned: true,
           backgroundColor: Colors.transparent,
           scrolledUnderElevation: 0,
-          title: Text(title, overflow: TextOverflow.ellipsis),
+          toolbarHeight: isMobile ? 84 : kToolbarHeight,
+          titleSpacing: horizontalPadding,
+          title: Text(
+            title,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.7,
+                ),
+          ),
           actions: actions,
         ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(
             horizontalPadding,
-            16,
+            isMobile ? 8 : 16,
             horizontalPadding,
-            24,
+            bottomPadding,
           ),
           sliver: SliverToBoxAdapter(child: child),
         ),

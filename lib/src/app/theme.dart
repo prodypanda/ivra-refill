@@ -68,38 +68,47 @@ ThemeData buildIvraTheme(Brightness brightness) {
     // Transparent scaffold to allow global gradient background to show through
     scaffoldBackgroundColor: Colors.transparent,
     visualDensity: VisualDensity.standard,
-    
+
     // Glassmorphic / Ambient Shadow Cards
     cardTheme: CardThemeData(
       elevation: 0,
-      color: isLight ? Colors.white.withValues(alpha: 0.7) : colorScheme.surface.withValues(alpha: 0.8),
-      shadowColor: const Color(0xFF92400E).withValues(alpha: 0.08), // Amber tinted shadow
+      color: isLight
+          ? Colors.white.withValues(alpha: 0.7)
+          : colorScheme.surface.withValues(alpha: 0.8),
+      shadowColor: const Color(0xFF92400E)
+          .withValues(alpha: 0.08), // Amber tinted shadow
       margin: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(16)),
         // No hard borders, rely on depth and blur
       ),
     ),
-    
+
     // Inputs with softer cream fill and golden orange focus (Stitch specific)
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: isLight ? const Color(0xFFFCF2EB) : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+      fillColor: isLight
+          ? const Color(0xFFFCF2EB)
+          : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       border: OutlineInputBorder(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
-        borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.3)),
+        borderSide:
+            BorderSide(color: colorScheme.outline.withValues(alpha: 0.3)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
-        borderSide: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+        borderSide: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
       ),
       focusedBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(16)),
-        borderSide: BorderSide(color: Color(0xFFF59E0B), width: 2.0), // Stitch Golden Orange focus outline!
+        borderSide: BorderSide(
+            color: Color(0xFFF59E0B),
+            width: 2.0), // Stitch Golden Orange focus outline!
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     ),
-    
+
     // Pill-like buttons with micro-glow shadows matching Stitch
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
@@ -107,7 +116,8 @@ ThemeData buildIvraTheme(Brightness brightness) {
         foregroundColor: Colors.white, // White text
         shape: const StadiumBorder(),
         elevation: 2,
-        shadowColor: const Color(0xFFF59E0B).withValues(alpha: 0.4), // Golden Orange glow shadow!
+        shadowColor: const Color(0xFFF59E0B)
+            .withValues(alpha: 0.4), // Golden Orange glow shadow!
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
         textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
       ),
@@ -116,32 +126,59 @@ ThemeData buildIvraTheme(Brightness brightness) {
       style: OutlinedButton.styleFrom(
         shape: const StadiumBorder(),
         foregroundColor: const Color(0xFF855300), // Brownish-orange primary
-        side: const BorderSide(color: Color(0xFFF59E0B), width: 1.5), // Golden Orange border
+        side: const BorderSide(
+            color: Color(0xFFF59E0B), width: 1.5), // Golden Orange border
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
         textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
       ),
     ),
-    
+
     // Soft Chips
     chipTheme: ChipThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
+      side:
+          BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       labelStyle: const TextStyle(fontWeight: FontWeight.w600),
     ),
-    
+
     // Transparent AppBars to let gradient show
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: false,
     ),
-    
+
     // Navigation
+    navigationBarTheme: NavigationBarThemeData(
+      indicatorColor: colorScheme.primaryContainer.withValues(alpha: 0.24),
+      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return TextStyle(
+          color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+          fontSize: 11,
+          fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return IconThemeData(
+          color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+          size: selected ? 26 : 24,
+        );
+      }),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: isLight ? const Color(0xFFFFF8F5) : colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+    ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: isLight ? const Color(0xFFFFF8F5).withValues(alpha: 0.5) : null,
+      backgroundColor:
+          isLight ? const Color(0xFFFFF8F5).withValues(alpha: 0.5) : null,
       selectedIconTheme: IconThemeData(color: colorScheme.primary),
       selectedLabelTextStyle: TextStyle(
         color: colorScheme.primary,
@@ -153,7 +190,7 @@ ThemeData buildIvraTheme(Brightness brightness) {
         fontSize: 12,
       ),
     ),
-    
+
     // Dialogs with fluid rounded corners
     dialogTheme: DialogThemeData(
       shape: RoundedRectangleBorder(

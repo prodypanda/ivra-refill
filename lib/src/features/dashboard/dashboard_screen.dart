@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
@@ -60,6 +61,7 @@ class DashboardScreen extends ConsumerWidget {
         ),
         builder: (data) => LayoutBuilder(
           builder: (context, constraints) {
+            final isMobile = constraints.maxWidth < 640;
             final columns = constraints.maxWidth >= 1000
                 ? 3
                 : constraints.maxWidth >= 640
@@ -69,6 +71,10 @@ class DashboardScreen extends ConsumerWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                if (isMobile) ...[
+                  _MobileHero(data: data),
+                  const SizedBox(height: 16),
+                ],
                 GridView.count(
                   crossAxisCount: columns,
                   shrinkWrap: true,
@@ -188,6 +194,123 @@ class _MetricCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MobileHero extends StatelessWidget {
+  const _MobileHero({required this.data});
+
+  final DashboardMetrics data;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.colorScheme.primary.withValues(alpha: 0.12),
+              Colors.orange.withValues(alpha: 0.08),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.spa_outlined,
+                color: theme.colorScheme.primary,
+                size: 32,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Today at Ivra',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.8,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${data.bottlesToReplace} ${l10n.t('metricBottlesToReplace').toLowerCase()}',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  _HeroPill(
+                    label: l10n.t('metricOpenAlerts'),
+                    value: data.openAlerts,
+                    icon: Icons.notifications_active_outlined,
+                  ),
+                  const SizedBox(width: 10),
+                  _HeroPill(
+                    label: l10n.t('metricPendingApprovals'),
+                    value: data.pendingApprovals,
+                    icon: Icons.fact_check_outlined,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HeroPill extends StatelessWidget {
+  const _HeroPill({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  final String label;
+  final int value;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface.withValues(alpha: 0.72),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: theme.colorScheme.primary),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '$value ${label.toLowerCase()}',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -619,11 +619,24 @@ void main() {
       expect(find.byType(NavigationRail), findsOneWidget);
     });
 
-    testWidgets('mobile-width uses drawer navigation', (tester) async {
+    testWidgets('mobile-width uses bottom navigation', (tester) async {
       await _pumpIvraApp(tester, size: const Size(375, 812));
 
       expect(find.byType(NavigationRail), findsNothing);
-      expect(find.byType(AppBar), findsWidgets);
+      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.text('More'), findsOneWidget);
+    });
+
+    testWidgets('mobile more menu opens secondary destinations',
+        (tester) async {
+      await _pumpIvraApp(tester, size: const Size(375, 812));
+
+      await tester.tap(find.text('More'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BottomSheet), findsOneWidget);
+      expect(find.text('Team'), findsWidgets);
+      expect(find.text('Account'), findsWidgets);
     });
 
     testWidgets('extended rail appears at wide width', (tester) async {

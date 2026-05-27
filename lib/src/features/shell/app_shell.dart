@@ -94,36 +94,11 @@ class AppShell extends ConsumerWidget {
           );
         }
 
-        return Container(
-          decoration: globalBackground,
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: AppBar(title: const Text('Ivra')),
-            drawer: NavigationDrawer(
-              selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
-              onDestinationSelected: (index) {
-                Navigator.of(context).pop();
-                context.go(navItems[index].route);
-              },
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(24, 24, 24, 12),
-                  child: _BrandMark(),
-                ),
-                for (final item in navItems)
-                  NavigationDrawerDestination(
-                    icon: Icon(item.icon),
-                    label: Text(item.label),
-                  ),
-              ],
-            ),
-            body: Column(
-              children: [
-                const OfflineBanner(),
-                Expanded(child: child),
-              ],
-            ),
-          ),
+        return _MobileShell(
+          selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
+          navItems: navItems,
+          background: globalBackground,
+          child: child,
         );
       },
     );
@@ -259,6 +234,126 @@ class AppShell extends ConsumerWidget {
   }
 }
 
+class _MobileShell extends StatelessWidget {
+  const _MobileShell({
+    required this.selectedIndex,
+    required this.navItems,
+    required this.background,
+    required this.child,
+  });
+
+  final int selectedIndex;
+  final List<_NavItem> navItems;
+  final BoxDecoration? background;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryItems = navItems.take(4).toList();
+    final moreItems = navItems.skip(4).toList();
+    final primaryIndex = selectedIndex < primaryItems.length
+        ? selectedIndex
+        : primaryItems.length - 1;
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: background,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            const OfflineBanner(),
+            Expanded(child: child),
+          ],
+        ),
+        bottomNavigationBar: Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface.withValues(alpha: 0.94),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.45),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withValues(alpha: 0.16),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: NavigationBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              height: 72,
+              selectedIndex: primaryIndex,
+              onDestinationSelected: (index) {
+                if (index == primaryItems.length - 1 && moreItems.isNotEmpty) {
+                  _showMoreDestinations(context, moreItems);
+                  return;
+                }
+                context.go(primaryItems[index].route);
+              },
+              destinations: [
+                for (var index = 0; index < primaryItems.length; index++)
+                  NavigationDestination(
+                    icon: Icon(
+                      index == primaryItems.length - 1 && moreItems.isNotEmpty
+                          ? Icons.more_horiz
+                          : primaryItems[index].icon,
+                    ),
+                    label:
+                        index == primaryItems.length - 1 && moreItems.isNotEmpty
+                            ? 'More'
+                            : primaryItems[index].label,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showMoreDestinations(BuildContext context, List<_NavItem> moreItems) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                const Center(child: _BrandMark()),
+                const SizedBox(height: 8),
+                for (final item in moreItems)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: ListTile(
+                      leading: Icon(item.icon),
+                      title: Text(item.label),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        context.go(item.route);
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class _BrandMark extends StatelessWidget {
   const _BrandMark();
 
@@ -277,13 +372,18 @@ class _BrandMark extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [
                 Theme.of(context).colorScheme.primary,
-                Color.lerp(Theme.of(context).colorScheme.primary, Colors.orange.shade700, 0.3) ?? Theme.of(context).colorScheme.primary,
+                Color.lerp(Theme.of(context).colorScheme.primary,
+                        Colors.orange.shade700, 0.3) ??
+                    Theme.of(context).colorScheme.primary,
               ],
             ),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
