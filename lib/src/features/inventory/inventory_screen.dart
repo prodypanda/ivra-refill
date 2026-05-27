@@ -72,16 +72,28 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             );
           }
 
-          // Inventory has no meaningful cross-hotel aggregate view, so if
-          // no hotel is selected we default to the first visible one. The
-          // global splash gate already scopes hotel-bound users to their own
-          // hotel; this fallback covers app-wide users (admin) who haven't
-          // picked a hotel yet.
+          // Inventory has no cross-hotel aggregate view, so we narrow down
+          // to a single hotel automatically when there is no ambiguity:
+          //   - hotel-bound users are already scoped by the splash gate, but
+          //     re-confirm here in case the list filter changes their hotel
+          //     out of view;
+          //   - admin / app-wide users only get auto-selected when exactly
+          //     one hotel is visible. With multiple hotels the dropdown
+          //     stays as the explicit choice so we never silently turn the
+          //     dashboard/rooms/alerts cross-hotel view into a single-hotel
+          //     view as a side effect of visiting Inventory.
           if (selectedHotelId == null && hotels.isNotEmpty) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              ref.read(selectedHotelIdProvider.notifier).state =
-                  hotels.first.id;
-            });
+            final userHotelId = currentUser?.hotelId;
+            final autoSelectId = userHotelId != null &&
+                    hotels.any((hotel) => hotel.id == userHotelId)
+                ? userHotelId
+                : (hotels.length == 1 ? hotels.first.id : null);
+            if (autoSelectId != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ref.read(selectedHotelIdProvider.notifier).state =
+                    autoSelectId;
+              });
+            }
           }
 
           return Column(
