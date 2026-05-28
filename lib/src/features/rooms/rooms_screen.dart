@@ -210,10 +210,18 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     }
 
                     final sortedFloors = roomsByFloor.keys.toList()..sort();
+                    final isMobile = MediaQuery.sizeOf(context).width < 720;
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        if (isMobile) ...[
+                          _RoomsMobileSummary(
+                            rooms: filteredRoomEntries,
+                            getStatus: _getRoomOverallStatus,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
                         for (final floor in sortedFloors) ...[
                           _buildFloorHeader(floor, l10n, theme, primaryColor),
                           const SizedBox(height: 12),
@@ -865,6 +873,7 @@ class _RoomCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final firstItem = roomProducts.first;
+    final isMobile = MediaQuery.sizeOf(context).width < 720 && !isDialog;
 
     var overallStatus = l10n.t('roomsStatusAllOk');
     var overallColor = Colors.orange.shade700;
@@ -895,99 +904,334 @@ class _RoomCard extends ConsumerWidget {
 
     return GlassCard(
       padding: EdgeInsets.zero,
+      borderRadius: isMobile ? 28 : 16,
       borderColor: overallColor.withValues(alpha: 0.2),
       borderWidth: 1.5,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.all(isMobile ? 16 : 12)
+                .copyWith(left: 16, right: 16),
             decoration: BoxDecoration(
-              color: overallColor.withValues(alpha: 0.05),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
+              color: overallColor.withValues(alpha: isMobile ? 0.11 : 0.05),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(isMobile ? 28 : 16),
+                topRight: Radius.circular(isMobile ? 28 : 16),
               ),
             ),
-            child: Row(
-              children: [
-                Icon(Icons.meeting_room_outlined, color: overallColor),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '${l10n.t('roomsLabelRoom')} ${firstItem.roomNumber}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    '${l10n.t('roomsLabelFloor')} ${firstItem.floorNumber}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: overallColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                          color: overallColor.withValues(alpha: 0.5)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(overallIcon, size: 14, color: overallColor),
-                        const SizedBox(width: 4),
-                        Flexible(
-                          child: Text(
-                            overallStatus,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: overallColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+            child: isMobile
+                ? _MobileRoomHeader(
+                    roomNumber: firstItem.roomNumber,
+                    floorNumber: firstItem.floorNumber,
+                    status: overallStatus,
+                    statusColor: overallColor,
+                    statusIcon: overallIcon,
+                  )
+                : Row(
+                    children: [
+                      Icon(Icons.meeting_room_outlined, color: overallColor),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${l10n.t('roomsLabelRoom')} ${firstItem.roomNumber}',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          '${l10n.t('roomsLabelFloor')} ${firstItem.floorNumber}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: overallColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                                color: overallColor.withValues(alpha: 0.5)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(overallIcon, size: 14, color: overallColor),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  overallStatus,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: overallColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (isDialog) ...[
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: const Icon(Icons.close, size: 20),
+                          onPressed: () => Navigator.of(context).pop(),
+                          visualDensity: VisualDensity.compact,
+                        ),
                       ],
-                    ),
+                    ],
                   ),
-                ),
-                if (isDialog) ...[
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 20),
-                    onPressed: () => Navigator.of(context).pop(),
-                    visualDensity: VisualDensity.compact,
-                  ),
+          ),
+          const Divider(height: 1),
+          Padding(
+            padding: EdgeInsets.all(isMobile ? 14 : 16),
+            child: Column(
+              children: [
+                for (int i = 0; i < roomProducts.length; i++) ...[
+                  if (i > 0) Divider(height: isMobile ? 18 : 24),
+                  _RoomCardProductRow(item: roomProducts[i]),
                 ],
               ],
             ),
           ),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                for (int i = 0; i < roomProducts.length; i++) ...[
-                  if (i > 0) const Divider(height: 24),
-                  _RoomCardProductRow(item: roomProducts[i]),
-                ],
-              ],
+        ],
+      ),
+    );
+  }
+}
+
+class _MobileRoomHeader extends StatelessWidget {
+  const _MobileRoomHeader({
+    required this.roomNumber,
+    required this.floorNumber,
+    required this.status,
+    required this.statusColor,
+    required this.statusIcon,
+  });
+
+  final String roomNumber;
+  final int floorNumber;
+  final String status;
+  final Color statusColor;
+  final IconData statusIcon;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: statusColor.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Icon(Icons.meeting_room_outlined, color: statusColor),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                '${l10n.t('roomsLabelRoom')} $roomNumber',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.4,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _RoomHeaderChip(
+              icon: Icons.layers_outlined,
+              label: '${l10n.t('roomsLabelFloor')} $floorNumber',
+              color: theme.colorScheme.primary,
+              filled: false,
+            ),
+            _RoomHeaderChip(
+              icon: statusIcon,
+              label: status,
+              color: statusColor,
+              filled: true,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _RoomHeaderChip extends StatelessWidget {
+  const _RoomHeaderChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.filled,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: filled
+            ? color.withValues(alpha: 0.12)
+            : theme.colorScheme.surface.withValues(alpha: 0.74),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RoomsMobileSummary extends StatelessWidget {
+  const _RoomsMobileSummary({
+    required this.rooms,
+    required this.getStatus,
+  });
+
+  final List<MapEntry<String, List<RoomProduct>>> rooms;
+  final _RoomOverallStatus Function(List<RoomProduct> products) getStatus;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    var attention = 0;
+    var refill = 0;
+    var ok = 0;
+
+    for (final room in rooms) {
+      switch (getStatus(room.value)) {
+        case _RoomOverallStatus.attentionRequired:
+          attention++;
+        case _RoomOverallStatus.refillNeeded:
+          refill++;
+        case _RoomOverallStatus.allOk:
+          ok++;
+      }
+    }
+
+    return GlassCard(
+      padding: const EdgeInsets.all(16),
+      borderRadius: 28,
+      color: theme.colorScheme.primary.withValues(alpha: 0.08),
+      child: Row(
+        children: [
+          _RoomsSummaryTile(
+            value: rooms.length,
+            label: l10n.t('rooms'),
+            icon: Icons.meeting_room_outlined,
+            color: theme.colorScheme.primary,
+          ),
+          _RoomsSummaryTile(
+            value: attention,
+            label: l10n.t('roomsStatusAttentionRequired'),
+            icon: Icons.warning_amber_rounded,
+            color: theme.colorScheme.error,
+          ),
+          _RoomsSummaryTile(
+            value: refill,
+            label: l10n.t('roomsStatusRefillNeeded'),
+            icon: Icons.hourglass_empty_rounded,
+            color: Colors.orange.shade700,
+          ),
+          _RoomsSummaryTile(
+            value: ok,
+            label: l10n.t('roomsStatusAllOk'),
+            icon: Icons.check_circle_outline,
+            color: Colors.green.shade700,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RoomsSummaryTile extends StatelessWidget {
+  const _RoomsSummaryTile({
+    required this.value,
+    required this.label,
+    required this.icon,
+    required this.color,
+  });
+
+  final int value;
+  final String label;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Expanded(
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 6),
+          Text(
+            value.toString(),
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
