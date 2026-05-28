@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -77,7 +79,9 @@ class ApprovalsScreen extends ConsumerWidget {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        if (canReviewRequests)
+                        if (request.status != ApprovalStatus.pending)
+                          _ApprovalStatusBadge(status: request.status)
+                        else if (canReviewRequests)
                           Wrap(
                             spacing: 8,
                             children: [
@@ -89,21 +93,28 @@ class ApprovalsScreen extends ConsumerWidget {
                                     await ref
                                         .read(repositoryProvider)
                                         .approveRequest(
-                                          approvalRequestId: request.id,
+                                          approvalRequestId:
+                                              request.id,
                                         );
                                     _refreshAfterReview(ref);
                                     if (context.mounted) {
                                       PremiumSnackbar.show(
                                         context,
                                         l10n.t('approvalsApproved'),
-                                        icon: Icons.check_circle_outline,
+                                        icon:
+                                            Icons.check_circle_outline,
                                       );
                                     }
-                                  } catch (_) {
+                                  } catch (e) {
+                                    developer.log(
+                                      'Approval failed',
+                                      error: e,
+                                      name: 'ApprovalsScreen',
+                                    );
                                     if (context.mounted) {
                                       PremiumSnackbar.show(
                                         context,
-                                        l10n.t('approvalsActionFailed'),
+                                        _errorMessage(e, l10n),
                                         icon: Icons.error_outline,
                                         isError: true,
                                       );
@@ -119,7 +130,8 @@ class ApprovalsScreen extends ConsumerWidget {
                                     await ref
                                         .read(repositoryProvider)
                                         .rejectRequest(
-                                          approvalRequestId: request.id,
+                                          approvalRequestId:
+                                              request.id,
                                         );
                                     _refreshAfterReview(ref);
                                     if (context.mounted) {
@@ -129,11 +141,16 @@ class ApprovalsScreen extends ConsumerWidget {
                                         icon: Icons.info_outline,
                                       );
                                     }
-                                  } catch (_) {
+                                  } catch (e) {
+                                    developer.log(
+                                      'Rejection failed',
+                                      error: e,
+                                      name: 'ApprovalsScreen',
+                                    );
                                     if (context.mounted) {
                                       PremiumSnackbar.show(
                                         context,
-                                        l10n.t('approvalsActionFailed'),
+                                        _errorMessage(e, l10n),
                                         icon: Icons.error_outline,
                                         isError: true,
                                       );
@@ -164,4 +181,47 @@ void _refreshAfterReview(WidgetRef ref) {
   ref.invalidate(suggestedOrdersProvider);
   ref.invalidate(alertsProvider);
   ref.invalidate(dashboardProvider);
+}
+
+class _ApprovalStatusBadge extends StatelessWidget {
+  const _ApprovalStatusBadge({required this.status});
+
+  final ApprovalStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final (label, color) = switch (status) {
+      ApprovalStatus.approved => ('Approved', Colors.green),
+      ApprovalStatus.rejected => ('Rejected', theme.colorScheme.error),
+      ApprovalStatus.cancelled => ('Cancelled', Colors.orange),
+      ApprovalStatus.pending => ('Pending', Colors.blue),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: theme.textTheme.labelMedium?.copyWith(
+          color: color,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
+
+String _errorMessage(Object error, AppLocalizations l10n) {
+  final raw = error.toString();
+  if (raw.contains('Access denied')) {
+    return l10n.t('approvalsAccessDenied');
+  }
+  if (raw.contains('not found')) {
+    return l10n.t('approvalsRequestNotFound');
+  }
+  return '${l10n.t('approvalsActionFailed')} ($raw)';
 }

@@ -427,7 +427,9 @@ class MockIvraRepository implements IvraRepository {
   @override
   Future<List<ApprovalRequest>> approvalRequests({String? hotelId}) async {
     return _approvalRequests
-        .where((item) => hotelId == null || item.hotelId == hotelId)
+        .where((item) =>
+            item.status == ApprovalStatus.pending &&
+            (hotelId == null || item.hotelId == hotelId))
         .toList();
   }
 
