@@ -75,8 +75,7 @@ void main() {
   });
 
   group('LoginScreen', () {
-    testWidgets('mobile login shows native hero and status strip',
-        (tester) async {
+    testWidgets('mobile login shows task-focused sign-in card', (tester) async {
       final router = GoRouter(
         initialLocation: LoginScreen.route,
         routes: [
@@ -109,10 +108,51 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpAndSettle();
 
-      expect(find.text('Ivra'), findsOneWidget);
+      expect(find.text('Ivra'), findsNothing);
       expect(find.text('Sign in'), findsNWidgets(2));
-      expect(find.text('Demo mode'), findsNWidgets(2));
       expect(find.text('Password'), findsWidgets);
+    });
+
+    testWidgets('Arabic mobile login keeps RTL localized layout',
+        (tester) async {
+      final router = GoRouter(
+        initialLocation: LoginScreen.route,
+        routes: [
+          GoRoute(
+            path: LoginScreen.route,
+            builder: (context, state) => const LoginScreen(),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            theme: buildIvraTheme(Brightness.light),
+            locale: const Locale('ar'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            routerConfig: router,
+          ),
+        ),
+      );
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      await tester.pumpAndSettle();
+
+      final fieldDirection = Directionality.of(
+        tester.element(find.text('البريد الإلكتروني')),
+      );
+      expect(fieldDirection, TextDirection.rtl);
+      expect(find.text('تسجيل الدخول'), findsNWidgets(2));
+      expect(find.text('كلمة المرور'), findsOneWidget);
     });
 
     testWidgets('toggles password visibility', (tester) async {
@@ -407,7 +447,7 @@ void main() {
   });
 
   group('SettingsScreen', () {
-    testWidgets('mobile settings shows redesigned overview', (tester) async {
+    testWidgets('mobile settings shows compact status card', (tester) async {
       await _pumpIvraApp(tester, size: const Size(390, 844));
 
       GoRouter.of(tester.element(find.text('Dashboard').first))
@@ -418,6 +458,26 @@ void main() {
       expect(find.text('Demo mode'), findsWidgets);
       expect(find.text('Offline mode'), findsWidgets);
       expect(find.text('Language'), findsOneWidget);
+    });
+
+    testWidgets('Arabic mobile settings keep RTL localized layout',
+        (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(390, 844),
+        locale: const Locale('ar'),
+      );
+
+      GoRouter.of(tester.element(find.text('لوحة التحكم').first))
+          .go(SettingsScreen.route);
+      await tester.pumpAndSettle();
+
+      final settingsFinder = find.text('الإعدادات').first;
+      expect(
+          Directionality.of(tester.element(settingsFinder)), TextDirection.rtl);
+      expect(find.text('وضع العرض'), findsWidgets);
+      expect(find.text('وضع عدم الاتصال'), findsWidgets);
+      expect(find.text('اللغة'), findsOneWidget);
     });
 
     testWidgets('shows language selector', (tester) async {

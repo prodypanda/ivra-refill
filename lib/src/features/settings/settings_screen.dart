@@ -39,10 +39,7 @@ class SettingsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (isMobile) ...[
-              _SettingsMobileOverview(
-                useSupabase: useSupabase,
-                offlineMode: offlineMode,
-              ),
+              _SettingsMobileStatus(useSupabase: useSupabase),
               const SizedBox(height: 16),
             ],
             DropdownButtonFormField<Locale>(
@@ -331,146 +328,35 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-class _SettingsMobileOverview extends StatelessWidget {
-  const _SettingsMobileOverview({
-    required this.useSupabase,
-    required this.offlineMode,
-  });
+class _SettingsMobileStatus extends StatelessWidget {
+  const _SettingsMobileStatus({required this.useSupabase});
 
   final bool useSupabase;
-  final bool offlineMode;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colorScheme.primary.withValues(alpha: 0.12),
-            const Color(0xFFF59E0B).withValues(alpha: 0.12),
-          ],
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      child: ListTile(
+        leading: Icon(
+          useSupabase ? Icons.cloud_done_outlined : Icons.science_outlined,
+          color: colorScheme.primary,
         ),
-        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.14)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Icon(Icons.tune_outlined, color: colorScheme.primary),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.t('settings'),
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      useSupabase
-                          ? l10n.t('settingsSupabaseHint')
-                          : l10n.t('settingsNoSupabaseHint'),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _SettingsStatusPill(
-                  icon: useSupabase
-                      ? Icons.cloud_done_outlined
-                      : Icons.science_outlined,
-                  label: useSupabase
-                      ? l10n.t('settingsSupabaseConnected')
-                      : l10n.t('demoMode'),
-                  color: colorScheme.primary,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _SettingsStatusPill(
-                  icon: offlineMode
-                      ? Icons.sync_disabled_outlined
-                      : Icons.sync_outlined,
-                  label: l10n.t('settingsOfflineMode'),
-                  color: offlineMode ? Colors.orange.shade700 : Colors.green,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsStatusPill extends StatelessWidget {
-  const _SettingsStatusPill({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.68),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: color.withValues(alpha: 0.18)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 17, color: color),
-          const SizedBox(width: 7),
-          Expanded(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-          ),
-        ],
+        title: Text(useSupabase
+            ? l10n.t('settingsSupabaseConnected')
+            : l10n.t('demoMode')),
+        subtitle: Text(
+          useSupabase
+              ? l10n.t('settingsSupabaseHint')
+              : l10n.t('settingsNoSupabaseHint'),
+        ),
       ),
     );
   }
