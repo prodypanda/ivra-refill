@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/premium_snackbar.dart';
 
 class ApprovalsScreen extends ConsumerWidget {
   const ApprovalsScreen({super.key});
@@ -84,24 +85,60 @@ class ApprovalsScreen extends ConsumerWidget {
                                 icon: const Icon(Icons.check_outlined),
                                 label: Text(l10n.t('approvalsApprove')),
                                 onPressed: () async {
-                                  await ref
-                                      .read(repositoryProvider)
-                                      .approveRequest(
-                                        approvalRequestId: request.id,
+                                  try {
+                                    await ref
+                                        .read(repositoryProvider)
+                                        .approveRequest(
+                                          approvalRequestId: request.id,
+                                        );
+                                    _refreshAfterReview(ref);
+                                    if (context.mounted) {
+                                      PremiumSnackbar.show(
+                                        context,
+                                        l10n.t('approvalsApproved'),
+                                        icon: Icons.check_circle_outline,
                                       );
-                                  _refreshAfterReview(ref);
+                                    }
+                                  } catch (_) {
+                                    if (context.mounted) {
+                                      PremiumSnackbar.show(
+                                        context,
+                                        l10n.t('approvalsActionFailed'),
+                                        icon: Icons.error_outline,
+                                        isError: true,
+                                      );
+                                    }
+                                  }
                                 },
                               ),
                               OutlinedButton.icon(
                                 icon: const Icon(Icons.close_outlined),
                                 label: Text(l10n.t('approvalsReject')),
                                 onPressed: () async {
-                                  await ref
-                                      .read(repositoryProvider)
-                                      .rejectRequest(
-                                        approvalRequestId: request.id,
+                                  try {
+                                    await ref
+                                        .read(repositoryProvider)
+                                        .rejectRequest(
+                                          approvalRequestId: request.id,
+                                        );
+                                    _refreshAfterReview(ref);
+                                    if (context.mounted) {
+                                      PremiumSnackbar.show(
+                                        context,
+                                        l10n.t('approvalsRejected'),
+                                        icon: Icons.info_outline,
                                       );
-                                  _refreshAfterReview(ref);
+                                    }
+                                  } catch (_) {
+                                    if (context.mounted) {
+                                      PremiumSnackbar.show(
+                                        context,
+                                        l10n.t('approvalsActionFailed'),
+                                        icon: Icons.error_outline,
+                                        isError: true,
+                                      );
+                                    }
+                                  }
                                 },
                               ),
                             ],

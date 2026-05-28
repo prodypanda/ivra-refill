@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
@@ -45,11 +46,19 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     final useSupabase = ref.watch(useSupabaseProvider);
 
     final l10n = AppLocalizations.of(context);
+    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final canViewTeam = currentUser != null &&
+        currentUser.role != UserRole.hotelStaff;
+
     return PageScaffold(
       title: l10n.t('account'),
       onRefresh: () async {
         ref.invalidate(currentUserProvider);
-        await ref.read(currentUserProvider.future);
+        ref.invalidate(teamMembersProvider);
+        await Future.wait([
+          ref.read(currentUserProvider.future),
+          ref.read(teamMembersProvider.future),
+        ]);
       },
       child: AsyncValueView(
         value: ref.watch(currentUserProvider),
@@ -83,6 +92,10 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
                     isSigningOut: _isSigningOut,
                     onSignOut: _signOut,
                   ),
+                ],
+                if (canViewTeam) ...[
+                  const SizedBox(height: 20),
+                  _TeamAccountsCard(currentUserId: user.id),
                 ],
               ],
             ),
@@ -452,6 +465,161 @@ class _InfoChip extends StatelessWidget {
     return Chip(
       avatar: Icon(icon, size: 18),
       label: Text('$label: $value'),
+    );
+  }
+}
+
+class _TeamAccountsCard extends ConsumerWidget {
+  const _TeamAccountsCard({required this.currentUserId});
+
+  final String currentUserId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    final hotelsById = <String, String>{
+      for (final hotel
+          in ref.watch(hotelsProvider).valueOrNull ?? const <Hotel>[])
+        hotel.id: hotel.name,
+    };
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.groups_2_outlined),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.t('accountTeamAccounts'),
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            AsyncValueView(
+              value: ref.watch(teamMembersProvider),
+              onRetry: () => ref.invalidate(teamMembersProvider),
+              builder: (members) {
+                if (members.isEmpty) {
+                  return Text(l10n.t('accountNoOtherAccounts'));
+                }
+                return Column(
+                  children: [
+                    for (int i = 0; i < members.length; i++) ...[
+                      if (i > 0) const Divider(height: 1),
+                      _TeamMemberTile(
+                        member: members[i],
+                        isCurrentUser: members[i].id == currentUserId,
+                        hotelName: members[i].hotelId != null
+                            ? hotelsById[members[i].hotelId!]
+                            : null,
+                      ),
+                    ],
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TeamMemberTile extends StatelessWidget {
+  const _TeamMemberTile({
+    required this.member,
+    required this.isCurrentUser,
+    this.hotelName,
+  });
+
+  final UserProfile member;
+  final bool isCurrentUser;
+  final String? hotelName;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      leading: CircleAvatar(
+        backgroundColor: isCurrentUser
+            ? theme.colorScheme.primary.withValues(alpha: 0.15)
+            : theme.colorScheme.surfaceContainerHighest,
+        child: Icon(
+          Icons.person_outlined,
+          color: isCurrentUser
+              ? theme.colorScheme.primary
+              : theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+      title: Row(
+        children: [
+          Flexible(
+            child: Text(
+              member.fullName,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: isCurrentUser ? FontWeight.bold : FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          if (isCurrentUser) ...[
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                l10n.t('accountYou'),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+      subtitle: Text(
+        '${l10n.userRoleLabel(member.role)}'
+        '${hotelName != null ? ' · $hotelName' : ''}',
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: member.isActive
+              ? Colors.green.withValues(alpha: 0.1)
+              : theme.colorScheme.error.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          member.isActive
+              ? l10n.t('accountActive')
+              : l10n.t('accountInactive'),
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: member.isActive
+                ? Colors.green.shade700
+                : theme.colorScheme.error,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 }

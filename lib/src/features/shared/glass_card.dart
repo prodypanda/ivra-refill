@@ -29,7 +29,7 @@ class GlassCard extends StatelessWidget {
     final isMobile = MediaQuery.sizeOf(context).width < 720;
     final finalColor = color ??
         (isMobile
-            ? theme.colorScheme.surface.withValues(alpha: 0.88)
+            ? theme.colorScheme.surface.withValues(alpha: 0.94)
             : Colors.white.withValues(alpha: 0.7));
     final finalBorderColor = borderColor ??
         (isMobile

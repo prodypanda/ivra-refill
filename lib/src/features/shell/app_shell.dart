@@ -117,6 +117,7 @@ class AppShell extends ConsumerWidget {
           UserRole.hotelManager,
           UserRole.hotelStaff,
         },
+        shortLabel: l10n.t('dashboardShort'),
       ),
       _NavItem(
         l10n.t('hotels'),
@@ -285,32 +286,48 @@ class _MobileShell extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),
-            child: NavigationBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              height: 72,
-              selectedIndex: primaryIndex,
-              onDestinationSelected: (index) {
-                if (index == primaryItems.length - 1 && moreItems.isNotEmpty) {
-                  _showMoreDestinations(context, moreItems);
-                  return;
-                }
-                context.go(primaryItems[index].route);
-              },
-              destinations: [
-                for (var index = 0; index < primaryItems.length; index++)
-                  NavigationDestination(
-                    icon: Icon(
-                      index == primaryItems.length - 1 && moreItems.isNotEmpty
-                          ? Icons.more_horiz
-                          : primaryItems[index].icon,
+            child: Theme(
+              data: theme.copyWith(
+                navigationBarTheme: theme.navigationBarTheme.copyWith(
+                  labelTextStyle: WidgetStateProperty.all(
+                    theme.textTheme.labelSmall?.copyWith(
+                      fontSize: 11,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    label:
-                        index == primaryItems.length - 1 && moreItems.isNotEmpty
-                            ? l10n.t('more')
-                            : primaryItems[index].label,
                   ),
-              ],
+                ),
+              ),
+              child: NavigationBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                height: 80,
+                labelBehavior:
+                    NavigationDestinationLabelBehavior.alwaysShow,
+                selectedIndex: primaryIndex,
+                onDestinationSelected: (index) {
+                  if (index == primaryItems.length - 1 &&
+                      moreItems.isNotEmpty) {
+                    _showMoreDestinations(context, moreItems);
+                    return;
+                  }
+                  context.go(primaryItems[index].route);
+                },
+                destinations: [
+                  for (var index = 0; index < primaryItems.length; index++)
+                    NavigationDestination(
+                      icon: Icon(
+                        index == primaryItems.length - 1 &&
+                                moreItems.isNotEmpty
+                            ? Icons.more_horiz
+                            : primaryItems[index].icon,
+                      ),
+                      label: index == primaryItems.length - 1 &&
+                              moreItems.isNotEmpty
+                          ? l10n.t('more')
+                          : primaryItems[index].mobileLabel,
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -413,10 +430,14 @@ class _BrandMark extends StatelessWidget {
 }
 
 class _NavItem {
-  const _NavItem(this.label, this.icon, this.route, this.allowedRoles);
+  const _NavItem(this.label, this.icon, this.route, this.allowedRoles,
+      {this.shortLabel});
 
   final String label;
+  final String? shortLabel;
   final IconData icon;
   final String route;
   final Set<UserRole> allowedRoles;
+
+  String get mobileLabel => shortLabel ?? label;
 }

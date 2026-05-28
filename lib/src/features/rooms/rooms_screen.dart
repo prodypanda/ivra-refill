@@ -681,7 +681,7 @@ class _CompactRoomTile extends ConsumerWidget {
         width: 110,
         height: 85,
         decoration: BoxDecoration(
-          color: overallColor.withValues(alpha: 0.04),
+          color: overallColor.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: overallColor.withValues(alpha: 0.3),
@@ -715,7 +715,7 @@ class _CompactRoomTile extends ConsumerWidget {
                     child: Text(
                       '${roomProducts.length}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 9,
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -914,7 +914,7 @@ class _RoomCard extends ConsumerWidget {
             padding: EdgeInsets.all(isMobile ? 16 : 12)
                 .copyWith(left: 16, right: 16),
             decoration: BoxDecoration(
-              color: overallColor.withValues(alpha: isMobile ? 0.11 : 0.05),
+              color: overallColor.withValues(alpha: isMobile ? 0.14 : 0.08),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(isMobile ? 28 : 16),
                 topRight: Radius.circular(isMobile ? 28 : 16),
@@ -1324,7 +1324,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontFamily: 'monospace',
                     color: theme.colorScheme.onSurfaceVariant,
-                    fontSize: 11,
+                    fontSize: 12,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -1332,7 +1332,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                   '• ${(item.product.bottleVolumeMl / 1000).toStringAsFixed(0)}L',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
-                    fontSize: 11,
+                    fontSize: 12,
                   ),
                 ),
               ],
@@ -1352,7 +1352,7 @@ class _RoomCardProductRow extends ConsumerWidget {
               ),
               child: Text(
                 '${l10n.t('roomsLabelRefills')}: ${item.refillCount}',
-                style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+                style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
               ),
             ),
             Container(
@@ -1363,20 +1363,20 @@ class _RoomCardProductRow extends ConsumerWidget {
               ),
               child: Text(
                 '${l10n.t('roomsLabelAge')}: ${item.bottleAgeDays(DateTime.now())}${l10n.t('roomsLabelDaysUnit')}',
-                style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+                style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.1),
-                border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+                color: statusColor.withValues(alpha: 0.15),
+                border: Border.all(color: statusColor.withValues(alpha: 0.4)),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 item.status.value.replaceAll('_', ' '),
                 style: theme.textTheme.bodySmall?.copyWith(
-                  fontSize: 10,
+                  fontSize: 11,
                   color: statusColor,
                   fontWeight: FontWeight.bold,
                 ),
