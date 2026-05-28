@@ -420,12 +420,25 @@ class _InventoryTable extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.sizeOf(context).width < 720;
 
     if (items.isEmpty) {
       return EmptyState(
         icon: Icons.inventory_2_outlined,
         title: l10n.t('inventoryNoInventoryYet'),
         message: l10n.t('inventoryNoProductsInInventory'),
+      );
+    }
+
+    if (isMobile) {
+      return Column(
+        children: [
+          for (final item in items)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _InventoryMobileCard(item: item, language: language),
+            ),
+        ],
       );
     }
 
@@ -492,6 +505,202 @@ class _InventoryTable extends StatelessWidget {
                   ),
                 ],
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InventoryMobileCard extends StatelessWidget {
+  const _InventoryMobileCard({
+    required this.item,
+    required this.language,
+  });
+
+  final InventoryItem item;
+  final String language;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final lowStock = item.lowBottles || item.lowBidons;
+    final statusColor =
+        lowStock ? theme.colorScheme.error : theme.colorScheme.primary;
+
+    return GlassCard(
+      padding: const EdgeInsets.all(16),
+      borderRadius: 24,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  lowStock
+                      ? Icons.priority_high_rounded
+                      : Icons.inventory_2_outlined,
+                  color: statusColor,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.product.label(language),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.product.sku,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _InventoryStatusPill(lowStock: lowStock),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              _InventoryCountTile(
+                label: l10n.t('inventoryTableFullBottles'),
+                value: item.fullBottles,
+                icon: Icons.water_drop_outlined,
+                color: Colors.orange,
+              ),
+              const SizedBox(width: 10),
+              _InventoryCountTile(
+                label: l10n.t('inventoryTableFullBidons'),
+                value: item.fullBidons,
+                icon: Icons.propane_tank_outlined,
+                color: theme.colorScheme.primary,
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              _InventoryCountTile(
+                label: l10n.t('inventoryTableEmptyBottles'),
+                value: item.emptyBottles,
+                icon: Icons.recycling_outlined,
+                color: theme.colorScheme.tertiary,
+              ),
+              const SizedBox(width: 10),
+              _InventoryCountTile(
+                label: l10n.t('inventoryTableOpenBidons'),
+                value: item.openBidons,
+                icon: Icons.oil_barrel_outlined,
+                color: Colors.indigo,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InventoryStatusPill extends StatelessWidget {
+  const _InventoryStatusPill({required this.lowStock});
+
+  final bool lowStock;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final color =
+        lowStock ? theme.colorScheme.error : theme.colorScheme.primary;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        lowStock
+            ? l10n.t('inventoryStatusLowStock')
+            : l10n.t('inventoryStatusHealthy'),
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: color,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _InventoryCountTile extends StatelessWidget {
+  const _InventoryCountTile({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  final String label;
+  final int value;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value.toString(),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -765,6 +974,7 @@ class _SuggestedOrders extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.sizeOf(context).width < 720;
 
     if (orders.isEmpty) {
       return EmptyState(
@@ -774,65 +984,80 @@ class _SuggestedOrders extends StatelessWidget {
       );
     }
 
+    final cards = [
+      for (final order in orders)
+        SizedBox(
+          width: isMobile ? double.infinity : 320,
+          child: GlassCard(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.shopping_cart_outlined,
+                        color: theme.colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        order.product.label(language),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 24),
+                _SuggestedOrderRow(
+                  Icons.water_drop_outlined,
+                  l10n.tParams(
+                    'orderNewBottlesText',
+                    {'count': '${order.bottlesToOrder}'},
+                  ),
+                  Colors.orange,
+                ),
+                const SizedBox(height: 8),
+                _SuggestedOrderRow(
+                  Icons.propane_tank_outlined,
+                  l10n.tParams(
+                    'orderNewBidonsText',
+                    {'count': '${order.bidonsToOrder}'},
+                  ),
+                  theme.colorScheme.primary,
+                ),
+                const SizedBox(height: 8),
+                _SuggestedOrderRow(
+                  Icons.recycling_outlined,
+                  l10n.tParams(
+                    'recycleBottlesText',
+                    {'count': '${order.bottlesToRecycle}'},
+                  ),
+                  theme.colorScheme.error,
+                ),
+              ],
+            ),
+          ),
+        ),
+    ];
+
+    if (isMobile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final card in cards)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: card,
+            ),
+        ],
+      );
+    }
+
     return Wrap(
       spacing: 16,
       runSpacing: 16,
-      children: [
-        for (final order in orders)
-          SizedBox(
-            width: 320,
-            child: GlassCard(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.shopping_cart_outlined,
-                          color: theme.colorScheme.primary),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          order.product.label(language),
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 24),
-                  _SuggestedOrderRow(
-                    Icons.water_drop_outlined,
-                    l10n.tParams(
-                      'orderNewBottlesText',
-                      {'count': '${order.bottlesToOrder}'},
-                    ),
-                    Colors.orange,
-                  ),
-                  const SizedBox(height: 8),
-                  _SuggestedOrderRow(
-                    Icons.propane_tank_outlined,
-                    l10n.tParams(
-                      'orderNewBidonsText',
-                      {'count': '${order.bidonsToOrder}'},
-                    ),
-                    theme.colorScheme.primary,
-                  ),
-                  const SizedBox(height: 8),
-                  _SuggestedOrderRow(
-                    Icons.recycling_outlined,
-                    l10n.tParams(
-                      'recycleBottlesText',
-                      {'count': '${order.bottlesToRecycle}'},
-                    ),
-                    theme.colorScheme.error,
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
+      children: cards,
     );
   }
 }
