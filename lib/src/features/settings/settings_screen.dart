@@ -17,6 +17,8 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isMobile = MediaQuery.sizeOf(context).width < 720;
     final locale = ref.watch(localeProvider);
     final useSupabase = ref.watch(useSupabaseProvider);
     final offlineMode = ref.watch(offlineModeProvider);
@@ -36,6 +38,10 @@ class SettingsScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (isMobile) ...[
+              _SettingsMobileStatus(useSupabase: useSupabase),
+              const SizedBox(height: 16),
+            ],
             DropdownButtonFormField<Locale>(
               initialValue: locale,
               decoration: InputDecoration(labelText: l10n.t('language')),
@@ -51,30 +57,41 @@ class SettingsScreen extends ConsumerWidget {
                 }
               },
             ),
-            const SizedBox(height: 20),
-            Card(
-              child: ListTile(
-                leading: Icon(
-                  useSupabase
-                      ? Icons.cloud_done_outlined
-                      : Icons.science_outlined,
-                ),
-                title: Text(useSupabase
-                    ? l10n.t('settingsSupabaseConnected')
-                    : l10n.t('demoMode')),
-                subtitle: Text(
-                  useSupabase
-                      ? l10n.t('settingsSupabaseHint')
-                      : l10n.t('settingsNoSupabaseHint'),
+            if (!isMobile) ...[
+              const SizedBox(height: 20),
+              Card(
+                child: ListTile(
+                  leading: Icon(
+                    useSupabase
+                        ? Icons.cloud_done_outlined
+                        : Icons.science_outlined,
+                  ),
+                  title: Text(useSupabase
+                      ? l10n.t('settingsSupabaseConnected')
+                      : l10n.t('demoMode')),
+                  subtitle: Text(
+                    useSupabase
+                        ? l10n.t('settingsSupabaseHint')
+                        : l10n.t('settingsNoSupabaseHint'),
+                  ),
                 ),
               ),
-            ),
+            ],
             if (!useSupabase) ...[
               const SizedBox(height: 20),
               const _DemoUserSwitcher(),
             ],
             const SizedBox(height: 20),
             Card(
+              elevation: isMobile ? 0 : null,
+              shape: isMobile
+                  ? RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      side: BorderSide(
+                        color: theme.colorScheme.outlineVariant,
+                      ),
+                    )
+                  : null,
               child: SwitchListTile(
                 secondary: const Icon(Icons.sync_disabled_outlined),
                 title:
@@ -311,6 +328,40 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+class _SettingsMobileStatus extends StatelessWidget {
+  const _SettingsMobileStatus({required this.useSupabase});
+
+  final bool useSupabase;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      child: ListTile(
+        leading: Icon(
+          useSupabase ? Icons.cloud_done_outlined : Icons.science_outlined,
+          color: colorScheme.primary,
+        ),
+        title: Text(useSupabase
+            ? l10n.t('settingsSupabaseConnected')
+            : l10n.t('demoMode')),
+        subtitle: Text(
+          useSupabase
+              ? l10n.t('settingsSupabaseHint')
+              : l10n.t('settingsNoSupabaseHint'),
+        ),
+      ),
+    );
+  }
+}
+
 class _OfflineActionTile extends StatelessWidget {
   const _OfflineActionTile({
     required this.action,
@@ -392,11 +443,21 @@ class _DemoUserSwitcher extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final isMobile = MediaQuery.sizeOf(context).width < 720;
 
     return AsyncValueView(
       value: ref.watch(demoUsersProvider),
       onRetry: () => ref.invalidate(demoUsersProvider),
       builder: (users) => Card(
+        elevation: isMobile ? 0 : null,
+        shape: isMobile
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+              )
+            : null,
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(
@@ -409,6 +470,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: currentUser?.id,
+                isExpanded: true,
                 decoration: InputDecoration(
                   labelText:
                       AppLocalizations.of(context).t('settingsTestAccessAs'),
@@ -420,6 +482,8 @@ class _DemoUserSwitcher extends ConsumerWidget {
                       value: user.id,
                       child: Text(
                         '${user.fullName} (${AppLocalizations.of(context).userRoleLabel(user.role)})',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                 ],
