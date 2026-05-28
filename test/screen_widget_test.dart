@@ -199,6 +199,23 @@ void main() {
       expect(find.text('Low stock'), findsWidgets);
     });
 
+    testWidgets('mobile inventory uses stock cards instead of data table',
+        (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(390, 844),
+        currentUser: _userForRole(UserRole.hotelStaff),
+      );
+
+      GoRouter.of(tester.element(find.text('Dashboard').first))
+          .go(InventoryScreen.route);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(DataTable), findsNothing);
+      expect(find.text('IVR-SHA-1L'), findsOneWidget);
+      expect(find.text('Low stock'), findsWidgets);
+    });
+
     testWidgets('shows adjust stock button', (tester) async {
       await _pumpIvraApp(
         tester,
