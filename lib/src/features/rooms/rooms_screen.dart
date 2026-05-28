@@ -1263,7 +1263,7 @@ class _RoomCardProductRow extends ConsumerWidget {
       BottleStatus.lost =>
         theme.colorScheme.error,
       BottleStatus.needsRefill => Colors.orange.shade700,
-      _ => Colors.orange.shade700,
+      _ => Colors.green.shade700,
     };
 
     return LayoutBuilder(

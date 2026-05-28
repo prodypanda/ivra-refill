@@ -264,6 +264,27 @@ void main() {
       expect(find.text('All OK'), findsWidgets);
       expect(find.textContaining('Room '), findsWidgets);
     });
+
+    testWidgets('Arabic mobile rooms keep RTL localized layout',
+        (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(390, 844),
+        locale: const Locale('ar'),
+        currentUser: _userForRole(UserRole.hotelStaff),
+      );
+
+      GoRouter.of(tester.element(find.text('لوحة التحكم').first))
+          .go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      final roomsContext = tester.element(find.text('الغرف').first);
+      expect(Directionality.of(roomsContext), TextDirection.rtl);
+      expect(find.text('انتباه مطلوب'), findsWidgets);
+      expect(find.text('تعبئة مطلوبة'), findsWidgets);
+      expect(find.text('كل شيء سليم'), findsWidgets);
+      expect(find.textContaining('غرفة '), findsWidgets);
+    });
   });
 
   group('ReportsScreen', () {
