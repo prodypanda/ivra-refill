@@ -13,6 +13,7 @@ import 'package:ivra_refill/src/features/alerts/alerts_screen.dart';
 import 'package:ivra_refill/src/features/auth/login_screen.dart';
 import 'package:ivra_refill/src/features/inventory/inventory_screen.dart';
 import 'package:ivra_refill/src/features/reports/reports_screen.dart';
+import 'package:ivra_refill/src/features/rooms/rooms_screen.dart';
 import 'package:ivra_refill/src/features/settings/settings_screen.dart';
 import 'package:ivra_refill/src/features/account/account_screen.dart';
 import 'package:ivra_refill/src/features/shared/offline_banner.dart';
@@ -242,6 +243,47 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Suggested orders'), findsWidgets);
+    });
+  });
+
+  group('RoomsScreen', () {
+    testWidgets('mobile rooms show summary and rounded room cards',
+        (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(390, 844),
+        currentUser: _userForRole(UserRole.hotelStaff),
+      );
+
+      GoRouter.of(tester.element(find.text('Dashboard').first))
+          .go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Attention Required'), findsWidgets);
+      expect(find.text('Refill Needed'), findsWidgets);
+      expect(find.text('All OK'), findsWidgets);
+      expect(find.textContaining('Room '), findsWidgets);
+    });
+
+    testWidgets('Arabic mobile rooms keep RTL localized layout',
+        (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(390, 844),
+        locale: const Locale('ar'),
+        currentUser: _userForRole(UserRole.hotelStaff),
+      );
+
+      GoRouter.of(tester.element(find.text('لوحة التحكم').first))
+          .go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      final roomsContext = tester.element(find.text('الغرف').first);
+      expect(Directionality.of(roomsContext), TextDirection.rtl);
+      expect(find.text('انتباه مطلوب'), findsWidgets);
+      expect(find.text('تعبئة مطلوبة'), findsWidgets);
+      expect(find.text('كل شيء سليم'), findsWidgets);
+      expect(find.textContaining('غرفة '), findsWidgets);
     });
   });
 
