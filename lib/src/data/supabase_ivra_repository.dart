@@ -194,7 +194,10 @@ class SupabaseIvraRepository implements IvraRepository {
 
   @override
   Future<List<ApprovalRequest>> approvalRequests({String? hotelId}) async {
-    var query = _client.from('approval_request_summaries').select();
+    var query = _client
+        .from('approval_request_summaries')
+        .select()
+        .eq('status', 'pending');
     if (hotelId != null) query = query.eq('hotel_id', hotelId);
     final rows = await _fetchWithCache(
       'approval_requests_${hotelId ?? 'all'}',

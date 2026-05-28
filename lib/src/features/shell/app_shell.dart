@@ -251,11 +251,14 @@ class _MobileShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final primaryItems = navItems.take(3).toList();
-    final moreItems = navItems.skip(3).toList();
+    const maxPrimary = 3;
+    final hasMore = navItems.length > maxPrimary;
+    final primaryItems = navItems.take(maxPrimary).toList();
+    final moreItems = navItems.skip(maxPrimary).toList();
+    final destinationCount = primaryItems.length + (hasMore ? 1 : 0);
     final primaryIndex = selectedIndex < primaryItems.length
         ? selectedIndex
-        : primaryItems.length - 1;
+        : destinationCount - 1;
     final theme = Theme.of(context);
 
     return Container(
@@ -305,8 +308,7 @@ class _MobileShell extends StatelessWidget {
                     NavigationDestinationLabelBehavior.alwaysShow,
                 selectedIndex: primaryIndex,
                 onDestinationSelected: (index) {
-                  if (index == primaryItems.length - 1 &&
-                      moreItems.isNotEmpty) {
+                  if (hasMore && index == primaryItems.length) {
                     _showMoreDestinations(context, moreItems);
                     return;
                   }
@@ -315,16 +317,13 @@ class _MobileShell extends StatelessWidget {
                 destinations: [
                   for (var index = 0; index < primaryItems.length; index++)
                     NavigationDestination(
-                      icon: Icon(
-                        index == primaryItems.length - 1 &&
-                                moreItems.isNotEmpty
-                            ? Icons.more_horiz
-                            : primaryItems[index].icon,
-                      ),
-                      label: index == primaryItems.length - 1 &&
-                              moreItems.isNotEmpty
-                          ? l10n.t('more')
-                          : primaryItems[index].mobileLabel,
+                      icon: Icon(primaryItems[index].icon),
+                      label: primaryItems[index].mobileLabel,
+                    ),
+                  if (hasMore)
+                    NavigationDestination(
+                      icon: const Icon(Icons.more_horiz),
+                      label: l10n.t('more'),
                     ),
                 ],
               ),
