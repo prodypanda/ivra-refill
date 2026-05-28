@@ -251,11 +251,14 @@ class _MobileShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final primaryItems = navItems.take(3).toList();
-    final moreItems = navItems.skip(3).toList();
-    final primaryIndex = selectedIndex < primaryItems.length
-        ? selectedIndex
-        : primaryItems.length - 1;
+    final maxPrimary = 4;
+    final hasMore = navItems.length > maxPrimary;
+    final primaryCount = hasMore ? maxPrimary - 1 : navItems.length;
+    final primaryItems = navItems.take(primaryCount).toList();
+    final moreItems = navItems.skip(primaryCount).toList();
+    final barItemCount = primaryCount + (hasMore ? 1 : 0);
+    final primaryIndex =
+        selectedIndex < primaryCount ? selectedIndex : (hasMore ? primaryCount : 0);
     final theme = Theme.of(context);
 
     return Container(
@@ -305,24 +308,21 @@ class _MobileShell extends StatelessWidget {
                     NavigationDestinationLabelBehavior.alwaysShow,
                 selectedIndex: primaryIndex,
                 onDestinationSelected: (index) {
-                  if (index == primaryItems.length - 1 &&
-                      moreItems.isNotEmpty) {
+                  if (hasMore && index == primaryCount) {
                     _showMoreDestinations(context, moreItems);
                     return;
                   }
                   context.go(primaryItems[index].route);
                 },
                 destinations: [
-                  for (var index = 0; index < primaryItems.length; index++)
+                  for (var index = 0; index < barItemCount; index++)
                     NavigationDestination(
                       icon: Icon(
-                        index == primaryItems.length - 1 &&
-                                moreItems.isNotEmpty
+                        index == primaryCount && hasMore
                             ? Icons.more_horiz
                             : primaryItems[index].icon,
                       ),
-                      label: index == primaryItems.length - 1 &&
-                              moreItems.isNotEmpty
+                      label: index == primaryCount && hasMore
                           ? l10n.t('more')
                           : primaryItems[index].mobileLabel,
                     ),
