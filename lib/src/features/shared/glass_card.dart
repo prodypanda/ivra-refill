@@ -25,16 +25,27 @@ class GlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final finalColor = color ?? Colors.white.withValues(alpha: 0.7);
-    final finalBorderColor = borderColor ?? Colors.white.withValues(alpha: 0.4);
-    
-    final finalShadows = boxShadow ?? [
-      BoxShadow(
-        color: const Color(0xFF92400E).withValues(alpha: 0.08),
-        blurRadius: 12.0,
-        offset: const Offset(0, 4),
-      ),
-    ];
+    final theme = Theme.of(context);
+    final isMobile = MediaQuery.sizeOf(context).width < 720;
+    final finalColor = color ??
+        (isMobile
+            ? theme.colorScheme.surface.withValues(alpha: 0.88)
+            : Colors.white.withValues(alpha: 0.7));
+    final finalBorderColor = borderColor ??
+        (isMobile
+            ? theme.colorScheme.outlineVariant.withValues(alpha: 0.36)
+            : Colors.white.withValues(alpha: 0.4));
+
+    final finalShadows = boxShadow ??
+        [
+          BoxShadow(
+            color: const Color(0xFF92400E).withValues(
+              alpha: isMobile ? 0.12 : 0.08,
+            ),
+            blurRadius: isMobile ? 20.0 : 12.0,
+            offset: Offset(0, isMobile ? 10 : 4),
+          ),
+        ];
 
     return Container(
       decoration: BoxDecoration(

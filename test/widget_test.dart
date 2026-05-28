@@ -29,12 +29,12 @@ void main() {
     expect(find.text('Dashboard'), findsWidgets);
   });
 
-  testWidgets('mobile layout uses app bar drawer shell', (tester) async {
+  testWidgets('mobile layout uses bottom navigation shell', (tester) async {
     await _pumpIvraApp(tester, size: const Size(390, 844));
 
     expect(find.byType(NavigationRail), findsNothing);
-    expect(find.byType(AppBar), findsWidgets);
-    expect(find.text('Ivra'), findsWidgets);
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.text('More'), findsOneWidget);
   });
 
   testWidgets('Arabic locale renders core navigation as RTL', (tester) async {
