@@ -17,6 +17,8 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final isMobile = MediaQuery.sizeOf(context).width < 720;
     final locale = ref.watch(localeProvider);
     final useSupabase = ref.watch(useSupabaseProvider);
     final offlineMode = ref.watch(offlineModeProvider);
@@ -36,6 +38,13 @@ class SettingsScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (isMobile) ...[
+              _SettingsMobileOverview(
+                useSupabase: useSupabase,
+                offlineMode: offlineMode,
+              ),
+              const SizedBox(height: 16),
+            ],
             DropdownButtonFormField<Locale>(
               initialValue: locale,
               decoration: InputDecoration(labelText: l10n.t('language')),
@@ -51,30 +60,41 @@ class SettingsScreen extends ConsumerWidget {
                 }
               },
             ),
-            const SizedBox(height: 20),
-            Card(
-              child: ListTile(
-                leading: Icon(
-                  useSupabase
-                      ? Icons.cloud_done_outlined
-                      : Icons.science_outlined,
-                ),
-                title: Text(useSupabase
-                    ? l10n.t('settingsSupabaseConnected')
-                    : l10n.t('demoMode')),
-                subtitle: Text(
-                  useSupabase
-                      ? l10n.t('settingsSupabaseHint')
-                      : l10n.t('settingsNoSupabaseHint'),
+            if (!isMobile) ...[
+              const SizedBox(height: 20),
+              Card(
+                child: ListTile(
+                  leading: Icon(
+                    useSupabase
+                        ? Icons.cloud_done_outlined
+                        : Icons.science_outlined,
+                  ),
+                  title: Text(useSupabase
+                      ? l10n.t('settingsSupabaseConnected')
+                      : l10n.t('demoMode')),
+                  subtitle: Text(
+                    useSupabase
+                        ? l10n.t('settingsSupabaseHint')
+                        : l10n.t('settingsNoSupabaseHint'),
+                  ),
                 ),
               ),
-            ),
+            ],
             if (!useSupabase) ...[
               const SizedBox(height: 20),
               const _DemoUserSwitcher(),
             ],
             const SizedBox(height: 20),
             Card(
+              elevation: isMobile ? 0 : null,
+              shape: isMobile
+                  ? RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      side: BorderSide(
+                        color: theme.colorScheme.outlineVariant,
+                      ),
+                    )
+                  : null,
               child: SwitchListTile(
                 secondary: const Icon(Icons.sync_disabled_outlined),
                 title:
@@ -311,6 +331,151 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+class _SettingsMobileOverview extends StatelessWidget {
+  const _SettingsMobileOverview({
+    required this.useSupabase,
+    required this.offlineMode,
+  });
+
+  final bool useSupabase;
+  final bool offlineMode;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colorScheme.primary.withValues(alpha: 0.12),
+            const Color(0xFFF59E0B).withValues(alpha: 0.12),
+          ],
+        ),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.14)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Icon(Icons.tune_outlined, color: colorScheme.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.t('settings'),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      useSupabase
+                          ? l10n.t('settingsSupabaseHint')
+                          : l10n.t('settingsNoSupabaseHint'),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _SettingsStatusPill(
+                  icon: useSupabase
+                      ? Icons.cloud_done_outlined
+                      : Icons.science_outlined,
+                  label: useSupabase
+                      ? l10n.t('settingsSupabaseConnected')
+                      : l10n.t('demoMode'),
+                  color: colorScheme.primary,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _SettingsStatusPill(
+                  icon: offlineMode
+                      ? Icons.sync_disabled_outlined
+                      : Icons.sync_outlined,
+                  label: l10n.t('settingsOfflineMode'),
+                  color: offlineMode ? Colors.orange.shade700 : Colors.green,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SettingsStatusPill extends StatelessWidget {
+  const _SettingsStatusPill({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.68),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 17, color: color),
+          const SizedBox(width: 7),
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _OfflineActionTile extends StatelessWidget {
   const _OfflineActionTile({
     required this.action,
@@ -392,11 +557,21 @@ class _DemoUserSwitcher extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final isMobile = MediaQuery.sizeOf(context).width < 720;
 
     return AsyncValueView(
       value: ref.watch(demoUsersProvider),
       onRetry: () => ref.invalidate(demoUsersProvider),
       builder: (users) => Card(
+        elevation: isMobile ? 0 : null,
+        shape: isMobile
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+              )
+            : null,
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(
@@ -409,6 +584,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: currentUser?.id,
+                isExpanded: true,
                 decoration: InputDecoration(
                   labelText:
                       AppLocalizations.of(context).t('settingsTestAccessAs'),
@@ -420,6 +596,8 @@ class _DemoUserSwitcher extends ConsumerWidget {
                       value: user.id,
                       child: Text(
                         '${user.fullName} (${AppLocalizations.of(context).userRoleLabel(user.role)})',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                 ],

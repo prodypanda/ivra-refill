@@ -75,6 +75,46 @@ void main() {
   });
 
   group('LoginScreen', () {
+    testWidgets('mobile login shows native hero and status strip',
+        (tester) async {
+      final router = GoRouter(
+        initialLocation: LoginScreen.route,
+        routes: [
+          GoRoute(
+            path: LoginScreen.route,
+            builder: (context, state) => const LoginScreen(),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            theme: buildIvraTheme(Brightness.light),
+            locale: const Locale('en'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            routerConfig: router,
+          ),
+        ),
+      );
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetPhysicalSize);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ivra'), findsOneWidget);
+      expect(find.text('Sign in'), findsNWidgets(2));
+      expect(find.text('Demo mode'), findsNWidgets(2));
+      expect(find.text('Password'), findsWidgets);
+    });
+
     testWidgets('toggles password visibility', (tester) async {
       final router = GoRouter(
         initialLocation: LoginScreen.route,
@@ -367,6 +407,19 @@ void main() {
   });
 
   group('SettingsScreen', () {
+    testWidgets('mobile settings shows redesigned overview', (tester) async {
+      await _pumpIvraApp(tester, size: const Size(390, 844));
+
+      GoRouter.of(tester.element(find.text('Dashboard').first))
+          .go(SettingsScreen.route);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Settings'), findsWidgets);
+      expect(find.text('Demo mode'), findsWidgets);
+      expect(find.text('Offline mode'), findsWidgets);
+      expect(find.text('Language'), findsOneWidget);
+    });
+
     testWidgets('shows language selector', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
