@@ -380,6 +380,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       )
                     : DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
+                          isExpanded: true,
                           value: selectedHotelId,
                           hint: Text(l10n.t('roomsSelectHotelFirst')),
                           icon:
@@ -390,6 +391,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                 value: hotel.id,
                                 child: Text(
                                   hotel.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w600),
                                 ),

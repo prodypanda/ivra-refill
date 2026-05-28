@@ -796,7 +796,25 @@ void main() {
 
       expect(find.byType(NavigationRail), findsNothing);
       expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.text('Rooms'), findsWidgets);
       expect(find.text('More'), findsOneWidget);
+    });
+
+    testWidgets('mobile rooms is directly reachable from bottom navigation',
+        (tester) async {
+      await _pumpIvraApp(tester, size: const Size(375, 812));
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.text('Rooms'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BottomSheet), findsNothing);
+      expect(find.text('Rooms'), findsWidgets);
+      expect(find.text('Attention Required'), findsWidgets);
     });
 
     testWidgets('mobile more menu opens secondary destinations',
@@ -809,7 +827,8 @@ void main() {
       expect(find.byType(BottomSheet), findsOneWidget);
       expect(find.text('Team'), findsWidgets);
       expect(find.text('Account'), findsWidgets);
-      expect(find.text('Inventory'), findsWidgets);
+      expect(find.text('Products'), findsWidgets);
+      expect(find.text('Rooms'), findsWidgets);
     });
 
     testWidgets('extended rail appears at wide width', (tester) async {
