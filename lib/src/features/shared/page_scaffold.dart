@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class PageScaffold extends StatelessWidget {
+import '../../state/app_state.dart';
+import '../account/account_screen.dart';
+
+class PageScaffold extends ConsumerWidget {
   const PageScaffold({
     required this.title,
     required this.child,
@@ -15,7 +20,40 @@ class PageScaffold extends StatelessWidget {
   final Future<void> Function()? onRefresh;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider).valueOrNull;
+    String initials = '';
+    if (user != null) {
+      final parts = user.fullName.trim().split(RegExp(r'\s+'));
+      initials = parts.length >= 2
+          ? '${parts.first[0]}${parts.last[0]}'.toUpperCase()
+          : (parts.first.isNotEmpty ? parts.first[0].toUpperCase() : '');
+    }
+
+    final accountButton = Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: GestureDetector(
+        onTap: () => context.go(AccountScreen.route),
+        child: CircleAvatar(
+          radius: 17,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          child: user != null
+              ? Text(
+                  initials,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                )
+              : Icon(
+                  Icons.person,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+        ),
+      ),
+    );
     final width = MediaQuery.sizeOf(context).width;
     final isMobile = width < 720;
     final horizontalPadding = width < 420
@@ -42,7 +80,7 @@ class PageScaffold extends StatelessWidget {
                   letterSpacing: -0.7,
                 ),
           ),
-          actions: actions,
+          actions: [...actions, accountButton],
         ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(

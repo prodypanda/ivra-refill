@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
-import '../account/account_screen.dart';
+
 import '../alerts/alerts_screen.dart';
 import '../approvals/approvals_screen.dart';
 import '../dashboard/dashboard_screen.dart';
@@ -170,17 +170,7 @@ class AppShell extends ConsumerWidget {
           UserRole.hotelManager,
         },
       ),
-      _NavItem(
-        l10n.t('account'),
-        Icons.account_circle_outlined,
-        AccountScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-          UserRole.hotelStaff,
-        },
-      ),
+
       _NavItem(
         l10n.t('approvals'),
         Icons.fact_check_outlined,

@@ -31,7 +31,51 @@ class ApprovalsScreen extends ConsumerWidget {
       child: AsyncValueView(
         value: ref.watch(approvalsProvider),
         onRetry: () => ref.invalidate(approvalsProvider),
-        builder: (requests) => Column(
+        builder: (requests) {
+          if (requests.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.fact_check_outlined,
+                      size: 64,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.3),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.t('approvalsEmpty'),
+                      style:
+                          Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.5),
+                              ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.t('approvalsEmptySubtitle'),
+                      style:
+                          Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.4),
+                              ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          return Column(
           children: [
             for (final request in requests)
               Padding(
@@ -166,7 +210,8 @@ class ApprovalsScreen extends ConsumerWidget {
                 ),
               ),
           ],
-        ),
+        );
+        },
       ),
     );
   }

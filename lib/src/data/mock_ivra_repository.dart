@@ -353,7 +353,10 @@ class MockIvraRepository implements IvraRepository {
   @override
   Future<List<UserProfile>> teamMembers({String? hotelId}) async {
     return _teamMembers
-        .where((member) => hotelId == null || member.hotelId == hotelId)
+        .where((member) =>
+            hotelId == null ||
+            member.hotelId == hotelId ||
+            member.hotelId == null)
         .toList();
   }
 

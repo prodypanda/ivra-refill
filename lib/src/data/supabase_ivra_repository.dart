@@ -114,7 +114,9 @@ class SupabaseIvraRepository implements IvraRepository {
   @override
   Future<List<UserProfile>> teamMembers({String? hotelId}) async {
     var query = _client.from('profiles').select();
-    if (hotelId != null) query = query.eq('hotel_id', hotelId);
+    if (hotelId != null) {
+      query = query.or('hotel_id.eq.$hotelId,hotel_id.is.null');
+    }
     final rows = await _fetchWithCache(
       'team_members_${hotelId ?? 'all'}',
       () => query.order('full_name'),
