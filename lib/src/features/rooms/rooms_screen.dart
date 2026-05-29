@@ -422,6 +422,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         const Icon(Icons.search, size: 20, color: Colors.grey),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
+                            tooltip: l10n.t('roomsClearSearch'),
                             icon: const Icon(Icons.clear, size: 16),
                             onPressed: () {
                               _searchController.clear();
@@ -989,6 +990,7 @@ class _RoomCard extends ConsumerWidget {
                       if (isDialog) ...[
                         const SizedBox(width: 8),
                         IconButton(
+                          tooltip: l10n.t('roomsBtnClose'),
                           icon: const Icon(Icons.close, size: 20),
                           onPressed: () => Navigator.of(context).pop(),
                           visualDensity: VisualDensity.compact,
