@@ -11,16 +11,16 @@ class PremiumSnackbar {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
-    final backgroundColor = isError 
+
+    final backgroundColor = isError
         ? colorScheme.errorContainer.withValues(alpha: 0.85)
         : colorScheme.surface.withValues(alpha: 0.85);
-        
-    final textColor = isError 
-        ? colorScheme.onErrorContainer
-        : colorScheme.onSurface;
-        
-    final iconColorToUse = iconColor ?? (isError ? colorScheme.error : colorScheme.primary);
+
+    final textColor =
+        isError ? colorScheme.onErrorContainer : colorScheme.onSurface;
+
+    final iconColorToUse =
+        iconColor ?? (isError ? colorScheme.error : colorScheme.primary);
 
     final snackBar = SnackBar(
       elevation: 0,

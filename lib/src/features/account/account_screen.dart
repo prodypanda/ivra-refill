@@ -47,8 +47,8 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
 
     final l10n = AppLocalizations.of(context);
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
-    final canViewTeam = currentUser != null &&
-        currentUser.role != UserRole.hotelStaff;
+    final canViewTeam =
+        currentUser != null && currentUser.role != UserRole.hotelStaff;
 
     return PageScaffold(
       title: l10n.t('account'),
@@ -609,9 +609,7 @@ class _TeamMemberTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
-          member.isActive
-              ? l10n.t('accountActive')
-              : l10n.t('accountInactive'),
+          member.isActive ? l10n.t('accountActive') : l10n.t('accountInactive'),
           style: theme.textTheme.labelSmall?.copyWith(
             color: member.isActive
                 ? Colors.green.shade700

@@ -79,4 +79,3 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
     return widget.child;
   }
 }
-

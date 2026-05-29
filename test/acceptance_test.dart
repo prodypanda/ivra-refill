@@ -79,8 +79,7 @@ void main() {
       }
       expect(rooms.length, 2);
 
-      final roomProducts =
-          await repository.roomProducts(hotelId: user.hotelId);
+      final roomProducts = await repository.roomProducts(hotelId: user.hotelId);
       for (final rp in roomProducts) {
         expect(rp.hotelId, 'hotel-seaside');
       }
@@ -190,8 +189,8 @@ void main() {
       );
 
       // Live hotel name should remain unchanged
-      final liveHotel = (await repository.hotels())
-          .firstWhere((h) => h.id == hotel.id);
+      final liveHotel =
+          (await repository.hotels()).firstWhere((h) => h.id == hotel.id);
       expect(liveHotel.name, originalName);
     });
 
@@ -211,8 +210,8 @@ void main() {
       final request = (await repository.approvalRequests()).first;
       await repository.approveRequest(approvalRequestId: request.id);
 
-      final updated = (await repository.hotels())
-          .firstWhere((h) => h.id == hotel.id);
+      final updated =
+          (await repository.hotels()).firstWhere((h) => h.id == hotel.id);
       expect(updated.name, 'Approved Seaside');
       expect(updated.address, '1 Approved St');
     });
@@ -234,8 +233,8 @@ void main() {
       final request = (await repository.approvalRequests()).first;
       await repository.rejectRequest(approvalRequestId: request.id);
 
-      final liveHotel = (await repository.hotels())
-          .firstWhere((h) => h.id == hotel.id);
+      final liveHotel =
+          (await repository.hotels()).firstWhere((h) => h.id == hotel.id);
       expect(liveHotel.name, originalName);
     });
 
@@ -485,8 +484,7 @@ void main() {
     test('suggested orders calculate positive quantities for low stock',
         () async {
       final repository = MockIvraRepository();
-      final orders =
-          await repository.suggestedOrders(hotelId: 'hotel-seaside');
+      final orders = await repository.suggestedOrders(hotelId: 'hotel-seaside');
 
       // Shampoo should have suggested order because of low stock
       final shampooOrder = orders.firstWhere(
@@ -716,7 +714,8 @@ void main() {
       expect(alertsPdf.length, greaterThan(100));
     });
 
-    test('English, French, and Arabic labels are available via AppLocalizations',
+    test(
+        'English, French, and Arabic labels are available via AppLocalizations',
         () {
       final en = AppLocalizations(const Locale('en'));
       final fr = AppLocalizations(const Locale('fr'));
@@ -741,8 +740,7 @@ void main() {
       expect(ar.t('inventory'), 'المخزون');
     });
 
-    test(
-        'all 3 languages have dashboard, hotels, rooms, inventory keys', () {
+    test('all 3 languages have dashboard, hotels, rooms, inventory keys', () {
       for (final locale in AppLocalizations.supportedLocales) {
         final l10n = AppLocalizations(locale);
         for (final key in ['dashboard', 'hotels', 'rooms', 'inventory']) {
