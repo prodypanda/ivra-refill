@@ -1,0 +1,3 @@
+## 2024-05-14 - Replace ListView with ListView.builder
+**Learning:** For long lists in Flutter, `ListView` can be a performance bottleneck because it builds all its children at once. Replacing it with `ListView.builder` ensures that children are only built when they are scrolled into view, saving memory and improving performance. I have found multiple files where ListView is used, and some of them have loops over large data sets. Replacing these with `ListView.builder` can improve rendering performance.
+**Action:** Replace `ListView` with `ListView.builder` when the list can be arbitrarily long or contains dynamic data. For very short known lists, it's fine.
