@@ -21,7 +21,8 @@ class AsyncValueView<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return value.when(
       data: builder,
-      loading: () => loadingWidget ??
+      loading: () =>
+          loadingWidget ??
           const Center(
             child: Padding(
               padding: EdgeInsets.all(32),
@@ -35,7 +36,6 @@ class AsyncValueView<T> extends StatelessWidget {
     );
   }
 }
-
 
 class _AsyncErrorState extends StatelessWidget {
   const _AsyncErrorState({

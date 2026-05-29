@@ -158,6 +158,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     }
 
                     // Apply search query and status filter at room level
+                    final queryLower = _searchQuery.toLowerCase();
                     final filteredRoomEntries =
                         groupedRooms.entries.where((entry) {
                       final firstItem = entry.value.first;
@@ -166,7 +167,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       if (_searchQuery.isNotEmpty) {
                         if (!firstItem.roomNumber
                             .toLowerCase()
-                            .contains(_searchQuery.toLowerCase())) {
+                            .contains(queryLower)) {
                           return false;
                         }
                       }

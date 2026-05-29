@@ -16,8 +16,7 @@ void main() {
     expect(AuthValidation.email('wrong'), 'authValidationEmailInvalid');
     expect(AuthValidation.email('manager@ivra.example'), isNull);
 
-    expect(AuthValidation.password('short'),
-        'authValidationPasswordTooShort');
+    expect(AuthValidation.password('short'), 'authValidationPasswordTooShort');
     expect(
       AuthValidation.matchingPasswords('strongpass', 'different'),
       'authValidationPasswordsDoNotMatch',

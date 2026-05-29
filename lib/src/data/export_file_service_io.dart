@@ -22,7 +22,8 @@ Future<ExportFileResult> saveBytes({
 }) async {
   final safeName = fileName.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
 
-  if (mimeType == 'application/pdf' || safeName.toLowerCase().endsWith('.pdf')) {
+  if (mimeType == 'application/pdf' ||
+      safeName.toLowerCase().endsWith('.pdf')) {
     await Printing.sharePdf(bytes: bytes, filename: safeName);
     return ExportFileResult(
       fileName: safeName,

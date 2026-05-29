@@ -142,8 +142,8 @@ class _AcceptInvitationScreenState
         if (Supabase.instance.client.auth.currentSession == null) {
           if (!mounted) return;
           setState(() {
-            _message = AppLocalizations.of(context)
-                .t('inviteAccountCreatedConfirm');
+            _message =
+                AppLocalizations.of(context).t('inviteAccountCreatedConfirm');
           });
           return;
         }
@@ -189,7 +189,8 @@ class _AcceptInvitationScreenState
           .replace(
               path: '/',
               query: '',
-              fragment: '${AcceptInvitationScreen.route}?token=${widget.token.trim()}')
+              fragment:
+                  '${AcceptInvitationScreen.route}?token=${widget.token.trim()}')
           .toString();
     } else {
       // Mobile / native build: hand Supabase the registered custom
@@ -255,16 +256,16 @@ class _InvitationForm extends StatelessWidget {
                   'inviteSubtitleNoHotel',
                   {
                     'name': invitation.fullName,
-                    'role':
-                        AppLocalizations.of(context).userRoleLabel(invitation.role),
+                    'role': AppLocalizations.of(context)
+                        .userRoleLabel(invitation.role),
                   },
                 )
               : AppLocalizations.of(context).tParams(
                   'inviteSubtitleWithHotel',
                   {
                     'name': invitation.fullName,
-                    'role':
-                        AppLocalizations.of(context).userRoleLabel(invitation.role),
+                    'role': AppLocalizations.of(context)
+                        .userRoleLabel(invitation.role),
                     'hotel': invitation.hotelName!,
                   },
                 ),
@@ -322,7 +323,8 @@ class _InvitationForm extends StatelessWidget {
         const SizedBox(height: 8),
         TextButton(
           onPressed: isSaving ? null : onBackToLogin,
-          child: Text(AppLocalizations.of(context).t('inviteAlreadyHaveAccount')),
+          child:
+              Text(AppLocalizations.of(context).t('inviteAlreadyHaveAccount')),
         ),
       ],
     );

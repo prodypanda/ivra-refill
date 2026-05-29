@@ -153,14 +153,17 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         .toList();
 
                     // Apply search query
+                    final languageCode =
+                        Localizations.localeOf(context).languageCode;
+                    final queryLower = _searchQuery.toLowerCase();
+
                     final searchedItems = hotelItems.where((item) {
-                      final name = item.product
-                          .label(Localizations.localeOf(context).languageCode)
-                          .toLowerCase();
-                      final sku = item.product.sku.toLowerCase();
                       if (_searchQuery.isEmpty) return true;
-                      return name.contains(_searchQuery.toLowerCase()) ||
-                          sku.contains(_searchQuery.toLowerCase());
+                      final name =
+                          item.product.label(languageCode).toLowerCase();
+                      final sku = item.product.sku.toLowerCase();
+                      return name.contains(queryLower) ||
+                          sku.contains(queryLower);
                     }).toList();
 
                     // Apply status filter
@@ -191,17 +194,20 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   ),
                   builder: (orders) {
                     // Filter orders by hotel and search query
+                    final languageCode =
+                        Localizations.localeOf(context).languageCode;
+                    final queryLower = _searchQuery.toLowerCase();
+
                     final filteredOrders = orders.where((order) {
                       final matchHotel = order.hotelId == selectedHotelId;
                       if (!matchHotel) return false;
 
                       if (_searchQuery.isEmpty) return true;
-                      final name = order.product
-                          .label(Localizations.localeOf(context).languageCode)
-                          .toLowerCase();
+                      final name =
+                          order.product.label(languageCode).toLowerCase();
                       final sku = order.product.sku.toLowerCase();
-                      return name.contains(_searchQuery.toLowerCase()) ||
-                          sku.contains(_searchQuery.toLowerCase());
+                      return name.contains(queryLower) ||
+                          sku.contains(queryLower);
                     }).toList();
 
                     return _SuggestedOrders(orders: filteredOrders);

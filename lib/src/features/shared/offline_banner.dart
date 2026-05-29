@@ -130,8 +130,7 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
           isNowOnline &&
           !ref.read(offlineModeProvider) &&
           (ref.read(offlineActionsProvider).valueOrNull?.length ?? 0) > 0) {
-        final count =
-            ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
+        final count = ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _autoSync(count);
         });
@@ -144,8 +143,7 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
           isNoLongerManualOffline &&
           ref.read(connectivityProvider) == true &&
           (ref.read(offlineActionsProvider).valueOrNull?.length ?? 0) > 0) {
-        final count =
-            ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
+        final count = ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _autoSync(count);
         });
@@ -173,35 +171,35 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final syncButton =
-                    pendingCount > 0 && isOnline && !hasManualOffline
-                        ? _isSyncing
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : TextButton.icon(
-                                onPressed: () => _manualSync(),
-                                icon: const Icon(Icons.sync, size: 16),
-                                label: Text(
-                                  l10n.t('offlineBannerSyncBtn'),
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                style: TextButton.styleFrom(
-                                  foregroundColor: const Color(0xFF2E7D32),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                              )
-                        : null;
+                final syncButton = pendingCount > 0 &&
+                        isOnline &&
+                        !hasManualOffline
+                    ? _isSyncing
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : TextButton.icon(
+                            onPressed: () => _manualSync(),
+                            icon: const Icon(Icons.sync, size: 16),
+                            label: Text(
+                              l10n.t('offlineBannerSyncBtn'),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            style: TextButton.styleFrom(
+                              foregroundColor: const Color(0xFF2E7D32),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          )
+                    : null;
                 final copy = Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

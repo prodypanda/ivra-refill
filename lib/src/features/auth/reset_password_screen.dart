@@ -61,7 +61,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -74,10 +77,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       const SizedBox(height: 16),
                       Text(
                         l10n.t('authResetNewPasswordTitle'),
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 28),
@@ -88,7 +92,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         decoration: InputDecoration(
                           labelText: l10n.t('authLabelNewPassword'),
                           labelStyle: const TextStyle(color: Colors.black54),
-                          prefixIcon: const Icon(Icons.lock_outline, color: Colors.black54),
+                          prefixIcon: const Icon(Icons.lock_outline,
+                              color: Colors.black54),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -99,20 +104,27 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         decoration: InputDecoration(
                           labelText: l10n.t('authLabelConfirmPassword'),
                           labelStyle: const TextStyle(color: Colors.black54),
-                          prefixIcon: const Icon(Icons.lock_reset_outlined, color: Colors.black54),
+                          prefixIcon: const Icon(Icons.lock_reset_outlined,
+                              color: Colors.black54),
                         ),
                       ),
                       if (_error != null) ...[
                         const SizedBox(height: 16),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.5),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .errorContainer
+                                .withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.error_outline, size: 16, color: Theme.of(context).colorScheme.error),
+                              Icon(Icons.error_outline,
+                                  size: 16,
+                                  color: Theme.of(context).colorScheme.error),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
@@ -130,20 +142,24 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       if (_message != null) ...[
                         const SizedBox(height: 16),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: Colors.orange.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.check_circle_outline, size: 16, color: Theme.of(context).colorScheme.primary),
+                              Icon(Icons.check_circle_outline,
+                                  size: 16,
+                                  color: Theme.of(context).colorScheme.primary),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   _message!,
                                   style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -170,7 +186,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             : const Icon(Icons.password_outlined),
                         label: Text(
                           l10n.t('authBtnUpdatePassword'),
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       ),
                       const SizedBox(height: 12),

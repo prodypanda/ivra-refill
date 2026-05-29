@@ -87,22 +87,28 @@ final roomsProvider = FutureProvider<List<RoomInfo>>((ref) {
 
 final roomProductsProvider = FutureProvider<List<RoomProduct>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
-  final items = await ref.watch(repositoryProvider).roomProducts(hotelId: hotelId);
-  final pendingActions = await ref.watch(offlineSyncServiceProvider).pendingActions();
-  
+  final items =
+      await ref.watch(repositoryProvider).roomProducts(hotelId: hotelId);
+  final pendingActions =
+      await ref.watch(offlineSyncServiceProvider).pendingActions();
+
   if (pendingActions.isEmpty) return items;
 
   return items.map((item) {
     var updated = item;
     for (final action in pendingActions) {
-      if (action.type == SyncActionType.refill && action.payload['roomProductId'] == updated.id) {
+      if (action.type == SyncActionType.refill &&
+          action.payload['roomProductId'] == updated.id) {
         final newCount = updated.refillCount + 1;
         updated = updated.copyWith(
           refillCount: newCount,
           lastRefillAt: DateTime.now(),
-          status: newCount >= updated.product.maxRefillCount ? BottleStatus.refillLimitReached : updated.status,
+          status: newCount >= updated.product.maxRefillCount
+              ? BottleStatus.refillLimitReached
+              : updated.status,
         );
-      } else if (action.type == SyncActionType.bottleReplacement && action.payload['roomProductId'] == updated.id) {
+      } else if (action.type == SyncActionType.bottleReplacement &&
+          action.payload['roomProductId'] == updated.id) {
         updated = updated.copyWith(
           refillCount: 0,
           status: BottleStatus.active,
@@ -117,20 +123,27 @@ final roomProductsProvider = FutureProvider<List<RoomProduct>>((ref) async {
 final inventoryProvider = FutureProvider<List<InventoryItem>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
   final items = await ref.watch(repositoryProvider).inventory(hotelId: hotelId);
-  final pendingActions = await ref.watch(offlineSyncServiceProvider).pendingActions();
-  
+  final pendingActions =
+      await ref.watch(offlineSyncServiceProvider).pendingActions();
+
   if (pendingActions.isEmpty) return items;
 
   return items.map((item) {
     var updated = item;
     for (final action in pendingActions) {
-      if (action.type == SyncActionType.stockAdjustment && action.payload['productId'] == updated.product.id) {
+      if (action.type == SyncActionType.stockAdjustment &&
+          action.payload['productId'] == updated.product.id) {
         updated = updated.copyWith(
-          fullBottles: updated.fullBottles + (action.payload['fullBottlesDelta'] as int? ?? 0),
-          emptyBottles: updated.emptyBottles + (action.payload['emptyBottlesDelta'] as int? ?? 0),
-          fullBidons: updated.fullBidons + (action.payload['fullBidonsDelta'] as int? ?? 0),
-          openBidons: updated.openBidons + (action.payload['openBidonsDelta'] as int? ?? 0),
-          emptyBidons: updated.emptyBidons + (action.payload['emptyBidonsDelta'] as int? ?? 0),
+          fullBottles: updated.fullBottles +
+              (action.payload['fullBottlesDelta'] as int? ?? 0),
+          emptyBottles: updated.emptyBottles +
+              (action.payload['emptyBottlesDelta'] as int? ?? 0),
+          fullBidons: updated.fullBidons +
+              (action.payload['fullBidonsDelta'] as int? ?? 0),
+          openBidons: updated.openBidons +
+              (action.payload['openBidonsDelta'] as int? ?? 0),
+          emptyBidons: updated.emptyBidons +
+              (action.payload['emptyBidonsDelta'] as int? ?? 0),
         );
       }
     }

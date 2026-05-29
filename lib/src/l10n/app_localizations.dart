@@ -304,8 +304,10 @@ class AppLocalizations {
       'approvalsRejected': 'Request rejected.',
       'approvalsApproveQueued': 'Approval queued for sync.',
       'approvalsRejectQueued': 'Rejection queued for sync.',
-      'approvalsAccessDenied': 'Access denied. Only admins can review approvals.',
-      'approvalsRequestNotFound': 'Approval request not found or already processed.',
+      'approvalsAccessDenied':
+          'Access denied. Only admins can review approvals.',
+      'approvalsRequestNotFound':
+          'Approval request not found or already processed.',
       'inviteAcceptTitle': 'Accept invitation',
       'inviteAlreadyHaveAccount': 'I already have an account',
       'inviteBackToSignIn': 'Back to sign in',
@@ -699,7 +701,8 @@ class AppLocalizations {
       'approvalsRejected': 'Demande rejetée.',
       'approvalsApproveQueued': 'Approbation mise en file d\'attente.',
       'approvalsRejectQueued': 'Rejet mis en file d\'attente.',
-      'approvalsAccessDenied': 'Accès refusé. Seuls les admins peuvent approuver.',
+      'approvalsAccessDenied':
+          'Accès refusé. Seuls les admins peuvent approuver.',
       'approvalsRequestNotFound': 'Demande introuvable ou déjà traitée.',
       'inviteAcceptTitle': 'Accepter l\'invitation',
       'inviteAlreadyHaveAccount': 'J\'ai déjà un compte',
@@ -1524,7 +1527,8 @@ class AppLocalizations {
       'approvalsRejected': 'Richiesta rifiutata.',
       'approvalsApproveQueued': 'Approvazione in coda per la sincronizzazione.',
       'approvalsRejectQueued': 'Rifiuto in coda per la sincronizzazione.',
-      'approvalsAccessDenied': 'Accesso negato. Solo gli admin possono approvare.',
+      'approvalsAccessDenied':
+          'Accesso negato. Solo gli admin possono approvare.',
       'approvalsRequestNotFound': 'Richiesta non trovata o già elaborata.',
       'inviteAcceptTitle': 'Accetta l\'invito',
       'inviteAlreadyHaveAccount': 'Ho già un account',

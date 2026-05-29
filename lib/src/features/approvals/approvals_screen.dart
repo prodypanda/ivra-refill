@@ -137,16 +137,14 @@ class ApprovalsScreen extends ConsumerWidget {
                                     await ref
                                         .read(repositoryProvider)
                                         .approveRequest(
-                                          approvalRequestId:
-                                              request.id,
+                                          approvalRequestId: request.id,
                                         );
                                     _refreshAfterReview(ref);
                                     if (context.mounted) {
                                       PremiumSnackbar.show(
                                         context,
                                         l10n.t('approvalsApproved'),
-                                        icon:
-                                            Icons.check_circle_outline,
+                                        icon: Icons.check_circle_outline,
                                       );
                                     }
                                   } catch (e) {
@@ -174,8 +172,7 @@ class ApprovalsScreen extends ConsumerWidget {
                                     await ref
                                         .read(repositoryProvider)
                                         .rejectRequest(
-                                          approvalRequestId:
-                                              request.id,
+                                          approvalRequestId: request.id,
                                         );
                                     _refreshAfterReview(ref);
                                     if (context.mounted) {
