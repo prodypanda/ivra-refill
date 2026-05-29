@@ -164,8 +164,10 @@ class HotelsScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
-    await showDialog<void>(
+    await showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (context) => const _CreateHotelDialog(),
     );
     ref.invalidate(hotelsProvider);
@@ -178,8 +180,10 @@ class HotelsScreen extends ConsumerWidget {
     Hotel hotel,
   ) async {
     final currentUser = ref.read(currentUserProvider).valueOrNull;
-    await showDialog<void>(
+    await showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (context) => _HotelEditRequestDialog(
         hotel: hotel,
         applyImmediately: currentUser?.isIvraUser ?? false,
@@ -248,101 +252,126 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
-    return AlertDialog(
-      title: Text(l10n.t('createHotel')),
-      content: SizedBox(
-        width: 520,
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _RequiredTextField(
-                    controller: _name, label: l10n.t('hotelLabelName')),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _legalName,
-                  decoration:
-                      InputDecoration(labelText: l10n.t('hotelLabelLegalName')),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<TunisianState>(
-                        isExpanded: true,
-                        initialValue: _selectedState,
-                        decoration: InputDecoration(
-                            labelText: l10n.t('hotelLabelState')),
-                        items: [
-                          for (final state in TunisianState.values)
-                            DropdownMenuItem(
-                              value: state,
-                              child: Text(state.displayName,
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                        ],
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() => _selectedState = value);
-                          }
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _RequiredTextField(
-                        controller: _country,
-                        label: l10n.t('hotelLabelCountry'),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                _RequiredTextField(
-                  controller: _contactName,
-                  label: l10n.t('hotelLabelContactName'),
-                ),
-                const SizedBox(height: 12),
-                _RequiredTextField(
-                    controller: _email, label: l10n.t('hotelLabelEmail')),
-                const SizedBox(height: 12),
-                _RequiredTextField(
-                    controller: _phone, label: l10n.t('hotelLabelPhone')),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _address,
-                  decoration:
-                      InputDecoration(labelText: l10n.t('hotelLabelAddress')),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _notes,
-                  decoration: InputDecoration(
-                    labelText: l10n.t('hotelLabelNotes'),
-                    alignLabelWithHint: true,
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.t('createHotel'),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  minLines: 2,
-                  maxLines: 4,
+            ),
+            const SizedBox(height: 24),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _RequiredTextField(
+                          controller: _name, label: l10n.t('hotelLabelName')),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _legalName,
+                        decoration:
+                            InputDecoration(labelText: l10n.t('hotelLabelLegalName')),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButtonFormField<TunisianState>(
+                              isExpanded: true,
+                              initialValue: _selectedState,
+                              decoration: InputDecoration(
+                                  labelText: l10n.t('hotelLabelState')),
+                              items: [
+                                for (final state in TunisianState.values)
+                                  DropdownMenuItem(
+                                    value: state,
+                                    child: Text(state.displayName,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                              ],
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() => _selectedState = value);
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _RequiredTextField(
+                              controller: _country,
+                              label: l10n.t('hotelLabelCountry'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      _RequiredTextField(
+                        controller: _contactName,
+                        label: l10n.t('hotelLabelContactName'),
+                      ),
+                      const SizedBox(height: 12),
+                      _RequiredTextField(
+                          controller: _email, label: l10n.t('hotelLabelEmail')),
+                      const SizedBox(height: 12),
+                      _RequiredTextField(
+                          controller: _phone, label: l10n.t('hotelLabelPhone')),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _address,
+                        decoration:
+                            InputDecoration(labelText: l10n.t('hotelLabelAddress')),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _notes,
+                        decoration: InputDecoration(
+                          labelText: l10n.t('hotelLabelNotes'),
+                          alignLabelWithHint: true,
+                        ),
+                        minLines: 2,
+                        maxLines: 4,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 8),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _save,
+                  icon: const Icon(Icons.add_business_outlined),
+                  label: Text(l10n.t('btnCreate')),
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: Text(l10n.t('btnCancel')),
-        ),
-        FilledButton.icon(
-          onPressed: _isSaving ? null : _save,
-          icon: const Icon(Icons.add_business_outlined),
-          label: Text(l10n.t('btnCreate')),
-        ),
-      ],
     );
   }
 
@@ -448,107 +477,132 @@ class _HotelEditRequestDialogState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
-    return AlertDialog(
-      title: Text('${l10n.t('requestHotelEdit')} - ${widget.hotel.name}'),
-      content: SizedBox(
-        width: 520,
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _RequiredTextField(
-                    controller: _name, label: l10n.t('hotelLabelName')),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _legalName,
-                  decoration:
-                      InputDecoration(labelText: l10n.t('hotelLabelLegalName')),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<TunisianState>(
-                        isExpanded: true,
-                        initialValue: _selectedState,
-                        decoration: InputDecoration(
-                            labelText: l10n.t('hotelLabelState')),
-                        items: [
-                          for (final state in TunisianState.values)
-                            DropdownMenuItem(
-                              value: state,
-                              child: Text(state.displayName,
-                                  overflow: TextOverflow.ellipsis),
-                            ),
-                        ],
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() => _selectedState = value);
-                          }
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _RequiredTextField(
-                        controller: _country,
-                        label: l10n.t('hotelLabelCountry'),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                _RequiredTextField(
-                  controller: _contactName,
-                  label: l10n.t('hotelLabelContactName'),
-                ),
-                const SizedBox(height: 12),
-                _RequiredTextField(
-                    controller: _email, label: l10n.t('hotelLabelEmail')),
-                const SizedBox(height: 12),
-                _RequiredTextField(
-                    controller: _phone, label: l10n.t('hotelLabelPhone')),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _address,
-                  decoration:
-                      InputDecoration(labelText: l10n.t('hotelLabelAddress')),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _notes,
-                  decoration: InputDecoration(
-                    labelText: l10n.t('hotelLabelNotes'),
-                    alignLabelWithHint: true,
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${l10n.t('requestHotelEdit')} - ${widget.hotel.name}',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  minLines: 2,
-                  maxLines: 4,
+            ),
+            const SizedBox(height: 24),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _RequiredTextField(
+                          controller: _name, label: l10n.t('hotelLabelName')),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _legalName,
+                        decoration:
+                            InputDecoration(labelText: l10n.t('hotelLabelLegalName')),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButtonFormField<TunisianState>(
+                              isExpanded: true,
+                              initialValue: _selectedState,
+                              decoration: InputDecoration(
+                                  labelText: l10n.t('hotelLabelState')),
+                              items: [
+                                for (final state in TunisianState.values)
+                                  DropdownMenuItem(
+                                    value: state,
+                                    child: Text(state.displayName,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                              ],
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() => _selectedState = value);
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _RequiredTextField(
+                              controller: _country,
+                              label: l10n.t('hotelLabelCountry'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      _RequiredTextField(
+                        controller: _contactName,
+                        label: l10n.t('hotelLabelContactName'),
+                      ),
+                      const SizedBox(height: 12),
+                      _RequiredTextField(
+                          controller: _email, label: l10n.t('hotelLabelEmail')),
+                      const SizedBox(height: 12),
+                      _RequiredTextField(
+                          controller: _phone, label: l10n.t('hotelLabelPhone')),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _address,
+                        decoration:
+                            InputDecoration(labelText: l10n.t('hotelLabelAddress')),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _notes,
+                        decoration: InputDecoration(
+                          labelText: l10n.t('hotelLabelNotes'),
+                          alignLabelWithHint: true,
+                        ),
+                        minLines: 2,
+                        maxLines: 4,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 8),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _submit,
+                  icon: Icon(
+                    widget.applyImmediately
+                        ? Icons.save_outlined
+                        : Icons.pending_actions_outlined,
+                  ),
+                  label: Text(widget.applyImmediately
+                      ? l10n.t('btnSave')
+                      : l10n.t('btnSubmitRequest')),
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: Text(l10n.t('btnCancel')),
-        ),
-        FilledButton.icon(
-          onPressed: _isSaving ? null : _submit,
-          icon: Icon(
-            widget.applyImmediately
-                ? Icons.save_outlined
-                : Icons.pending_actions_outlined,
-          ),
-          label: Text(widget.applyImmediately
-              ? l10n.t('btnSave')
-              : l10n.t('btnSubmitRequest')),
-        ),
-      ],
     );
   }
 

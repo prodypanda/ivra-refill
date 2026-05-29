@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/app_enums.dart';
@@ -225,44 +226,58 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         for (final floor in sortedFloors) ...[
                           _buildFloorHeader(floor, l10n, theme, primaryColor),
                           const SizedBox(height: 12),
-                          if (_showDetailedView)
-                            // Detailed View: Vertical list of full detailed RoomCards
-                            Column(
-                              children: [
-                                for (final entry
-                                    in _sortRoomsInFloor(roomsByFloor[floor]!))
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 16),
-                                    child: _RoomCard(
-                                      roomId: entry.key,
-                                      roomProducts: entry.value,
-                                    ),
-                                  ),
-                              ],
-                            )
-                          else
-                            // Compact View: Wrap grid of CompactRoomTiles
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Wrap(
-                                spacing: 12,
-                                runSpacing: 12,
-                                children: [
-                                  for (final entry in _sortRoomsInFloor(
-                                      roomsByFloor[floor]!))
-                                    _CompactRoomTile(
-                                      roomNumber: entry.value.first.roomNumber,
-                                      roomProducts: entry.value,
-                                      onTap: () => _showRoomDetailsDialog(
-                                        context,
-                                        entry.value.first.roomNumber,
-                                        entry.value,
-                                      ),
-                                    ),
-                                ],
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (child, animation) => FadeTransition(
+                              opacity: animation,
+                              child: SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(0, 0.05),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
                               ),
                             ),
+                            child: _showDetailedView
+                                ? Column(
+                                    key: const ValueKey('detailed_view'),
+                                    children: [
+                                      for (final entry in _sortRoomsInFloor(
+                                          roomsByFloor[floor]!))
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 16),
+                                          child: _RoomCard(
+                                            roomId: entry.key,
+                                            roomProducts: entry.value,
+                                          ),
+                                        ),
+                                    ],
+                                  )
+                                : Padding(
+                                    key: const ValueKey('compact_view'),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    child: Wrap(
+                                      spacing: 12,
+                                      runSpacing: 12,
+                                      children: [
+                                        for (final entry in _sortRoomsInFloor(
+                                            roomsByFloor[floor]!))
+                                          _CompactRoomTile(
+                                            roomNumber:
+                                                entry.value.first.roomNumber,
+                                            roomProducts: entry.value,
+                                            onTap: () => _showRoomDetailsDialog(
+                                              context,
+                                              entry.value.first.roomNumber,
+                                              entry.value,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                          ),
                         ],
                         const SizedBox(height: 40),
                       ],
@@ -424,6 +439,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         ? IconButton(
                             icon: const Icon(Icons.clear, size: 16),
                             onPressed: () {
+                              HapticFeedback.lightImpact();
                               _searchController.clear();
                               setState(() {
                                 _searchQuery = '';
@@ -466,6 +482,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 ],
                 selected: {_showDetailedView},
                 onSelectionChanged: (val) {
+                  HapticFeedback.lightImpact();
                   setState(() {
                     _showDetailedView = val.first;
                   });
@@ -517,6 +534,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         : FontWeight.normal,
                   ),
                   onSelected: (selected) {
+                    HapticFeedback.lightImpact();
                     if (selected) setState(() => _statusFilter = 'all');
                   },
                 ),
@@ -537,6 +555,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         : FontWeight.normal,
                   ),
                   onSelected: (selected) {
+                    HapticFeedback.lightImpact();
                     if (selected) setState(() => _statusFilter = 'ok');
                   },
                 ),
@@ -557,6 +576,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         : FontWeight.normal,
                   ),
                   onSelected: (selected) {
+                    HapticFeedback.lightImpact();
                     if (selected) setState(() => _statusFilter = 'refill');
                   },
                 ),
@@ -578,6 +598,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         : FontWeight.normal,
                   ),
                   onSelected: (selected) {
+                    HapticFeedback.lightImpact();
                     if (selected) setState(() => _statusFilter = 'attention');
                   },
                 ),
@@ -594,19 +615,23 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     String roomNumber,
     List<RoomProduct> roomProducts,
   ) {
-    showDialog<void>(
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        clipBehavior: Clip.antiAlias,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 720),
-          child: SingleChildScrollView(
-            child: _RoomCard(
-              roomId: roomProducts.first.roomId,
-              roomProducts: roomProducts,
-              isDialog: true,
-            ),
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.viewInsetsOf(context).bottom + 24,
+            top: 24,
+            left: 16,
+            right: 16,
+          ),
+          child: _RoomCard(
+            roomId: roomProducts.first.roomId,
+            roomProducts: roomProducts,
+            isDialog: true,
           ),
         ),
       ),
@@ -621,8 +646,10 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final products = await ref.read(productsProvider.future);
     if (!context.mounted) return;
 
-    await showDialog<void>(
+    await showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (context) => _RoomTemplateDialog(
         hotels: hotels,
         products: products,
@@ -674,66 +701,125 @@ class _CompactRoomTile extends ConsumerWidget {
       overallIcon = Icons.hourglass_empty_rounded;
     }
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Ink(
-        width: 110,
-        height: 85,
-        decoration: BoxDecoration(
-          color: overallColor.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: overallColor.withValues(alpha: 0.3),
-            width: 1.5,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: overallColor.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF92400E).withValues(alpha: 0.05),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(overallIcon, size: 16, color: overallColor),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      '${roomProducts.length}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          splashColor: overallColor.withValues(alpha: 0.2),
+          highlightColor: overallColor.withValues(alpha: 0.1),
+          child: Ink(
+            width: 110,
+            height: 110, // Made it a bit taller for better spacing
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  overallColor.withValues(alpha: 0.15),
+                  overallColor.withValues(alpha: 0.03),
                 ],
               ),
-              Center(
-                child: Text(
-                  roomNumber,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 16,
-                    color: theme.colorScheme.onSurface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: overallColor.withValues(alpha: 0.3),
+                width: 1.5,
+              ),
+            ),
+            child: Stack(
+              children: [
+                // Top Right Icon
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Icon(overallIcon, size: 20, color: overallColor),
+                ),
+                // Top Left Product Count
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface.withValues(alpha: 0.8),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.inventory_2_outlined,
+                            size: 10, color: theme.colorScheme.onSurfaceVariant),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${roomProducts.length}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 2),
-            ],
+                // Center Room Number
+                Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 12),
+                      Text(
+                        roomNumber,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 22,
+                          color: theme.colorScheme.onSurface,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      Text(
+                        'Room',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontSize: 10,
+                          color: theme.colorScheme.onSurfaceVariant,
+                          letterSpacing: 0.5,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Bottom highlight bar
+                Positioned(
+                  bottom: 0,
+                  left: 16,
+                  right: 16,
+                  child: Container(
+                    height: 3,
+                    decoration: BoxDecoration(
+                      color: overallColor.withValues(alpha: 0.6),
+                      borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(3)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -755,8 +841,10 @@ Future<void> _showRefillHistory(
 
   if (!context.mounted) return;
 
-  await showDialog<void>(
+  await showModalBottomSheet<void>(
     context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => _RefillHistoryDialog(
       item: item,
       events: itemEvents,
@@ -775,8 +863,10 @@ Future<void> _showRoomEditRequest(
   WidgetRef ref,
   RoomProduct item,
 ) async {
-  await showDialog<void>(
+  await showModalBottomSheet<void>(
     context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => _RoomEditRequestDialog(item: item),
   );
 
@@ -792,8 +882,10 @@ Future<void> _showBottleEditRequest(
   WidgetRef ref,
   RoomProduct item,
 ) async {
-  await showDialog<void>(
+  await showModalBottomSheet<void>(
     context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) => _BottleLifecycleEditDialog(item: item),
   );
 
@@ -1266,7 +1358,47 @@ class _RoomCardProductRow extends ConsumerWidget {
       _ => Colors.green.shade700,
     };
 
-    return LayoutBuilder(
+    Future<void> performRefill() async {
+      var isOffline = ref.read(offlineModeProvider);
+      if (!isOffline) {
+        try {
+          await ref.read(repositoryProvider).recordRefill(
+                roomProductId: item.id,
+              );
+        } catch (e) {
+          if (e.toString().contains('SocketException') ||
+              e.toString().contains('ClientException') ||
+              e.toString().contains('Failed host lookup') ||
+              e.toString().contains('XMLHttpRequest')) {
+            isOffline = true;
+          } else {
+            rethrow;
+          }
+        }
+      }
+      if (isOffline) {
+        await ref.read(offlineSyncServiceProvider).enqueue(
+          type: SyncActionType.refill,
+          payload: {'roomProductId': item.id},
+        );
+        ref.invalidate(offlineActionsProvider);
+      }
+      ref.invalidate(roomProductsProvider);
+      ref.invalidate(dashboardProvider);
+      ref.invalidate(refillEventsProvider);
+      if (context.mounted) {
+        HapticFeedback.mediumImpact();
+        PremiumSnackbar.show(
+          context,
+          isOffline
+              ? '${l10n.t('roomsRefillQueued')} ${item.roomNumber}'
+              : '${l10n.t('roomsRefillRecorded')} ${item.roomNumber}',
+          icon: Icons.water_drop_outlined,
+        );
+      }
+    }
+
+    final content = LayoutBuilder(
       builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 650;
 
@@ -1396,46 +1528,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                 foregroundColor: Colors.white,
                 minimumSize: const Size(80, 36),
               ),
-              onPressed: item.canRefill
-                  ? () async {
-                      var isOffline = ref.read(offlineModeProvider);
-                      if (!isOffline) {
-                        try {
-                          await ref.read(repositoryProvider).recordRefill(
-                                roomProductId: item.id,
-                              );
-                        } catch (e) {
-                          if (e.toString().contains('SocketException') ||
-                              e.toString().contains('ClientException') ||
-                              e.toString().contains('Failed host lookup') ||
-                              e.toString().contains('XMLHttpRequest')) {
-                            isOffline = true;
-                          } else {
-                            rethrow;
-                          }
-                        }
-                      }
-                      if (isOffline) {
-                        await ref.read(offlineSyncServiceProvider).enqueue(
-                          type: SyncActionType.refill,
-                          payload: {'roomProductId': item.id},
-                        );
-                        ref.invalidate(offlineActionsProvider);
-                      }
-                      ref.invalidate(roomProductsProvider);
-                      ref.invalidate(dashboardProvider);
-                      ref.invalidate(refillEventsProvider);
-                      if (context.mounted) {
-                        PremiumSnackbar.show(
-                          context,
-                          isOffline
-                              ? '${l10n.t('roomsRefillQueued')} ${item.roomNumber}'
-                              : '${l10n.t('roomsRefillRecorded')} ${item.roomNumber}',
-                          icon: Icons.water_drop_outlined,
-                        );
-                      }
-                    }
-                  : null,
+              onPressed: item.canRefill ? performRefill : null,
               icon: const Icon(Icons.water_drop_outlined, size: 14),
               label:
                   Text(l10n.t('refill'), style: const TextStyle(fontSize: 12)),
@@ -1532,6 +1625,37 @@ class _RoomCardProductRow extends ConsumerWidget {
         );
       },
     );
+
+    if (!item.canRefill) return content;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Dismissible(
+        key: ValueKey('refill_${item.id}'),
+        direction: DismissDirection.startToEnd,
+        background: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF267D65),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(left: 24),
+          child: Row(
+            children: [
+              const Icon(Icons.water_drop_outlined, color: Colors.white),
+              const SizedBox(width: 8),
+              Text(l10n.t('refill'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+        confirmDismiss: (direction) async {
+          HapticFeedback.lightImpact();
+          await performRefill();
+          return false;
+        },
+        child: content,
+      ),
+    );
   }
 }
 
@@ -1571,61 +1695,81 @@ class _BottleLifecycleEditDialogState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return AlertDialog(
-      title: Text(
-          '${l10n.t('roomsDialogBottleEditTitle')} ${widget.item.roomNumber}'),
-      content: SizedBox(
-        width: 500,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField<BottleStatus>(
-                initialValue: _status,
-                decoration: InputDecoration(
-                    labelText: l10n.t('roomsLabelBottleStatus')),
-                items: [
-                  for (final status in BottleStatus.values)
-                    DropdownMenuItem(
-                      value: status,
-                      child: Text(status.value.replaceAll('_', ' ')),
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          left: 16,
+          right: 16,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${l10n.t('roomsDialogBottleEditTitle')} ${widget.item.roomNumber}',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButtonFormField<BottleStatus>(
+                    initialValue: _status,
+                    decoration: InputDecoration(
+                        labelText: l10n.t('roomsLabelBottleStatus')),
+                    items: [
+                      for (final status in BottleStatus.values)
+                        DropdownMenuItem(
+                          value: status,
+                          child: Text(status.value.replaceAll('_', ' ')),
+                        ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) setState(() => _status = value);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _bottleStartedAt,
+                    decoration: InputDecoration(
+                      labelText: l10n.t('roomsLabelBottleStartDate'),
+                      hintText: 'YYYY-MM-DD',
                     ),
+                    validator: (value) {
+                      final parsed = DateTime.tryParse(value?.trim() ?? '');
+                      if (parsed == null) {
+                        return l10n.t('roomsValidationEnterValidDate');
+                      }
+                      return null;
+                    },
+                  ),
                 ],
-                onChanged: (value) {
-                  if (value != null) setState(() => _status = value);
-                },
               ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _bottleStartedAt,
-                decoration: InputDecoration(
-                  labelText: l10n.t('roomsLabelBottleStartDate'),
-                  hintText: 'YYYY-MM-DD',
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
                 ),
-                validator: (value) {
-                  final parsed = DateTime.tryParse(value?.trim() ?? '');
-                  if (parsed == null) {
-                    return l10n.t('roomsValidationEnterValidDate');
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _submit,
+                  icon: const Icon(Icons.pending_actions_outlined),
+                  label: Text(l10n.t('btnSubmitRequest')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: Text(l10n.t('btnCancel')),
-        ),
-        FilledButton.icon(
-          onPressed: _isSaving ? null : _submit,
-          icon: const Icon(Icons.pending_actions_outlined),
-          label: Text(l10n.t('btnSubmitRequest')),
-        ),
-      ],
     );
   }
 
@@ -1712,47 +1856,67 @@ class _RoomEditRequestDialogState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return AlertDialog(
-      title: Text(
-          '${l10n.t('roomsDialogRoomEditTitle')} ${widget.item.roomNumber}'),
-      content: SizedBox(
-        width: 460,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: _roomNumber,
-                decoration:
-                    InputDecoration(labelText: l10n.t('roomsLabelRoomNumber')),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return l10n.t('requiredField');
-                  }
-                  return null;
-                },
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          left: 16,
+          right: 16,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${l10n.t('roomsDialogRoomEditTitle')} ${widget.item.roomNumber}',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _roomNumber,
+                    decoration:
+                        InputDecoration(labelText: l10n.t('roomsLabelRoomNumber')),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return l10n.t('requiredField');
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _NumberField(
+                    controller: _floorNumber,
+                    label: l10n.t('roomsLabelFloorNumber'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 12),
-              _NumberField(
-                controller: _floorNumber,
-                label: l10n.t('roomsLabelFloorNumber'),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _submit,
+                  icon: const Icon(Icons.pending_actions_outlined),
+                  label: Text(l10n.t('btnSubmitRequest')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: Text(l10n.t('btnCancel')),
-        ),
-        FilledButton.icon(
-          onPressed: _isSaving ? null : _submit,
-          icon: const Icon(Icons.pending_actions_outlined),
-          label: Text(l10n.t('btnSubmitRequest')),
-        ),
-      ],
     );
   }
 
@@ -1875,96 +2039,114 @@ class _RefillHistoryDialog extends ConsumerWidget {
     final language = Localizations.localeOf(context).languageCode;
     final now = DateTime.now();
 
-    return AlertDialog(
-      title: Text(
-          '${l10n.t('roomsLabelRoom')} ${item.roomNumber} ${item.product.label(language)} ${l10n.t('roomsDialogHistoryTitle')}'),
-      content: SizedBox(
-        width: 620,
-        child: events.isEmpty
-            ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Text(l10n.t('roomsNoHistoryRecorded')),
-              )
-            : ListView.separated(
-                shrinkWrap: true,
-                itemCount: events.length,
-                separatorBuilder: (context, index) => const Divider(height: 1),
-                itemBuilder: (context, index) {
-                  final event = events[index];
-                  final canUndo = event.canUndo(now, currentUser.id);
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(_eventIcon(event.type)),
-                    title: Text(_eventLabel(l10n, event.type)),
-                    subtitle: Text(
-                      '${_formatDateTime(event.occurredAt)} | '
-                      '${event.previousRefillCount} -> ${event.newRefillCount}',
-                    ),
-                    trailing: event.type == RefillEventType.refill
-                        ? Wrap(
-                            spacing: 8,
-                            children: [
-                              if (canUndo)
-                                TextButton.icon(
-                                  onPressed: () async {
-                                    final offline =
-                                        ref.read(offlineModeProvider);
-                                    if (offline) {
-                                      await ref
-                                          .read(offlineSyncServiceProvider)
-                                          .enqueue(
-                                        type: SyncActionType.undoRefill,
-                                        payload: {'refillEventId': event.id},
-                                      );
-                                      ref.invalidate(offlineActionsProvider);
-                                    } else {
-                                      await ref
-                                          .read(repositoryProvider)
-                                          .undoRefill(refillEventId: event.id);
-                                    }
-                                    if (context.mounted) {
-                                      Navigator.of(context).pop();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            offline
-                                                ? l10n.t('roomsMsgUndoQueued')
-                                                : l10n
-                                                    .t('roomsMsgRefillUndone'),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  icon: const Icon(Icons.undo_outlined),
-                                  label: Text(l10n.t('undo')),
-                                )
-                              else
-                                TextButton.icon(
-                                  onPressed: () => _showCorrectionDialog(
-                                    context,
-                                    ref,
-                                    event,
-                                  ),
-                                  icon: const Icon(
-                                    Icons.assignment_late_outlined,
-                                  ),
-                                  label: Text(l10n.t('correction')),
-                                ),
-                            ],
-                          )
-                        : null,
-                  );
-                },
-              ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.t('roomsBtnClose')),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 24,
+          bottom: 16,
         ),
-      ],
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${l10n.t('roomsLabelRoom')} ${item.roomNumber} ${item.product.label(language)} ${l10n.t('roomsDialogHistoryTitle')}',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            Flexible(
+              child: events.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: Text(l10n.t('roomsNoHistoryRecorded')),
+                    )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: events.length,
+                      separatorBuilder: (context, index) => const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final event = events[index];
+                        final canUndo = event.canUndo(now, currentUser.id);
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(_eventIcon(event.type)),
+                          title: Text(_eventLabel(l10n, event.type)),
+                          subtitle: Text(
+                            '${_formatDateTime(event.occurredAt)} | '
+                            '${event.previousRefillCount} -> ${event.newRefillCount}',
+                          ),
+                          trailing: event.type == RefillEventType.refill
+                              ? Wrap(
+                                  spacing: 8,
+                                  children: [
+                                    if (canUndo)
+                                      TextButton.icon(
+                                        onPressed: () async {
+                                          final offline =
+                                              ref.read(offlineModeProvider);
+                                          if (offline) {
+                                            await ref
+                                                .read(offlineSyncServiceProvider)
+                                                .enqueue(
+                                              type: SyncActionType.undoRefill,
+                                              payload: {'refillEventId': event.id},
+                                            );
+                                            ref.invalidate(offlineActionsProvider);
+                                          } else {
+                                            await ref
+                                                .read(repositoryProvider)
+                                                .undoRefill(refillEventId: event.id);
+                                          }
+                                          if (context.mounted) {
+                                            Navigator.of(context).pop();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  offline
+                                                      ? l10n.t('roomsMsgUndoQueued')
+                                                      : l10n
+                                                          .t('roomsMsgRefillUndone'),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        icon: const Icon(Icons.undo_outlined),
+                                        label: Text(l10n.t('undo')),
+                                      )
+                                    else
+                                      TextButton.icon(
+                                        onPressed: () => _showCorrectionDialog(
+                                          context,
+                                          ref,
+                                          event,
+                                        ),
+                                        icon: const Icon(
+                                          Icons.assignment_late_outlined,
+                                        ),
+                                        label: Text(l10n.t('correction')),
+                                      ),
+                                  ],
+                                )
+                              : null,
+                        );
+                      },
+                    ),
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.t('roomsBtnClose')),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -2004,8 +2186,10 @@ class _RefillHistoryDialog extends ConsumerWidget {
     WidgetRef ref,
     RefillEvent event,
   ) async {
-    await showDialog<void>(
+    await showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (context) => _CorrectionRequestDialog(event: event),
     );
     if (context.mounted) Navigator.of(context).pop();
@@ -2038,40 +2222,61 @@ class _CorrectionRequestDialogState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return AlertDialog(
-      title: Text(l10n.t('roomsBtnRequestCorrection')),
-      content: SizedBox(
-        width: 420,
-        child: Form(
-          key: _formKey,
-          child: TextFormField(
-            controller: _reason,
-            decoration: InputDecoration(
-              labelText: l10n.t('roomsLabelReason'),
-              alignLabelWithHint: true,
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          left: 16,
+          right: 16,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.t('roomsBtnRequestCorrection'),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
-            minLines: 3,
-            maxLines: 5,
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return l10n.t('requiredField');
-              }
-              return null;
-            },
-          ),
+            const SizedBox(height: 24),
+            Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: _reason,
+                decoration: InputDecoration(
+                  labelText: l10n.t('roomsLabelReason'),
+                  alignLabelWithHint: true,
+                ),
+                minLines: 3,
+                maxLines: 5,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return l10n.t('requiredField');
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _submit,
+                  icon: const Icon(Icons.assignment_late_outlined),
+                  label: Text(l10n.t('btnSubmitRequest')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: Text(l10n.t('btnCancel')),
-        ),
-        FilledButton.icon(
-          onPressed: _isSaving ? null : _submit,
-          icon: const Icon(Icons.assignment_late_outlined),
-          label: Text(l10n.t('btnSubmitRequest')),
-        ),
-      ],
     );
   }
 
@@ -2158,101 +2363,124 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
 
-    return AlertDialog(
-      title: Text(l10n.t('roomsTooltipCreateTemplate')),
-      content: SizedBox(
-        width: 560,
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                DropdownButtonFormField<String>(
-                  initialValue: _hotelId,
-                  decoration: InputDecoration(labelText: l10n.t('hotels')),
-                  items: [
-                    for (final hotel in widget.hotels)
-                      DropdownMenuItem(
-                        value: hotel.id,
-                        child: Text(hotel.name),
-                      ),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => _hotelId = value);
-                  },
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _NumberField(
-                        controller: _floorNumber,
-                        label: l10n.t('roomsLabelFloor'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _NumberField(
-                        controller: _firstRoomNumber,
-                        label: l10n.t('roomsLabelRoom'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _NumberField(
-                        controller: _roomCount,
-                        label:
-                            '${l10n.t('roomsLabelRoom')} count', // count is universal/clear, or let's use it dynamically
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    l10n.t('roomsLabelProductsInRoom'),
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final product in widget.products)
-                      FilterChip(
-                        label: Text(product.label(language)),
-                        selected: _selectedProductIds.contains(product.id),
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected) {
-                              _selectedProductIds.add(product.id);
-                            } else {
-                              _selectedProductIds.remove(product.id);
-                            }
-                          });
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          left: 16,
+          right: 16,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.t('roomsTooltipCreateTemplate'),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DropdownButtonFormField<String>(
+                        initialValue: _hotelId,
+                        decoration: InputDecoration(labelText: l10n.t('hotels')),
+                        items: [
+                          for (final hotel in widget.hotels)
+                            DropdownMenuItem(
+                              value: hotel.id,
+                              child: Text(hotel.name),
+                            ),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) setState(() => _hotelId = value);
                         },
                       ),
-                  ],
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _NumberField(
+                              controller: _floorNumber,
+                              label: l10n.t('roomsLabelFloor'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _NumberField(
+                              controller: _firstRoomNumber,
+                              label: l10n.t('roomsLabelRoom'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _NumberField(
+                              controller: _roomCount,
+                              label:
+                                  '${l10n.t('roomsLabelRoom')} count', // count is universal/clear, or let's use it dynamically
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          l10n.t('roomsLabelProductsInRoom'),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final product in widget.products)
+                            FilterChip(
+                              label: Text(product.label(language)),
+                              selected: _selectedProductIds.contains(product.id),
+                              onSelected: (selected) {
+                                setState(() {
+                                  if (selected) {
+                                    _selectedProductIds.add(product.id);
+                                  } else {
+                                    _selectedProductIds.remove(product.id);
+                                  }
+                                });
+                              },
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _save,
+                  icon: const Icon(Icons.auto_awesome_motion_outlined),
+                  label: Text(l10n.t('roomsBtnCreateRooms')),
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: Text(l10n.t('btnCancel')),
-        ),
-        FilledButton.icon(
-          onPressed: _isSaving ? null : _save,
-          icon: const Icon(Icons.auto_awesome_motion_outlined),
-          label: Text(l10n.t('roomsBtnCreateRooms')),
-        ),
-      ],
     );
   }
 

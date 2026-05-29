@@ -41,8 +41,10 @@ class ProductsScreen extends ConsumerWidget {
     WidgetRef ref, {
     Product? product,
   }) async {
-    await showDialog<void>(
+    await showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (context) => _ProductDialog(product: product),
     );
 
@@ -228,8 +230,10 @@ class _ProductsTable extends ConsumerWidget {
                                           l10n.t('productsBtnEdit'),
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        onPressed: () => showDialog<void>(
+                                        onPressed: () => showModalBottomSheet<void>(
                                           context: context,
+                                          isScrollControlled: true,
+                                          useSafeArea: true,
                                           builder: (context) =>
                                               _ProductDialog(product: product),
                                         ).then((_) {
@@ -390,110 +394,135 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return AlertDialog(
-      title: Text(
-          _isEditing ? l10n.t('productsBtnEdit') : l10n.t('productsBtnCreate')),
-      content: SizedBox(
-        width: 640,
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _RequiredTextField(
-                    controller: _sku, label: l10n.t('productsLabelSku')),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _RequiredTextField(
-                        controller: _nameEn,
-                        label: l10n.t('productsLabelNameEn'),
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+    
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              _isEditing ? l10n.t('productsBtnEdit') : l10n.t('productsBtnCreate'),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _RequiredTextField(
+                          controller: _sku, label: l10n.t('productsLabelSku')),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _RequiredTextField(
+                              controller: _nameEn,
+                              label: l10n.t('productsLabelNameEn'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _RequiredTextField(
+                              controller: _nameFr,
+                              label: l10n.t('productsLabelNameFr'),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _RequiredTextField(
-                        controller: _nameFr,
-                        label: l10n.t('productsLabelNameFr'),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _RequiredTextField(
+                              controller: _nameAr,
+                              label: l10n.t('productsLabelNameAr'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _RequiredTextField(
+                              controller: _nameIt,
+                              label: l10n.t('productsLabelNameIt'),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _RequiredTextField(
-                        controller: _nameAr,
-                        label: l10n.t('productsLabelNameAr'),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _imageUrl,
+                        decoration: InputDecoration(
+                          labelText: l10n.t('productsLabelImage'),
+                          hintText: l10n.t('productsLabelImageHint'),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _RequiredTextField(
-                        controller: _nameIt,
-                        label: l10n.t('productsLabelNameIt'),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: [
+                          _PositiveIntField(
+                            controller: _bottleVolumeMl,
+                            label: l10n.t('productsLabelBottleMl'),
+                          ),
+                          _PositiveIntField(
+                            controller: _bidonVolumeMl,
+                            label: l10n.t('productsLabelBidonMl'),
+                          ),
+                          _PositiveIntField(
+                            controller: _maxRefillCount,
+                            label: l10n.t('productsLabelMaxRefills'),
+                          ),
+                          _PositiveIntField(
+                            controller: _maxBottleAgeDays,
+                            label: l10n.t('productsLabelMaxAgeDays'),
+                          ),
+                          _PositiveIntField(
+                            controller: _lowBottleThreshold,
+                            label: l10n.t('productsLabelLowBottles'),
+                          ),
+                          _PositiveIntField(
+                            controller: _lowBidonThreshold,
+                            label: l10n.t('productsLabelLowBidons'),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _imageUrl,
-                  decoration: InputDecoration(
-                    labelText: l10n.t('productsLabelImage'),
-                    hintText: l10n.t('productsLabelImageHint'),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    _PositiveIntField(
-                      controller: _bottleVolumeMl,
-                      label: l10n.t('productsLabelBottleMl'),
-                    ),
-                    _PositiveIntField(
-                      controller: _bidonVolumeMl,
-                      label: l10n.t('productsLabelBidonMl'),
-                    ),
-                    _PositiveIntField(
-                      controller: _maxRefillCount,
-                      label: l10n.t('productsLabelMaxRefills'),
-                    ),
-                    _PositiveIntField(
-                      controller: _maxBottleAgeDays,
-                      label: l10n.t('productsLabelMaxAgeDays'),
-                    ),
-                    _PositiveIntField(
-                      controller: _lowBottleThreshold,
-                      label: l10n.t('productsLabelLowBottles'),
-                    ),
-                    _PositiveIntField(
-                      controller: _lowBidonThreshold,
-                      label: l10n.t('productsLabelLowBidons'),
-                    ),
-                  ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 8),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _save,
+                  icon: Icon(_isEditing ? Icons.save_outlined : Icons.add_outlined),
+                  label: Text(_isEditing ? l10n.t('btnSave') : l10n.t('btnCreate')),
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: Text(l10n.t('btnCancel')),
-        ),
-        FilledButton.icon(
-          onPressed: _isSaving ? null : _save,
-          icon: Icon(_isEditing ? Icons.save_outlined : Icons.add_outlined),
-          label: Text(_isEditing ? l10n.t('btnSave') : l10n.t('btnCreate')),
-        ),
-      ],
     );
   }
 

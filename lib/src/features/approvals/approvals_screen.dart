@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/app_enums.dart';
@@ -80,8 +81,47 @@ class ApprovalsScreen extends ConsumerWidget {
             for (final request in requests)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: Card(
-                  child: Padding(
+                child: Dismissible(
+                  key: ValueKey(request.id),
+                  direction: (canReviewRequests && request.status == ApprovalStatus.pending)
+                      ? DismissDirection.horizontal
+                      : DismissDirection.none,
+                  background: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade600,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: 24),
+                    child: const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
+                  ),
+                  secondaryBackground: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade600,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 24),
+                    child: const Icon(Icons.cancel_outlined, color: Colors.white, size: 28),
+                  ),
+                  onDismissed: (direction) async {
+                    HapticFeedback.lightImpact();
+                    try {
+                      if (direction == DismissDirection.startToEnd) {
+                        await ref.read(repositoryProvider).approveRequest(approvalRequestId: request.id);
+                        if (context.mounted) PremiumSnackbar.show(context, l10n.t('approvalsApproved'), icon: Icons.check_circle_outline);
+                      } else {
+                        await ref.read(repositoryProvider).rejectRequest(approvalRequestId: request.id);
+                        if (context.mounted) PremiumSnackbar.show(context, l10n.t('approvalsRejected'), icon: Icons.info_outline);
+                      }
+                      _refreshAfterReview(ref);
+                    } catch (e) {
+                      if (context.mounted) PremiumSnackbar.show(context, _errorMessage(e, l10n), icon: Icons.error_outline, isError: true);
+                      _refreshAfterReview(ref);
+                    }
+                  },
+                  child: Card(
+                    child: Padding(
                     padding: const EdgeInsets.all(18),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,6 +249,7 @@ class ApprovalsScreen extends ConsumerWidget {
                   ),
                 ),
               ),
+            ),
           ],
         );
         },

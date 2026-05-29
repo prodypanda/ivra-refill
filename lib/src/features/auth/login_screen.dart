@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -22,9 +24,26 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _localAuth = LocalAuthentication();
   var _isLoading = false;
   var _obscurePassword = true;
+  var _canCheckBiometrics = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometrics();
+  }
+
+  Future<void> _checkBiometrics() async {
+    try {
+      final canAuth = await _localAuth.canCheckBiometrics || await _localAuth.isDeviceSupported();
+      if (mounted) setState(() => _canCheckBiometrics = canAuth);
+    } catch (e) {
+      // Ignore
+    }
+  }
 
   @override
   void dispose() {
@@ -295,6 +314,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ),
                       ),
+                      if (_canCheckBiometrics) ...[
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: Size.fromHeight(isMobile ? 54 : 48),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                isMobile ? 18 : 12,
+                              ),
+                            ),
+                          ),
+                          onPressed: _isLoading ? null : _biometricLogin,
+                          icon: const Icon(Icons.fingerprint),
+                          label: const Text(
+                            'Biometric Login',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 12),
                       TextButton(
                         onPressed:
@@ -334,6 +376,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+      
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('saved_email', _emailController.text.trim());
+      await prefs.setString('saved_password', _passwordController.text);
+
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);
       if (mounted) {
@@ -345,6 +392,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  Future<void> _biometricLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('saved_email');
+    final savedPassword = prefs.getString('saved_password');
+    
+    if (savedEmail == null || savedPassword == null) {
+      setState(() => _error = 'Please login manually first to enable biometrics.');
+      return;
+    }
+
+    try {
+      final authenticated = await _localAuth.authenticate(
+        localizedReason: 'Authenticate to access Ivra',
+      );
+      
+      if (authenticated) {
+        _emailController.text = savedEmail;
+        _passwordController.text = savedPassword;
+        _login();
+      }
+    } catch (e) {
+      if (mounted) setState(() => _error = 'Biometric authentication failed.');
     }
   }
 

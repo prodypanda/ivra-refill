@@ -64,6 +64,36 @@ ThemeData buildIvraTheme(Brightness brightness) {
     colorScheme: colorScheme,
     textTheme: GoogleFonts.plusJakartaSansTextTheme(
       ThemeData(brightness: brightness).textTheme,
+    ).apply(
+      bodyColor: colorScheme.onSurface,
+      displayColor: colorScheme.onSurface,
+    ),
+    // Soft Chips
+    chipTheme: ChipThemeData(
+      backgroundColor: colorScheme.surfaceContainerHighest,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      side:
+          BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      labelStyle: TextStyle(
+        fontWeight: FontWeight.w600,
+        color: colorScheme.onSurfaceVariant,
+      ),
+    ),
+    listTileTheme: ListTileThemeData(
+      iconColor: colorScheme.onSurfaceVariant,
+      textColor: colorScheme.onSurface,
+    ),
+    dataTableTheme: DataTableThemeData(
+      headingTextStyle: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: colorScheme.onSurface,
+      ),
+      dataTextStyle: TextStyle(
+        color: colorScheme.onSurface,
+      ),
     ),
     // Transparent scaffold to allow global gradient background to show through
     scaffoldBackgroundColor: Colors.transparent,
@@ -90,6 +120,9 @@ ThemeData buildIvraTheme(Brightness brightness) {
       fillColor: isLight
           ? const Color(0xFFFCF2EB)
           : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+      labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+      floatingLabelStyle: TextStyle(color: colorScheme.primary),
+      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
       border: OutlineInputBorder(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
         borderSide:
@@ -133,16 +166,7 @@ ThemeData buildIvraTheme(Brightness brightness) {
       ),
     ),
 
-    // Soft Chips
-    chipTheme: ChipThemeData(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      side:
-          BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      labelStyle: const TextStyle(fontWeight: FontWeight.w600),
-    ),
+
 
     // Transparent AppBars to let gradient show
     appBarTheme: const AppBarTheme(

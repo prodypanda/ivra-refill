@@ -4,6 +4,7 @@
          Flutter tooling, so without it here release APKs would have no
          network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"

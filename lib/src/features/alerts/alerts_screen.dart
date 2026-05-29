@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/app_enums.dart';
@@ -114,6 +115,7 @@ class AlertsScreen extends ConsumerWidget {
     WidgetRef ref,
     String alertId,
   ) async {
+    HapticFeedback.lightImpact();
     await ref.read(repositoryProvider).resolveAlert(alertId: alertId);
     ref.invalidate(alertsProvider);
     ref.invalidate(dashboardProvider);
@@ -365,11 +367,27 @@ class _AlertCard extends StatelessWidget {
     // Muted opacity for resolved alerts
     final contentOpacity = isResolved ? 0.45 : 1.0;
 
-    return AnimatedOpacity(
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.easeOut,
-      opacity: isResolved ? 0.72 : 1.0,
-      child: Container(
+    return Dismissible(
+      key: ValueKey(alert.id),
+      direction: isResolved ? DismissDirection.none : DismissDirection.endToStart,
+      onDismissed: (_) {
+        HapticFeedback.lightImpact();
+        onResolve(alert.id);
+      },
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 24),
+        decoration: BoxDecoration(
+          color: Colors.green.shade600,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
+      ),
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOut,
+        opacity: isResolved ? 0.72 : 1.0,
+        child: Container(
         decoration: BoxDecoration(
           color: isResolved
               ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.38)
@@ -550,6 +568,7 @@ class _AlertCard extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }

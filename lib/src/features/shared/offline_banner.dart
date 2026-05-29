@@ -156,126 +156,69 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
     if (!isEffectivelyOffline && pendingCount == 0) {
       return const SizedBox.shrink();
     }
-
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-        child: Material(
-          elevation: 2,
-          shadowColor: const Color(0xFF92400E).withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-          color: isEffectivelyOffline
-              ? const Color(0xFFFFF3E0) // warm amber for offline
-              : const Color(0xFFE8F5E9), // soft green for "pending but online"
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final syncButton =
-                    pendingCount > 0 && isOnline && !hasManualOffline
-                        ? _isSyncing
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : TextButton.icon(
-                                onPressed: () => _manualSync(),
-                                icon: const Icon(Icons.sync, size: 16),
-                                label: Text(
-                                  l10n.t('offlineBannerSyncBtn'),
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                style: TextButton.styleFrom(
-                                  foregroundColor: const Color(0xFF2E7D32),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                              )
-                        : null;
-                final copy = Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      isEffectivelyOffline
-                          ? Icons.cloud_off_outlined
-                          : Icons.cloud_sync_outlined,
-                      size: 20,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 12, bottom: 4),
+          child: Material(
+            elevation: 2,
+            shadowColor: const Color(0xFF92400E).withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(24),
+            color: isEffectivelyOffline
+                ? const Color(0xFFFFF3E0)
+                : const Color(0xFFE8F5E9),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isEffectivelyOffline
+                        ? Icons.cloud_off_outlined
+                        : Icons.cloud_sync_outlined,
+                    size: 16,
+                    color: isEffectivelyOffline
+                        ? const Color(0xFFE65100)
+                        : const Color(0xFF2E7D32),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    isEffectivelyOffline
+                        ? l10n.t('offlineBannerTitle')
+                        : l10n.tParams(
+                            'settingsPendingSync',
+                            {'count': pendingCount.toString()},
+                          ),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
                       color: isEffectivelyOffline
                           ? const Color(0xFFE65100)
                           : const Color(0xFF2E7D32),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            isEffectivelyOffline
-                                ? l10n.t('offlineBannerTitle')
-                                : l10n.tParams(
-                                    'settingsPendingSync',
-                                    {'count': pendingCount.toString()},
-                                  ),
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: isEffectivelyOffline
-                                  ? const Color(0xFFE65100)
-                                  : const Color(0xFF2E7D32),
-                            ),
-                          ),
-                          Text(
-                            isEffectivelyOffline
-                                ? '${l10n.t('offlineBannerSubtitle')}${pendingCount > 0 ? ' • $pendingCount ${l10n.t('offlineBannerPending')}' : ''}'
-                                : '$pendingCount ${l10n.t('offlineBannerPending')}',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: isEffectivelyOffline
-                                  ? const Color(0xFFBF360C)
-                                  : const Color(0xFF1B5E20),
-                            ),
-                          ),
-                        ],
+                  ),
+                  if (pendingCount > 0 && isOnline && !hasManualOffline) ...[
+                    const SizedBox(width: 12),
+                    if (_isSyncing)
+                      const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    else
+                      InkWell(
+                        onTap: _manualSync,
+                        borderRadius: BorderRadius.circular(12),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          child: Icon(Icons.sync, size: 16, color: Color(0xFF2E7D32)),
+                        ),
                       ),
-                    ),
                   ],
-                );
-
-                if (constraints.maxWidth < 360 && syncButton != null) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      copy,
-                      const SizedBox(height: 8),
-                      Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: syncButton,
-                      ),
-                    ],
-                  );
-                }
-
-                return Row(
-                  children: [
-                    Expanded(child: copy),
-                    if (syncButton != null) ...[
-                      const SizedBox(width: 8),
-                      syncButton,
-                    ],
-                  ],
-                );
-              },
+                ],
+              ),
             ),
           ),
         ),

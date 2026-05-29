@@ -67,7 +67,8 @@ class PageScaffold extends ConsumerWidget {
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
         SliverAppBar(
-          pinned: true,
+          floating: true,
+          snap: true,
           backgroundColor: Colors.transparent,
           scrolledUnderElevation: 0,
           toolbarHeight: isMobile ? 84 : kToolbarHeight,

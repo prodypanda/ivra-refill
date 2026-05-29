@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "592457790267",
+    "project_id": "ivra-refill",
+    "storage_bucket": "ivra-refill.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:592457790267:android:0902219e053dce3e62fd1e",
+        "android_client_info": {
+          "package_name": "com.ivra.refill"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqGTA3G293PMs7iVR8zv51nkpJ_Uync9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
