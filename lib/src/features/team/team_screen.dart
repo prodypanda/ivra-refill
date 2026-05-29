@@ -516,25 +516,30 @@ class _InviteTeamMemberDialogState
                       borderRadius: BorderRadius.circular(12),
                     ),
                     constraints: const BoxConstraints(maxHeight: 200),
-                    child: ListView(
+                    // ⚡ Bolt Optimization: Use ListView.builder instead of ListView
+                    // What: Replaced eager ListView with lazy ListView.builder
+                    // Why: ListView builds all children at once, which causes jank when the list of hotels is large.
+                    // Impact: Reduces initial memory allocation and layout time from O(N) to O(Visible Items).
+                    child: ListView.builder(
                       shrinkWrap: true,
-                      children: [
-                        for (final hotel in widget.hotels)
-                          CheckboxListTile(
-                            title: Text(hotel.name),
-                            subtitle: Text(hotel.city),
-                            value: _selectedHotelIds.contains(hotel.id),
-                            onChanged: (checked) {
-                              setState(() {
-                                if (checked == true) {
-                                  _selectedHotelIds.add(hotel.id);
-                                } else {
-                                  _selectedHotelIds.remove(hotel.id);
-                                }
-                              });
-                            },
-                          ),
-                      ],
+                      itemCount: widget.hotels.length,
+                      itemBuilder: (context, index) {
+                        final hotel = widget.hotels[index];
+                        return CheckboxListTile(
+                          title: Text(hotel.name),
+                          subtitle: Text(hotel.city),
+                          value: _selectedHotelIds.contains(hotel.id),
+                          onChanged: (checked) {
+                            setState(() {
+                              if (checked == true) {
+                                _selectedHotelIds.add(hotel.id);
+                              } else {
+                                _selectedHotelIds.remove(hotel.id);
+                              }
+                            });
+                          },
+                        );
+                      },
                     ),
                   ),
                   if (_selectedHotelIds.isEmpty)
@@ -713,31 +718,36 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
                 borderRadius: BorderRadius.circular(12),
               ),
               constraints: const BoxConstraints(maxHeight: 350),
-              child: ListView(
+              // ⚡ Bolt Optimization: Use ListView.builder instead of ListView
+              // What: Replaced eager ListView with lazy ListView.builder
+              // Why: ListView builds all children at once, which causes jank when the list of hotels is large.
+              // Impact: Reduces initial memory allocation and layout time from O(N) to O(Visible Items).
+              child: ListView.builder(
                 shrinkWrap: true,
-                children: [
-                  for (final hotel in widget.allHotels)
-                    CheckboxListTile(
-                      title: Text(hotel.name),
-                      subtitle: Text('${hotel.city}, ${hotel.country}'),
-                      secondary: Icon(
-                        Icons.hotel_outlined,
-                        color: _selectedIds.contains(hotel.id)
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurfaceVariant,
-                      ),
-                      value: _selectedIds.contains(hotel.id),
-                      onChanged: (checked) {
-                        setState(() {
-                          if (checked == true) {
-                            _selectedIds.add(hotel.id);
-                          } else {
-                            _selectedIds.remove(hotel.id);
-                          }
-                        });
-                      },
+                itemCount: widget.allHotels.length,
+                itemBuilder: (context, index) {
+                  final hotel = widget.allHotels[index];
+                  return CheckboxListTile(
+                    title: Text(hotel.name),
+                    subtitle: Text('${hotel.city}, ${hotel.country}'),
+                    secondary: Icon(
+                      Icons.hotel_outlined,
+                      color: _selectedIds.contains(hotel.id)
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurfaceVariant,
                     ),
-                ],
+                    value: _selectedIds.contains(hotel.id),
+                    onChanged: (checked) {
+                      setState(() {
+                        if (checked == true) {
+                          _selectedIds.add(hotel.id);
+                        } else {
+                          _selectedIds.remove(hotel.id);
+                        }
+                      });
+                    },
+                  );
+                },
               ),
             ),
           ],
