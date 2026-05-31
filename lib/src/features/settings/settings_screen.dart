@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/offline/offline_sync_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../auth/biometric_auth.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 
@@ -105,6 +106,10 @@ class SettingsScreen extends ConsumerWidget {
                 },
               ),
             ),
+            if (useSupabase) ...[
+              const SizedBox(height: 20),
+              _BiometricSettingTile(isMobile: isMobile),
+            ],
             const SizedBox(height: 20),
             AsyncValueView(
               value: ref.watch(offlineActionsProvider),
@@ -324,6 +329,97 @@ class SettingsScreen extends ConsumerWidget {
       SnackBar(
           content:
               Text(AppLocalizations.of(context).t('settingsQueueCleared'))),
+    );
+  }
+}
+
+/// Toggle that lets the user enable or disable biometric (fingerprint / face)
+/// unlock for the app. The choice is persisted via [biometricEnabledProvider].
+class _BiometricSettingTile extends ConsumerStatefulWidget {
+  const _BiometricSettingTile({required this.isMobile});
+
+  final bool isMobile;
+
+  @override
+  ConsumerState<_BiometricSettingTile> createState() =>
+      _BiometricSettingTileState();
+}
+
+class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
+  bool? _available;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAvailability();
+  }
+
+  Future<void> _checkAvailability() async {
+    final available =
+        await ref.read(biometricAuthServiceProvider).isAvailable();
+    if (!mounted) return;
+    setState(() => _available = available);
+  }
+
+  Future<void> _onChanged(bool value) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    if (value) {
+      final available =
+          _available ?? await ref.read(biometricAuthServiceProvider).isAvailable();
+      if (!mounted) return;
+      if (!available) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.t('settingsBiometricUnavailable'))),
+        );
+        return;
+      }
+      // Confirm with a real biometric check so the user proves the sensor
+      // works before we rely on it at login.
+      try {
+        final ok = await ref
+            .read(biometricAuthServiceProvider)
+            .authenticate(l10n.t('authBiometricReason'));
+        if (!ok) return;
+      } catch (_) {
+        if (!mounted) return;
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.t('authBiometricFailed'))),
+        );
+        return;
+      }
+    }
+
+    await ref.read(biometricEnabledProvider.notifier).setEnabled(value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final enabled = ref.watch(biometricEnabledProvider);
+    final available = _available ?? false;
+
+    return Card(
+      elevation: widget.isMobile ? 0 : null,
+      shape: widget.isMobile
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: BorderSide(color: theme.colorScheme.outlineVariant),
+            )
+          : null,
+      child: SwitchListTile(
+        secondary: const Icon(Icons.fingerprint),
+        title: Text(l10n.t('settingsBiometricTitle')),
+        subtitle: Text(
+          available
+              ? l10n.t('settingsBiometricHint')
+              : l10n.t('settingsBiometricUnavailable'),
+        ),
+        value: enabled && available,
+        onChanged: available ? _onChanged : null,
+      ),
     );
   }
 }
