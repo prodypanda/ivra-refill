@@ -53,15 +53,54 @@ class SupabaseIvraRepository implements IvraRepository {
     if (user == null) {
       throw StateError('No authenticated Supabase user.');
     }
-    final data = await _fetchWithCache(
-      'current_user_${user.id}',
-      () => _client.from('profiles').select().eq('id', user.id).single(),
-    );
+    final data = await _fetchCurrentUserProfile(user.id);
     final profile = UserProfile.fromMap(data);
     if (!profile.isActive) {
       throw StateError('This account has been deactivated.');
     }
     return profile;
+  }
+
+  Future<Map<String, dynamic>> _fetchCurrentUserProfile(String userId) async {
+    Future<Map<String, dynamic>> fetch() => _fetchWithCache(
+          'current_user_$userId',
+          () => _client.from('profiles').select().eq('id', userId).single(),
+        );
+    try {
+      return await fetch();
+    } catch (e) {
+      // On a cold start the saved access token can be momentarily expired, so
+      // the first profile request fails with a transient JWT/network error
+      // before Supabase auto-refreshes the session. Give the refresh a beat
+      // and retry once before surfacing the failure to the UI.
+      if (_isRetriableProfileError(e)) {
+        await Future<void>.delayed(const Duration(milliseconds: 700));
+        return await fetch();
+      }
+      rethrow;
+    }
+  }
+
+  bool _isRetriableProfileError(Object error) {
+    if (error is AuthException) return true;
+    final raw = error.toString();
+    // A genuine "no profile row" is not retriable.
+    if (raw.contains('PGRST116') ||
+        raw.contains('contains 0 rows') ||
+        raw.contains('multiple (or no) rows')) {
+      return false;
+    }
+    return raw.contains('JWT') ||
+        raw.contains('PGRST301') ||
+        raw.contains('token is expired') ||
+        raw.contains('SocketException') ||
+        raw.contains('Failed host lookup') ||
+        raw.contains('ClientException') ||
+        raw.contains('XMLHttpRequest') ||
+        raw.contains('Failed to fetch') ||
+        raw.contains('Connection') ||
+        raw.contains('timeout') ||
+        raw.contains('timed out');
   }
 
   @override

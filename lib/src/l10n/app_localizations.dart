@@ -138,6 +138,9 @@ class AppLocalizations {
           'Something went wrong. Please try again, or contact support if the problem persists.',
       'asyncErrorTitle': 'Could not load this section',
       'btnRetry': 'Retry',
+      'authProfileLoadErrorTitle': 'We couldn\'t load your profile.',
+      'authProfileLoadErrorBody':
+          'This is usually a temporary connection issue. Please retry.',
       'authAccountDeactivated':
           'This account has been deactivated. Contact your administrator for access.',
       'settingsPayloadInvalidJson': 'Payload must be a JSON object.',
@@ -535,6 +538,9 @@ class AppLocalizations {
           'Une erreur est survenue. Réessayez ou contactez le support si le problème persiste.',
       'asyncErrorTitle': 'Impossible de charger cette section',
       'btnRetry': 'Réessayer',
+      'authProfileLoadErrorTitle': 'Impossible de charger votre profil.',
+      'authProfileLoadErrorBody':
+          'Il s\'agit généralement d\'un problème de connexion temporaire. Veuillez réessayer.',
       'authAccountDeactivated':
           'Ce compte a été désactivé. Contactez votre administrateur pour y accéder.',
       'settingsPayloadInvalidJson': 'La charge utile doit être un objet JSON.',
@@ -946,6 +952,9 @@ class AppLocalizations {
           'حدث خطأ غير متوقّع. حاول مرّة أخرى أو تواصل مع الدّعم إذا استمرّت المشكلة.',
       'asyncErrorTitle': 'تعذّر تحميل هذا القسم',
       'btnRetry': 'إعادة المحاولة',
+      'authProfileLoadErrorTitle': 'تعذّر تحميل ملفّك الشخصي.',
+      'authProfileLoadErrorBody':
+          'عادةً ما تكون هذه مشكلة اتّصال مؤقّتة. يرجى إعادة المحاولة.',
       'authAccountDeactivated':
           'تمّ تعطيل هذا الحساب. تواصل مع المدير لاستعادة الوصول.',
       'settingsPayloadInvalidJson': 'يجب أن تكون الحمولة كائن JSON.',
@@ -1387,6 +1396,9 @@ class AppLocalizations {
           'Si è verificato un errore. Riprova o contatta l\'assistenza se il problema persiste.',
       'asyncErrorTitle': 'Impossibile caricare questa sezione',
       'btnRetry': 'Riprova',
+      'authProfileLoadErrorTitle': 'Impossibile caricare il tuo profilo.',
+      'authProfileLoadErrorBody':
+          'Di solito è un problema di connessione temporaneo. Riprova.',
       'authAccountDeactivated':
           'Questo account è stato disattivato. Contatta l\'amministratore per riaccedere.',
       'settingsPayloadInvalidJson': 'Il payload deve essere un oggetto JSON.',

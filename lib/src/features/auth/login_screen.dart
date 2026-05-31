@@ -64,11 +64,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final useSupabase = ref.watch(useSupabaseProvider);
     final hasSession =
         useSupabase && Supabase.instance.client.auth.currentSession != null;
-    final profileError = hasSession
+    final profileErrorObj = hasSession
         ? ref.watch(currentUserProvider).whenOrNull(
-              error: (error, stackTrace) => localizeAuthError(l10n, error),
+              error: (error, stackTrace) => error,
             )
         : null;
+    final isTransientProfile =
+        profileErrorObj != null && isTransientProfileError(profileErrorObj);
 
     return Scaffold(
       body: Container(
@@ -154,7 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         const SizedBox(height: 22),
                       ],
-                      if (profileError != null) ...[
+                      if (profileErrorObj != null) ...[
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -165,7 +167,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                l10n.t('authTitleCannotAccess'),
+                                l10n.t(isTransientProfile
+                                    ? 'authProfileLoadErrorTitle'
+                                    : 'authTitleCannotAccess'),
                                 style: TextStyle(
                                   color: Theme.of(context)
                                       .colorScheme
@@ -175,7 +179,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                profileError,
+                                isTransientProfile
+                                    ? l10n.t('authProfileLoadErrorBody')
+                                    : localizeAuthError(l10n, profileErrorObj),
                                 style: TextStyle(
                                   color: Theme.of(context)
                                       .colorScheme
@@ -184,13 +190,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton.icon(
-                                  onPressed: _isLoading ? null : _signOut,
-                                  icon: const Icon(Icons.logout_outlined),
-                                  label: Text(l10n.t('authBtnSignOut')),
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  if (isTransientProfile) ...[
+                                    TextButton.icon(
+                                      onPressed: _isLoading
+                                          ? null
+                                          : _retryProfileLoad,
+                                      icon: const Icon(Icons.refresh),
+                                      label: Text(l10n.t('btnRetry')),
+                                    ),
+                                    const SizedBox(width: 4),
+                                  ],
+                                  TextButton.icon(
+                                    onPressed: _isLoading ? null : _signOut,
+                                    icon: const Icon(Icons.logout_outlined),
+                                    label: Text(l10n.t('authBtnSignOut')),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -466,6 +484,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } finally {
       if (mounted) setState(() => _isAuthenticating = false);
     }
+  }
+
+  void _retryProfileLoad() {
+    setState(() => _error = null);
+    ref.invalidate(currentUserProvider);
   }
 
   Future<void> _signOut() async {
