@@ -261,6 +261,17 @@ class AppLocalizations {
       'settingsOfflineMode': 'Offline mode',
       'settingsOfflineQueue': 'Queue actions',
       'settingsOfflineSend': 'Send actions',
+      'settingsBiometricTitle': 'Biometric unlock',
+      'settingsBiometricHint': 'Use your fingerprint or face to sign in.',
+      'settingsBiometricUnavailable':
+          'Biometric unlock is not available on this device.',
+      'authBtnBiometricLogin': 'Biometric login',
+      'authBiometricReason': 'Authenticate to access Ivra',
+      'authBiometricNeedsLogin':
+          'Please sign in once to enable biometric login.',
+      'authBiometricOfflineNoSession':
+          'You are offline. Connect to the internet to sign in.',
+      'authBiometricFailed': 'Biometric authentication failed.',
       'settingsBtnClear': 'Clear',
       'settingsBtnSyncNow': 'Sync now',
       'settingsNoPendingActions': 'No pending actions.',
@@ -655,6 +666,18 @@ class AppLocalizations {
       'settingsOfflineMode': 'Mode hors ligne',
       'settingsOfflineQueue': 'Mettre en file d\'attente',
       'settingsOfflineSend': 'Envoyer les actions',
+      'settingsBiometricTitle': 'Déverrouillage biométrique',
+      'settingsBiometricHint':
+          'Utilisez votre empreinte ou votre visage pour vous connecter.',
+      'settingsBiometricUnavailable':
+          'Le déverrouillage biométrique n\'est pas disponible sur cet appareil.',
+      'authBtnBiometricLogin': 'Connexion biométrique',
+      'authBiometricReason': 'Authentifiez-vous pour accéder à Ivra',
+      'authBiometricNeedsLogin':
+          'Connectez-vous une fois pour activer la connexion biométrique.',
+      'authBiometricOfflineNoSession':
+          'Vous êtes hors ligne. Connectez-vous à Internet pour vous identifier.',
+      'authBiometricFailed': 'Échec de l\'authentification biométrique.',
       'settingsBtnClear': 'Effacer',
       'settingsBtnSyncNow': 'Synchroniser',
       'settingsNoPendingActions': 'Aucune action en attente.',
@@ -1041,6 +1064,16 @@ class AppLocalizations {
       'settingsOfflineMode': 'وضع عدم الاتصال',
       'settingsOfflineQueue': 'جدولة الإجراءات',
       'settingsOfflineSend': 'إرسال الإجراءات',
+      'settingsBiometricTitle': 'الفتح بالبصمة',
+      'settingsBiometricHint': 'استخدم بصمتك أو وجهك لتسجيل الدخول.',
+      'settingsBiometricUnavailable': 'الفتح بالبصمة غير متاح على هذا الجهاز.',
+      'authBtnBiometricLogin': 'تسجيل الدخول بالبصمة',
+      'authBiometricReason': 'قم بالمصادقة للوصول إلى Ivra',
+      'authBiometricNeedsLogin':
+          'يرجى تسجيل الدخول مرة واحدة لتفعيل الدخول بالبصمة.',
+      'authBiometricOfflineNoSession':
+          'أنت غير متصل بالإنترنت. اتصل بالإنترنت لتسجيل الدخول.',
+      'authBiometricFailed': 'فشلت المصادقة بالبصمة.',
       'settingsBtnClear': 'مسح',
       'settingsBtnSyncNow': 'مزامنة',
       'settingsNoPendingActions': 'لا توجد إجراءات معلقة.',
@@ -1478,6 +1511,18 @@ class AppLocalizations {
       'settingsOfflineMode': 'Modalità offline',
       'settingsOfflineQueue': 'Metti in coda',
       'settingsOfflineSend': 'Invia azioni',
+      'settingsBiometricTitle': 'Sblocco biometrico',
+      'settingsBiometricHint':
+          'Usa la tua impronta o il volto per accedere.',
+      'settingsBiometricUnavailable':
+          'Lo sblocco biometrico non è disponibile su questo dispositivo.',
+      'authBtnBiometricLogin': 'Accesso biometrico',
+      'authBiometricReason': 'Autenticati per accedere a Ivra',
+      'authBiometricNeedsLogin':
+          'Accedi una volta per abilitare l\'accesso biometrico.',
+      'authBiometricOfflineNoSession':
+          'Sei offline. Connettiti a Internet per accedere.',
+      'authBiometricFailed': 'Autenticazione biometrica non riuscita.',
       'settingsBtnClear': 'Pulisci',
       'settingsBtnSyncNow': 'Sincronizza',
       'settingsNoPendingActions': 'Nessuna azione in attesa.',

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -9,7 +8,9 @@ import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../shared/glass_card.dart';
+import '../shared/offline_banner.dart';
 import 'auth_validation.dart';
+import 'biometric_auth.dart';
 import 'reset_password_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -24,10 +25,11 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _localAuth = LocalAuthentication();
   var _isLoading = false;
   var _obscurePassword = true;
-  var _canCheckBiometrics = false;
+  var _biometricAvailable = false;
+  var _hasSavedCredentials = false;
+  var _isAuthenticating = false;
   String? _error;
 
   @override
@@ -37,12 +39,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _checkBiometrics() async {
-    try {
-      final canAuth = await _localAuth.canCheckBiometrics || await _localAuth.isDeviceSupported();
-      if (mounted) setState(() => _canCheckBiometrics = canAuth);
-    } catch (e) {
-      // Ignore
-    }
+    final available = await ref.read(biometricAuthServiceProvider).isAvailable();
+    final hasCreds = await hasSavedCredentials();
+    if (!mounted) return;
+    setState(() {
+      _biometricAvailable = available;
+      _hasSavedCredentials = hasCreds;
+    });
   }
 
   @override
@@ -314,7 +317,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ),
                       ),
-                      if (_canCheckBiometrics) ...[
+                      if (_biometricAvailable &&
+                          _hasSavedCredentials &&
+                          ref.watch(biometricEnabledProvider)) ...[
                         const SizedBox(height: 12),
                         OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
@@ -326,11 +331,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                             ),
                           ),
-                          onPressed: _isLoading ? null : _biometricLogin,
+                          onPressed:
+                              (_isLoading || _isAuthenticating) ? null : _biometricLogin,
                           icon: const Icon(Icons.fingerprint),
-                          label: const Text(
-                            'Biometric Login',
-                            style: TextStyle(
+                          label: Text(
+                            l10n.t('authBtnBiometricLogin'),
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -378,8 +384,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       );
       
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('saved_email', _emailController.text.trim());
-      await prefs.setString('saved_password', _passwordController.text);
+      await prefs.setString(AuthPrefs.savedEmail, _emailController.text.trim());
+      await prefs.setString(AuthPrefs.savedPassword, _passwordController.text);
+      if (mounted) setState(() => _hasSavedCredentials = true);
 
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);
@@ -396,27 +403,68 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _biometricLogin() async {
+    // Re-entrancy guard: never start a second biometric prompt while one is
+    // already in flight. Without this, a double tap (or a rebuild that re-runs
+    // the handler) stacks multiple `authenticate()` calls and the system
+    // prompt reappears again and again until the app is killed.
+    if (_isAuthenticating) return;
+
+    final l10n = AppLocalizations.of(context);
     final prefs = await SharedPreferences.getInstance();
-    final savedEmail = prefs.getString('saved_email');
-    final savedPassword = prefs.getString('saved_password');
-    
-    if (savedEmail == null || savedPassword == null) {
-      setState(() => _error = 'Please login manually first to enable biometrics.');
+    final savedEmail = prefs.getString(AuthPrefs.savedEmail);
+    final savedPassword = prefs.getString(AuthPrefs.savedPassword);
+
+    if (savedEmail == null ||
+        savedEmail.isEmpty ||
+        savedPassword == null ||
+        savedPassword.isEmpty) {
+      setState(() => _error = l10n.t('authBiometricNeedsLogin'));
       return;
     }
 
+    setState(() {
+      _isAuthenticating = true;
+      _error = null;
+    });
+
     try {
-      final authenticated = await _localAuth.authenticate(
-        localizedReason: 'Authenticate to access Ivra',
-      );
-      
-      if (authenticated) {
-        _emailController.text = savedEmail;
-        _passwordController.text = savedPassword;
-        _login();
+      final authenticated = await ref
+          .read(biometricAuthServiceProvider)
+          .authenticate(l10n.t('authBiometricReason'));
+
+      if (!authenticated) return;
+
+      // If a (possibly cached/offline) Supabase session already exists, unlock
+      // straight into the app instead of forcing a network sign-in. This is
+      // what lets biometric unlock work offline: the previous code always
+      // called `signInWithPassword`, which fails without a network and left the
+      // user stuck re-trying the fingerprint prompt.
+      final hasSession =
+          Supabase.instance.client.auth.currentSession != null;
+      if (hasSession) {
+        ref.invalidate(currentUserProvider);
+        ref.invalidate(dashboardProvider);
+        if (mounted) context.go(DashboardScreen.route);
+        return;
       }
+
+      final isOnline = ref.read(connectivityProvider);
+      if (!isOnline) {
+        if (mounted) {
+          setState(() => _error = l10n.t('authBiometricOfflineNoSession'));
+        }
+        return;
+      }
+
+      // Online and no session yet: replay the saved credentials through the
+      // normal sign-in flow.
+      _emailController.text = savedEmail;
+      _passwordController.text = savedPassword;
+      await _login();
     } catch (e) {
-      if (mounted) setState(() => _error = 'Biometric authentication failed.');
+      if (mounted) setState(() => _error = l10n.t('authBiometricFailed'));
+    } finally {
+      if (mounted) setState(() => _isAuthenticating = false);
     }
   }
 
