@@ -50,3 +50,39 @@ String localizeAuthError(
   }
   return l10n.t(fallbackKey);
 }
+
+/// Returns true when [error], thrown while loading the signed-in user's
+/// profile, is a *transient* failure (a network blip, a request timeout, or an
+/// auth-token refresh race on cold start) rather than a genuine authorization
+/// problem.
+///
+/// Transient failures should be retried in place instead of being shown as
+/// "this account cannot access Ivra" and forcing the user to sign out / restart
+/// the app. Genuine problems — a deactivated account, or an account that truly
+/// has no profile row — are not transient.
+bool isTransientProfileError(Object error) {
+  // Genuine authorization problems: do not retry / do not soften the message.
+  if (error is StateError) return false;
+  final raw = error.toString();
+  if (raw.contains('This account has been deactivated')) return false;
+  // PostgREST `.single()` with no row => the account genuinely has no profile.
+  if (raw.contains('PGRST116') ||
+      raw.contains('contains 0 rows') ||
+      raw.contains('multiple (or no) rows')) {
+    return false;
+  }
+  // An expired/invalid access token (common right after a cold start, before
+  // Supabase auto-refreshes the session) is transient.
+  if (error is AuthException) return true;
+  return raw.contains('JWT') ||
+      raw.contains('PGRST301') ||
+      raw.contains('token is expired') ||
+      raw.contains('SocketException') ||
+      raw.contains('Failed host lookup') ||
+      raw.contains('ClientException') ||
+      raw.contains('XMLHttpRequest') ||
+      raw.contains('Failed to fetch') ||
+      raw.contains('Connection') ||
+      raw.contains('timeout') ||
+      raw.contains('timed out');
+}
