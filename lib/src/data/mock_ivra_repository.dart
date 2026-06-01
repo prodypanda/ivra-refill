@@ -293,6 +293,9 @@ class MockIvraRepository implements IvraRepository {
   final Set<String> _processedClientRequestIds = {};
 
   @override
+  Future<void> clearCachedData() async {}
+
+  @override
   Future<UserProfile> currentUser() async => _currentUser;
 
   @override

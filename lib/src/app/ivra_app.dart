@@ -69,6 +69,12 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
       } else if (userChanged && hotelId == null) {
         ref.read(selectedHotelIdProvider.notifier).state = null;
       }
+      // When the signed-in user changes (sign in as a different account, or
+      // sign out), drop the previous account's cached data so the new account
+      // sees fresh results without needing a manual pull-to-refresh.
+      if (userChanged) {
+        invalidateAccountScopedData(ref);
+      }
     });
 
     final currentUserAsync = ref.watch(currentUserProvider);
