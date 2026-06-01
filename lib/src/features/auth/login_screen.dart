@@ -111,28 +111,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       if (!isMobile) ...[
                         Center(
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: colorScheme.primary.withValues(alpha: 0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.spa_outlined,
-                              size: 36,
-                              color: colorScheme.primary,
-                            ),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            height: 80,
+                            fit: BoxFit.contain,
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Ivra',
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.w900,
-                            color: colorScheme.primary,
-                            letterSpacing: 0.5,
-                          ),
-                          textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 32),
                       ] else ...[
