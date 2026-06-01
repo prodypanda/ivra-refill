@@ -27,6 +27,7 @@ void callbackDispatcher() {
       await Supabase.initialize(
         url: _supabaseUrl,
         anonKey: _supabaseAnonKey,
+        debug: false,
       );
     }
     
@@ -61,6 +62,9 @@ Future<void> main() async {
     await Supabase.initialize(
       url: _supabaseUrl,
       anonKey: _supabaseAnonKey,
+      // Suppress the backend SDK's console logging so the provider name is
+      // never surfaced to end users (e.g. the browser console on web).
+      debug: false,
     );
   }
 

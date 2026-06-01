@@ -61,7 +61,7 @@ class SupabaseIvraRepository implements IvraRepository {
   Future<UserProfile> currentUser() async {
     final user = _client.auth.currentUser;
     if (user == null) {
-      throw StateError('No authenticated Supabase user.');
+      throw StateError('No authenticated user.');
     }
     final data = await _fetchCurrentUserProfile(user.id);
     final profile = UserProfile.fromMap(data);
@@ -127,7 +127,7 @@ class SupabaseIvraRepository implements IvraRepository {
 
   @override
   Future<void> switchDemoUser({required String userId}) {
-    throw UnsupportedError('Demo user switching is not available in Supabase.');
+    throw UnsupportedError('Demo user switching is not available.');
   }
 
   @override
