@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -63,20 +64,26 @@ Future<void> main() async {
     );
   }
 
-  // Initialize Workmanager
-  Workmanager().initialize(
-    callbackDispatcher,
-  );
-  
-  // Register a periodic task for background sync
-  Workmanager().registerPeriodicTask(
-    '1',
-    'backgroundSync',
-    frequency: const Duration(minutes: 15),
-    constraints: Constraints(
-      networkType: NetworkType.connected,
-    ),
-  );
+  // Workmanager backs onto platform background-execution APIs that rely on
+  // `dart:io` (Platform.isAndroid/isIOS). Those throw on web
+  // (`Unsupported operation: Platform._operatingSystem`), which previously
+  // crashed startup and left the web build stuck on the loading screen. Skip
+  // it on web, where background sync isn't supported anyway.
+  if (!kIsWeb) {
+    Workmanager().initialize(
+      callbackDispatcher,
+    );
+
+    // Register a periodic task for background sync
+    Workmanager().registerPeriodicTask(
+      '1',
+      'backgroundSync',
+      frequency: const Duration(minutes: 15),
+      constraints: Constraints(
+        networkType: NetworkType.connected,
+      ),
+    );
+  }
 
   runApp(
     ProviderScope(

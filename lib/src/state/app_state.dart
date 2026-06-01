@@ -153,6 +153,29 @@ final alertsProvider = FutureProvider<List<AlertItem>>((ref) {
   return ref.watch(repositoryProvider).alerts(hotelId: hotelId);
 });
 
+/// Invalidates every provider that holds account-scoped data. The data
+/// providers above are plain (non-autoDispose) [FutureProvider]s, so they keep
+/// the previously signed-in user's results cached for the whole app session.
+/// Without this, switching accounts showed the prior user's data until a manual
+/// pull-to-refresh. Call this whenever the authenticated user changes so the
+/// new account's data is fetched immediately.
+void invalidateAccountScopedData(WidgetRef ref) {
+  ref.invalidate(dashboardProvider);
+  ref.invalidate(hotelsProvider);
+  ref.invalidate(productsProvider);
+  ref.invalidate(teamMembersProvider);
+  ref.invalidate(demoUsersProvider);
+  ref.invalidate(teamInvitationsProvider);
+  ref.invalidate(roomsProvider);
+  ref.invalidate(roomProductsProvider);
+  ref.invalidate(inventoryProvider);
+  ref.invalidate(suggestedOrdersProvider);
+  ref.invalidate(approvalsProvider);
+  ref.invalidate(alertsProvider);
+  ref.invalidate(refillEventsProvider);
+  ref.invalidate(offlineActionsProvider);
+}
+
 final refillEventsProvider = FutureProvider<List<RefillEvent>>((ref) {
   final hotelId = ref.watch(selectedHotelIdProvider);
   return ref.watch(repositoryProvider).recentRefillEvents(hotelId: hotelId);

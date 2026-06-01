@@ -48,6 +48,16 @@ class SupabaseIvraRepository implements IvraRepository {
 
 
   @override
+  Future<void> clearCachedData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys =
+        prefs.getKeys().where((k) => k.startsWith('cache_')).toList();
+    for (final key in keys) {
+      await prefs.remove(key);
+    }
+  }
+
+  @override
   Future<UserProfile> currentUser() async {
     final user = _client.auth.currentUser;
     if (user == null) {

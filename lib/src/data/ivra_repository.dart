@@ -167,4 +167,9 @@ abstract class IvraRepository {
     required String userId,
     required String hotelId,
   });
+
+  /// Clear any locally persisted offline read-cache. Called on sign-out so a
+  /// different account signing in offline can't be served the previous user's
+  /// cached data.
+  Future<void> clearCachedData();
 }

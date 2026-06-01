@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
+
+/// Product create/edit/delete is restricted server-side to Ivra-level roles
+/// (`app_admin`/`app_manager`, see the `products_write_ivra` RLS policy).
+/// Hotel managers and staff would only hit a permission error, so hide the
+/// management controls from them entirely.
+bool canManageProducts(UserProfile? user) {
+  if (user == null) return false;
+  return user.role == UserRole.appAdmin || user.role == UserRole.appManager;
+}
 
 class ProductsScreen extends ConsumerWidget {
   const ProductsScreen({super.key});
@@ -15,6 +25,8 @@ class ProductsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final canManage =
+        canManageProducts(ref.watch(currentUserProvider).valueOrNull);
     return PageScaffold(
       title: l10n.t('productsCatalogTitle'),
       onRefresh: () async {
@@ -22,11 +34,12 @@ class ProductsScreen extends ConsumerWidget {
         await ref.read(productsProvider.future);
       },
       actions: [
-        IconButton(
-          tooltip: l10n.t('productsBtnCreate'),
-          icon: const Icon(Icons.add_circle_outline),
-          onPressed: () => _showProductDialog(context, ref),
-        ),
+        if (canManage)
+          IconButton(
+            tooltip: l10n.t('productsBtnCreate'),
+            icon: const Icon(Icons.add_circle_outline),
+            onPressed: () => _showProductDialog(context, ref),
+          ),
       ],
       child: AsyncValueView(
         value: ref.watch(productsProvider),
@@ -65,6 +78,8 @@ class _ProductsTable extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final language = Localizations.localeOf(context).languageCode;
     final l10n = AppLocalizations.of(context);
+    final canManage =
+        canManageProducts(ref.watch(currentUserProvider).valueOrNull);
 
     if (products.isEmpty) {
       return Card(
@@ -219,35 +234,41 @@ class _ProductsTable extends ConsumerWidget {
                                   l10n.t('productsLabelLowStock'),
                                   '${product.lowBottleThreshold} ${l10n.t('bottles').toLowerCase()} / ${product.lowBidonThreshold} ${l10n.t('bidons').toLowerCase()}',
                                 ),
-                                const Divider(height: 32),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Flexible(
-                                      child: TextButton.icon(
-                                        icon: const Icon(Icons.edit_outlined),
-                                        label: Text(
-                                          l10n.t('productsBtnEdit'),
-                                          overflow: TextOverflow.ellipsis,
+                                if (canManage) ...[
+                                  const Divider(height: 32),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Flexible(
+                                        child: TextButton.icon(
+                                          icon:
+                                              const Icon(Icons.edit_outlined),
+                                          label: Text(
+                                            l10n.t('productsBtnEdit'),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          onPressed: () =>
+                                              showModalBottomSheet<void>(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            useSafeArea: true,
+                                            builder: (context) =>
+                                                _ProductDialog(
+                                                    product: product),
+                                          ).then((_) {
+                                            ref.invalidate(productsProvider);
+                                            ref.invalidate(
+                                                roomProductsProvider);
+                                            ref.invalidate(inventoryProvider);
+                                            ref.invalidate(
+                                                suggestedOrdersProvider);
+                                            ref.invalidate(dashboardProvider);
+                                          }),
                                         ),
-                                        onPressed: () => showModalBottomSheet<void>(
-                                          context: context,
-                                          isScrollControlled: true,
-                                          useSafeArea: true,
-                                          builder: (context) =>
-                                              _ProductDialog(product: product),
-                                        ).then((_) {
-                                          ref.invalidate(productsProvider);
-                                          ref.invalidate(roomProductsProvider);
-                                          ref.invalidate(inventoryProvider);
-                                          ref.invalidate(
-                                              suggestedOrdersProvider);
-                                          ref.invalidate(dashboardProvider);
-                                        }),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
+                                ],
                               ],
                             ),
                           ),

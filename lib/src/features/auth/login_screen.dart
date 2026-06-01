@@ -503,6 +503,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
     try {
       await Supabase.instance.client.auth.signOut();
+      // Drop the offline read-cache so a different account signing in next
+      // can't be served this user's cached data.
+      await ref.read(repositoryProvider).clearCachedData();
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);
     } catch (error) {
