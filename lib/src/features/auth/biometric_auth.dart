@@ -4,14 +4,56 @@ import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Shared-preferences keys used by the auth + biometric flow.
+///
+/// Biometric opt-in and saved credentials are scoped *per account*. Earlier the
+/// app stored a single global `biometric_enabled` flag and one
+/// `saved_email`/`saved_password` pair, so enabling biometrics on one account
+/// (and the credentials saved at login) leaked to whatever account signed in
+/// next. Keying the password by email and tracking which single account opted
+/// in fixes that cross-account leak.
 class AuthPrefs {
   const AuthPrefs._();
 
+  /// Email of the most recent successful password login. Used only to pre-fill
+  /// the login form, never to decide biometric eligibility.
   static const savedEmail = 'saved_email';
-  static const savedPassword = 'saved_password';
 
-  /// Whether the user has opted in to unlocking the app with biometrics.
-  static const biometricEnabled = 'biometric_enabled';
+  /// Email of the single account that has opted in to biometric unlock (lower
+  /// cased), or absent/empty when biometric unlock is disabled.
+  static const biometricAccount = 'biometric_account_email';
+
+  /// Per-account saved password, keyed by the normalised email. Biometric
+  /// unlock replays the credentials of [biometricAccount] only.
+  static String passwordKey(String email) =>
+      'saved_password::${normalizeEmail(email)}';
+
+  /// Legacy global keys, read only to clean them up on migration.
+  static const legacyBiometricEnabled = 'biometric_enabled';
+  static const legacyPassword = 'saved_password';
+
+  /// Canonical form of an email used for keying/comparison.
+  static String normalizeEmail(String email) => email.trim().toLowerCase();
+}
+
+/// Persist the credentials for a successful login, scoped to [email].
+Future<void> saveLoginCredentials(String email, String password) async {
+  final prefs = await SharedPreferences.getInstance();
+  final trimmed = email.trim();
+  await prefs.setString(AuthPrefs.savedEmail, trimmed);
+  await prefs.setString(AuthPrefs.passwordKey(trimmed), password);
+}
+
+/// The saved password for [email], if any.
+Future<String?> savedPasswordFor(String email) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(AuthPrefs.passwordKey(email));
+}
+
+/// Whether biometric unlock is currently enabled for [email].
+bool isBiometricEnabledForEmail(String? biometricAccount, String? email) {
+  if (biometricAccount == null || biometricAccount.isEmpty) return false;
+  if (email == null || email.isEmpty) return false;
+  return biometricAccount == AuthPrefs.normalizeEmail(email);
 }
 
 /// Thin wrapper around [LocalAuthentication] that centralises the options used
@@ -57,39 +99,53 @@ final biometricAuthServiceProvider = Provider<BiometricAuthService>((ref) {
   return BiometricAuthService();
 });
 
-/// Whether biometric unlock is enabled by the user. Persisted in
-/// [SharedPreferences] so the choice survives restarts, and exposed as a
-/// notifier so the settings toggle and the login screen stay in sync.
-final biometricEnabledProvider =
-    StateNotifierProvider<BiometricEnabledNotifier, bool>((ref) {
-  return BiometricEnabledNotifier()..load();
+/// Holds the single account email that has opted in to biometric unlock (or
+/// null when disabled). Persisted in [SharedPreferences] so the choice survives
+/// restarts, and exposed as a notifier so the settings toggle and the login
+/// screen stay in sync. Replaces the old global boolean, which leaked the
+/// opt-in across every account on the device.
+final biometricAccountProvider =
+    StateNotifierProvider<BiometricAccountNotifier, String?>((ref) {
+  return BiometricAccountNotifier()..load();
 });
 
-class BiometricEnabledNotifier extends StateNotifier<bool> {
-  BiometricEnabledNotifier() : super(false);
+class BiometricAccountNotifier extends StateNotifier<String?> {
+  BiometricAccountNotifier() : super(null);
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
+    // Drop the legacy global opt-in so a previously stored `true` can no longer
+    // grant biometric unlock to an unrelated account. Users re-enable per
+    // account once after upgrading.
+    if (prefs.containsKey(AuthPrefs.legacyBiometricEnabled)) {
+      await prefs.remove(AuthPrefs.legacyBiometricEnabled);
+    }
     if (!mounted) return;
-    state = prefs.getBool(AuthPrefs.biometricEnabled) ?? false;
+    final account = prefs.getString(AuthPrefs.biometricAccount);
+    state = (account != null && account.isNotEmpty) ? account : null;
   }
 
-  Future<void> setEnabled(bool value) async {
-    state = value;
+  /// Enable biometric unlock for [email], or pass null/empty to disable it.
+  Future<void> setAccount(String? email) async {
+    final normalized = (email != null && email.trim().isNotEmpty)
+        ? AuthPrefs.normalizeEmail(email)
+        : null;
+    state = normalized;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(AuthPrefs.biometricEnabled, value);
+    if (normalized == null) {
+      await prefs.remove(AuthPrefs.biometricAccount);
+    } else {
+      await prefs.setString(AuthPrefs.biometricAccount, normalized);
+    }
   }
 }
 
-/// Whether credentials from a previous successful login are stored locally.
-/// Biometric unlock replays these credentials, so it is only offered once they
-/// exist.
-Future<bool> hasSavedCredentials() async {
+/// Whether the account that opted in to biometric unlock has stored credentials
+/// to replay. Biometric is only offered on the login screen once they exist.
+Future<bool> hasBiometricCredentials() async {
   final prefs = await SharedPreferences.getInstance();
-  final email = prefs.getString(AuthPrefs.savedEmail);
-  final password = prefs.getString(AuthPrefs.savedPassword);
-  return email != null &&
-      email.isNotEmpty &&
-      password != null &&
-      password.isNotEmpty;
+  final account = prefs.getString(AuthPrefs.biometricAccount);
+  if (account == null || account.isEmpty) return false;
+  final password = prefs.getString(AuthPrefs.passwordKey(account));
+  return password != null && password.isNotEmpty;
 }

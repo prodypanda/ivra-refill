@@ -41,6 +41,16 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.7
 
+# path_provider_android 2.3.x switched its native layer to a JNI-based
+# implementation (depends on `jni`/`jni_flutter`), which generates a
+# `com.github.dart_lang.jni.JniPlugin` reference in GeneratedPluginRegistrant.
+# On this project's Android setup that class is not resolved on the compile
+# classpath, so clean builds fail with "cannot find symbol JniPlugin". Pinning
+# to the last 2.2.x release keeps the platform-channel implementation and avoids
+# pulling in jni entirely. (path_provider is a transitive dep via supabase_flutter.)
+dependency_overrides:
+  path_provider_android: 2.2.17
+
 flutter:
   uses-material-design: true
   assets:

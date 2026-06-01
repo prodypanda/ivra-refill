@@ -334,7 +334,9 @@ class SettingsScreen extends ConsumerWidget {
 }
 
 /// Toggle that lets the user enable or disable biometric (fingerprint / face)
-/// unlock for the app. The choice is persisted via [biometricEnabledProvider].
+/// unlock for the app. The choice is scoped to the currently signed-in account
+/// via [biometricAccountProvider], so enabling it for one user no longer leaks
+/// the opt-in to a different account that signs in later.
 class _BiometricSettingTile extends ConsumerStatefulWidget {
   const _BiometricSettingTile({required this.isMobile});
 
@@ -364,8 +366,14 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
   Future<void> _onChanged(bool value) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
+    final email = ref.read(currentUserProvider).valueOrNull?.email;
 
     if (value) {
+      if (email == null || email.isEmpty) {
+        // Shouldn't happen on the settings screen, but never enable biometric
+        // without an account to tie it to.
+        return;
+      }
       final available =
           _available ?? await ref.read(biometricAuthServiceProvider).isAvailable();
       if (!mounted) return;
@@ -391,14 +399,18 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
       }
     }
 
-    await ref.read(biometricEnabledProvider.notifier).setEnabled(value);
+    await ref
+        .read(biometricAccountProvider.notifier)
+        .setAccount(value ? email : null);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final enabled = ref.watch(biometricEnabledProvider);
+    final biometricAccount = ref.watch(biometricAccountProvider);
+    final currentEmail = ref.watch(currentUserProvider).valueOrNull?.email;
+    final enabled = isBiometricEnabledForEmail(biometricAccount, currentEmail);
     final available = _available ?? false;
 
     return Card(
