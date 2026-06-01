@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -40,7 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _checkBiometrics() async {
     final available = await ref.read(biometricAuthServiceProvider).isAvailable();
-    final hasCreds = await hasSavedCredentials();
+    final hasCreds = await hasBiometricCredentials();
     if (!mounted) return;
     setState(() {
       _biometricAvailable = available;
@@ -337,7 +336,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       if (_biometricAvailable &&
                           _hasSavedCredentials &&
-                          ref.watch(biometricEnabledProvider)) ...[
+                          ref.watch(biometricAccountProvider) != null) ...[
                         const SizedBox(height: 12),
                         OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
@@ -401,10 +400,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         password: _passwordController.text,
       );
       
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(AuthPrefs.savedEmail, _emailController.text.trim());
-      await prefs.setString(AuthPrefs.savedPassword, _passwordController.text);
-      if (mounted) setState(() => _hasSavedCredentials = true);
+      await saveLoginCredentials(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+      final hasCreds = await hasBiometricCredentials();
+      if (mounted) setState(() => _hasSavedCredentials = hasCreds);
 
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);
@@ -428,14 +429,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_isAuthenticating) return;
 
     final l10n = AppLocalizations.of(context);
-    final prefs = await SharedPreferences.getInstance();
-    final savedEmail = prefs.getString(AuthPrefs.savedEmail);
-    final savedPassword = prefs.getString(AuthPrefs.savedPassword);
+    final biometricAccount = ref.read(biometricAccountProvider);
+    final savedPassword = biometricAccount == null
+        ? null
+        : await savedPasswordFor(biometricAccount);
+    final hasSession =
+        Supabase.instance.client.auth.currentSession != null;
 
-    if (savedEmail == null ||
-        savedEmail.isEmpty ||
-        savedPassword == null ||
-        savedPassword.isEmpty) {
+    // Biometric unlock needs either a live session to restore, or the stored
+    // credentials of the account that opted in (to replay a sign-in).
+    if (!hasSession &&
+        (biometricAccount == null ||
+            savedPassword == null ||
+            savedPassword.isEmpty)) {
       setState(() => _error = l10n.t('authBiometricNeedsLogin'));
       return;
     }
@@ -457,8 +463,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // what lets biometric unlock work offline: the previous code always
       // called `signInWithPassword`, which fails without a network and left the
       // user stuck re-trying the fingerprint prompt.
-      final hasSession =
-          Supabase.instance.client.auth.currentSession != null;
       if (hasSession) {
         ref.invalidate(currentUserProvider);
         ref.invalidate(dashboardProvider);
@@ -474,10 +478,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         return;
       }
 
-      // Online and no session yet: replay the saved credentials through the
-      // normal sign-in flow.
-      _emailController.text = savedEmail;
-      _passwordController.text = savedPassword;
+      // Online and no session yet: replay the saved credentials of the account
+      // that enabled biometric unlock.
+      _emailController.text = biometricAccount!;
+      _passwordController.text = savedPassword!;
       await _login();
     } catch (e) {
       if (mounted) setState(() => _error = l10n.t('authBiometricFailed'));
