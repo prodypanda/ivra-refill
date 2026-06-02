@@ -1,0 +1,3 @@
+## 2024-05-18 - Missing Tooltips on IconButtons
+**Learning:** In Flutter, `IconButton` widgets without a `tooltip` property lack semantic labels for screen readers. This makes icon-only buttons completely inaccessible to visually impaired users who rely on assistive technologies to navigate the UI. This pattern of missing tooltips on utility buttons (like "clear search" or "close dialog") was noticed in a few places in the app.
+**Action:** Always ensure that `IconButton` and similar icon-only interactive elements include a descriptive `tooltip` (or `semanticsLabel` on the underlying `Icon`) using localization, so the purpose of the button is announced to screen reader users and shown on long-press/hover.
