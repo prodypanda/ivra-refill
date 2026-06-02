@@ -2,4 +2,5 @@
 <resources>
     <color name="ivra_green">#F2A900</color>
     <color name="ivra_surface">#F8FBFA</color>
+	<color name="ic_launcher_background">#000000</color>
 </resources>
