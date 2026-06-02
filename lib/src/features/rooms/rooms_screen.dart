@@ -228,7 +228,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                           const SizedBox(height: 12),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
-                            transitionBuilder: (child, animation) => FadeTransition(
+                            transitionBuilder: (child, animation) =>
+                                FadeTransition(
                               opacity: animation,
                               child: SlideTransition(
                                 position: Tween<Offset>(
@@ -437,6 +438,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         const Icon(Icons.search, size: 20, color: Colors.grey),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
+                            tooltip: l10n.t('settingsBtnClear'),
                             icon: const Icon(Icons.clear, size: 16),
                             onPressed: () {
                               HapticFeedback.lightImpact();
@@ -756,13 +758,15 @@ class _CompactRoomTile extends ConsumerWidget {
                       color: theme.colorScheme.surface.withValues(alpha: 0.8),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                          color: theme.colorScheme.outlineVariant
+                              .withValues(alpha: 0.5)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.inventory_2_outlined,
-                            size: 10, color: theme.colorScheme.onSurfaceVariant),
+                            size: 10,
+                            color: theme.colorScheme.onSurfaceVariant),
                         const SizedBox(width: 4),
                         Text(
                           '${roomProducts.length}',
@@ -813,8 +817,8 @@ class _CompactRoomTile extends ConsumerWidget {
                     height: 3,
                     decoration: BoxDecoration(
                       color: overallColor.withValues(alpha: 0.6),
-                      borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(3)),
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(3)),
                     ),
                   ),
                 ),
@@ -1081,6 +1085,7 @@ class _RoomCard extends ConsumerWidget {
                       if (isDialog) ...[
                         const SizedBox(width: 8),
                         IconButton(
+                          tooltip: l10n.t('roomsBtnClose'),
                           icon: const Icon(Icons.close, size: 20),
                           onPressed: () => Navigator.of(context).pop(),
                           visualDensity: VisualDensity.compact,
@@ -1644,7 +1649,9 @@ class _RoomCardProductRow extends ConsumerWidget {
             children: [
               const Icon(Icons.water_drop_outlined, color: Colors.white),
               const SizedBox(width: 8),
-              Text(l10n.t('refill'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              Text(l10n.t('refill'),
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -1709,7 +1716,10 @@ class _BottleLifecycleEditDialogState
           children: [
             Text(
               '${l10n.t('roomsDialogBottleEditTitle')} ${widget.item.roomNumber}',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Form(
@@ -1755,7 +1765,8 @@ class _BottleLifecycleEditDialogState
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(l10n.t('btnCancel')),
                 ),
                 const SizedBox(width: 12),
@@ -1870,7 +1881,10 @@ class _RoomEditRequestDialogState
           children: [
             Text(
               '${l10n.t('roomsDialogRoomEditTitle')} ${widget.item.roomNumber}',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Form(
@@ -1880,8 +1894,8 @@ class _RoomEditRequestDialogState
                 children: [
                   TextFormField(
                     controller: _roomNumber,
-                    decoration:
-                        InputDecoration(labelText: l10n.t('roomsLabelRoomNumber')),
+                    decoration: InputDecoration(
+                        labelText: l10n.t('roomsLabelRoomNumber')),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return l10n.t('requiredField');
@@ -1902,7 +1916,8 @@ class _RoomEditRequestDialogState
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(l10n.t('btnCancel')),
                 ),
                 const SizedBox(width: 12),
@@ -2053,7 +2068,10 @@ class _RefillHistoryDialog extends ConsumerWidget {
           children: [
             Text(
               '${l10n.t('roomsLabelRoom')} ${item.roomNumber} ${item.product.label(language)} ${l10n.t('roomsDialogHistoryTitle')}',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Flexible(
@@ -2065,7 +2083,8 @@ class _RefillHistoryDialog extends ConsumerWidget {
                   : ListView.separated(
                       shrinkWrap: true,
                       itemCount: events.length,
-                      separatorBuilder: (context, index) => const Divider(height: 1),
+                      separatorBuilder: (context, index) =>
+                          const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final event = events[index];
                         final canUndo = event.canUndo(now, currentUser.id);
@@ -2088,16 +2107,21 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                               ref.read(offlineModeProvider);
                                           if (offline) {
                                             await ref
-                                                .read(offlineSyncServiceProvider)
+                                                .read(
+                                                    offlineSyncServiceProvider)
                                                 .enqueue(
                                               type: SyncActionType.undoRefill,
-                                              payload: {'refillEventId': event.id},
+                                              payload: {
+                                                'refillEventId': event.id
+                                              },
                                             );
-                                            ref.invalidate(offlineActionsProvider);
+                                            ref.invalidate(
+                                                offlineActionsProvider);
                                           } else {
                                             await ref
                                                 .read(repositoryProvider)
-                                                .undoRefill(refillEventId: event.id);
+                                                .undoRefill(
+                                                    refillEventId: event.id);
                                           }
                                           if (context.mounted) {
                                             Navigator.of(context).pop();
@@ -2106,9 +2130,10 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                               SnackBar(
                                                 content: Text(
                                                   offline
-                                                      ? l10n.t('roomsMsgUndoQueued')
-                                                      : l10n
-                                                          .t('roomsMsgRefillUndone'),
+                                                      ? l10n.t(
+                                                          'roomsMsgUndoQueued')
+                                                      : l10n.t(
+                                                          'roomsMsgRefillUndone'),
                                                 ),
                                               ),
                                             );
@@ -2236,7 +2261,10 @@ class _CorrectionRequestDialogState
           children: [
             Text(
               l10n.t('roomsBtnRequestCorrection'),
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Form(
@@ -2262,7 +2290,8 @@ class _CorrectionRequestDialogState
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(l10n.t('btnCancel')),
                 ),
                 const SizedBox(width: 12),
@@ -2377,7 +2406,10 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
           children: [
             Text(
               l10n.t('roomsTooltipCreateTemplate'),
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Flexible(
@@ -2389,7 +2421,8 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
                     children: [
                       DropdownButtonFormField<String>(
                         initialValue: _hotelId,
-                        decoration: InputDecoration(labelText: l10n.t('hotels')),
+                        decoration:
+                            InputDecoration(labelText: l10n.t('hotels')),
                         items: [
                           for (final hotel in widget.hotels)
                             DropdownMenuItem(
@@ -2443,7 +2476,8 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
                           for (final product in widget.products)
                             FilterChip(
                               label: Text(product.label(language)),
-                              selected: _selectedProductIds.contains(product.id),
+                              selected:
+                                  _selectedProductIds.contains(product.id),
                               onSelected: (selected) {
                                 setState(() {
                                   if (selected) {
@@ -2466,7 +2500,8 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(l10n.t('btnCancel')),
                 ),
                 const SizedBox(width: 12),
