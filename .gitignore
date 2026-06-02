@@ -36,3 +36,5 @@ android/app/key.properties
 # Firebase deployment cache and logs
 .firebase/
 firebase-debug.log
+/.firebase
+firebase-debug.log
