@@ -14,6 +14,10 @@ class PageScaffold extends ConsumerWidget {
     super.key,
   });
 
+  // Performance: Extract RegExp compilation from the build method
+  // to prevent expensive recompilation on every page rebuild.
+  static final _whitespaceRegex = RegExp(r'\s+');
+
   final String title;
   final Widget child;
   final List<Widget> actions;
@@ -24,7 +28,7 @@ class PageScaffold extends ConsumerWidget {
     final user = ref.watch(currentUserProvider).valueOrNull;
     String initials = '';
     if (user != null) {
-      final parts = user.fullName.trim().split(RegExp(r'\s+'));
+      final parts = user.fullName.trim().split(_whitespaceRegex);
       initials = parts.length >= 2
           ? '${parts.first[0]}${parts.last[0]}'.toUpperCase()
           : (parts.first.isNotEmpty ? parts.first[0].toUpperCase() : '');
