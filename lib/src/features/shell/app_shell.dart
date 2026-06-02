@@ -368,7 +368,7 @@ class _BrandMark extends StatelessWidget {
   Widget build(BuildContext context) {
     return Image.asset(
       'assets/images/logo-dark.png',
-      height: 64,
+      height: 110,
       fit: BoxFit.contain,
     );
   }

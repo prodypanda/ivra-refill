@@ -112,8 +112,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       if (!isMobile) ...[
                         Center(
                           child: Image.asset(
-                            'assets/images/logo-dark.png',
-                            height: 80,
+                            'assets/images/logo-dark-mini.png',
+                            height: 110,
                             fit: BoxFit.contain,
                           ),
                         ),
