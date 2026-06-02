@@ -101,7 +101,7 @@ class _PremiumLoadingWidgetState extends State<PremiumLoadingWidget>
                   children: [
                     if (widget.showBrand) ...[
                       Image.asset(
-                        'assets/images/logo.png',
+                        'assets/images/logo-dark.png',
                         height: 120 * scale,
                         fit: BoxFit.contain,
                       ),

@@ -367,7 +367,7 @@ class _BrandMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      'assets/images/logo.png',
+      'assets/images/logo-dark.png',
       height: 64,
       fit: BoxFit.contain,
     );
