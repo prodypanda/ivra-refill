@@ -6,6 +6,8 @@ import 'package:share_plus/share_plus.dart';
 
 import 'export_file_result.dart';
 
+final _invalidFilenameCharsRegex = RegExp(r'[<>:"/\\|?*]');
+
 /// Hands the exported bytes off to the OS share sheet on mobile/desktop.
 ///
 /// Writing directly to `Directory.systemTemp` (the previous behaviour) on
@@ -20,7 +22,7 @@ Future<ExportFileResult> saveBytes({
   required Uint8List bytes,
   required String mimeType,
 }) async {
-  final safeName = fileName.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+  final safeName = fileName.replaceAll(_invalidFilenameCharsRegex, '_');
 
   if (mimeType == 'application/pdf' ||
       safeName.toLowerCase().endsWith('.pdf')) {
