@@ -330,9 +330,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         onPressed: _isLoading ? null : _googleSignIn,
                         icon: const Icon(Icons.public),
-                        label: const Text(
-                          'Sign in with Google',
-                          style: TextStyle(
+                        label: Text(
+                          l10n.t('authBtnGoogleSignIn'),
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),

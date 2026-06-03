@@ -258,35 +258,45 @@
 
 <body>
   <header>
-    <img src="logo.png" alt="Ivra logo" />
-    <div class="brand">Ivra<small>Refill Management</small></div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <img src="logo.png" alt="Ivra logo" />
+      <div class="brand">Ivra<small>Refill Management</small></div>
+    </div>
+    <div class="lang-switcher" style="margin-left: auto;">
+      <select id="langSelect" style="padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(124, 75, 19, 0.3); background: var(--card); color: var(--ink); font-weight: 600; cursor: pointer; outline: none;">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="it">Italiano</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
   </header>
 
   <main>
     <section>
-      <h1>Smart refill operations for <span class="accent">modern hotels</span>.</h1>
-      <p class="lead">Track room amenities, automate refills, and manage your inventory — on your phone or in the
+      <h1 id="t-title">Smart refill operations for <span class="accent">modern hotels</span>.</h1>
+      <p class="lead" id="t-lead">Track room amenities, automate refills, and manage your inventory — on your phone or in the
         browser.</p>
       <div class="actions">
         <a class="btn btn-primary" id="downloadBtn" href="#" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M5 20h14v-2H5v2zM12 2 6.5 9h3.5v5h4V9h3.5L12 2z" transform="rotate(180 12 11)" />
           </svg>
-          Download for Android
+          <span id="t-downloadBtn">Download for Android</span>
         </a>
         <a class="btn btn-outline" id="loginBtn" href="#">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path
               d="M10 17l5-5-5-5v3H3v4h7v3zm9-14H5a2 2 0 0 0-2 2v4h2V5h14v14H5v-4H3v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z" />
           </svg>
-          Login (Web App)
+          <span id="t-loginBtn">Login (Web App)</span>
         </a>
       </div>
     </section>
 
     <aside class="card">
-      <h2>Get the Android app</h2>
-      <p>Scan to download the latest version</p>
+      <h2 id="t-cardTitle">Get the Android app</h2>
+      <p id="t-cardText">Scan to download the latest version</p>
       <div id="qrcode" aria-label="QR code to download the Android app"></div>
       <a class="apk-link" id="apkLink" href="#" rel="noopener">Direct download link</a>
     </aside>
@@ -321,6 +331,69 @@
       } catch (e) {
         document.getElementById("qrcode").textContent = "QR unavailable";
       }
+
+      var i18n = {
+        en: {
+          title: "Smart refill operations for <span class='accent'>modern hotels</span>.",
+          lead: "Track room amenities, automate refills, and manage your inventory — on your phone or in the browser.",
+          downloadBtn: "Download for Android",
+          loginBtn: "Login (Web App)",
+          cardTitle: "Get the Android app",
+          cardText: "Scan to download the latest version",
+          apkLink: "Direct download link"
+        },
+        fr: {
+          title: "Gestion intelligente des recharges pour <span class='accent'>hôtels modernes</span>.",
+          lead: "Suivez les produits d'accueil, automatisez les recharges et gérez vos stocks — sur votre téléphone ou le navigateur.",
+          downloadBtn: "Télécharger pour Android",
+          loginBtn: "Connexion (App Web)",
+          cardTitle: "Obtenir l'application Android",
+          cardText: "Scannez pour télécharger la dernière version",
+          apkLink: "Lien de téléchargement direct"
+        },
+        it: {
+          title: "Operazioni di ricarica intelligenti per <span class='accent'>hotel moderni</span>.",
+          lead: "Traccia i prodotti in camera, automatizza le ricariche e gestisci l'inventario: sul tuo telefono o nel browser.",
+          downloadBtn: "Scarica per Android",
+          loginBtn: "Accedi (Web App)",
+          cardTitle: "Scarica l'app Android",
+          cardText: "Scansiona per scaricare l'ultima versione",
+          apkLink: "Link di download diretto"
+        },
+        ar: {
+          title: "عمليات إعادة تعبئة ذكية للـ <span class='accent'>فنادق الحديثة</span>.",
+          lead: "تتبع وسائل الراحة في الغرف، أتمتة إعادة التعبئة، وإدارة مخزونك — على هاتفك أو عبر المتصفح.",
+          downloadBtn: "تنزيل لنظام الأندرويد",
+          loginBtn: "تسجيل الدخول (تطبيق الويب)",
+          cardTitle: "احصل على تطبيق الأندرويد",
+          cardText: "امسح الرمز لتنزيل أحدث إصدار",
+          apkLink: "رابط تنزيل مباشر"
+        }
+      };
+
+      var langSelect = document.getElementById('langSelect');
+      var savedLang = localStorage.getItem('ivra_lang') || (navigator.language || 'en').substring(0, 2);
+      if (!i18n[savedLang]) savedLang = 'en';
+      langSelect.value = savedLang;
+
+      function updateText() {
+        var lang = langSelect.value;
+        localStorage.setItem('ivra_lang', lang);
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        
+        document.getElementById('t-title').innerHTML = i18n[lang].title;
+        document.getElementById('t-lead').textContent = i18n[lang].lead;
+        document.getElementById('t-downloadBtn').textContent = i18n[lang].downloadBtn;
+        document.getElementById('t-loginBtn').textContent = i18n[lang].loginBtn;
+        document.getElementById('t-cardTitle').textContent = i18n[lang].cardTitle;
+        document.getElementById('t-cardText').textContent = i18n[lang].cardText;
+        document.getElementById('apkLink').textContent = i18n[lang].apkLink;
+      }
+
+      langSelect.addEventListener('change', updateText);
+      updateText();
+
     })();
   </script>
 </body>
