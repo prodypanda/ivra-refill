@@ -72,6 +72,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         profileErrorObj != null && isTransientProfileError(profileErrorObj);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: ref.watch(localeProvider).languageCode,
+                icon: Icon(Icons.language, color: colorScheme.onSurfaceVariant),
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+                dropdownColor: colorScheme.surface,
+                items: const [
+                  DropdownMenuItem(value: 'fr', child: Text('FR')),
+                  DropdownMenuItem(value: 'en', child: Text('EN')),
+                  DropdownMenuItem(value: 'it', child: Text('IT')),
+                  DropdownMenuItem(value: 'ar', child: Text('AR')),
+                ],
+                onChanged: (String? newLang) {
+                  if (newLang != null) {
+                    ref.read(localeProvider.notifier).state = Locale(newLang);
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
