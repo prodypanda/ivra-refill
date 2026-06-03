@@ -65,6 +65,12 @@ Future<void> main() async {
       // Suppress the backend SDK's console logging so the provider name is
       // never surfaced to end users (e.g. the browser console on web).
       debug: false,
+      // Use PKCE flow so auth redirects use ?code=xxx (query param) instead
+      // of #access_token=xxx (hash fragment). Android deep links strip hash
+      // fragments, which breaks the implicit flow on mobile.
+      authOptions: const FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.pkce,
+      ),
     );
   }
 
