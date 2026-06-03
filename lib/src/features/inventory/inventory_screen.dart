@@ -430,90 +430,33 @@ class _InventoryTable extends StatelessWidget {
       );
     }
 
-    if (isMobile) {
-      return Column(
-        children: [
-          for (final item in items)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _InventoryMobileCard(item: item, language: language),
-            ),
-        ],
-      );
-    }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 1100
+            ? 3
+            : constraints.maxWidth >= 700
+                ? 2
+                : 1;
 
-    return GlassCard(
-      padding: EdgeInsets.zero,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          headingRowColor: WidgetStateProperty.all(
-              theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4)),
-          columns: [
-            DataColumn(
-                label: Text(l10n.t('inventoryTableProduct'),
-                    style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(
-                label: Text(l10n.t('inventoryTableFullBottles'),
-                    style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(
-                label: Text(l10n.t('inventoryTableEmptyBottles'),
-                    style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(
-                label: Text(l10n.t('inventoryTableFullBidons'),
-                    style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(
-                label: Text(l10n.t('inventoryTableOpenBidons'),
-                    style: const TextStyle(fontWeight: FontWeight.bold))),
-            DataColumn(
-                label: Text(l10n.t('inventoryTableStatus'),
-                    style: const TextStyle(fontWeight: FontWeight.bold))),
-          ],
-          rows: [
+        return GridView.count(
+          crossAxisCount: columns,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 20,
+          crossAxisSpacing: 20,
+          childAspectRatio: isMobile ? 1.0 : 1.3,
+          children: [
             for (final item in items)
-              DataRow(
-                cells: [
-                  DataCell(Text(item.product.label(language),
-                      style: const TextStyle(fontWeight: FontWeight.bold))),
-                  DataCell(Text('${item.fullBottles}')),
-                  DataCell(Text('${item.emptyBottles}')),
-                  DataCell(Text('${item.fullBidons}')),
-                  DataCell(Text('${item.openBidons}')),
-                  DataCell(
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: (item.lowBottles || item.lowBidons)
-                            ? theme.colorScheme.errorContainer
-                            : Colors.orange.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        item.lowBottles || item.lowBidons
-                            ? l10n.t('inventoryStatusLowStock')
-                            : l10n.t('inventoryStatusHealthy'),
-                        style: TextStyle(
-                          color: (item.lowBottles || item.lowBidons)
-                              ? theme.colorScheme.onErrorContainer
-                              : Colors.orange.shade800,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              _PremiumInventoryCard(item: item, language: language),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
-class _InventoryMobileCard extends StatelessWidget {
-  const _InventoryMobileCard({
+class _PremiumInventoryCard extends StatefulWidget {
+  const _PremiumInventoryCard({
     required this.item,
     required this.language,
   });
@@ -522,102 +465,306 @@ class _InventoryMobileCard extends StatelessWidget {
   final String language;
 
   @override
+  State<_PremiumInventoryCard> createState() => _PremiumInventoryCardState();
+}
+
+class _PremiumInventoryCardState extends State<_PremiumInventoryCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final lowStock = item.lowBottles || item.lowBidons;
+    final lowStock = widget.item.lowBottles || widget.item.lowBidons;
     final statusColor =
         lowStock ? theme.colorScheme.error : theme.colorScheme.primary;
 
-    return GlassCard(
-      padding: const EdgeInsets.all(16),
-      borderRadius: 24,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutBack,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.surface.withValues(alpha: 0.95),
+                theme.colorScheme.surface.withValues(alpha: 0.8),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: statusColor.withValues(alpha: _isHovered ? 0.15 : 0.05),
+                blurRadius: _isHovered ? 24 : 12,
+                offset: const Offset(0, 8),
+              ),
+            ],
+            border: Border.all(
+              color: statusColor.withValues(alpha: _isHovered ? 0.4 : 0.15),
+              width: 1.5,
+            ),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Icon(
+                      lowStock
+                          ? Icons.priority_high_rounded
+                          : Icons.inventory_2_outlined,
+                      color: statusColor,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.item.product.label(widget.language),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            height: 1.1,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          widget.item.product.sku,
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _InventoryStatusPill(lowStock: lowStock),
+                ],
+              ),
+              const Spacer(),
+              // Visual Stock Indicators
+              _VisualStockBar(
+                label: l10n.t('inventoryTableFullBottles'),
+                value: widget.item.fullBottles,
+                threshold: widget.item.product.lowBottleThreshold,
+                icon: Icons.water_drop_outlined,
+                color: Colors.orange,
+              ),
+              const SizedBox(height: 12),
+              _VisualStockBar(
+                label: l10n.t('inventoryTableFullBidons'),
+                value: widget.item.fullBidons,
+                threshold: widget.item.product.lowBidonThreshold,
+                icon: Icons.propane_tank_outlined,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(height: 16),
+              // Smaller stats for empties/open
               Container(
-                width: 46,
-                height: 46,
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.1),
+                  color: theme.colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
-                  lowStock
-                      ? Icons.priority_high_rounded
-                      : Icons.inventory_2_outlined,
-                  color: statusColor,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text(
-                      item.product.label(language),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w900,
-                      ),
+                    _MiniStat(
+                      label: l10n.t('inventoryTableEmptyBottles'),
+                      value: widget.item.emptyBottles,
+                      icon: Icons.recycling_outlined,
+                      color: theme.colorScheme.tertiary,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item.product.sku,
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                    Container(width: 1, height: 24, color: theme.dividerColor),
+                    _MiniStat(
+                      label: l10n.t('inventoryTableOpenBidons'),
+                      value: widget.item.openBidons,
+                      icon: Icons.oil_barrel_outlined,
+                      color: Colors.indigo,
                     ),
                   ],
                 ),
               ),
-              _InventoryStatusPill(lowStock: lowStock),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _InventoryCountTile(
-                label: l10n.t('inventoryTableFullBottles'),
-                value: item.fullBottles,
-                icon: Icons.water_drop_outlined,
-                color: Colors.orange,
-              ),
-              const SizedBox(width: 10),
-              _InventoryCountTile(
-                label: l10n.t('inventoryTableFullBidons'),
-                value: item.fullBidons,
-                icon: Icons.propane_tank_outlined,
-                color: theme.colorScheme.primary,
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              _InventoryCountTile(
-                label: l10n.t('inventoryTableEmptyBottles'),
-                value: item.emptyBottles,
-                icon: Icons.recycling_outlined,
-                color: theme.colorScheme.tertiary,
-              ),
-              const SizedBox(width: 10),
-              _InventoryCountTile(
-                label: l10n.t('inventoryTableOpenBidons'),
-                value: item.openBidons,
-                icon: Icons.oil_barrel_outlined,
-                color: Colors.indigo,
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
 }
+
+class _VisualStockBar extends StatelessWidget {
+  const _VisualStockBar({
+    required this.label,
+    required this.value,
+    required this.threshold,
+    required this.icon,
+    required this.color,
+  });
+
+  final String label;
+  final int value;
+  final int threshold;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLow = value <= threshold;
+    final displayColor = isLow ? theme.colorScheme.error : color;
+
+    // Calculate an artificial percentage based on threshold (e.g. threshold * 3 is 100%)
+    final maxExpected = (threshold * 3).clamp(10, 1000);
+    final percentage =
+        (value / maxExpected).clamp(0.05, 1.0); // At least 5% so it's visible
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 16, color: displayColor),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                label,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            Text(
+              value.toString(),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                color: displayColor,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Stack(
+          children: [
+            Container(
+              height: 8,
+              decoration: BoxDecoration(
+                color: displayColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            FractionallySizedBox(
+              widthFactor: percentage,
+              child: Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      displayColor.withValues(alpha: 0.7),
+                      displayColor,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: displayColor.withValues(alpha: 0.4),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Threshold marker
+            Positioned(
+              left: 0,
+              right: 0,
+              child: FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: (threshold / maxExpected).clamp(0.0, 1.0),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: 2,
+                    height: 8,
+                    color: theme.colorScheme.error,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _MiniStat extends StatelessWidget {
+  const _MiniStat({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  final String label;
+  final int value;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16, color: color),
+        const SizedBox(width: 6),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              value.toString(),
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontSize: 9,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+// Replaced with _PremiumInventoryCard
 
 class _InventoryStatusPill extends StatelessWidget {
   const _InventoryStatusPill({required this.lowStock});

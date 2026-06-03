@@ -122,7 +122,8 @@ ThemeData buildIvraTheme(Brightness brightness) {
           : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
       floatingLabelStyle: TextStyle(color: colorScheme.primary),
-      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
+      hintStyle:
+          TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
       border: OutlineInputBorder(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
         borderSide:
@@ -165,8 +166,6 @@ ThemeData buildIvraTheme(Brightness brightness) {
         textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
       ),
     ),
-
-
 
     // Transparent AppBars to let gradient show
     appBarTheme: const AppBarTheme(

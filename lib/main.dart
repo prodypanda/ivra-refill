@@ -30,11 +30,11 @@ void callbackDispatcher() {
         debug: false,
       );
     }
-    
+
     final container = ProviderContainer(
       overrides: [useSupabaseProvider.overrideWithValue(useSupabase)],
     );
-    
+
     try {
       final repo = container.read(repositoryProvider);
       final syncService = container.read(offlineSyncServiceProvider);

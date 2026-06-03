@@ -347,7 +347,7 @@ class _MetricCard extends StatelessWidget {
 // Alert card
 // ---------------------------------------------------------------------------
 
-class _AlertCard extends StatelessWidget {
+class _AlertCard extends StatefulWidget {
   const _AlertCard({
     required this.alert,
     required this.onResolve,
@@ -357,22 +357,30 @@ class _AlertCard extends StatelessWidget {
   final ValueChanged<String> onResolve;
 
   @override
+  State<_AlertCard> createState() => _AlertCardState();
+}
+
+class _AlertCardState extends State<_AlertCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isResolved = alert.isResolved;
-    final severityCol = _severityColor(alert.severity, colorScheme);
+    final isResolved = widget.alert.isResolved;
+    final severityCol = _severityColor(widget.alert.severity, colorScheme);
     final l10n = AppLocalizations.of(context);
 
     // Muted opacity for resolved alerts
     final contentOpacity = isResolved ? 0.45 : 1.0;
 
     return Dismissible(
-      key: ValueKey(alert.id),
-      direction: isResolved ? DismissDirection.none : DismissDirection.endToStart,
+      key: ValueKey(widget.alert.id),
+      direction:
+          isResolved ? DismissDirection.none : DismissDirection.endToStart,
       onDismissed: (_) {
         HapticFeedback.lightImpact();
-        onResolve(alert.id);
+        widget.onResolve(widget.alert.id);
       },
       background: Container(
         alignment: Alignment.centerRight,
@@ -381,194 +389,227 @@ class _AlertCard extends StatelessWidget {
           color: Colors.green.shade600,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
+        child: const Icon(Icons.check_circle_outline,
+            color: Colors.white, size: 28),
       ),
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 350),
         curve: Curves.easeOut,
         opacity: isResolved ? 0.72 : 1.0,
-        child: Container(
-        decoration: BoxDecoration(
-          color: isResolved
-              ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.38)
-              : colorScheme.surface.withValues(alpha: 0.70),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: isResolved
-              ? null
-              : [
-                  BoxShadow(
-                    color: severityCol.withValues(alpha: 0.08),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // ── Colored left severity strip ──
-                Container(
-                  width: 4,
-                  decoration: BoxDecoration(
-                    color: severityCol.withValues(alpha: isResolved ? 0.3 : 1.0),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      bottomLeft: Radius.circular(16),
-                    ),
-                  ),
+        child: MouseRegion(
+          onEnter: (_) => setState(() => _isHovered = true),
+          onExit: (_) => setState(() => _isHovered = false),
+          child: AnimatedScale(
+            scale: _isHovered && !isResolved ? 1.02 : 1.0,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOutBack,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isResolved
+                      ? [
+                          colorScheme.surfaceContainerHighest
+                              .withValues(alpha: 0.38),
+                          colorScheme.surfaceContainerHighest
+                              .withValues(alpha: 0.2),
+                        ]
+                      : [
+                          colorScheme.surface.withValues(alpha: 0.95),
+                          colorScheme.surface.withValues(alpha: 0.8),
+                        ],
                 ),
-                // ── Card content ──
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 18, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // ── Header row: icon + title + time ──
-                        Row(
-                          children: [
-                            // Type icon
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: severityCol.withValues(
-                                    alpha: isResolved ? 0.06 : 0.10),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Icon(
-                                _alertTypeIcon(alert.type),
-                                size: 20,
-                                color: severityCol
-                                    .withValues(alpha: contentOpacity),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Title
-                            Expanded(
-                              child: Text(
-                                alert.title,
-                                style:
-                                    theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w800,
-                                  color: colorScheme.onSurface
-                                      .withValues(alpha: contentOpacity),
-                                  decoration: isResolved
-                                      ? TextDecoration.lineThrough
-                                      : null,
-                                  decorationColor: colorScheme.onSurface
-                                      .withValues(alpha: 0.35),
-                                  letterSpacing: -0.2,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            // Time ago
-                            Text(
-                              _timeAgo(alert.createdAt),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant
-                                    .withValues(alpha: isResolved ? 0.35 : 0.55),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: severityCol.withValues(
+                      alpha: _isHovered && !isResolved ? 0.3 : 0.0),
+                  width: 1.5,
+                ),
+                boxShadow: isResolved
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: severityCol.withValues(
+                              alpha: _isHovered ? 0.15 : 0.08),
+                          blurRadius: _isHovered ? 24 : 16,
+                          offset: Offset(0, _isHovered ? 8 : 4),
                         ),
-                        const SizedBox(height: 10),
-                        // ── Body text ──
-                        Padding(
-                          padding: const EdgeInsets.only(left: 2),
-                          child: Text(
-                            alert.body,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurface
-                                  .withValues(alpha: isResolved ? 0.35 : 0.72),
-                              height: 1.45,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
+                      ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ── Colored left severity strip ──
+                      Container(
+                        width: 4,
+                        decoration: BoxDecoration(
+                          color: severityCol.withValues(
+                              alpha: isResolved ? 0.3 : 1.0),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            bottomLeft: Radius.circular(16),
                           ),
                         ),
-                        const SizedBox(height: 14),
-                        // ── Bottom row: chips + resolve button ──
-                        Row(
-                          children: [
-                            // Type chip
-                            _PillChip(
-                              label: l10n.alertTypeLabel(alert.type),
-                              backgroundColor: severityCol
-                                  .withValues(alpha: isResolved ? 0.05 : 0.08),
-                              textColor: severityCol
-                                  .withValues(alpha: contentOpacity),
-                            ),
-                            const SizedBox(width: 8),
-                            // Severity indicator
-                            _PillChip(
-                              label: l10n.tParams('alertsSeverityLabel',
-                                  {'severity': '${alert.severity}'}),
-                              backgroundColor: severityCol
-                                  .withValues(alpha: isResolved ? 0.05 : 0.08),
-                              textColor: severityCol
-                                  .withValues(alpha: contentOpacity),
-                            ),
-                            const Spacer(),
-                            // Status indicator or resolve button
-                            if (isResolved)
+                      ),
+                      // ── Card content ──
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 18, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // ── Header row: icon + title + time ──
                               Row(
-                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
-                                    Icons.check_circle_outline_rounded,
-                                    size: 16,
-                                    color: Colors.green.shade600
-                                        .withValues(alpha: 0.6),
+                                  // Type icon
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: severityCol.withValues(
+                                          alpha: isResolved ? 0.06 : 0.10),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      _alertTypeIcon(widget.alert.type),
+                                      size: 20,
+                                      color: severityCol.withValues(
+                                          alpha: contentOpacity),
+                                    ),
                                   ),
-                                  const SizedBox(width: 4),
+                                  const SizedBox(width: 12),
+                                  // Title
+                                  Expanded(
+                                    child: Text(
+                                      widget.alert.title,
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.w800,
+                                        color: colorScheme.onSurface
+                                            .withValues(alpha: contentOpacity),
+                                        decoration: isResolved
+                                            ? TextDecoration.lineThrough
+                                            : null,
+                                        decorationColor: colorScheme.onSurface
+                                            .withValues(alpha: 0.35),
+                                        letterSpacing: -0.2,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  // Time ago
                                   Text(
-                                    l10n.t('alertsStatusResolved'),
-                                    style:
-                                        theme.textTheme.labelSmall?.copyWith(
-                                      color: Colors.green.shade600
-                                          .withValues(alpha: 0.6),
-                                      fontWeight: FontWeight.w600,
+                                    _timeAgo(widget.alert.createdAt),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.onSurfaceVariant
+                                          .withValues(
+                                              alpha: isResolved ? 0.35 : 0.55),
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ],
-                              )
-                            else
-                              FilledButton.icon(
-                                style: FilledButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  textStyle: const TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
-                                  ),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                icon: const Icon(Icons.check_outlined,
-                                    size: 16),
-                                label: Text(l10n.t('alertsResolve')),
-                                onPressed: () => onResolve(alert.id),
                               ),
-                          ],
+                              const SizedBox(height: 10),
+                              // ── Body text ──
+                              Padding(
+                                padding: const EdgeInsets.only(left: 2),
+                                child: Text(
+                                  widget.alert.body,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurface.withValues(
+                                        alpha: isResolved ? 0.35 : 0.72),
+                                    height: 1.45,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              // ── Bottom row: chips + resolve button ──
+                              Row(
+                                children: [
+                                  // Type chip
+                                  _PillChip(
+                                    label:
+                                        l10n.alertTypeLabel(widget.alert.type),
+                                    backgroundColor: severityCol.withValues(
+                                        alpha: isResolved ? 0.05 : 0.08),
+                                    textColor: severityCol.withValues(
+                                        alpha: contentOpacity),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  // Severity indicator
+                                  _PillChip(
+                                    label: l10n.tParams('alertsSeverityLabel', {
+                                      'severity': '${widget.alert.severity}'
+                                    }),
+                                    backgroundColor: severityCol.withValues(
+                                        alpha: isResolved ? 0.05 : 0.08),
+                                    textColor: severityCol.withValues(
+                                        alpha: contentOpacity),
+                                  ),
+                                  const Spacer(),
+                                  // Status indicator or resolve button
+                                  if (isResolved)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle_outline_rounded,
+                                          size: 16,
+                                          color: Colors.green.shade600
+                                              .withValues(alpha: 0.6),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          l10n.t('alertsStatusResolved'),
+                                          style: theme.textTheme.labelSmall
+                                              ?.copyWith(
+                                            color: Colors.green.shade600
+                                                .withValues(alpha: 0.6),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  else
+                                    FilledButton.icon(
+                                      style: FilledButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 8),
+                                        textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 12,
+                                        ),
+                                        minimumSize: Size.zero,
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      icon: const Icon(Icons.check_outlined,
+                                          size: 16),
+                                      label: Text(l10n.t('alertsResolve')),
+                                      onPressed: () =>
+                                          widget.onResolve(widget.alert.id),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
       ),
     );
   }

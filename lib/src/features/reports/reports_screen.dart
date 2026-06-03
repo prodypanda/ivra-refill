@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../auth/auth_validation.dart';
+import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
 
 class ReportsScreen extends ConsumerWidget {
@@ -303,7 +304,7 @@ class _ReportButton {
   final VoidCallback onPressed;
 }
 
-class _ReportAction extends StatelessWidget {
+class _ReportAction extends StatefulWidget {
   const _ReportAction({
     required this.title,
     required this.body,
@@ -317,40 +318,126 @@ class _ReportAction extends StatelessWidget {
   final List<_ReportButton> actions;
 
   @override
+  State<_ReportAction> createState() => _ReportActionState();
+}
+
+class _ReportActionState extends State<_ReportAction> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 360,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(icon, size: 32),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 8),
-              Text(body),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
+    final theme = Theme.of(context);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutBack,
+        child: SizedBox(
+          width: 360,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.primary
+                      .withValues(alpha: _isHovered ? 0.15 : 0.0),
+                  blurRadius: _isHovered ? 20 : 0,
+                  spreadRadius: _isHovered ? 2 : 0,
+                ),
+              ],
+            ),
+            child: GlassCard(
+              padding: EdgeInsets.zero,
+              borderRadius: 20,
+              borderColor: theme.colorScheme.outline
+                  .withValues(alpha: _isHovered ? 0.3 : 0.1),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (final action in actions)
-                    FilledButton.icon(
-                      onPressed: action.onPressed,
-                      icon: Icon(action.icon),
-                      label: Text(action.label),
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          theme.colorScheme.primaryContainer
+                              .withValues(alpha: 0.6),
+                          theme.colorScheme.primaryContainer
+                              .withValues(alpha: 0.1),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
                     ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(widget.icon,
+                              size: 32, color: theme.colorScheme.primary),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            widget.title,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.body,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            height: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: [
+                            for (final action in widget.actions)
+                              FilledButton.icon(
+                                onPressed: action.onPressed,
+                                icon: Icon(action.icon, size: 18),
+                                label: Text(action.label),
+                                style: FilledButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),

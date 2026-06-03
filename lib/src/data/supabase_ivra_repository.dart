@@ -20,15 +20,17 @@ class SupabaseIvraRepository implements IvraRepository {
       await prefs.setString('cache_$key', jsonEncode(data));
       return data;
     } catch (e) {
-      if (e is SocketException || e.toString().contains('Failed host lookup') || e.toString().contains('ClientException') || e.toString().contains('XMLHttpRequest')) {
+      if (e is SocketException ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('ClientException') ||
+          e.toString().contains('XMLHttpRequest')) {
         final prefs = await SharedPreferences.getInstance();
         final cached = prefs.getString('cache_$key');
         if (cached != null) {
           final decoded = jsonDecode(cached);
           if (decoded is List) {
             return List<Map<String, dynamic>>.from(
-              decoded.map((x) => Map<String, dynamic>.from(x as Map))
-            ) as T;
+                decoded.map((x) => Map<String, dynamic>.from(x as Map))) as T;
           } else if (decoded is Map) {
             return Map<String, dynamic>.from(decoded) as T;
           }
@@ -46,12 +48,10 @@ class SupabaseIvraRepository implements IvraRepository {
     }
   }
 
-
   @override
   Future<void> clearCachedData() async {
     final prefs = await SharedPreferences.getInstance();
-    final keys =
-        prefs.getKeys().where((k) => k.startsWith('cache_')).toList();
+    final keys = prefs.getKeys().where((k) => k.startsWith('cache_')).toList();
     for (final key in keys) {
       await prefs.remove(key);
     }
@@ -146,7 +146,9 @@ class SupabaseIvraRepository implements IvraRepository {
     }
     final data = await _fetchWithCache(
       'dashboard_metrics_${hotelId ?? 'all'}',
-      () => _client.rpc('dashboard_metrics', params: params.isNotEmpty ? params : null).single(),
+      () => _client
+          .rpc('dashboard_metrics', params: params.isNotEmpty ? params : null)
+          .single(),
     );
 
     return DashboardMetrics(

@@ -58,7 +58,8 @@ class _DeepLinkListenerState extends ConsumerState<DeepLinkListener> {
     // a flicker. The hot-state case still works because the stream will
     // continue emitting subsequent intents.
     final currentUri = router.routeInformationProvider.value.uri;
-    final current = _toRouterLocation(currentUri.path, currentUri.queryParameters);
+    final current =
+        _toRouterLocation(currentUri.path, currentUri.queryParameters);
     if (current == target) return;
 
     router.go(target);
@@ -70,7 +71,8 @@ class _DeepLinkListenerState extends ConsumerState<DeepLinkListener> {
   ) {
     final normalisedPath = path.isEmpty ? '/' : path;
     if (queryParameters.isEmpty) return normalisedPath;
-    return Uri(path: normalisedPath, queryParameters: queryParameters).toString();
+    return Uri(path: normalisedPath, queryParameters: queryParameters)
+        .toString();
   }
 
   @override

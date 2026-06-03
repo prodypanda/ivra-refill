@@ -38,7 +38,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _checkBiometrics() async {
-    final available = await ref.read(biometricAuthServiceProvider).isAvailable();
+    final available =
+        await ref.read(biometricAuthServiceProvider).isAvailable();
     final hasCreds = await hasBiometricCredentials();
     if (!mounted) return;
     setState(() {
@@ -209,9 +210,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 children: [
                                   if (isTransientProfile) ...[
                                     TextButton.icon(
-                                      onPressed: _isLoading
-                                          ? null
-                                          : _retryProfileLoad,
+                                      onPressed:
+                                          _isLoading ? null : _retryProfileLoad,
                                       icon: const Icon(Icons.refresh),
                                       label: Text(l10n.t('btnRetry')),
                                     ),
@@ -384,8 +384,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                             ),
                           ),
-                          onPressed:
-                              (_isLoading || _isAuthenticating) ? null : _biometricLogin,
+                          onPressed: (_isLoading || _isAuthenticating)
+                              ? null
+                              : _biometricLogin,
                           icon: const Icon(Icons.fingerprint),
                           label: Text(
                             l10n.t('authBtnBiometricLogin'),
@@ -424,8 +425,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
     try {
       final base = Uri.base;
-      final isWeb = base.hasScheme && (base.scheme == 'http' || base.scheme == 'https');
-      
+      final isWeb =
+          base.hasScheme && (base.scheme == 'http' || base.scheme == 'https');
+
       await Supabase.instance.client.auth.signInWithOAuth(
         OAuthProvider.google,
         redirectTo: isWeb ? base.toString() : 'ivra://app/login-callback',
@@ -458,7 +460,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      
+
       await saveLoginCredentials(
         _emailController.text.trim(),
         _passwordController.text,
@@ -492,8 +494,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final savedPassword = biometricAccount == null
         ? null
         : await savedPasswordFor(biometricAccount);
-    final hasSession =
-        Supabase.instance.client.auth.currentSession != null;
+    final hasSession = Supabase.instance.client.auth.currentSession != null;
 
     // Biometric unlock needs either a live session to restore, or the stored
     // credentials of the account that opted in (to replay a sign-in).

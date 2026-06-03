@@ -44,115 +44,9 @@ class HotelsScreen extends ConsumerWidget {
           runSpacing: 20,
           children: [
             for (final hotel in hotels)
-              SizedBox(
-                width: 360,
-                child: GlassCard(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              hotel.name,
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                          ),
-                          if (hotel.pendingEdits > 0)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.errorContainer,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.pending_actions,
-                                    size: 14,
-                                    color: theme.colorScheme.onErrorContainer,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${hotel.pendingEdits} ${l10n.t('hotelPendingChip')}',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onErrorContainer,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-                      if (hotel.legalName.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        Text(
-                          hotel.legalName,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant
-                                .withValues(alpha: 0.8),
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Icon(Icons.location_city_outlined,
-                              size: 14, color: theme.colorScheme.primary),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${hotel.city}, ${hotel.country}',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 24),
-                      _Line(Icons.person_outline, hotel.contactName),
-                      _Line(Icons.email_outlined, hotel.email),
-                      _Line(Icons.phone_outlined, hotel.phone),
-                      if (hotel.address.isNotEmpty)
-                        _Line(Icons.location_on_outlined, hotel.address),
-                      if (hotel.notes.isNotEmpty)
-                        _Line(Icons.notes_outlined, hotel.notes),
-                      const Divider(height: 24),
-                      Row(
-                        children: [
-                          Icon(Icons.room_service_outlined,
-                              size: 16,
-                              color: theme.colorScheme.onSurfaceVariant),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              '${hotel.roomCount} ${l10n.t('hotelRoomsTracked')}',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            tooltip: l10n.t('requestHotelEdit'),
-                            icon: const Icon(Icons.edit_note_outlined),
-                            onPressed: () => _showHotelEditRequestDialog(
-                                context, ref, hotel),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+              _PremiumHotelCard(
+                hotel: hotel,
+                onEdit: () => _showHotelEditRequestDialog(context, ref, hotel),
               ),
           ],
         ),
@@ -211,6 +105,231 @@ class _Line extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(child: Text(text, overflow: TextOverflow.ellipsis)),
         ],
+      ),
+    );
+  }
+}
+
+class _PremiumHotelCard extends StatefulWidget {
+  const _PremiumHotelCard({required this.hotel, required this.onEdit});
+
+  final Hotel hotel;
+  final VoidCallback onEdit;
+
+  @override
+  State<_PremiumHotelCard> createState() => _PremiumHotelCardState();
+}
+
+class _PremiumHotelCardState extends State<_PremiumHotelCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final hotel = widget.hotel;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutBack,
+        child: SizedBox(
+          width: 360,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.primary
+                      .withValues(alpha: _isHovered ? 0.15 : 0.0),
+                  blurRadius: _isHovered ? 20 : 0,
+                  spreadRadius: _isHovered ? 2 : 0,
+                ),
+              ],
+            ),
+            child: GlassCard(
+              padding: EdgeInsets.zero,
+              borderRadius: 20,
+              borderColor: theme.colorScheme.outline
+                  .withValues(alpha: _isHovered ? 0.3 : 0.1),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          theme.colorScheme.primaryContainer
+                              .withValues(alpha: 0.6),
+                          theme.colorScheme.primaryContainer
+                              .withValues(alpha: 0.2),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                hotel.name,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  color: theme.colorScheme.onSurface,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ),
+                            if (hotel.pendingEdits > 0)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.errorContainer,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.pending_actions,
+                                      size: 14,
+                                      color: theme.colorScheme.onErrorContainer,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${hotel.pendingEdits}',
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color:
+                                            theme.colorScheme.onErrorContainer,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                        if (hotel.legalName.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            hotel.legalName,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant
+                                  .withValues(alpha: 0.8),
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.location_city_outlined,
+                                size: 16, color: theme.colorScheme.primary),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${hotel.city}, ${hotel.country}',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 32),
+                        _Line(Icons.person_outline, hotel.contactName),
+                        _Line(Icons.email_outlined, hotel.email),
+                        _Line(Icons.phone_outlined, hotel.phone),
+                        if (hotel.address.isNotEmpty)
+                          _Line(Icons.location_on_outlined, hotel.address),
+                        if (hotel.notes.isNotEmpty)
+                          _Line(Icons.notes_outlined, hotel.notes),
+                        const Divider(height: 32),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.secondaryContainer
+                                    .withValues(alpha: 0.5),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(Icons.room_service_outlined,
+                                  size: 16,
+                                  color:
+                                      theme.colorScheme.onSecondaryContainer),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${hotel.roomCount}',
+                                    style:
+                                        theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.w800,
+                                      color: theme.colorScheme.onSurface,
+                                    ),
+                                  ),
+                                  Text(
+                                    l10n.t('hotelRoomsTracked'),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              decoration: BoxDecoration(
+                                color: _isHovered
+                                    ? theme.colorScheme.primaryContainer
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: IconButton(
+                                tooltip: l10n.t('requestHotelEdit'),
+                                icon: Icon(
+                                  Icons.edit_note_outlined,
+                                  color: _isHovered
+                                      ? theme.colorScheme.primary
+                                      : theme.colorScheme.onSurfaceVariant,
+                                ),
+                                onPressed: widget.onEdit,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -285,8 +404,8 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _legalName,
-                        decoration:
-                            InputDecoration(labelText: l10n.t('hotelLabelLegalName')),
+                        decoration: InputDecoration(
+                            labelText: l10n.t('hotelLabelLegalName')),
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -335,8 +454,8 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _address,
-                        decoration:
-                            InputDecoration(labelText: l10n.t('hotelLabelAddress')),
+                        decoration: InputDecoration(
+                            labelText: l10n.t('hotelLabelAddress')),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -358,7 +477,8 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(l10n.t('btnCancel')),
                 ),
                 const SizedBox(width: 8),
@@ -510,8 +630,8 @@ class _HotelEditRequestDialogState
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _legalName,
-                        decoration:
-                            InputDecoration(labelText: l10n.t('hotelLabelLegalName')),
+                        decoration: InputDecoration(
+                            labelText: l10n.t('hotelLabelLegalName')),
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -560,8 +680,8 @@ class _HotelEditRequestDialogState
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _address,
-                        decoration:
-                            InputDecoration(labelText: l10n.t('hotelLabelAddress')),
+                        decoration: InputDecoration(
+                            labelText: l10n.t('hotelLabelAddress')),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -583,7 +703,8 @@ class _HotelEditRequestDialogState
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(l10n.t('btnCancel')),
                 ),
                 const SizedBox(width: 8),

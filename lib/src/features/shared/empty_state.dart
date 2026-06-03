@@ -105,12 +105,14 @@ class _EmptyStateState extends State<EmptyState>
                   Text(
                     widget.message,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.75),
+                      color: theme.colorScheme.onSurfaceVariant
+                          .withValues(alpha: 0.75),
                       height: 1.5,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  if (widget.actionLabel != null && widget.onAction != null) ...[
+                  if (widget.actionLabel != null &&
+                      widget.onAction != null) ...[
                     const SizedBox(height: 28),
                     FilledButton.icon(
                       onPressed: widget.onAction,

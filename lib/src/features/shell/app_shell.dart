@@ -170,7 +170,6 @@ class AppShell extends ConsumerWidget {
           UserRole.hotelManager,
         },
       ),
-
       _NavItem(
         l10n.t('approvals'),
         Icons.fact_check_outlined,
@@ -294,8 +293,7 @@ class _MobileShell extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 height: 80,
-                labelBehavior:
-                    NavigationDestinationLabelBehavior.alwaysShow,
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
                 selectedIndex: primaryIndex,
                 onDestinationSelected: (index) {
                   if (hasMore && index == primaryItems.length) {

@@ -374,8 +374,8 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
         // without an account to tie it to.
         return;
       }
-      final available =
-          _available ?? await ref.read(biometricAuthServiceProvider).isAvailable();
+      final available = _available ??
+          await ref.read(biometricAuthServiceProvider).isAvailable();
       if (!mounted) return;
       if (!available) {
         messenger.showSnackBar(

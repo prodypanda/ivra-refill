@@ -10,6 +10,7 @@ import '../auth/accept_invitation_screen.dart';
 import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/glass_card.dart';
 
 class TeamScreen extends ConsumerWidget {
   const TeamScreen({super.key});
@@ -263,58 +264,20 @@ class _MembersTable extends ConsumerWidget {
         hotel.id: hotel.name,
     };
 
-    return Card(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columns: [
-            DataColumn(label: Text(l10n.t('teamTableColumnName'))),
-            DataColumn(label: Text(l10n.t('teamTableColumnEmail'))),
-            DataColumn(label: Text(l10n.t('teamTableColumnRole'))),
-            DataColumn(label: Text(l10n.t('teamTableColumnHotel'))),
-            DataColumn(label: Text(l10n.t('teamTableColumnStatus'))),
-            DataColumn(label: Text(l10n.t('teamTableColumnActions'))),
-          ],
-          rows: [
-            for (final member in members)
-              DataRow(
-                cells: [
-                  DataCell(Text(member.fullName)),
-                  DataCell(Text(member.email)),
-                  DataCell(Chip(label: Text(l10n.userRoleLabel(member.role)))),
-                  DataCell(
-                    Text(
-                      member.hotelId != null
-                          ? (hotelsById[member.hotelId!] ?? member.hotelId!)
-                          : (member.isIvraUser
-                              ? l10n.t('teamHotelAll')
-                              : l10n.t('teamHotelNone')),
-                    ),
-                  ),
-                  DataCell(
-                    Chip(
-                      label: Text(
-                        member.isActive
-                            ? l10n.t('teamStatusActive')
-                            : l10n.t('teamStatusInactive'),
-                      ),
-                    ),
-                  ),
-                  DataCell(
-                    _MemberActions(
-                      currentUser: currentUser,
-                      member: member,
-                      onSetActive: onSetActive,
-                      onManageHotels: canManageHotels && !member.isIvraUser
-                          ? () => onManageHotels(member)
-                          : null,
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
-      ),
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: [
+        for (final member in members)
+          _PremiumMemberCard(
+            currentUser: currentUser,
+            member: member,
+            hotelsById: hotelsById,
+            canManageHotels: canManageHotels,
+            onSetActive: onSetActive,
+            onManageHotels: onManageHotels,
+          ),
+      ],
     );
   }
 }
@@ -346,57 +309,19 @@ class _InvitationsTable extends StatelessWidget {
       );
     }
 
-    return Card(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          columns: [
-            DataColumn(
-                label: Text(
-                    AppLocalizations.of(context).t('teamTableColumnName'))),
-            DataColumn(
-                label: Text(
-                    AppLocalizations.of(context).t('teamTableColumnEmail'))),
-            DataColumn(
-                label: Text(
-                    AppLocalizations.of(context).t('teamTableColumnRole'))),
-            DataColumn(
-                label: Text(
-                    AppLocalizations.of(context).t('teamTableColumnHotel'))),
-            DataColumn(
-                label: Text(
-                    AppLocalizations.of(context).t('teamTableColumnStatus'))),
-            DataColumn(
-                label: Text(
-                    AppLocalizations.of(context).t('teamTableColumnActions'))),
-          ],
-          rows: [
-            for (final invitation in invitations)
-              DataRow(
-                cells: [
-                  DataCell(Text(invitation.fullName)),
-                  DataCell(Text(invitation.email)),
-                  DataCell(
-                    Chip(label: Text(l10n.userRoleLabel(invitation.role))),
-                  ),
-                  DataCell(
-                    Text(invitation.hotelName ?? l10n.t('teamHotelAll')),
-                  ),
-                  DataCell(Text(l10n.invitationStatusLabel(invitation.status))),
-                  DataCell(
-                    _InvitationActions(
-                      canManage: _canManageInvitation(currentUser, invitation),
-                      invitation: invitation,
-                      onCancel: onCancel,
-                      onCopyLink: onCopyLink,
-                      onResend: onResend,
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
-      ),
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: [
+        for (final invitation in invitations)
+          _PremiumInvitationCard(
+            currentUser: currentUser,
+            invitation: invitation,
+            onResend: onResend,
+            onCancel: onCancel,
+            onCopyLink: onCopyLink,
+          ),
+      ],
     );
   }
 }
@@ -850,6 +775,348 @@ class _InvitationActions extends StatelessWidget {
           onPressed: canManage ? () => onCancel(invitation) : null,
         ),
       ],
+    );
+  }
+}
+
+class _PremiumMemberCard extends StatefulWidget {
+  const _PremiumMemberCard({
+    required this.currentUser,
+    required this.member,
+    required this.hotelsById,
+    required this.canManageHotels,
+    required this.onSetActive,
+    required this.onManageHotels,
+  });
+
+  final UserProfile? currentUser;
+  final UserProfile member;
+  final Map<String, String> hotelsById;
+  final bool canManageHotels;
+  final void Function(UserProfile member, bool isActive) onSetActive;
+  final void Function(UserProfile member) onManageHotels;
+
+  @override
+  State<_PremiumMemberCard> createState() => _PremiumMemberCardState();
+}
+
+class _PremiumMemberCardState extends State<_PremiumMemberCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final member = widget.member;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutBack,
+        child: SizedBox(
+          width: 320,
+          child: GlassCard(
+            padding: const EdgeInsets.all(20),
+            borderColor: member.isActive
+                ? theme.colorScheme.primary
+                    .withValues(alpha: _isHovered ? 0.5 : 0.2)
+                : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.colorScheme.primary.withValues(alpha: 0.8),
+                            theme.colorScheme.secondary.withValues(alpha: 0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        member.fullName.substring(0, 1).toUpperCase(),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            member.fullName,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          Text(
+                            member.email,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.secondaryContainer,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        l10n.userRoleLabel(member.role),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSecondaryContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: member.isActive
+                            ? Colors.green.withValues(alpha: 0.2)
+                            : theme.colorScheme.errorContainer,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        member.isActive
+                            ? l10n.t('teamStatusActive')
+                            : l10n.t('teamStatusInactive'),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: member.isActive
+                              ? Colors.green[800]
+                              : theme.colorScheme.onErrorContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Icon(Icons.business_outlined,
+                        size: 16, color: theme.colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        member.hotelId != null
+                            ? (widget.hotelsById[member.hotelId!] ??
+                                member.hotelId!)
+                            : (member.isIvraUser
+                                ? l10n.t('teamHotelAll')
+                                : l10n.t('teamHotelNone')),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 32),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: _MemberActions(
+                    currentUser: widget.currentUser,
+                    member: member,
+                    onSetActive: widget.onSetActive,
+                    onManageHotels: widget.canManageHotels && !member.isIvraUser
+                        ? () => widget.onManageHotels(member)
+                        : null,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PremiumInvitationCard extends StatefulWidget {
+  const _PremiumInvitationCard({
+    required this.currentUser,
+    required this.invitation,
+    required this.onResend,
+    required this.onCancel,
+    required this.onCopyLink,
+  });
+
+  final UserProfile? currentUser;
+  final TeamInvitation invitation;
+  final ValueChanged<TeamInvitation> onResend;
+  final ValueChanged<TeamInvitation> onCancel;
+  final ValueChanged<TeamInvitation> onCopyLink;
+
+  @override
+  State<_PremiumInvitationCard> createState() => _PremiumInvitationCardState();
+}
+
+class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final invitation = widget.invitation;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutBack,
+        child: SizedBox(
+          width: 320,
+          child: GlassCard(
+            padding: const EdgeInsets.all(20),
+            borderColor: theme.colorScheme.tertiary
+                .withValues(alpha: _isHovered ? 0.5 : 0.2),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceContainerHighest,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color:
+                              theme.colorScheme.tertiary.withValues(alpha: 0.3),
+                          width: 2,
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.mark_email_unread_outlined,
+                        color: theme.colorScheme.tertiary,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            invitation.fullName,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          Text(
+                            invitation.email,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.tertiaryContainer,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        l10n.userRoleLabel(invitation.role),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onTertiaryContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        l10n.invitationStatusLabel(invitation.status),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.orange[800],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Icon(Icons.business_outlined,
+                        size: 16, color: theme.colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        invitation.hotelName ?? l10n.t('teamHotelAll'),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 32),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: _InvitationActions(
+                    canManage:
+                        _canManageInvitation(widget.currentUser, invitation),
+                    invitation: invitation,
+                    onCancel: widget.onCancel,
+                    onCopyLink: widget.onCopyLink,
+                    onResend: widget.onResend,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

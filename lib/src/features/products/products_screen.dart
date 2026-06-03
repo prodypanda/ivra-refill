@@ -112,168 +112,10 @@ class _ProductsTable extends ConsumerWidget {
                 for (final product in products)
                   SizedBox(
                     width: cardWidth,
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 180,
-                            width: double.infinity,
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: Image.asset(
-                                    product.imagePath,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                      decoration: const BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color(0xFF0C4A3A),
-                                            Color(0xFF267D65),
-                                            Color(0xFF3EA47E),
-                                          ],
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.spa_outlined,
-                                              size: 48,
-                                              color: Colors.white
-                                                  .withValues(alpha: 0.95),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              product.sku,
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'monospace',
-                                                fontWeight: FontWeight.w700,
-                                                letterSpacing: 1.2,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 12,
-                                  left: 12,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Colors.black.withValues(alpha: 0.6),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      product.sku,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w800,
-                                        fontFamily: 'monospace',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(18),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  product.label(language),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w800,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                      ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 16),
-                                _RuleRow(
-                                    Icons.pin_drop_outlined,
-                                    l10n.t('productsLabelBottleVolume'),
-                                    '${product.bottleVolumeMl} ml'),
-                                _RuleRow(
-                                    Icons.propane_tank_outlined,
-                                    l10n.t('productsLabelBidonVolume'),
-                                    '${product.bidonVolumeMl} ml'),
-                                _RuleRow(
-                                    Icons.loop_outlined,
-                                    l10n.t('productsLabelMaxRefill'),
-                                    '${product.maxRefillCount} ${l10n.t('refills')}'),
-                                _RuleRow(
-                                    Icons.calendar_today_outlined,
-                                    l10n.t('productsLabelMaxAge'),
-                                    '${product.maxBottleAgeDays} ${l10n.t('days')}'),
-                                _RuleRow(
-                                  Icons.warning_amber_outlined,
-                                  l10n.t('productsLabelLowStock'),
-                                  '${product.lowBottleThreshold} ${l10n.t('bottles').toLowerCase()} / ${product.lowBidonThreshold} ${l10n.t('bidons').toLowerCase()}',
-                                ),
-                                if (canManage) ...[
-                                  const Divider(height: 32),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Flexible(
-                                        child: TextButton.icon(
-                                          icon:
-                                              const Icon(Icons.edit_outlined),
-                                          label: Text(
-                                            l10n.t('productsBtnEdit'),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          onPressed: () =>
-                                              showModalBottomSheet<void>(
-                                            context: context,
-                                            isScrollControlled: true,
-                                            useSafeArea: true,
-                                            builder: (context) =>
-                                                _ProductDialog(
-                                                    product: product),
-                                          ).then((_) {
-                                            ref.invalidate(productsProvider);
-                                            ref.invalidate(
-                                                roomProductsProvider);
-                                            ref.invalidate(inventoryProvider);
-                                            ref.invalidate(
-                                                suggestedOrdersProvider);
-                                            ref.invalidate(dashboardProvider);
-                                          }),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    child: _PremiumProductCard(
+                      product: product,
+                      language: language,
+                      canManage: canManage,
                     ),
                   ),
               ],
@@ -281,6 +123,244 @@ class _ProductsTable extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _PremiumProductCard extends ConsumerStatefulWidget {
+  const _PremiumProductCard({
+    required this.product,
+    required this.language,
+    required this.canManage,
+  });
+
+  final Product product;
+  final String language;
+  final bool canManage;
+
+  @override
+  ConsumerState<_PremiumProductCard> createState() =>
+      _PremiumProductCardState();
+}
+
+class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutBack,
+        child: Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.surface.withValues(alpha: 0.95),
+                theme.colorScheme.surface.withValues(alpha: 0.8),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.shadow
+                    .withValues(alpha: _isHovered ? 0.15 : 0.05),
+                blurRadius: _isHovered ? 24 : 12,
+                offset: const Offset(0, 8),
+              ),
+            ],
+            border: Border.all(
+              color: theme.colorScheme.primary
+                  .withValues(alpha: _isHovered ? 0.4 : 0.15),
+              width: 1.5,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Hero Image Header
+              SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.asset(
+                      widget.product.imagePath,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFF0C4A3A),
+                              Color(0xFF267D65),
+                              Color(0xFF3EA47E),
+                            ],
+                          ),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.spa_outlined,
+                            size: 64,
+                            color: Colors.white.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Gradient overlay
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.7),
+                            ],
+                            stops: const [0.5, 1.0],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // SKU Badge
+                    Positioned(
+                      top: 16,
+                      left: 16,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Text(
+                          widget.product.sku,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: 'monospace',
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Title over image
+                    Positioned(
+                      bottom: 16,
+                      left: 16,
+                      right: 16,
+                      child: Text(
+                        widget.product.label(widget.language),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          height: 1.1,
+                          shadows: [
+                            const Shadow(
+                              color: Colors.black87,
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Details
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _RuleRow(
+                        Icons.pin_drop_outlined,
+                        l10n.t('productsLabelBottleVolume'),
+                        '${widget.product.bottleVolumeMl} ml'),
+                    _RuleRow(
+                        Icons.propane_tank_outlined,
+                        l10n.t('productsLabelBidonVolume'),
+                        '${widget.product.bidonVolumeMl} ml'),
+                    _RuleRow(
+                        Icons.loop_outlined,
+                        l10n.t('productsLabelMaxRefill'),
+                        '${widget.product.maxRefillCount} ${l10n.t('refills')}'),
+                    _RuleRow(
+                        Icons.calendar_today_outlined,
+                        l10n.t('productsLabelMaxAge'),
+                        '${widget.product.maxBottleAgeDays} ${l10n.t('days')}'),
+                    _RuleRow(
+                      Icons.warning_amber_outlined,
+                      l10n.t('productsLabelLowStock'),
+                      '${widget.product.lowBottleThreshold} ${l10n.t('bottles').toLowerCase()} / ${widget.product.lowBidonThreshold} ${l10n.t('bidons').toLowerCase()}',
+                    ),
+                    if (widget.canManage) ...[
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        child: Divider(height: 1),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          FilledButton.icon(
+                            style: FilledButton.styleFrom(
+                              backgroundColor:
+                                  theme.colorScheme.primaryContainer,
+                              foregroundColor:
+                                  theme.colorScheme.onPrimaryContainer,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            icon: const Icon(Icons.edit_outlined, size: 18),
+                            label: Text(
+                              l10n.t('productsBtnEdit'),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: () => showModalBottomSheet<void>(
+                              context: context,
+                              isScrollControlled: true,
+                              useSafeArea: true,
+                              builder: (context) =>
+                                  _ProductDialog(product: widget.product),
+                            ).then((_) {
+                              ref.invalidate(productsProvider);
+                              ref.invalidate(roomProductsProvider);
+                              ref.invalidate(inventoryProvider);
+                              ref.invalidate(suggestedOrdersProvider);
+                              ref.invalidate(dashboardProvider);
+                            }),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -416,7 +496,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-    
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -430,10 +510,12 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              _isEditing ? l10n.t('productsBtnEdit') : l10n.t('productsBtnCreate'),
+              _isEditing
+                  ? l10n.t('productsBtnEdit')
+                  : l10n.t('productsBtnCreate'),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 24),
             Flexible(
@@ -530,14 +612,17 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(l10n.t('btnCancel')),
                 ),
                 const SizedBox(width: 8),
                 FilledButton.icon(
                   onPressed: _isSaving ? null : _save,
-                  icon: Icon(_isEditing ? Icons.save_outlined : Icons.add_outlined),
-                  label: Text(_isEditing ? l10n.t('btnSave') : l10n.t('btnCreate')),
+                  icon: Icon(
+                      _isEditing ? Icons.save_outlined : Icons.add_outlined),
+                  label: Text(
+                      _isEditing ? l10n.t('btnSave') : l10n.t('btnCreate')),
                 ),
               ],
             ),

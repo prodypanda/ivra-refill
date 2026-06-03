@@ -6,11 +6,13 @@ void main() {
   group('isTransientProfileError', () {
     test('treats network failures as transient', () {
       expect(
-        isTransientProfileError(Exception('SocketException: Failed host lookup')),
+        isTransientProfileError(
+            Exception('SocketException: Failed host lookup')),
         isTrue,
       );
       expect(
-        isTransientProfileError(Exception('ClientException: Connection closed')),
+        isTransientProfileError(
+            Exception('ClientException: Connection closed')),
         isTrue,
       );
       expect(isTransientProfileError(Exception('Request timed out')), isTrue);

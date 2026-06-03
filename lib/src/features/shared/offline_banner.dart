@@ -130,8 +130,7 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
           isNowOnline &&
           !ref.read(offlineModeProvider) &&
           (ref.read(offlineActionsProvider).valueOrNull?.length ?? 0) > 0) {
-        final count =
-            ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
+        final count = ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _autoSync(count);
         });
@@ -144,8 +143,7 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
           isNoLongerManualOffline &&
           ref.read(connectivityProvider) == true &&
           (ref.read(offlineActionsProvider).valueOrNull?.length ?? 0) > 0) {
-        final count =
-            ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
+        final count = ref.read(offlineActionsProvider).valueOrNull?.length ?? 0;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _autoSync(count);
         });
@@ -213,7 +211,8 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
                         borderRadius: BorderRadius.circular(12),
                         child: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Icon(Icons.sync, size: 16, color: Color(0xFF2E7D32)),
+                          child: Icon(Icons.sync,
+                              size: 16, color: Color(0xFF2E7D32)),
                         ),
                       ),
                   ],

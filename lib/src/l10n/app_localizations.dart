@@ -319,8 +319,10 @@ class AppLocalizations {
       'approvalsRejected': 'Request rejected.',
       'approvalsApproveQueued': 'Approval queued for sync.',
       'approvalsRejectQueued': 'Rejection queued for sync.',
-      'approvalsAccessDenied': 'Access denied. Only admins can review approvals.',
-      'approvalsRequestNotFound': 'Approval request not found or already processed.',
+      'approvalsAccessDenied':
+          'Access denied. Only admins can review approvals.',
+      'approvalsRequestNotFound':
+          'Approval request not found or already processed.',
       'inviteAcceptTitle': 'Accept invitation',
       'inviteAlreadyHaveAccount': 'I already have an account',
       'inviteBackToSignIn': 'Back to sign in',
@@ -339,8 +341,7 @@ class AppLocalizations {
       'settingsDemoUser': 'Demo user',
       'settingsSupabaseConnected': 'Connected',
       'settingsSupabaseHint': 'The app is using live data.',
-      'settingsNoSupabaseHint':
-          'Server connection is not configured.',
+      'settingsNoSupabaseHint': 'Server connection is not configured.',
       'settingsEditAction': 'Edit queued action',
       'settingsResolveConflict': 'Resolve sync conflict',
       'settingsActionSynced': 'Action synced',
@@ -511,7 +512,8 @@ class AppLocalizations {
       'enterNumberError': 'Entrez un nombre',
       'createHotel': 'Créer un hôtel',
       'requestHotelEdit': 'Demander la modification',
-      'authTitleCannotAccess': 'Ce compte nécessite une invitation pour accéder à Ivra.',
+      'authTitleCannotAccess':
+          'Ce compte nécessite une invitation pour accéder à Ivra.',
       'authBtnGoogleSignIn': 'Se connecter avec Google',
       'authBtnSignOut': 'Se déconnecter',
       'authLabelEmail': 'E-mail',
@@ -704,7 +706,8 @@ class AppLocalizations {
       'accountFullNameRequired': 'Le nom complet est requis',
       'accountNewPassword': 'Nouveau mot de passe',
       'accountConfirmPassword': 'Confirmer le mot de passe',
-      'accountPasswordHintSupabase': 'Met à jour le mot de passe de votre compte.',
+      'accountPasswordHintSupabase':
+          'Met à jour le mot de passe de votre compte.',
       'accountPasswordHintDemo':
           'Le mode démo accepte le changement localement.',
       'accountSignOutHint': 'Terminer la session en cours sur cet appareil.',
@@ -722,7 +725,8 @@ class AppLocalizations {
       'alertsRefreshSmart': 'Actualiser les alertes',
       'alertsResolve': 'Résoudre',
       'approvalsEmpty': 'Aucune approbation en attente',
-      'approvalsEmptySubtitle': 'Toutes les demandes d\'approbation ont été traitées.',
+      'approvalsEmptySubtitle':
+          'Toutes les demandes d\'approbation ont été traitées.',
       'approvalsApprove': 'Approuver',
       'approvalsReject': 'Rejeter',
       'approvalsActionFailed': 'L\'action a échoué. Réessayez.',
@@ -730,7 +734,8 @@ class AppLocalizations {
       'approvalsRejected': 'Demande rejetée.',
       'approvalsApproveQueued': 'Approbation mise en file d\'attente.',
       'approvalsRejectQueued': 'Rejet mis en file d\'attente.',
-      'approvalsAccessDenied': 'Accès refusé. Seuls les admins peuvent approuver.',
+      'approvalsAccessDenied':
+          'Accès refusé. Seuls les admins peuvent approuver.',
       'approvalsRequestNotFound': 'Demande introuvable ou déjà traitée.',
       'inviteAcceptTitle': 'Accepter l\'invitation',
       'inviteAlreadyHaveAccount': 'J\'ai déjà un compte',
@@ -1149,8 +1154,7 @@ class AppLocalizations {
       'settingsDemoUser': 'مستخدم تجريبي',
       'settingsSupabaseConnected': 'متصل',
       'settingsSupabaseHint': 'التطبيق يستخدم البيانات المباشرة.',
-      'settingsNoSupabaseHint':
-          'لم يتم تكوين الاتصال بالخادم.',
+      'settingsNoSupabaseHint': 'لم يتم تكوين الاتصال بالخادم.',
       'settingsEditAction': 'تعديل الإجراء المنتظر',
       'settingsResolveConflict': 'حل تعارض المزامنة',
       'settingsActionSynced': 'تمت مزامنة الإجراء',
@@ -1528,8 +1532,7 @@ class AppLocalizations {
       'settingsOfflineQueue': 'Metti in coda',
       'settingsOfflineSend': 'Invia azioni',
       'settingsBiometricTitle': 'Sblocco biometrico',
-      'settingsBiometricHint':
-          'Usa la tua impronta o il volto per accedere.',
+      'settingsBiometricHint': 'Usa la tua impronta o il volto per accedere.',
       'settingsBiometricUnavailable':
           'Lo sblocco biometrico non è disponibile su questo dispositivo.',
       'authBtnBiometricLogin': 'Accesso biometrico',
@@ -1577,7 +1580,8 @@ class AppLocalizations {
       'alertsRefreshSmart': 'Aggiorna avvisi intelligenti',
       'alertsResolve': 'Risolvi',
       'approvalsEmpty': 'Nessuna approvazione in sospeso',
-      'approvalsEmptySubtitle': 'Tutte le richieste di approvazione sono state elaborate.',
+      'approvalsEmptySubtitle':
+          'Tutte le richieste di approvazione sono state elaborate.',
       'approvalsApprove': 'Approva',
       'approvalsReject': 'Rifiuta',
       'approvalsActionFailed': 'L\'azione non è riuscita. Riprova.',
@@ -1585,7 +1589,8 @@ class AppLocalizations {
       'approvalsRejected': 'Richiesta rifiutata.',
       'approvalsApproveQueued': 'Approvazione in coda per la sincronizzazione.',
       'approvalsRejectQueued': 'Rifiuto in coda per la sincronizzazione.',
-      'approvalsAccessDenied': 'Accesso negato. Solo gli admin possono approvare.',
+      'approvalsAccessDenied':
+          'Accesso negato. Solo gli admin possono approvare.',
       'approvalsRequestNotFound': 'Richiesta non trovata o già elaborata.',
       'inviteAcceptTitle': 'Accetta l\'invito',
       'inviteAlreadyHaveAccount': 'Ho già un account',
@@ -1605,8 +1610,7 @@ class AppLocalizations {
       'settingsDemoUser': 'Utente demo',
       'settingsSupabaseConnected': 'Connesso',
       'settingsSupabaseHint': 'L\'app utilizza dati live.',
-      'settingsNoSupabaseHint':
-          'La connessione al server non è configurata.',
+      'settingsNoSupabaseHint': 'La connessione al server non è configurata.',
       'settingsEditAction': 'Modifica azione in coda',
       'settingsResolveConflict': 'Risolvi conflitto di sync',
       'settingsActionSynced': 'Azione sincronizzata',

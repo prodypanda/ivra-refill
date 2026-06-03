@@ -6,7 +6,6 @@ import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
-import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/shimmer_loading.dart';
 
@@ -179,7 +178,8 @@ class _MetricCardState extends State<_MetricCard> {
             ),
             boxShadow: [
               BoxShadow(
-                color: widget.iconColor.withValues(alpha: _isHovered ? 0.15 : 0.05),
+                color: widget.iconColor
+                    .withValues(alpha: _isHovered ? 0.15 : 0.05),
                 blurRadius: _isHovered ? 24 : 12,
                 offset: const Offset(0, 8),
               ),
@@ -290,7 +290,8 @@ class _MobileHero extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -454,17 +455,25 @@ class _ActivityChart extends StatelessWidget {
                   ),
                 ),
                 titlesData: FlTitlesData(
-                  rightTitles:
-                      const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles:
-                      const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false)),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 30,
                       interval: 1,
                       getTitlesWidget: (value, meta) {
-                        final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                        final days = [
+                          'Mon',
+                          'Tue',
+                          'Wed',
+                          'Thu',
+                          'Fri',
+                          'Sat',
+                          'Sun'
+                        ];
                         if (value.toInt() >= 0 && value.toInt() < days.length) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 8.0),
@@ -506,10 +515,14 @@ class _ActivityChart extends StatelessWidget {
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
                     getTooltipItems: (touchedSpots) {
-                      return touchedSpots.map((spot) => LineTooltipItem(
-                        '${spot.y.toInt()} refills',
-                        const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      )).toList();
+                      return touchedSpots
+                          .map((spot) => LineTooltipItem(
+                                '${spot.y.toInt()} refills',
+                                const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ))
+                          .toList();
                     },
                   ),
                 ),
