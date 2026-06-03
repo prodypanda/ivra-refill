@@ -34,6 +34,13 @@ Copy-Item -Path (Join-Path $repoRoot "deploy\landing\*") -Destination $public -R
 New-Item -ItemType Directory -Path (Join-Path $public "app") | Out-Null
 Copy-Item -Path (Join-Path $repoRoot "build\web\*") -Destination (Join-Path $public "app") -Recurse -Force
 
+# .well-known must be at the site root (not under /app/) for Android App Links.
+$wellKnownSrc = Join-Path $repoRoot "web\.well-known"
+if (Test-Path $wellKnownSrc) {
+  Copy-Item -Path $wellKnownSrc -Destination $public -Recurse -Force
+  Write-Host "    Copied .well-known/ to public root." -ForegroundColor Gray
+}
+
 # Hosting config alongside public/ for `firebase deploy`.
 Copy-Item -Path (Join-Path $repoRoot "deploy\firebase.json") -Destination $repoRoot -Force
 

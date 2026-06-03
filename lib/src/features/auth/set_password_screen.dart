@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
+
 import '../dashboard/dashboard_screen.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
@@ -111,7 +111,7 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  l10n.t('setPasswordBody') ?? 'Please set a secure password for your account to complete your registration.',
+                  l10n.t('setPasswordBody'),
                   textAlign: TextAlign.center,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -174,7 +174,7 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                         )
-                      : Text(l10n.t('setPasswordButton') ?? 'Set Password'),
+                      : Text(l10n.t('setPasswordButton')),
                 ),
               ],
             ),
