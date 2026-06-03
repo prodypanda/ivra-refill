@@ -112,7 +112,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       if (!isMobile) ...[
                         Center(
                           child: Image.asset(
-                            'assets/images/logo-dark-mini.png',
+                            'assets/images/logo-dark.png',
                             height: 110,
                             fit: BoxFit.contain,
                           ),
@@ -317,6 +317,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: Size.fromHeight(isMobile ? 54 : 48),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              isMobile ? 18 : 12,
+                            ),
+                          ),
+                        ),
+                        onPressed: _isLoading ? null : _googleSignIn,
+                        icon: const Icon(Icons.public),
+                        label: const Text(
+                          'Sign in with Google',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                       if (_biometricAvailable &&
                           _hasSavedCredentials &&
                           ref.watch(biometricAccountProvider) != null) ...[
@@ -361,6 +382,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _googleSignIn() async {
+    final l10n = AppLocalizations.of(context);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final base = Uri.base;
+      final isWeb = base.hasScheme && (base.scheme == 'http' || base.scheme == 'https');
+      
+      await Supabase.instance.client.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: isWeb ? base.toString() : 'ivra://app/login-callback',
+      );
+      // Note: for web, the browser will redirect automatically.
+      // For mobile, the OS deep links back and Supabase flutter handles the session.
+      // The actual routing to Dashboard happens via our app state listeners.
+    } catch (error) {
+      if (mounted) setState(() => _error = localizeAuthError(l10n, error));
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _login() async {

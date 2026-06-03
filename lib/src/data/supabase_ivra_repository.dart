@@ -72,6 +72,14 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   Future<Map<String, dynamic>> _fetchCurrentUserProfile(String userId) async {
+    try {
+      // Automatically accept any pending team invitations for this user's email.
+      // This allows users (especially Google Auth users) to seamlessly join their
+      // team immediately upon their first sign-in, without needing to click
+      // through an email link if their email matches a pending invite.
+      await _client.rpc('auto_accept_invitations');
+    } catch (_) {}
+
     Future<Map<String, dynamic>> fetch() => _fetchWithCache(
           'current_user_$userId',
           () => _client.from('profiles').select().eq('id', userId).single(),
