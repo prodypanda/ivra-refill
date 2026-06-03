@@ -45,12 +45,16 @@ serve(async (req) => {
     )
 
     // Call the native Supabase invite endpoint, which automatically sends the SMTP email
+    const siteUrl = Deno.env.get('SUPABASE_URL')?.replace('.supabase.co', '') ?? ''
+    const redirectTo = 'https://refill.ivra-cosmetics.com/app/'
+
     const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
       data: {
         invitation_id: record.id,
         role: record.role,
         full_name: record.full_name
-      }
+      },
+      redirectTo: redirectTo
     })
 
     if (error) {
