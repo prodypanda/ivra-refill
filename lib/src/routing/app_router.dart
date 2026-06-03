@@ -6,6 +6,7 @@ import '../features/account/account_screen.dart';
 import '../features/auth/accept_invitation_screen.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/reset_password_screen.dart';
+import '../features/auth/set_password_screen.dart';
 import '../features/alerts/alerts_screen.dart';
 import '../features/approvals/approvals_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
@@ -37,16 +38,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLogin = path == LoginScreen.route;
       final isResetPassword = path == ResetPasswordScreen.route;
       final isAcceptInvite = path == AcceptInvitationScreen.route;
-      final isPublicAuthRoute = isLogin || isResetPassword || isAcceptInvite;
+      final isSetPassword = path == SetPasswordScreen.route;
+      final isPublicAuthRoute = isLogin || isResetPassword || isAcceptInvite || isSetPassword;
 
       if (useSupabase) {
         final isLoggedIn = Supabase.instance.client.auth.currentSession != null;
+        final userMetadata = Supabase.instance.client.auth.currentUser?.userMetadata ?? {};
+        final isInvitedUser = userMetadata['invitation_id'] != null;
+        final isOnboarded = userMetadata['onboarded'] == true;
+        final needsPassword = isLoggedIn && isInvitedUser && !isOnboarded;
 
         if (!isLoggedIn && !isPublicAuthRoute) return LoginScreen.route;
-        if (isLoggedIn && hasProfileError && !isPublicAuthRoute) {
+        
+        if (needsPassword && !isSetPassword) {
+          return SetPasswordScreen.route;
+        }
+
+        if (isLoggedIn && hasProfileError && !isPublicAuthRoute && !needsPassword) {
           return LoginScreen.route;
         }
-        if (isLoggedIn && isLogin && !hasProfileError) {
+        if (isLoggedIn && isLogin && !hasProfileError && !needsPassword) {
           return DashboardScreen.route;
         }
       }
@@ -72,6 +83,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => AcceptInvitationScreen(
           token: state.uri.queryParameters['token'] ?? '',
         ),
+      ),
+      GoRoute(
+        path: SetPasswordScreen.route,
+        builder: (context, state) => const SetPasswordScreen(),
       ),
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),

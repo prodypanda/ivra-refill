@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ivra.refill",
+      "sha256_cert_fingerprints": [
+        "3D:45:D2:B7:33:65:95:B8:9A:04:33:B5:29:98:15:0D:6E:5A:11:ED:1D:DC:CB:0D:0C:10:EF:84:ED:5A:03:77"
+      ]
+    }
+  }
+]
