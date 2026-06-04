@@ -142,6 +142,7 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
                     labelText: l10n.t('password'),
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
+                      tooltip: l10n.t(_obscurePassword ? 'authShowPassword' : 'authHidePassword'),
                       icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                       onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                     ),
