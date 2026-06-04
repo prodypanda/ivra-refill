@@ -18,6 +18,12 @@
           { "key": "Content-Type", "value": "application/json" }
         ]
       }
+    ],
+    "rewrites": [
+      {
+        "source": "/app/**",
+        "destination": "/app/index.html"
+      }
     ]
   }
 }
