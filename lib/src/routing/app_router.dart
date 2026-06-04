@@ -39,22 +39,27 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isResetPassword = path == ResetPasswordScreen.route;
       final isAcceptInvite = path == AcceptInvitationScreen.route;
       final isSetPassword = path == SetPasswordScreen.route;
-      final isPublicAuthRoute = isLogin || isResetPassword || isAcceptInvite || isSetPassword;
+      final isPublicAuthRoute =
+          isLogin || isResetPassword || isAcceptInvite || isSetPassword;
 
       if (useSupabase) {
         final isLoggedIn = Supabase.instance.client.auth.currentSession != null;
-        final userMetadata = Supabase.instance.client.auth.currentUser?.userMetadata ?? {};
+        final userMetadata =
+            Supabase.instance.client.auth.currentUser?.userMetadata ?? {};
         final isInvitedUser = userMetadata['invitation_id'] != null;
         final isOnboarded = userMetadata['onboarded'] == true;
         final needsPassword = isLoggedIn && isInvitedUser && !isOnboarded;
 
         if (!isLoggedIn && !isPublicAuthRoute) return LoginScreen.route;
-        
+
         if (needsPassword && !isSetPassword) {
           return SetPasswordScreen.route;
         }
 
-        if (isLoggedIn && hasProfileError && !isPublicAuthRoute && !needsPassword) {
+        if (isLoggedIn &&
+            hasProfileError &&
+            !isPublicAuthRoute &&
+            !needsPassword) {
           return LoginScreen.route;
         }
         if (isLoggedIn && isLogin && !hasProfileError && !needsPassword) {
