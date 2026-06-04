@@ -77,7 +77,8 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
       }
     } catch (e) {
       setState(() {
-        _error = localizeAuthError(AppLocalizations.of(context), e, fallbackKey: 'resetPasswordError');
+        _error = localizeAuthError(AppLocalizations.of(context), e,
+            fallbackKey: 'resetPasswordError');
       });
     } finally {
       if (mounted) {
@@ -94,7 +95,8 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
     final l10n = AppLocalizations.of(context);
 
     return PageScaffold(
-      title: l10n.t('setPasswordTitle'), // You may need to add this to translations if missing
+      title: l10n.t(
+          'setPasswordTitle'), // You may need to add this to translations if missing
       child: Center(
         child: SizedBox(
           width: 400,
@@ -142,10 +144,14 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
                     labelText: l10n.t('password'),
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      icon: Icon(_obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -155,7 +161,8 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
                   decoration: InputDecoration(
                     labelText: l10n.t('confirmPassword'),
                     prefixIcon: const Icon(Icons.lock_outline),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                   onSubmitted: (_) => _updatePassword(),
                 ),
@@ -172,7 +179,8 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
                       ? const SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
                         )
                       : Text(l10n.t('setPasswordButton')),
                 ),

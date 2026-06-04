@@ -15,12 +15,14 @@ import 'export_file_result.dart';
 /// platform share sheet via `printing` (for PDFs) and `share_plus`
 /// (for other types) lets the user route the export to Drive, email,
 /// Downloads, or any other handler they have installed.
+final _invalidFileNameChars = RegExp(r'[<>:"/\\|?*]');
+
 Future<ExportFileResult> saveBytes({
   required String fileName,
   required Uint8List bytes,
   required String mimeType,
 }) async {
-  final safeName = fileName.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+  final safeName = fileName.replaceAll(_invalidFileNameChars, '_');
 
   if (mimeType == 'application/pdf' ||
       safeName.toLowerCase().endsWith('.pdf')) {

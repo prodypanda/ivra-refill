@@ -44,85 +44,114 @@ class ApprovalsScreen extends ConsumerWidget {
             );
           }
           return Column(
-          children: [
-            for (final request in requests)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Dismissible(
-                  key: ValueKey(request.id),
-                  direction: (canReviewRequests && request.status == ApprovalStatus.pending)
-                      ? DismissDirection.horizontal
-                      : DismissDirection.none,
-                  background: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade600,
-                      borderRadius: BorderRadius.circular(12),
+            children: [
+              for (final request in requests)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Dismissible(
+                    key: ValueKey(request.id),
+                    direction: (canReviewRequests &&
+                            request.status == ApprovalStatus.pending)
+                        ? DismissDirection.horizontal
+                        : DismissDirection.none,
+                    background: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade600,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(left: 24),
+                      child: const Icon(Icons.check_circle_outline,
+                          color: Colors.white, size: 28),
                     ),
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 24),
-                    child: const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
-                  ),
-                  secondaryBackground: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade600,
-                      borderRadius: BorderRadius.circular(12),
+                    secondaryBackground: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade600,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 24),
+                      child: const Icon(Icons.cancel_outlined,
+                          color: Colors.white, size: 28),
                     ),
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 24),
-                    child: const Icon(Icons.cancel_outlined, color: Colors.white, size: 28),
-                  ),
-                  onDismissed: (direction) async {
-                    HapticFeedback.lightImpact();
-                    try {
-                      if (direction == DismissDirection.startToEnd) {
-                        await ref.read(repositoryProvider).approveRequest(approvalRequestId: request.id);
-                        if (context.mounted) PremiumSnackbar.show(context, l10n.t('approvalsApproved'), icon: Icons.check_circle_outline);
-                      } else {
-                        await ref.read(repositoryProvider).rejectRequest(approvalRequestId: request.id);
-                        if (context.mounted) PremiumSnackbar.show(context, l10n.t('approvalsRejected'), icon: Icons.info_outline);
-                      }
-                      _refreshAfterReview(ref);
-                    } catch (e) {
-                      if (context.mounted) PremiumSnackbar.show(context, _errorMessage(e, l10n), icon: Icons.error_outline, isError: true);
-                      _refreshAfterReview(ref);
-                    }
-                  },
-                  child: _ApprovalCard(
-                    request: request,
-                    canReviewRequests: canReviewRequests,
-                    onApprove: () async {
+                    onDismissed: (direction) async {
+                      HapticFeedback.lightImpact();
                       try {
-                        await ref.read(repositoryProvider).approveRequest(approvalRequestId: request.id);
+                        if (direction == DismissDirection.startToEnd) {
+                          await ref
+                              .read(repositoryProvider)
+                              .approveRequest(approvalRequestId: request.id);
+                          if (context.mounted)
+                            PremiumSnackbar.show(
+                                context, l10n.t('approvalsApproved'),
+                                icon: Icons.check_circle_outline);
+                        } else {
+                          await ref
+                              .read(repositoryProvider)
+                              .rejectRequest(approvalRequestId: request.id);
+                          if (context.mounted)
+                            PremiumSnackbar.show(
+                                context, l10n.t('approvalsRejected'),
+                                icon: Icons.info_outline);
+                        }
                         _refreshAfterReview(ref);
-                        if (context.mounted) {
-                          PremiumSnackbar.show(context, l10n.t('approvalsApproved'), icon: Icons.check_circle_outline);
-                        }
                       } catch (e) {
-                        developer.log('Approval failed', error: e, name: 'ApprovalsScreen');
-                        if (context.mounted) {
-                          PremiumSnackbar.show(context, _errorMessage(e, l10n), icon: Icons.error_outline, isError: true);
-                        }
+                        if (context.mounted)
+                          PremiumSnackbar.show(context, _errorMessage(e, l10n),
+                              icon: Icons.error_outline, isError: true);
+                        _refreshAfterReview(ref);
                       }
                     },
-                    onReject: () async {
-                      try {
-                        await ref.read(repositoryProvider).rejectRequest(approvalRequestId: request.id);
-                        _refreshAfterReview(ref);
-                        if (context.mounted) {
-                          PremiumSnackbar.show(context, l10n.t('approvalsRejected'), icon: Icons.info_outline);
+                    child: _ApprovalCard(
+                      request: request,
+                      canReviewRequests: canReviewRequests,
+                      onApprove: () async {
+                        try {
+                          await ref
+                              .read(repositoryProvider)
+                              .approveRequest(approvalRequestId: request.id);
+                          _refreshAfterReview(ref);
+                          if (context.mounted) {
+                            PremiumSnackbar.show(
+                                context, l10n.t('approvalsApproved'),
+                                icon: Icons.check_circle_outline);
+                          }
+                        } catch (e) {
+                          developer.log('Approval failed',
+                              error: e, name: 'ApprovalsScreen');
+                          if (context.mounted) {
+                            PremiumSnackbar.show(
+                                context, _errorMessage(e, l10n),
+                                icon: Icons.error_outline, isError: true);
+                          }
                         }
-                      } catch (e) {
-                        developer.log('Rejection failed', error: e, name: 'ApprovalsScreen');
-                        if (context.mounted) {
-                          PremiumSnackbar.show(context, _errorMessage(e, l10n), icon: Icons.error_outline, isError: true);
+                      },
+                      onReject: () async {
+                        try {
+                          await ref
+                              .read(repositoryProvider)
+                              .rejectRequest(approvalRequestId: request.id);
+                          _refreshAfterReview(ref);
+                          if (context.mounted) {
+                            PremiumSnackbar.show(
+                                context, l10n.t('approvalsRejected'),
+                                icon: Icons.info_outline);
+                          }
+                        } catch (e) {
+                          developer.log('Rejection failed',
+                              error: e, name: 'ApprovalsScreen');
+                          if (context.mounted) {
+                            PremiumSnackbar.show(
+                                context, _errorMessage(e, l10n),
+                                icon: Icons.error_outline, isError: true);
+                          }
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
                 ),
-              ),
-          ],
-        );
+            ],
+          );
         },
       ),
     );
@@ -221,7 +250,8 @@ class _ApprovalCardState extends State<_ApprovalCard> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.primary.withValues(alpha: _isHovered ? 0.15 : 0.0),
+                color: theme.colorScheme.primary
+                    .withValues(alpha: _isHovered ? 0.15 : 0.0),
                 blurRadius: _isHovered ? 20 : 0,
                 spreadRadius: _isHovered ? 2 : 0,
               ),
@@ -229,7 +259,8 @@ class _ApprovalCardState extends State<_ApprovalCard> {
           ),
           child: GlassCard(
             padding: const EdgeInsets.all(20),
-            borderColor: theme.colorScheme.primary.withValues(alpha: _isHovered ? 0.4 : 0.1),
+            borderColor: theme.colorScheme.primary
+                .withValues(alpha: _isHovered ? 0.4 : 0.1),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -238,10 +269,12 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+                        color: theme.colorScheme.primaryContainer
+                            .withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.compare_arrows_outlined, color: theme.colorScheme.primary),
+                      child: Icon(Icons.compare_arrows_outlined,
+                          color: theme.colorScheme.primary),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -256,7 +289,8 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                             ),
                           ),
                           Text(
-                            l10n.tParams('approvalsRequestedBy', {'name': request.requestedByName}),
+                            l10n.tParams('approvalsRequestedBy',
+                                {'name': request.requestedByName}),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -270,7 +304,8 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                    color: theme.colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -281,7 +316,8 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                           children: [
                             Text(
                               l10n.t('approvalsOldValue'),
-                              style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.error),
+                              style: theme.textTheme.labelSmall
+                                  ?.copyWith(color: theme.colorScheme.error),
                             ),
                             Text(
                               request.oldValue,
@@ -294,7 +330,8 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, size: 16, color: theme.colorScheme.onSurfaceVariant),
+                      Icon(Icons.arrow_forward,
+                          size: 16, color: theme.colorScheme.onSurfaceVariant),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Column(
@@ -302,7 +339,8 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                           children: [
                             Text(
                               l10n.t('approvalsNewValue'),
-                              style: theme.textTheme.labelSmall?.copyWith(color: Colors.green),
+                              style: theme.textTheme.labelSmall
+                                  ?.copyWith(color: Colors.green),
                             ),
                             Text(
                               request.newValue,
@@ -327,14 +365,17 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                       TextButton.icon(
                         icon: const Icon(Icons.close_outlined),
                         label: Text(l10n.t('approvalsReject')),
-                        style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
+                        style: TextButton.styleFrom(
+                            foregroundColor: theme.colorScheme.error),
                         onPressed: widget.onReject,
                       ),
                       const SizedBox(width: 8),
                       FilledButton.icon(
                         icon: const Icon(Icons.check_outlined),
                         label: Text(l10n.t('approvalsApprove')),
-                        style: FilledButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                        style: FilledButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white),
                         onPressed: widget.onApprove,
                       ),
                     ],
@@ -347,4 +388,3 @@ class _ApprovalCardState extends State<_ApprovalCard> {
     );
   }
 }
-

@@ -122,7 +122,8 @@ class AppLocalizations {
       'authBtnForgotPassword': 'Forgot password?',
       'authResetPasswordTitle': 'Reset password',
       'setPasswordTitle': 'Set your password',
-      'setPasswordBody': 'Please set a secure password for your account to complete your registration.',
+      'setPasswordBody':
+          'Please set a secure password for your account to complete your registration.',
       'setPasswordButton': 'Set Password',
       'authBtnSendResetLink': 'Send reset link',
       'authResetLinkSent': 'Password reset link sent to',
@@ -527,7 +528,8 @@ class AppLocalizations {
       'authBtnForgotPassword': 'Mot de passe oublié ?',
       'authResetPasswordTitle': 'Réinitialiser le mot de passe',
       'setPasswordTitle': 'Définir votre mot de passe',
-      'setPasswordBody': 'Veuillez définir un mot de passe sécurisé pour votre compte afin de finaliser votre inscription.',
+      'setPasswordBody':
+          'Veuillez définir un mot de passe sécurisé pour votre compte afin de finaliser votre inscription.',
       'setPasswordButton': 'Définir le mot de passe',
       'authBtnSendResetLink': 'Envoyer le lien de réinitialisation',
       'authResetLinkSent': 'Lien de réinitialisation envoyé à',
@@ -1396,7 +1398,8 @@ class AppLocalizations {
       'authBtnForgotPassword': 'Password dimenticata?',
       'authResetPasswordTitle': 'Reimposta la password',
       'setPasswordTitle': 'Imposta la tua password',
-      'setPasswordBody': 'Imposta una password sicura per il tuo account per completare la registrazione.',
+      'setPasswordBody':
+          'Imposta una password sicura per il tuo account per completare la registrazione.',
       'setPasswordButton': 'Imposta password',
       'authBtnSendResetLink': 'Invia link di ripristino',
       'authResetLinkSent': 'Link di reimpostazione della password inviato a',
