@@ -19,12 +19,16 @@ class PageScaffold extends ConsumerWidget {
   final List<Widget> actions;
   final Future<void> Function()? onRefresh;
 
+  // ⚡ Bolt: Extracted RegExp compilation to static final to prevent expensive
+  // recompilation on every widget rebuild (up to 60fps).
+  static final _whitespaceRegex = RegExp(r'\s+');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider).valueOrNull;
     String initials = '';
     if (user != null) {
-      final parts = user.fullName.trim().split(RegExp(r'\s+'));
+      final parts = user.fullName.trim().split(_whitespaceRegex);
       initials = parts.length >= 2
           ? '${parts.first[0]}${parts.last[0]}'.toUpperCase()
           : (parts.first.isNotEmpty ? parts.first[0].toUpperCase() : '');
