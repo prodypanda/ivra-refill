@@ -212,6 +212,9 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
 
                     final sortedFloors = roomsByFloor.keys.toList()..sort();
                     final isMobile = MediaQuery.sizeOf(context).width < 720;
+                    final canDeleteRooms = currentUser?.isIvraUser == true ||
+                        (currentUser?.hotelId == selectedHotelId &&
+                            currentUser?.role == UserRole.hotelManager);
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -224,7 +227,15 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                           const SizedBox(height: 16),
                         ],
                         for (final floor in sortedFloors) ...[
-                          _buildFloorHeader(floor, l10n, theme, primaryColor),
+                          _buildFloorHeader(
+                            floor,
+                            l10n,
+                            theme,
+                            primaryColor,
+                            onDeleteFloor: canDeleteRooms
+                                ? () => _confirmDeleteFloor(context, ref, floor)
+                                : null,
+                          ),
                           const SizedBox(height: 12),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
@@ -251,6 +262,10 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                           child: _RoomCard(
                                             roomId: entry.key,
                                             roomProducts: entry.value,
+                                            onDeleteRoom: canDeleteRooms
+                                                ? () => _confirmDeleteRoom(
+                                                    context, ref, entry.key, entry.value.first.roomNumber)
+                                                : null,
                                           ),
                                         ),
                                     ],
@@ -323,7 +338,12 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   }
 
   Widget _buildFloorHeader(
-      int floor, AppLocalizations l10n, ThemeData theme, Color primaryColor) {
+    int floor,
+    AppLocalizations l10n,
+    ThemeData theme,
+    Color primaryColor, {
+    VoidCallback? onDeleteFloor,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(top: 32, bottom: 20),
       child: Container(
@@ -386,6 +406,14 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 ),
               ),
             ),
+            if (onDeleteFloor != null) ...[
+              const SizedBox(width: 16),
+              IconButton(
+                tooltip: l10n.t('delete'),
+                icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
+                onPressed: onDeleteFloor,
+              ),
+            ],
           ],
         ),
       ),
@@ -699,6 +727,100 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     ref.invalidate(roomProductsProvider);
     ref.invalidate(dashboardProvider);
   }
+
+  Future<void> _confirmDeleteRoom(
+      BuildContext context, WidgetRef ref, String roomId, String roomNumber) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.t('delete')),
+        content: Text('${l10n.t('roomsLabelRoom')} $roomNumber?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnCancel')),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.delete_outline),
+            label: Text(l10n.t('delete')),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await ref.read(repositoryProvider).deleteRoom(roomId);
+        ref.invalidate(roomsProvider);
+        ref.invalidate(roomProductsProvider);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _confirmDeleteFloor(
+      BuildContext context, WidgetRef ref, int floorNumber) async {
+    final l10n = AppLocalizations.of(context);
+    
+    final roomsList = await ref.read(roomsProvider.future);
+    final floorInfo = roomsList.where((r) => r.floorNumber == floorNumber).firstOrNull;
+    if (floorInfo == null) return;
+    final floorId = floorInfo.floorId;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.t('delete')),
+        content: Text('${l10n.t('roomsLabelFloor')} $floorNumber?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnCancel')),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.delete_outline),
+            label: Text(l10n.t('delete')),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await ref.read(repositoryProvider).deleteFloor(floorId);
+        ref.invalidate(roomsProvider);
+        ref.invalidate(roomProductsProvider);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    }
+  }
 }
 
 enum _RoomOverallStatus { allOk, refillNeeded, attentionRequired }
@@ -994,11 +1116,13 @@ class _RoomCard extends StatefulWidget {
     required this.roomId,
     required this.roomProducts,
     this.isDialog = false,
+    this.onDeleteRoom,
   });
 
   final String roomId;
   final List<RoomProduct> roomProducts;
   final bool isDialog;
+  final VoidCallback? onDeleteRoom;
 
   @override
   State<_RoomCard> createState() => _RoomCardState();
@@ -1149,6 +1273,15 @@ class _RoomCardState extends State<_RoomCard> {
                                 ),
                               ),
                             ),
+                            if (widget.onDeleteRoom != null) ...[
+                              const SizedBox(width: 8),
+                              IconButton(
+                                tooltip: l10n.t('delete'),
+                                icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
+                                onPressed: widget.onDeleteRoom,
+                                visualDensity: VisualDensity.compact,
+                              ),
+                            ],
                             if (widget.isDialog) ...[
                               const SizedBox(width: 8),
                               IconButton(

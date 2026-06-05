@@ -57,6 +57,7 @@ class TeamScreen extends ConsumerWidget {
                   _setMemberActive(context, ref, member, isActive),
               onManageHotels: (member) =>
                   _showManageHotelsDialog(context, ref, member),
+              onDelete: (member) => _confirmDeleteUser(context, ref, member),
             ),
           ),
           const SizedBox(height: 28),
@@ -150,6 +151,52 @@ class TeamScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _confirmDeleteUser(
+    BuildContext context,
+    WidgetRef ref,
+    UserProfile member,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.t('delete')),
+        content: Text('${l10n.t('teamLabelFullName')}: ${member.fullName}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnCancel')),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.delete_outline),
+            label: Text(l10n.t('delete')),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await ref.read(repositoryProvider).deleteUser(member.id);
+        ref.invalidate(teamMembersProvider);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   Future<void> _cancelInvitation(
     BuildContext context,
     WidgetRef ref,
@@ -235,12 +282,14 @@ class _MembersTable extends ConsumerWidget {
     required this.members,
     required this.onSetActive,
     required this.onManageHotels,
+    required this.onDelete,
   });
 
   final UserProfile? currentUser;
   final List<UserProfile> members;
   final void Function(UserProfile member, bool isActive) onSetActive;
   final void Function(UserProfile member) onManageHotels;
+  final void Function(UserProfile member) onDelete;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -276,6 +325,7 @@ class _MembersTable extends ConsumerWidget {
             canManageHotels: canManageHotels,
             onSetActive: onSetActive,
             onManageHotels: onManageHotels,
+            onDelete: onDelete,
           ),
       ],
     );
@@ -396,7 +446,13 @@ class _InviteTeamMemberDialogState
                       labelText: l10n.t('teamTableColumnEmail')),
                   validator: (value) {
                     final errorKey = AuthValidation.email(value ?? '');
-                    return errorKey == null ? null : l10n.t(errorKey);
+                    if (errorKey != null) return l10n.t(errorKey);
+                    // Prevent self-invitation
+                    if ((value ?? '').trim().toLowerCase() ==
+                        widget.currentUser.email.toLowerCase()) {
+                      return l10n.t('teamCannotInviteSelf');
+                    }
+                    return null;
                   },
                 ),
                 const SizedBox(height: 12),
@@ -544,12 +600,14 @@ class _MemberActions extends StatelessWidget {
     required this.member,
     required this.onSetActive,
     this.onManageHotels,
+    required this.onDelete,
   });
 
   final UserProfile? currentUser;
   final UserProfile member;
   final void Function(UserProfile member, bool isActive) onSetActive;
   final VoidCallback? onManageHotels;
+  final void Function(UserProfile member) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -575,6 +633,11 @@ class _MemberActions extends StatelessWidget {
                 : Icons.person_add_alt_1_outlined,
           ),
           onPressed: canManage ? () => onSetActive(member, nextState) : null,
+        ),
+        IconButton(
+          tooltip: l10n.t('delete'),
+          icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+          onPressed: canManage ? () => onDelete(member) : null,
         ),
       ],
     );
@@ -787,6 +850,7 @@ class _PremiumMemberCard extends StatefulWidget {
     required this.canManageHotels,
     required this.onSetActive,
     required this.onManageHotels,
+    required this.onDelete,
   });
 
   final UserProfile? currentUser;
@@ -795,6 +859,7 @@ class _PremiumMemberCard extends StatefulWidget {
   final bool canManageHotels;
   final void Function(UserProfile member, bool isActive) onSetActive;
   final void Function(UserProfile member) onManageHotels;
+  final void Function(UserProfile member) onDelete;
 
   @override
   State<_PremiumMemberCard> createState() => _PremiumMemberCardState();
@@ -949,6 +1014,7 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                     onManageHotels: widget.canManageHotels && !member.isIvraUser
                         ? () => widget.onManageHotels(member)
                         : null,
+                    onDelete: widget.onDelete,
                   ),
                 ),
               ],

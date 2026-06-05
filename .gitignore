@@ -38,3 +38,4 @@ android/app/key.properties
 firebase-debug.log
 /.firebase
 firebase-debug.log
+firebase-key.json

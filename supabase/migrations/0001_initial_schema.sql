@@ -833,6 +833,12 @@ begin
     raise exception 'Full name is required';
   end if;
 
+  -- Prevent self-invitation
+  if lower(trim(p_email)) = lower(coalesce(auth.jwt() ->> 'email', '')) then
+    raise exception 'You cannot invite yourself';
+  end if;
+
+
   if current_user_role() = 'hotel_manager' then
     if v_role <> 'hotel_staff' then
       raise exception 'Hotel managers can only invite hotel staff';

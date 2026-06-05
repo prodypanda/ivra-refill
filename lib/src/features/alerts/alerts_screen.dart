@@ -89,6 +89,7 @@ class AlertsScreen extends ConsumerWidget {
           alerts: alerts,
           onRefresh: () => _refreshAlerts(context, ref),
           onResolve: (alertId) => _resolveAlert(context, ref, alertId),
+          onDelete: (alertId) => _deleteAlert(context, ref, alertId),
         ),
       ),
     );
@@ -126,6 +127,53 @@ class AlertsScreen extends ConsumerWidget {
       icon: Icons.check_circle_outline,
     );
   }
+
+  Future<void> _deleteAlert(
+    BuildContext context,
+    WidgetRef ref,
+    String alertId,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.t('delete')),
+        content: Text('${l10n.t('delete')}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnCancel')),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.delete_outline),
+            label: Text(l10n.t('delete')),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await ref.read(repositoryProvider).deleteAlert(alertId);
+        ref.invalidate(alertsProvider);
+        ref.invalidate(dashboardProvider);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -137,11 +185,13 @@ class _AlertsList extends StatelessWidget {
     required this.alerts,
     required this.onRefresh,
     required this.onResolve,
+    required this.onDelete,
   });
 
   final List<AlertItem> alerts;
   final VoidCallback onRefresh;
   final ValueChanged<String> onResolve;
+  final ValueChanged<String> onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +228,11 @@ class _AlertsList extends StatelessWidget {
         for (final alert in sortedAlerts)
           Padding(
             padding: const EdgeInsets.only(bottom: 14),
-            child: _AlertCard(alert: alert, onResolve: onResolve),
+            child: _AlertCard(
+              alert: alert,
+              onResolve: onResolve,
+              onDelete: onDelete,
+            ),
           ),
       ],
     );
@@ -351,10 +405,12 @@ class _AlertCard extends StatefulWidget {
   const _AlertCard({
     required this.alert,
     required this.onResolve,
+    required this.onDelete,
   });
 
   final AlertItem alert;
   final ValueChanged<String> onResolve;
+  final ValueChanged<String> onDelete;
 
   @override
   State<_AlertCard> createState() => _AlertCardState();
@@ -597,6 +653,14 @@ class _AlertCardState extends State<_AlertCard> {
                                       onPressed: () =>
                                           widget.onResolve(widget.alert.id),
                                     ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    tooltip: l10n.t('delete'),
+                                    icon: Icon(Icons.delete_outline, color: theme.colorScheme.error, size: 20),
+                                    onPressed: () => widget.onDelete(widget.alert.id),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                  ),
                                 ],
                               ),
                             ],

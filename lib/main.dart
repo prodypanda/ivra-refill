@@ -9,6 +9,7 @@ import 'package:workmanager/workmanager.dart';
 
 import 'src/app/ivra_app.dart';
 import 'src/state/app_state.dart';
+import 'src/services/notification_service.dart';
 
 const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
 const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
@@ -17,6 +18,7 @@ const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   // Handle background messages
+  await NotificationService.showLocalNotification(message);
 }
 
 @pragma('vm:entry-point')
@@ -48,7 +50,7 @@ void callbackDispatcher() {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setUrlStrategy(const PathUrlStrategy());
+  setUrlStrategy(PathUrlStrategy());
 
   try {
     await Firebase.initializeApp();

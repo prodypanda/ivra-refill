@@ -41,6 +41,15 @@ if (Test-Path $wellKnownSrc) {
   Write-Host "    Copied .well-known/ to public root." -ForegroundColor Gray
 }
 
+# Auth callback page at /auth/callback/ for Supabase invite redirects.
+$authCallbackSrc = Join-Path $repoRoot "deploy\auth-callback"
+if (Test-Path $authCallbackSrc) {
+  $authCallbackDst = Join-Path $public "auth\callback"
+  New-Item -ItemType Directory -Path $authCallbackDst -Force | Out-Null
+  Copy-Item -Path (Join-Path $authCallbackSrc "*") -Destination $authCallbackDst -Recurse -Force
+  Write-Host "    Copied auth/callback/ to public root." -ForegroundColor Gray
+}
+
 # Hosting config alongside public/ for `firebase deploy`.
 Copy-Item -Path (Join-Path $repoRoot "deploy\firebase.json") -Destination $repoRoot -Force
 

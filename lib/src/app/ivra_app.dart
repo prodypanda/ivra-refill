@@ -7,8 +7,11 @@ import '../features/shared/premium_loading.dart';
 import '../l10n/app_localizations.dart';
 import '../routing/app_router.dart';
 import '../state/app_state.dart';
+import '../services/notification_service.dart';
 import 'deep_link_listener.dart';
 import 'theme.dart';
+
+final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 class IvraApp extends ConsumerWidget {
   const IvraApp({super.key});
@@ -19,6 +22,7 @@ class IvraApp extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
+      scaffoldMessengerKey: scaffoldMessengerKey,
       title: 'Ivra',
       debugShowCheckedModeBanner: false,
       theme: buildIvraTheme(Brightness.light),
@@ -74,6 +78,10 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
       // sees fresh results without needing a manual pull-to-refresh.
       if (userChanged) {
         invalidateAccountScopedData(ref);
+      }
+      
+      if (nextUser != null && prevUserId != nextUser.id) {
+        ref.read(notificationServiceProvider).initialize();
       }
     });
 

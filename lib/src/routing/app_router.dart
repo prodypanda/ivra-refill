@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,24 +17,39 @@ import '../features/products/products_screen.dart';
 import '../features/reports/reports_screen.dart';
 import '../features/rooms/rooms_screen.dart';
 import '../features/settings/settings_screen.dart';
+import '../features/shared/not_found_screen.dart';
 import '../features/shell/app_shell.dart';
 import '../features/team/team_screen.dart';
+import '../features/notifications/send_notification_screen.dart';
 import '../domain/app_enums.dart';
 import '../state/app_state.dart';
 
+class RouterNotifier extends ChangeNotifier {
+  RouterNotifier(this._ref) {
+    _ref.listen(supabaseAuthStateProvider, (_, __) => notifyListeners());
+    _ref.listen(currentUserProvider, (_, __) => notifyListeners());
+    _ref.listen(useSupabaseProvider, (_, __) => notifyListeners());
+  }
+
+  final Ref _ref;
+}
+
 final routerProvider = Provider<GoRouter>((ref) {
-  final useSupabase = ref.watch(useSupabaseProvider);
-  ref.watch(supabaseAuthStateProvider);
-  final hasSession =
-      !useSupabase || Supabase.instance.client.auth.currentSession != null;
-  final currentUserValue = hasSession ? ref.watch(currentUserProvider) : null;
-  final currentUser = currentUserValue?.valueOrNull;
-  final hasProfileError =
-      useSupabase && hasSession && (currentUserValue?.hasError ?? false);
+  final notifier = RouterNotifier(ref);
 
   return GoRouter(
+    refreshListenable: notifier,
     initialLocation: DashboardScreen.route,
+    errorBuilder: (context, state) => NotFoundScreen(error: state.error),
     redirect: (context, state) {
+      final useSupabase = ref.read(useSupabaseProvider);
+      final hasSession =
+          !useSupabase || Supabase.instance.client.auth.currentSession != null;
+      final currentUserValue = hasSession ? ref.read(currentUserProvider) : null;
+      final currentUser = currentUserValue?.valueOrNull;
+      final hasProfileError =
+          useSupabase && hasSession && (currentUserValue?.hasError ?? false);
+
       final path = state.uri.path;
       final isLogin = path == LoginScreen.route;
       final isResetPassword = path == ResetPasswordScreen.route;
@@ -46,7 +62,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         final userMetadata = Supabase.instance.client.auth.currentUser?.userMetadata ?? {};
         final isInvitedUser = userMetadata['invitation_id'] != null;
         final isOnboarded = userMetadata['onboarded'] == true;
-        final needsPassword = isLoggedIn && isInvitedUser && !isOnboarded;
+        final passwordAlreadySet = ref.read(passwordSetProvider);
+        final needsPassword = isLoggedIn && isInvitedUser && !isOnboarded && !passwordAlreadySet;
 
         if (!isLoggedIn && !isPublicAuthRoute) return LoginScreen.route;
         
@@ -86,7 +103,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: SetPasswordScreen.route,
-        builder: (context, state) => const SetPasswordScreen(),
+        builder: (context, state) => SetPasswordScreen(
+          refreshToken: state.uri.queryParameters['refresh_token'],
+          accessToken: state.uri.queryParameters['access_token'],
+        ),
       ),
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
@@ -132,6 +152,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const ReportsScreen(),
           ),
           GoRoute(
+            path: SendNotificationScreen.route,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: SendNotificationScreen(),
+            ),
+          ),
+          GoRoute(
             path: SettingsScreen.route,
             builder: (context, state) => const SettingsScreen(),
           ),
@@ -158,6 +184,7 @@ const _allowedRoutesByRole = {
     ApprovalsScreen.route,
     AlertsScreen.route,
     ReportsScreen.route,
+    SendNotificationScreen.route,
     SettingsScreen.route,
   },
   UserRole.appManager: {
@@ -171,6 +198,7 @@ const _allowedRoutesByRole = {
     ApprovalsScreen.route,
     AlertsScreen.route,
     ReportsScreen.route,
+    SendNotificationScreen.route,
     SettingsScreen.route,
   },
   UserRole.hotelManager: {

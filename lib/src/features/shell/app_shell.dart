@@ -16,15 +16,32 @@ import '../reports/reports_screen.dart';
 import '../rooms/rooms_screen.dart';
 import '../settings/settings_screen.dart';
 import '../shared/offline_banner.dart';
+import '../shared/web_download_banner.dart';
 import '../team/team_screen.dart';
+import '../notifications/send_notification_screen.dart';
+import '../../services/notification_service.dart';
 
-class AppShell extends ConsumerWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({required this.child, super.key});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends ConsumerState<AppShell> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize push notifications when shell is mounted
+    Future.microtask(() {
+      ref.read(notificationServiceProvider).initialize();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final currentUserAsync = ref.watch(currentUserProvider);
     final currentUser = currentUserAsync.valueOrNull;
     final navItems = _navItems(context, currentUser?.role);
@@ -58,25 +75,32 @@ class AppShell extends ConsumerWidget {
               backgroundColor: Colors.transparent,
               body: Row(
                 children: [
-                  NavigationRail(
-                    extended: constraints.maxWidth >= 1180,
-                    scrollable: true,
-                    selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
-                    onDestinationSelected: (index) =>
-                        context.go(navItems[index].route),
-                    labelType: constraints.maxWidth >= 1180
-                        ? NavigationRailLabelType.none
-                        : NavigationRailLabelType.all,
-                    leading: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 24),
-                      child: _BrandMark(),
-                    ),
-                    destinations: [
-                      for (final item in navItems)
-                        NavigationRailDestination(
-                          icon: Icon(item.icon),
-                          label: Text(item.label),
+                  Column(
+                    children: [
+                      Expanded(
+                        child: NavigationRail(
+                          extended: constraints.maxWidth >= 1180,
+                          scrollable: true,
+                          selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
+                          onDestinationSelected: (index) =>
+                              context.go(navItems[index].route),
+                          labelType: constraints.maxWidth >= 1180
+                              ? NavigationRailLabelType.none
+                              : NavigationRailLabelType.all,
+                          leading: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24),
+                            child: _BrandMark(),
+                          ),
+                          destinations: [
+                            for (final item in navItems)
+                              NavigationRailDestination(
+                                icon: Icon(item.icon),
+                                label: Text(item.label),
+                              ),
+                          ],
                         ),
+                      ),
+                      if (constraints.maxWidth >= 1180) const _DrawerFooter(),
                     ],
                   ),
                   const VerticalDivider(width: 1, color: Colors.black12),
@@ -84,7 +108,8 @@ class AppShell extends ConsumerWidget {
                     child: Column(
                       children: [
                         const OfflineBanner(),
-                        Expanded(child: child),
+                        const WebDownloadBanner(),
+                        Expanded(child: widget.child),
                       ],
                     ),
                   ),
@@ -98,7 +123,7 @@ class AppShell extends ConsumerWidget {
           selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
           navItems: navItems,
           background: globalBackground,
-          child: child,
+          child: widget.child,
         );
       },
     );
@@ -202,6 +227,15 @@ class AppShell extends ConsumerWidget {
         },
       ),
       _NavItem(
+        l10n.t('menuSendPush'),
+        Icons.send_rounded,
+        SendNotificationScreen.route,
+        const {
+          UserRole.appAdmin,
+          UserRole.appManager,
+        },
+      ),
+      _NavItem(
         l10n.t('settings'),
         Icons.settings_outlined,
         SettingsScreen.route,
@@ -257,6 +291,7 @@ class _MobileShell extends StatelessWidget {
         body: Column(
           children: [
             const OfflineBanner(),
+            const WebDownloadBanner(),
             Expanded(child: child),
           ],
         ),
@@ -350,6 +385,8 @@ class _MobileShell extends StatelessWidget {
                       },
                     ),
                   ),
+                const SizedBox(height: 16),
+                const _DrawerFooter(),
               ],
             ),
           ),
@@ -383,4 +420,38 @@ class _NavItem {
   final Set<UserRole> allowedRoles;
 
   String get mobileLabel => shortLabel ?? label;
+}
+
+class _DrawerFooter extends StatelessWidget {
+  const _DrawerFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'App Version (v1.0.2)',
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'iVRA Refill, by Pulire Tunisia',
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
 }

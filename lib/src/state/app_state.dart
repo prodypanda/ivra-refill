@@ -23,6 +23,11 @@ final localeProvider = StateProvider<Locale>((ref) => const Locale('fr'));
 
 final offlineModeProvider = StateProvider<bool>((ref) => false);
 
+/// Set to true after the invited user successfully sets their password.
+/// This prevents the router from redirecting back to SetPasswordScreen
+/// during the brief window where userMetadata hasn't propagated yet.
+final passwordSetProvider = StateProvider<bool>((ref) => false);
+
 final repositoryProvider = Provider<IvraRepository>((ref) {
   final useSupabase = ref.watch(useSupabaseProvider);
   if (useSupabase) {

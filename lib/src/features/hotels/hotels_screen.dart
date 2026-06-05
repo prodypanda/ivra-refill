@@ -47,11 +47,63 @@ class HotelsScreen extends ConsumerWidget {
               _PremiumHotelCard(
                 hotel: hotel,
                 onEdit: () => _showHotelEditRequestDialog(context, ref, hotel),
+                onDelete: canCreateHotel ? () => _confirmDeleteHotel(context, ref, hotel) : null,
               ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDeleteHotel(
+    BuildContext context,
+    WidgetRef ref,
+    Hotel hotel,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.t('delete')),
+        content: Text(l10n.tParams('confirmDeleteHotel', {'hotelName': hotel.name})),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnCancel')),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.delete_outline),
+            label: Text(l10n.t('delete')),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await ref.read(repositoryProvider).deleteHotel(hotel.id);
+        ref.invalidate(hotelsProvider);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.t('hotelDeleted'))),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    }
   }
 
   Future<void> _showCreateHotelDialog(
@@ -111,10 +163,11 @@ class _Line extends StatelessWidget {
 }
 
 class _PremiumHotelCard extends StatefulWidget {
-  const _PremiumHotelCard({required this.hotel, required this.onEdit});
+  const _PremiumHotelCard({required this.hotel, required this.onEdit, this.onDelete});
 
   final Hotel hotel;
   final VoidCallback onEdit;
+  final VoidCallback? onDelete;
 
   @override
   State<_PremiumHotelCard> createState() => _PremiumHotelCardState();
@@ -320,6 +373,28 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
                                 onPressed: widget.onEdit,
                               ),
                             ),
+                            if (widget.onDelete != null) ...[
+                              const SizedBox(width: 8),
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                decoration: BoxDecoration(
+                                  color: _isHovered
+                                      ? theme.colorScheme.errorContainer
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: IconButton(
+                                  tooltip: l10n.t('delete'),
+                                  icon: Icon(
+                                    Icons.delete_outline,
+                                    color: _isHovered
+                                        ? theme.colorScheme.error
+                                        : theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                  onPressed: widget.onDelete,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ],

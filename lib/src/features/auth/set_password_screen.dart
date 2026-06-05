@@ -1,9 +1,15 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// Conditional import for web-only sessionStorage access
+import 'set_password_stub.dart' if (dart.library.html) 'set_password_web.dart'
+    as platform;
+
 import '../../l10n/app_localizations.dart';
+import '../../state/app_state.dart';
 
 import '../dashboard/dashboard_screen.dart';
 import '../shared/glass_card.dart';
@@ -11,9 +17,18 @@ import '../shared/page_scaffold.dart';
 import 'auth_validation.dart';
 
 class SetPasswordScreen extends ConsumerStatefulWidget {
-  const SetPasswordScreen({super.key});
+  const SetPasswordScreen({
+    this.refreshToken,
+    this.accessToken,
+    super.key,
+  });
 
   static const route = '/set-password';
+
+  /// Fallback: refresh token passed as query parameter (kept for backwards
+  /// compatibility, but the auth callback page now prefers sessionStorage).
+  final String? refreshToken;
+  final String? accessToken;
 
   @override
   ConsumerState<SetPasswordScreen> createState() => _SetPasswordScreenState();
@@ -25,6 +40,48 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
   bool _isSaving = false;
   String? _error;
   bool _obscurePassword = true;
+  bool _isEstablishingSession = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _maybeEstablishSession();
+  }
+
+  /// Establish a Supabase session from the refresh token.
+  /// Priority: sessionStorage (secure) > query parameter (fallback).
+  Future<void> _maybeEstablishSession() async {
+    // Already have a session? Skip.
+    if (Supabase.instance.client.auth.currentSession != null) return;
+
+    // 1. Try sessionStorage first (set by the auth callback page)
+    String? refreshToken;
+    if (kIsWeb) {
+      refreshToken = platform.consumeRefreshToken();
+    }
+
+    // 2. Fallback to query parameter
+    refreshToken ??= widget.refreshToken;
+
+    if (refreshToken == null || refreshToken.isEmpty) return;
+
+    setState(() => _isEstablishingSession = true);
+
+    try {
+      await Supabase.instance.client.auth.setSession(refreshToken);
+      // Invalidate cached user so the rest of the app picks up the new session.
+      ref.invalidate(currentUserProvider);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = 'Session error: ${e.toString()}';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isEstablishingSession = false);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -52,30 +109,28 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
     });
 
     try {
+      // Set the flag BEFORE calling updateUser. The updateUser call triggers
+      // an auth state change which causes the router to rebuild. Without this
+      // flag, the router would see needsPassword=true and redirect back here.
+      ref.read(passwordSetProvider.notifier).state = true;
+
       final res = await Supabase.instance.client.auth.updateUser(
         UserAttributes(
           password: _passwordController.text,
+          data: {'onboarded': true},
         ),
       );
 
       if (res.user != null) {
         if (!mounted) return;
-        // User successfully set their password!
-        // We update their metadata to remove the `invitation_id` so we know they're fully onboarded
-        // Actually, we can just let them pass to the dashboard, as the router will allow them now
-        // if we update a flag in their user metadata. Let's set `onboarded: true`.
-        await Supabase.instance.client.auth.updateUser(
-          UserAttributes(
-            data: {'onboarded': true},
-          ),
-        );
-
-        if (!mounted) return;
+        ref.invalidate(currentUserProvider);
         context.go(DashboardScreen.route);
       } else {
+        ref.read(passwordSetProvider.notifier).state = false;
         throw Exception('Failed to update password');
       }
     } catch (e) {
+      ref.read(passwordSetProvider.notifier).state = false;
       setState(() {
         _error = localizeAuthError(AppLocalizations.of(context), e, fallbackKey: 'resetPasswordError');
       });
@@ -93,8 +148,23 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
+    if (_isEstablishingSession) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(l10n.t('setPasswordTitle')),
+            ],
+          ),
+        ),
+      );
+    }
+
     return PageScaffold(
-      title: l10n.t('setPasswordTitle'), // You may need to add this to translations if missing
+      title: l10n.t('setPasswordTitle'),
       child: Center(
         child: SizedBox(
           width: 400,

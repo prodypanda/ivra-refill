@@ -351,6 +351,13 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                               ref.invalidate(dashboardProvider);
                             }),
                           ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            tooltip: l10n.t('delete'),
+                            icon: Icon(Icons.delete_outline,
+                                color: theme.colorScheme.error),
+                            onPressed: () => _confirmDelete(context, ref),
+                          ),
                         ],
                       ),
                     ],
@@ -362,6 +369,48 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.t('delete')),
+        content: Text('${l10n.t('productsLabelNameEn')}: ${widget.product.nameEn}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnCancel')),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.delete_outline),
+            label: Text(l10n.t('delete')),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await ref.read(repositoryProvider).deleteProduct(widget.product.id);
+        ref.invalidate(productsProvider);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    }
   }
 }
 

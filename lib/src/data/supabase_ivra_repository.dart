@@ -315,6 +315,36 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<void> deleteHotel(String hotelId) async {
+    await _client.from('hotels').delete().eq('id', hotelId);
+  }
+
+  @override
+  Future<void> deleteRoom(String roomId) async {
+    await _client.from('rooms').delete().eq('id', roomId);
+  }
+
+  @override
+  Future<void> deleteFloor(String floorId) async {
+    await _client.from('floors').delete().eq('id', floorId);
+  }
+
+  @override
+  Future<void> deleteUser(String userId) async {
+    await _client.rpc('delete_user', params: {'target_user_id': userId});
+  }
+
+  @override
+  Future<void> deleteAlert(String alertId) async {
+    await _client.from('alerts').delete().eq('id', alertId);
+  }
+
+  @override
+  Future<void> deleteProduct(String productId) async {
+    await _client.from('products').delete().eq('id', productId);
+  }
+
+  @override
   Future<void> createRoomsFromTemplate({
     required String hotelId,
     required int floorNumber,

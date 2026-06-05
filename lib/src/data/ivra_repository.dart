@@ -38,6 +38,13 @@ abstract class IvraRepository {
     String notes = '',
   });
 
+  Future<void> deleteHotel(String hotelId);
+  Future<void> deleteRoom(String roomId);
+  Future<void> deleteFloor(String floorId);
+  Future<void> deleteUser(String userId);
+  Future<void> deleteAlert(String alertId);
+  Future<void> deleteProduct(String productId);
+
   Future<void> createRoomsFromTemplate({
     required String hotelId,
     required int floorNumber,

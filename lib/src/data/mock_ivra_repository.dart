@@ -629,6 +629,41 @@ class MockIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<void> deleteHotel(String hotelId) async {
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+    final i = _hotels.indexWhere((h) => h.id == hotelId);
+    if (i >= 0) {
+      _hotels.removeAt(i);
+    }
+  }
+
+  @override
+  Future<void> deleteRoom(String roomId) async {
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+    _roomProducts.removeWhere((rp) => rp.roomId == roomId);
+  }
+
+  @override
+  Future<void> deleteFloor(String floorId) async {
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+  }
+
+  @override
+  Future<void> deleteUser(String userId) async {
+    _teamMembers.removeWhere((u) => u.id == userId);
+  }
+
+  @override
+  Future<void> deleteAlert(String alertId) async {
+    _alerts.removeWhere((a) => a.id == alertId);
+  }
+
+  @override
+  Future<void> deleteProduct(String productId) async {
+    _products.removeWhere((p) => p.id == productId);
+  }
+
+  @override
   Future<void> createRoomsFromTemplate({
     required String hotelId,
     required int floorNumber,
