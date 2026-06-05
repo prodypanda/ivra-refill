@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Shared-preferences keys used by the auth + biometric flow.
 ///
@@ -35,18 +36,20 @@ class AuthPrefs {
   static String normalizeEmail(String email) => email.trim().toLowerCase();
 }
 
+const _secureStorage = FlutterSecureStorage();
+
 /// Persist the credentials for a successful login, scoped to [email].
 Future<void> saveLoginCredentials(String email, String password) async {
   final prefs = await SharedPreferences.getInstance();
   final trimmed = email.trim();
   await prefs.setString(AuthPrefs.savedEmail, trimmed);
-  await prefs.setString(AuthPrefs.passwordKey(trimmed), password);
+  await _secureStorage.write(
+      key: AuthPrefs.passwordKey(trimmed), value: password);
 }
 
 /// The saved password for [email], if any.
 Future<String?> savedPasswordFor(String email) async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(AuthPrefs.passwordKey(email));
+  return await _secureStorage.read(key: AuthPrefs.passwordKey(email));
 }
 
 /// Whether biometric unlock is currently enabled for [email].
@@ -146,6 +149,6 @@ Future<bool> hasBiometricCredentials() async {
   final prefs = await SharedPreferences.getInstance();
   final account = prefs.getString(AuthPrefs.biometricAccount);
   if (account == null || account.isEmpty) return false;
-  final password = prefs.getString(AuthPrefs.passwordKey(account));
+  final password = await _secureStorage.read(key: AuthPrefs.passwordKey(account));
   return password != null && password.isNotEmpty;
 }

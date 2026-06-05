@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ivra_refill/src/features/auth/biometric_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
   group('BiometricAccountNotifier', () {
@@ -80,6 +81,10 @@ void main() {
   });
 
   group('per-account credentials', () {
+    setUp(() {
+      FlutterSecureStorage.setMockInitialValues({});
+    });
+
     test('saveLoginCredentials stores password keyed by email', () async {
       SharedPreferences.setMockInitialValues({});
       await saveLoginCredentials('Admin@Ivra.com', 'hunter2');
