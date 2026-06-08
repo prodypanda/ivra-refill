@@ -165,7 +165,9 @@ class _MetricCardState extends State<_MetricCard> {
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOutBack,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
@@ -179,9 +181,10 @@ class _MetricCardState extends State<_MetricCard> {
             boxShadow: [
               BoxShadow(
                 color: widget.iconColor
-                    .withValues(alpha: _isHovered ? 0.15 : 0.05),
-                blurRadius: _isHovered ? 24 : 12,
-                offset: const Offset(0, 8),
+                    .withValues(alpha: _isHovered ? 0.25 : 0.05),
+                blurRadius: _isHovered ? 32 : 12,
+                spreadRadius: _isHovered ? 4 : 0,
+                offset: Offset(0, _isHovered ? 12 : 8),
               ),
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.03),
@@ -190,7 +193,7 @@ class _MetricCardState extends State<_MetricCard> {
               ),
             ],
             border: Border.all(
-              color: widget.iconColor.withValues(alpha: _isHovered ? 0.3 : 0.1),
+              color: widget.iconColor.withValues(alpha: _isHovered ? 0.5 : 0.1),
               width: 1.5,
             ),
           ),
@@ -446,10 +449,16 @@ class _ActivityChart extends StatelessWidget {
               LineChartData(
                 gridData: FlGridData(
                   show: true,
-                  drawVerticalLine: false,
+                  drawVerticalLine: true,
                   horizontalInterval: 10,
+                  verticalInterval: 1,
                   getDrawingHorizontalLine: (value) => FlLine(
-                    color: theme.dividerColor.withValues(alpha: 0.4),
+                    color: theme.dividerColor.withValues(alpha: 0.2),
+                    strokeWidth: 1,
+                    dashArray: [4, 4],
+                  ),
+                  getDrawingVerticalLine: (value) => FlLine(
+                    color: theme.dividerColor.withValues(alpha: 0.1),
                     strokeWidth: 1,
                     dashArray: [4, 4],
                   ),
@@ -540,13 +549,13 @@ class _ActivityChart extends StatelessWidget {
                     isCurved: true,
                     curveSmoothness: 0.35,
                     color: theme.colorScheme.primary,
-                    barWidth: 4,
+                    barWidth: 5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
                       show: true,
                       getDotPainter: (spot, percent, barData, index) {
                         return FlDotCirclePainter(
-                          radius: 4,
+                          radius: 5,
                           color: Colors.white,
                           strokeWidth: 3,
                           strokeColor: theme.colorScheme.primary,
@@ -557,8 +566,8 @@ class _ActivityChart extends StatelessWidget {
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          theme.colorScheme.primary.withValues(alpha: 0.3),
-                          theme.colorScheme.primary.withValues(alpha: 0.0),
+                          theme.colorScheme.primary.withValues(alpha: 0.4),
+                          theme.colorScheme.primary.withValues(alpha: 0.05),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
