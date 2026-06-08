@@ -13,6 +13,7 @@ import '../shared/empty_state.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/premium_snackbar.dart';
+import '../shared/shimmer_loading.dart';
 
 class ApprovalsScreen extends ConsumerWidget {
   const ApprovalsScreen({super.key});
@@ -35,6 +36,15 @@ class ApprovalsScreen extends ConsumerWidget {
       child: AsyncValueView(
         value: ref.watch(approvalsProvider),
         onRetry: () => ref.invalidate(approvalsProvider),
+        loadingWidget: Column(
+          children: List.generate(
+            3,
+            (index) => const Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: CardShimmer(isCompact: true),
+            ),
+          ),
+        ),
         builder: (requests) {
           if (requests.isEmpty) {
             return EmptyState(
@@ -58,8 +68,8 @@ class ApprovalsScreen extends ConsumerWidget {
                       color: Colors.green.shade600,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 24),
+                    alignment: AlignmentDirectional.centerStart,
+                    padding: const EdgeInsetsDirectional.only(start: 24),
                     child: const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
                   ),
                   secondaryBackground: Container(
@@ -67,8 +77,8 @@ class ApprovalsScreen extends ConsumerWidget {
                       color: Colors.red.shade600,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 24),
+                    alignment: AlignmentDirectional.centerEnd,
+                    padding: const EdgeInsetsDirectional.only(end: 24),
                     child: const Icon(Icons.cancel_outlined, color: Colors.white, size: 28),
                   ),
                   onDismissed: (direction) async {
@@ -138,6 +148,76 @@ void _refreshAfterReview(WidgetRef ref) {
   ref.invalidate(suggestedOrdersProvider);
   ref.invalidate(alertsProvider);
   ref.invalidate(dashboardProvider);
+}
+
+class _ApprovalDiffView extends StatelessWidget {
+  const _ApprovalDiffView({
+    required this.oldValue,
+    required this.newValue,
+  });
+
+  final String oldValue;
+  final String newValue;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.t('approvalsOldValue'),
+                  style: theme.textTheme.labelSmall
+                      ?.copyWith(color: theme.colorScheme.error),
+                ),
+                Text(
+                  oldValue,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    decoration: TextDecoration.lineThrough,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Icon(Icons.arrow_forward,
+              size: 16, color: theme.colorScheme.onSurfaceVariant),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.t('approvalsNewValue'),
+                  style: theme.textTheme.labelSmall
+                      ?.copyWith(color: Colors.green),
+                ),
+                Text(
+                  newValue,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _ApprovalStatusBadge extends StatelessWidget {
@@ -267,55 +347,9 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.t('approvalsOldValue'),
-                              style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.error),
-                            ),
-                            Text(
-                              request.oldValue,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                decoration: TextDecoration.lineThrough,
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, size: 16, color: theme.colorScheme.onSurfaceVariant),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.t('approvalsNewValue'),
-                              style: theme.textTheme.labelSmall?.copyWith(color: Colors.green),
-                            ),
-                            Text(
-                              request.newValue,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green[700],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                _ApprovalDiffView(
+                  oldValue: request.oldValue,
+                  newValue: request.newValue,
                 ),
                 const SizedBox(height: 16),
                 if (request.status != ApprovalStatus.pending)
