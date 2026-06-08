@@ -60,7 +60,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isResetPassword = path == ResetPasswordScreen.route;
       final isAcceptInvite = path == AcceptInvitationScreen.route;
       final isSetPassword = path == SetPasswordScreen.route;
-      final isPublicAuthRoute = isLogin || isResetPassword || isAcceptInvite || isSetPassword;
+      final isAuthCallback = path == '/auth/callback';
+      final isPublicAuthRoute = isLogin || isResetPassword || isAcceptInvite || isSetPassword || isAuthCallback;
 
       if (useSupabase) {
         final isLoggedIn = Supabase.instance.client.auth.currentSession != null;
@@ -112,6 +113,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => SetPasswordScreen(
           refreshToken: state.uri.queryParameters['refresh_token'],
           accessToken: state.uri.queryParameters['access_token'],
+        ),
+      ),
+      GoRoute(
+        path: '/auth/callback',
+        builder: (context, state) => const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
         ),
       ),
       ShellRoute(
