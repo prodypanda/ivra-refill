@@ -58,6 +58,23 @@ serve(async (req) => {
     })
 
     if (error) {
+      // If the user already verified their email but didn't set a password, they will be registered.
+      // In this case, we send them a password setup / recovery email instead!
+      if (error.message.includes('User already registered') || error.status === 422 || error.code === 'user_already_exists') {
+        console.log(`User ${email} already exists. Sending password setup/recovery email instead of invite.`);
+        const { data: resetData, error: resetError } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
+          redirectTo: redirectTo
+        })
+        
+        if (resetError) {
+          throw resetError
+        }
+        
+        return new Response(JSON.stringify({ success: true, user: resetData, is_recovery: true }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 200
+        })
+      }
       throw error
     }
 
