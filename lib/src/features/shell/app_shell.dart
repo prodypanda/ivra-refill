@@ -36,7 +36,7 @@ class _AppShellState extends ConsumerState<AppShell> {
     super.initState();
     // Initialize push notifications when shell is mounted
     Future.microtask(() {
-      ref.read(notificationServiceProvider).initialize();
+      ref.read(notificationServiceProvider)?.initialize();
     });
   }
 

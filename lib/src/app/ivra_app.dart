@@ -81,7 +81,7 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
       }
       
       if (nextUser != null && prevUserId != nextUser.id) {
-        ref.read(notificationServiceProvider).initialize();
+        ref.read(notificationServiceProvider)?.initialize();
       }
     });
 

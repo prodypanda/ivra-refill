@@ -20,7 +20,11 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
   debugPrint('notificationTapBackground: ${notificationResponse.actionId}');
 }
 
-final notificationServiceProvider = Provider((ref) {
+final notificationServiceProvider = Provider<NotificationService?>((ref) {
+  final useSupabase = ref.watch(useSupabaseProvider);
+  if (!useSupabase) {
+    return null;
+  }
   return NotificationService(Supabase.instance.client);
 });
 
