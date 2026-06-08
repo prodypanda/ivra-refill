@@ -10,6 +10,7 @@ import 'package:ivra_refill/src/features/hotels/hotels_screen.dart';
 import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:ivra_refill/src/features/products/products_screen.dart';
 import 'package:ivra_refill/src/features/rooms/rooms_screen.dart';
+import 'package:ivra_refill/src/features/shared/offline_banner.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -155,6 +156,9 @@ Future<void> _pumpIvraApp(
         localeProvider.overrideWith((ref) => locale ?? const Locale('en')),
         if (currentUser != null)
           currentUserProvider.overrideWith((ref) async => currentUser),
+        connectivityProvider.overrideWith(
+          (ref) => ConnectivityNotifier(host: null),
+        ),
       ],
       child: const IvraApp(),
     ),
