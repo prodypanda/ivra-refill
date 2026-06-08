@@ -28,6 +28,10 @@ final offlineModeProvider = StateProvider<bool>((ref) => false);
 /// during the brief window where userMetadata hasn't propagated yet.
 final passwordSetProvider = StateProvider<bool>((ref) => false);
 
+/// Set to true when the user clicks a password recovery link.
+/// This forces the router to show the SetPasswordScreen.
+final isPasswordRecoveryProvider = StateProvider<bool>((ref) => false);
+
 final repositoryProvider = Provider<IvraRepository>((ref) {
   final useSupabase = ref.watch(useSupabaseProvider);
   if (useSupabase) {
@@ -71,9 +75,15 @@ final productsProvider = FutureProvider<List<Product>>((ref) {
   return ref.watch(repositoryProvider).products();
 });
 
-final teamMembersProvider = FutureProvider<List<UserProfile>>((ref) {
+final teamMembersProvider = FutureProvider<List<UserProfile>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
-  return ref.watch(repositoryProvider).teamMembers(hotelId: hotelId);
+  final members = await ref.watch(repositoryProvider).teamMembers(hotelId: hotelId);
+  final invitations = await ref.watch(repositoryProvider).teamInvitations(hotelId: hotelId);
+  
+  // Filter out members who are still in the "Pending Invitations" list
+  return members.where((m) {
+    return !invitations.any((i) => i.email.toLowerCase() == m.email.toLowerCase());
+  }).toList();
 });
 
 final demoUsersProvider = FutureProvider<List<UserProfile>>((ref) {

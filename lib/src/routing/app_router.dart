@@ -26,7 +26,12 @@ import '../state/app_state.dart';
 
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this._ref) {
-    _ref.listen(supabaseAuthStateProvider, (_, __) => notifyListeners());
+    _ref.listen(supabaseAuthStateProvider, (_, next) {
+      if (next.value?.event == AuthChangeEvent.passwordRecovery) {
+        _ref.read(isPasswordRecoveryProvider.notifier).state = true;
+      }
+      notifyListeners();
+    });
     _ref.listen(currentUserProvider, (_, __) => notifyListeners());
     _ref.listen(useSupabaseProvider, (_, __) => notifyListeners());
   }
@@ -63,7 +68,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         final isInvitedUser = userMetadata['invitation_id'] != null;
         final isOnboarded = userMetadata['onboarded'] == true;
         final passwordAlreadySet = ref.read(passwordSetProvider);
-        final needsPassword = isLoggedIn && isInvitedUser && !isOnboarded && !passwordAlreadySet;
+        final isPasswordRecovery = ref.read(isPasswordRecoveryProvider);
+        final needsPassword = (isLoggedIn && isInvitedUser && !isOnboarded && !passwordAlreadySet) || isPasswordRecovery;
 
         if (!isLoggedIn && !isPublicAuthRoute) return LoginScreen.route;
         

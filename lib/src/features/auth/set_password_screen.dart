@@ -113,6 +113,7 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
       // an auth state change which causes the router to rebuild. Without this
       // flag, the router would see needsPassword=true and redirect back here.
       ref.read(passwordSetProvider.notifier).state = true;
+      ref.read(isPasswordRecoveryProvider.notifier).state = false;
 
       final res = await Supabase.instance.client.auth.updateUser(
         UserAttributes(
