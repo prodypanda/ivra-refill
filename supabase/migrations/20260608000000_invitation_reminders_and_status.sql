@@ -111,7 +111,7 @@ BEGIN
     PERFORM cron.schedule(
       'ivra-invitation-reminders',
       '0 * * * *', -- every hour
-      $$ select process_invitation_reminders(); $$
+      'SELECT public.process_invitation_reminders();'
     );
   ELSE
     RAISE NOTICE 'pg_cron is unavailable; cannot schedule ivra-invitation-reminders.';
