@@ -1,8 +1,15 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ivra_refill/src/features/auth/biometric_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() {
+    FlutterSecureStorage.setMockInitialValues({});
+  });
+
   group('BiometricAccountNotifier', () {
     test('defaults to null when nothing is stored', () async {
       SharedPreferences.setMockInitialValues({});
@@ -82,6 +89,7 @@ void main() {
   group('per-account credentials', () {
     test('saveLoginCredentials stores password keyed by email', () async {
       SharedPreferences.setMockInitialValues({});
+      FlutterSecureStorage.setMockInitialValues({});
       await saveLoginCredentials('Admin@Ivra.com', 'hunter2');
       expect(await savedPasswordFor('admin@ivra.com'), 'hunter2');
       // A different account has no stored password.
@@ -91,6 +99,7 @@ void main() {
     test('signing in as a second account does not overwrite the first',
         () async {
       SharedPreferences.setMockInitialValues({});
+      FlutterSecureStorage.setMockInitialValues({});
       await saveLoginCredentials('admin@ivra.com', 'adminpw');
       await saveLoginCredentials('nashab2015@gmail.com', 'nashabpw');
       expect(await savedPasswordFor('admin@ivra.com'), 'adminpw');
@@ -100,6 +109,7 @@ void main() {
     test('hasBiometricCredentials reflects the opted-in account only',
         () async {
       SharedPreferences.setMockInitialValues({});
+      FlutterSecureStorage.setMockInitialValues({});
       await saveLoginCredentials('admin@ivra.com', 'adminpw');
       // No biometric account selected yet.
       expect(await hasBiometricCredentials(), isFalse);
