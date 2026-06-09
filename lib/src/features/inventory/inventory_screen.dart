@@ -697,14 +697,14 @@ class _VisualStockBar extends StatelessWidget {
               ),
             ),
             // Threshold marker
-            Positioned(
-              left: 0,
-              right: 0,
+            PositionedDirectional(
+              start: 0,
+              end: 0,
               child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 widthFactor: (threshold / maxExpected).clamp(0.0, 1.0),
                 child: Align(
-                  alignment: Alignment.centerRight,
+                  alignment: AlignmentDirectional.centerEnd,
                   child: Container(
                     width: 2,
                     height: 8,

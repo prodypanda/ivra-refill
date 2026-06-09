@@ -165,12 +165,13 @@ class _MetricCardState extends State<_MetricCard> {
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOutBack,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 theme.colorScheme.surface.withValues(alpha: 0.9),
                 theme.colorScheme.surface.withValues(alpha: 0.7),
@@ -258,8 +259,8 @@ class _MobileHero extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             theme.colorScheme.primary,
             theme.colorScheme.primary.withRed(220).withGreen(120),
@@ -275,8 +276,8 @@ class _MobileHero extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: -20,
+          PositionedDirectional(
+            end: -20,
             top: -20,
             child: Icon(
               Icons.spa,
@@ -560,8 +561,8 @@ class _ActivityChart extends StatelessWidget {
                           theme.colorScheme.primary.withValues(alpha: 0.3),
                           theme.colorScheme.primary.withValues(alpha: 0.0),
                         ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                        begin: AlignmentDirectional.topCenter,
+                        end: AlignmentDirectional.bottomCenter,
                       ),
                     ),
                   ),
