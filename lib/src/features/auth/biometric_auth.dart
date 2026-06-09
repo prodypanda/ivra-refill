@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,15 +39,16 @@ class AuthPrefs {
 /// Persist the credentials for a successful login, scoped to [email].
 Future<void> saveLoginCredentials(String email, String password) async {
   final prefs = await SharedPreferences.getInstance();
+  const secureStorage = FlutterSecureStorage();
   final trimmed = email.trim();
   await prefs.setString(AuthPrefs.savedEmail, trimmed);
-  await prefs.setString(AuthPrefs.passwordKey(trimmed), password);
+  await secureStorage.write(key: AuthPrefs.passwordKey(trimmed), value: password);
 }
 
 /// The saved password for [email], if any.
 Future<String?> savedPasswordFor(String email) async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(AuthPrefs.passwordKey(email));
+  const secureStorage = FlutterSecureStorage();
+  return secureStorage.read(key: AuthPrefs.passwordKey(email));
 }
 
 /// Whether biometric unlock is currently enabled for [email].
@@ -144,8 +146,9 @@ class BiometricAccountNotifier extends StateNotifier<String?> {
 /// to replay. Biometric is only offered on the login screen once they exist.
 Future<bool> hasBiometricCredentials() async {
   final prefs = await SharedPreferences.getInstance();
+  const secureStorage = FlutterSecureStorage();
   final account = prefs.getString(AuthPrefs.biometricAccount);
   if (account == null || account.isEmpty) return false;
-  final password = prefs.getString(AuthPrefs.passwordKey(account));
+  final password = await secureStorage.read(key: AuthPrefs.passwordKey(account));
   return password != null && password.isNotEmpty;
 }
