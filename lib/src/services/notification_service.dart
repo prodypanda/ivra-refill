@@ -21,16 +21,20 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 final notificationServiceProvider = Provider((ref) {
-  return NotificationService(Supabase.instance.client);
+  final useSupabase = ref.watch(useSupabaseProvider);
+  final client = useSupabase ? Supabase.instance.client : null;
+  return NotificationService(client);
 });
 
 class NotificationService {
   NotificationService(this._supabase);
 
-  final SupabaseClient _supabase;
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  final SupabaseClient? _supabase;
+  FirebaseMessaging get _fcm => FirebaseMessaging.instance;
 
   Future<void> initialize() async {
+    if (_supabase == null) return;
+
     final settings = await _fcm.requestPermission(
       alert: true,
       badge: true,
@@ -164,7 +168,7 @@ class NotificationService {
         else if (Platform.isIOS) deviceType = 'ios';
       }
 
-      await _supabase.rpc('register_fcm_token', params: {
+      await _supabase?.rpc('register_fcm_token', params: {
         'p_token': token,
         'p_device_type': deviceType,
       });
