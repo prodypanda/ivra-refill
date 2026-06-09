@@ -12,6 +12,39 @@ import 'auth_validation.dart';
 import 'biometric_auth.dart';
 import 'reset_password_screen.dart';
 
+String buildPasswordResetRedirectUrl(Uri base) {
+  if (base.hasScheme && (base.scheme == 'http' || base.scheme == 'https')) {
+    final appBasePath = _currentWebAppBasePath(base.path);
+    return Uri(
+      scheme: base.scheme,
+      host: base.host,
+      port: base.hasPort ? base.port : null,
+      path: '$appBasePath${ResetPasswordScreen.route}',
+    ).toString();
+  }
+
+  return 'ivra://app${ResetPasswordScreen.route}';
+}
+
+String _currentWebAppBasePath(String path) {
+  final normalized = path.endsWith('/') && path.length > 1
+      ? path.substring(0, path.length - 1)
+      : path;
+
+  if (normalized.endsWith(LoginScreen.route)) {
+    return normalized.substring(0, normalized.length - LoginScreen.route.length);
+  }
+  if (normalized.endsWith(ResetPasswordScreen.route)) {
+    return normalized.substring(
+      0,
+      normalized.length - ResetPasswordScreen.route.length,
+    );
+  }
+  if (normalized == '/app') return normalized;
+
+  return '';
+}
+
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -699,16 +732,6 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
   }
 
   String _resetRedirectUrl() {
-    final base = Uri.base;
-    if (base.hasScheme && (base.scheme == 'http' || base.scheme == 'https')) {
-      return base
-          .replace(path: '/', query: '', fragment: ResetPasswordScreen.route)
-          .toString();
-    }
-    // Mobile / native build: Supabase requires an absolute URL with a
-    // scheme, so we hand it the custom `ivra://app/...` URI registered
-    // by AndroidManifest.xml. The OS routes the redirect back into the
-    // running app via Flutter's deep-link integration.
-    return 'ivra://app${ResetPasswordScreen.route}';
+    return buildPasswordResetRedirectUrl(Uri.base);
   }
 }

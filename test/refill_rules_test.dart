@@ -6,6 +6,7 @@ import 'package:ivra_refill/src/data/mock_ivra_repository.dart';
 import 'package:ivra_refill/src/data/report_export_service.dart';
 import 'package:ivra_refill/src/domain/app_enums.dart';
 import 'package:ivra_refill/src/features/auth/auth_validation.dart';
+import 'package:ivra_refill/src/features/auth/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -23,6 +24,25 @@ void main() {
     );
     expect(
         AuthValidation.matchingPasswords('strongpass', 'strongpass'), isNull);
+  });
+
+  test('password reset redirect uses web path routes', () {
+    expect(
+      buildPasswordResetRedirectUrl(
+        Uri.parse('https://refill.ivra-cosmetics.com/app/login'),
+      ),
+      'https://refill.ivra-cosmetics.com/app/reset-password',
+    );
+    expect(
+      buildPasswordResetRedirectUrl(
+        Uri.parse('https://refill.ivra-cosmetics.com/login'),
+      ),
+      'https://refill.ivra-cosmetics.com/reset-password',
+    );
+    expect(
+      buildPasswordResetRedirectUrl(Uri.parse('ivra://app/login')),
+      'ivra://app/reset-password',
+    );
   });
 
   test('Supabase role checks are null safe for inactive accounts', () {
