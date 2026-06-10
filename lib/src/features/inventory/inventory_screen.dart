@@ -297,6 +297,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         const Icon(Icons.search, size: 20, color: Colors.grey),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
+                            tooltip: l10n.t('commonClearSearch'),
                             icon: const Icon(Icons.clear, size: 16),
                             onPressed: () {
                               _searchController.clear();

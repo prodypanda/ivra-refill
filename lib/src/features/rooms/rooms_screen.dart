@@ -503,6 +503,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         const Icon(Icons.search, size: 20, color: Colors.grey),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
+                            tooltip: l10n.t('commonClearSearch'),
                             icon: const Icon(Icons.clear, size: 16),
                             onPressed: () {
                               HapticFeedback.lightImpact();
@@ -1285,6 +1286,7 @@ class _RoomCardState extends State<_RoomCard> {
                             if (widget.isDialog) ...[
                               const SizedBox(width: 8),
                               IconButton(
+                                tooltip: l10n.t('roomsBtnClose'),
                                 icon: const Icon(Icons.close, size: 20),
                                 onPressed: () => Navigator.of(context).pop(),
                                 visualDensity: VisualDensity.compact,
