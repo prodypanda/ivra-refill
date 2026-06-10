@@ -15,16 +15,16 @@ class ShimmerLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
+    final theme = Theme.of(context);
     return Shimmer.fromColors(
-      baseColor: isLight ? Colors.grey.shade200 : Colors.grey.shade800,
-      highlightColor: isLight ? Colors.grey.shade50 : Colors.grey.shade700,
+      baseColor: theme.colorScheme.surfaceContainerHighest,
+      highlightColor: theme.colorScheme.surface,
       period: const Duration(milliseconds: 1500),
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: isLight ? Colors.white : Colors.black,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(borderRadius),
         ),
       ),
