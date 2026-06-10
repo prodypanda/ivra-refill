@@ -386,6 +386,15 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final l10n = AppLocalizations.of(context);
     final selectedHotelId = ref.read(selectedHotelIdProvider);
 
+    if (selectedHotelId == null) {
+      PremiumSnackbar.show(
+        context,
+        l10n.t('roomsSelectHotelFirst'),
+        icon: Icons.domain_outlined,
+      );
+      return;
+    }
+
     // Filter available adjustment items to only the currently selected hotel's inventory items!
     final hotelItems =
         items.where((item) => item.hotelId == selectedHotelId).toList();
