@@ -163,35 +163,37 @@ class _MetricCardState extends State<_MetricCard> {
       cursor: SystemMouseCursors.click,
       child: AnimatedScale(
         scale: _isHovered ? 1.02 : 1.0,
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutBack,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
-                theme.colorScheme.surface.withValues(alpha: 0.9),
-                theme.colorScheme.surface.withValues(alpha: 0.7),
+                theme.colorScheme.surface.withValues(alpha: _isHovered ? 1.0 : 0.9),
+                theme.colorScheme.surface.withValues(alpha: _isHovered ? 0.8 : 0.7),
               ],
             ),
             boxShadow: [
               BoxShadow(
                 color: widget.iconColor
-                    .withValues(alpha: _isHovered ? 0.15 : 0.05),
-                blurRadius: _isHovered ? 24 : 12,
+                    .withValues(alpha: _isHovered ? 0.25 : 0.05),
+                blurRadius: _isHovered ? 32 : 12,
                 offset: const Offset(0, 8),
               ),
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 4,
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: _isHovered ? 8 : 4,
                 offset: const Offset(0, 2),
               ),
             ],
             border: Border.all(
-              color: widget.iconColor.withValues(alpha: _isHovered ? 0.3 : 0.1),
-              width: 1.5,
+              color: widget.iconColor.withValues(alpha: _isHovered ? 0.5 : 0.1),
+              width: _isHovered ? 2.0 : 1.5,
             ),
           ),
           padding: const EdgeInsets.all(20),
@@ -258,8 +260,8 @@ class _MobileHero extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             theme.colorScheme.primary,
             theme.colorScheme.primary.withRed(220).withGreen(120),
@@ -275,8 +277,9 @@ class _MobileHero extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: -20,
+          Positioned.directional(
+            textDirection: Directionality.of(context),
+            end: -20,
             top: -20,
             child: Icon(
               Icons.spa,
@@ -375,7 +378,7 @@ class _HeroPill extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        padding: const EdgeInsetsDirectional.symmetric(vertical: 14, horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
@@ -514,12 +517,16 @@ class _ActivityChart extends StatelessWidget {
                 maxY: 60,
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (touchedSpot) =>
+                        theme.colorScheme.onSurface,
+                    tooltipPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots
                           .map((spot) => LineTooltipItem(
                                 '${spot.y.toInt()} refills',
-                                const TextStyle(
-                                    color: Colors.white,
+                                TextStyle(
+                                    color: theme.colorScheme.surface,
                                     fontWeight: FontWeight.bold),
                               ))
                           .toList();
