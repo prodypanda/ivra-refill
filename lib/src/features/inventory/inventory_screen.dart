@@ -399,7 +399,26 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final hotelItems =
         items.where((item) => item.hotelId == selectedHotelId).toList();
 
-    if (hotelItems.isEmpty) {
+    // Fetch all available products so we can allow adding stock for products not yet in the hotel's inventory.
+    final products = await ref.read(productsProvider.future);
+    final allHotelItems = products.map((product) {
+      final existing = hotelItems
+          .where((item) => item.product.id == product.id)
+          .firstOrNull;
+      return existing ??
+          InventoryItem(
+            id: 'new_${product.id}',
+            hotelId: selectedHotelId,
+            product: product,
+            fullBottles: 0,
+            emptyBottles: 0,
+            fullBidons: 0,
+            openBidons: 0,
+            emptyBidons: 0,
+          );
+    }).toList();
+
+    if (allHotelItems.isEmpty) {
       PremiumSnackbar.show(
         context,
         l10n.t('inventoryNoItemsToAdjust'),
@@ -410,7 +429,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
     await showDialog<void>(
       context: context,
-      builder: (context) => _StockAdjustmentDialog(items: hotelItems),
+      builder: (context) => _StockAdjustmentDialog(items: allHotelItems),
     );
 
     ref.invalidate(inventoryProvider);
