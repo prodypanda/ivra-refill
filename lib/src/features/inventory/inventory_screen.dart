@@ -917,7 +917,7 @@ class _StockAdjustmentDialogState
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<String>(
-                  initialValue: _inventoryItemId,
+                  value: _inventoryItemId,
                   decoration: InputDecoration(
                       labelText: l10n.t('inventoryTableProduct')),
                   items: [

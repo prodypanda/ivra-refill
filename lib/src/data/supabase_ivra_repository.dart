@@ -129,6 +129,16 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<void> updateUserProfile({
+    required String userId,
+    required String fullName,
+  }) {
+    return _client.from('profiles').update({
+      'full_name': fullName,
+    }).eq('id', userId);
+  }
+
+  @override
   Future<void> changeCurrentUserPassword({required String password}) async {
     await _client.auth.updateUser(UserAttributes(password: password));
   }
@@ -247,7 +257,7 @@ class SupabaseIvraRepository implements IvraRepository {
     var query = _client.from('suggested_order_quantities').select();
     if (hotelId != null) query = query.eq('hotel_id', hotelId);
     final rows = await _fetchWithCache(
-      'inventory_${hotelId ?? 'all'}',
+      'suggested_orders_${hotelId ?? 'all'}',
       () => query.order('product_name'),
     );
     return rows.map<SuggestedOrder>(_suggestedOrderFromMap).toList();

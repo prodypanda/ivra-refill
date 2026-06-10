@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
@@ -83,40 +84,46 @@ class DashboardScreen extends ConsumerWidget {
                   childAspectRatio: aspectRatio,
                   children: [
                     _MetricCard(
-                      l10n.t('metricHotels'),
-                      data.hotelCount,
-                      Icons.apartment_outlined,
-                      theme.colorScheme.primary,
+                      label: l10n.t('metricHotels'),
+                      value: data.hotelCount,
+                      icon: Icons.apartment_outlined,
+                      iconColor: theme.colorScheme.primary,
+                      onTap: () => context.go('/hotels'),
                     ),
                     _MetricCard(
-                      l10n.t('metricRooms'),
-                      data.roomCount,
-                      Icons.meeting_room_outlined,
-                      Colors.orange,
+                      label: l10n.t('metricRooms'),
+                      value: data.roomCount,
+                      icon: Icons.meeting_room_outlined,
+                      iconColor: Colors.orange,
+                      onTap: () => context.go('/rooms'),
                     ),
                     _MetricCard(
-                      l10n.t('metricPendingApprovals'),
-                      data.pendingApprovals,
-                      Icons.fact_check_outlined,
-                      Colors.amber.shade800,
+                      label: l10n.t('metricPendingApprovals'),
+                      value: data.pendingApprovals,
+                      icon: Icons.fact_check_outlined,
+                      iconColor: Colors.amber.shade800,
+                      onTap: () => context.go('/approvals'),
                     ),
                     _MetricCard(
-                      l10n.t('metricOpenAlerts'),
-                      data.openAlerts,
-                      Icons.notifications_active_outlined,
-                      theme.colorScheme.error,
+                      label: l10n.t('metricOpenAlerts'),
+                      value: data.openAlerts,
+                      icon: Icons.notifications_active_outlined,
+                      iconColor: theme.colorScheme.error,
+                      onTap: () => context.go('/alerts'),
                     ),
                     _MetricCard(
-                      l10n.t('metricBottlesToReplace'),
-                      data.bottlesToReplace,
-                      Icons.recycling_outlined,
-                      Colors.orange.shade700,
+                      label: l10n.t('metricBottlesToReplace'),
+                      value: data.bottlesToReplace,
+                      icon: Icons.recycling_outlined,
+                      iconColor: Colors.orange.shade700,
+                      onTap: () => context.go('/rooms'),
                     ),
                     _MetricCard(
-                      l10n.t('metricLowStockProducts'),
-                      data.lowStockProducts,
-                      Icons.inventory_2_outlined,
-                      Colors.indigo.shade600,
+                      label: l10n.t('metricLowStockProducts'),
+                      value: data.lowStockProducts,
+                      icon: Icons.inventory_2_outlined,
+                      iconColor: Colors.indigo.shade600,
+                      onTap: () => context.go('/inventory'),
                     ),
                   ],
                 ),
@@ -140,12 +147,19 @@ class DashboardScreen extends ConsumerWidget {
 }
 
 class _MetricCard extends StatefulWidget {
-  const _MetricCard(this.label, this.value, this.icon, this.iconColor);
+  const _MetricCard({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.iconColor,
+    this.onTap,
+  });
 
   final String label;
   final int value;
   final IconData icon;
   final Color iconColor;
+  final VoidCallback? onTap;
 
   @override
   State<_MetricCard> createState() => _MetricCardState();
@@ -165,7 +179,9 @@ class _MetricCardState extends State<_MetricCard> {
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOutBack,
-        child: Container(
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
@@ -240,7 +256,7 @@ class _MetricCardState extends State<_MetricCard> {
           ),
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -465,14 +481,15 @@ class _ActivityChart extends StatelessWidget {
                       reservedSize: 30,
                       interval: 1,
                       getTitlesWidget: (value, meta) {
+                        final l10n = AppLocalizations.of(context);
                         final days = [
-                          'Mon',
-                          'Tue',
-                          'Wed',
-                          'Thu',
-                          'Fri',
-                          'Sat',
-                          'Sun'
+                          l10n.t('dayMon'),
+                          l10n.t('dayTue'),
+                          l10n.t('dayWed'),
+                          l10n.t('dayThu'),
+                          l10n.t('dayFri'),
+                          l10n.t('daySat'),
+                          l10n.t('daySun'),
                         ];
                         if (value.toInt() >= 0 && value.toInt() < days.length) {
                           return Padding(
@@ -515,9 +532,10 @@ class _ActivityChart extends StatelessWidget {
                 lineTouchData: LineTouchData(
                   touchTooltipData: LineTouchTooltipData(
                     getTooltipItems: (touchedSpots) {
+                      final l10n = AppLocalizations.of(context);
                       return touchedSpots
                           .map((spot) => LineTooltipItem(
-                                '${spot.y.toInt()} refills',
+                                '${spot.y.toInt()} ${l10n.t('chartRefills')}',
                                 const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),

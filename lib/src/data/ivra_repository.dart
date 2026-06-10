@@ -7,6 +7,11 @@ abstract class IvraRepository {
     required String fullName,
   });
 
+  Future<void> updateUserProfile({
+    required String userId,
+    required String fullName,
+  });
+
   Future<void> changeCurrentUserPassword({
     required String password,
   });

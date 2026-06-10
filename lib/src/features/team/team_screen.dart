@@ -57,6 +57,10 @@ class TeamScreen extends ConsumerWidget {
                   _setMemberActive(context, ref, member, isActive),
               onManageHotels: (member) =>
                   _showManageHotelsDialog(context, ref, member),
+              onEditProfile: (member) => showDialog(
+                context: context,
+                builder: (context) => _EditProfileDialog(member: member),
+              ),
               onDelete: (member) => _confirmDeleteUser(context, ref, member),
             ),
           ),
@@ -282,6 +286,7 @@ class _MembersTable extends ConsumerWidget {
     required this.members,
     required this.onSetActive,
     required this.onManageHotels,
+    required this.onEditProfile,
     required this.onDelete,
   });
 
@@ -289,6 +294,7 @@ class _MembersTable extends ConsumerWidget {
   final List<UserProfile> members;
   final void Function(UserProfile member, bool isActive) onSetActive;
   final void Function(UserProfile member) onManageHotels;
+  final void Function(UserProfile member) onEditProfile;
   final void Function(UserProfile member) onDelete;
 
   @override
@@ -325,6 +331,7 @@ class _MembersTable extends ConsumerWidget {
             canManageHotels: canManageHotels,
             onSetActive: onSetActive,
             onManageHotels: onManageHotels,
+            onEditProfile: onEditProfile,
             onDelete: onDelete,
           ),
       ],
@@ -457,7 +464,7 @@ class _InviteTeamMemberDialogState
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<UserRole>(
-                  initialValue: _role,
+                  value: _role,
                   decoration:
                       InputDecoration(labelText: l10n.t('teamTableColumnRole')),
                   items: [
@@ -600,6 +607,7 @@ class _MemberActions extends StatelessWidget {
     required this.member,
     required this.onSetActive,
     this.onManageHotels,
+    required this.onEditProfile,
     required this.onDelete,
   });
 
@@ -607,6 +615,7 @@ class _MemberActions extends StatelessWidget {
   final UserProfile member;
   final void Function(UserProfile member, bool isActive) onSetActive;
   final VoidCallback? onManageHotels;
+  final void Function(UserProfile member) onEditProfile;
   final void Function(UserProfile member) onDelete;
 
   @override
@@ -617,6 +626,12 @@ class _MemberActions extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        if (canManage)
+          IconButton(
+            tooltip: l10n.t('teamEditProfile'),
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => onEditProfile(member),
+          ),
         if (onManageHotels != null)
           IconButton(
             tooltip: l10n.t('teamManageHotels'),
@@ -850,6 +865,7 @@ class _PremiumMemberCard extends StatefulWidget {
     required this.canManageHotels,
     required this.onSetActive,
     required this.onManageHotels,
+    required this.onEditProfile,
     required this.onDelete,
   });
 
@@ -859,6 +875,7 @@ class _PremiumMemberCard extends StatefulWidget {
   final bool canManageHotels;
   final void Function(UserProfile member, bool isActive) onSetActive;
   final void Function(UserProfile member) onManageHotels;
+  final void Function(UserProfile member) onEditProfile;
   final void Function(UserProfile member) onDelete;
 
   @override
@@ -1014,6 +1031,7 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                     onManageHotels: widget.canManageHotels && !member.isIvraUser
                         ? () => widget.onManageHotels(member)
                         : null,
+                    onEditProfile: widget.onEditProfile,
                     onDelete: widget.onDelete,
                   ),
                 ),
@@ -1194,17 +1212,119 @@ List<UserRole> _invitableRoles(UserRole role) {
         UserRole.hotelManager,
         UserRole.hotelStaff,
       ],
-    UserRole.hotelManager => const [UserRole.hotelStaff],
-    UserRole.hotelStaff => const [],
+    UserRole.hotelManager => [UserRole.hotelStaff],
+    UserRole.hotelStaff => [],
   };
 }
+
+// ============================================================
+// Edit Profile Dialog
+// ============================================================
+class _EditProfileDialog extends ConsumerStatefulWidget {
+  const _EditProfileDialog({required this.member});
+
+  final UserProfile member;
+
+  @override
+  ConsumerState<_EditProfileDialog> createState() => _EditProfileDialogState();
+}
+
+class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _fullName;
+  var _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fullName = TextEditingController(text: widget.member.fullName);
+  }
+
+  @override
+  void dispose() {
+    _fullName.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l10n.t('teamEditProfile')),
+      content: SizedBox(
+        width: 400,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _fullName,
+                decoration: InputDecoration(labelText: l10n.t('teamLabelFullName')),
+                validator: (val) => val == null || val.trim().isEmpty ? l10n.t('requiredField') : null,
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+          child: Text(l10n.t('btnCancel')),
+        ),
+        FilledButton.icon(
+          onPressed: _isSaving ? null : _save,
+          icon: _isSaving
+              ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              : const Icon(Icons.check),
+          label: Text(l10n.t('btnSave')),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isSaving = true);
+    try {
+      final repo = ref.read(repositoryProvider);
+      await repo.updateUserProfile(
+        userId: widget.member.id,
+        fullName: _fullName.text.trim(),
+      );
+      // Invalidate providers so UI updates
+      ref.invalidate(teamMembersProvider);
+      ref.invalidate(currentUserProvider);
+      
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).t('teamEditProfileSuccess'))),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(localizeAuthError(
+            AppLocalizations.of(context),
+            error,
+            fallbackKey: 'errorGeneric',
+          )),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+}
+
 
 bool _canManageMember(UserProfile? currentUser, UserProfile member) {
   if (currentUser == null || currentUser.id == member.id) return false;
   return switch (currentUser.role) {
     UserRole.appAdmin => true,
-    UserRole.appManager => member.role == UserRole.hotelManager ||
-        member.role == UserRole.hotelStaff,
+    UserRole.appManager => member.role != UserRole.appAdmin,
     UserRole.hotelManager => member.role == UserRole.hotelStaff &&
         member.hotelId != null &&
         member.hotelId == currentUser.hotelId,

@@ -317,6 +317,30 @@ class MockIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<void> updateUserProfile({
+    required String userId,
+    required String fullName,
+  }) async {
+    final trimmedName = fullName.trim();
+    if (trimmedName.isEmpty) {
+      throw ArgumentError('Full name is required.');
+    }
+
+    final index = _teamMembers.indexWhere(
+      (member) => member.id == userId,
+    );
+    if (index != -1) {
+      _teamMembers[index] = _teamMembers[index].copyWith(
+        fullName: trimmedName,
+      );
+    }
+    
+    if (_currentUser.id == userId) {
+      _currentUser = _currentUser.copyWith(fullName: trimmedName);
+    }
+  }
+
+  @override
   Future<void> changeCurrentUserPassword({required String password}) async {
     if (password.length < 8) {
       throw ArgumentError('Password must be at least 8 characters.');
