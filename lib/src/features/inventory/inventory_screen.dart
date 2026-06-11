@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -1107,8 +1109,8 @@ class _StockAdjustmentDialogState
                 await Supabase.instance.client.functions.invoke(
                   'send-notification',
                   body: {
-                    'title': l10n?.t('alerts') ?? 'Alerts',
-                    'body': l10n?.t('productsLabelLowStock') ?? 'Low stock alert',
+                    'title': l10n.t('alerts'),
+                    'body': l10n.t('productsLabelLowStock'),
                     'targetType': 'hotel',
                     'targetValue': item.hotelId,
                     'targetPage': '/alerts',
