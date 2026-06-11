@@ -436,27 +436,73 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
         ?.where((p) => p.id == widget.alert.productId)
         .firstOrNull;
 
-    if (product != null &&
-        (widget.alert.type == AlertType.lowBottleStock ||
-            widget.alert.type == AlertType.lowBidonStock)) {
-      final isBottle = widget.alert.type == AlertType.lowBottleStock;
-      final regex = RegExp(r'(\d+).*?(\d+)\.');
-      final match = regex.firstMatch(widget.alert.body);
-      if (match != null) {
-        final remain = match.group(1);
-        final threshold = match.group(2);
-        final productName = product.label(lang);
+    if (product != null) {
+      if (widget.alert.type == AlertType.lowBottleStock ||
+          widget.alert.type == AlertType.lowBidonStock) {
+        final isBottle = widget.alert.type == AlertType.lowBottleStock;
+        final regex = RegExp(r'(\d+).*?(\d+)\.');
+        final match = regex.firstMatch(widget.alert.body);
+        if (match != null) {
+          final remain = match.group(1);
+          final threshold = match.group(2);
+          final productName = product.label(lang);
 
-        title = l10n.tParams(
-          isBottle ? 'alertLowBottleTitle' : 'alertLowBidonTitle',
-          {'product': productName},
-        );
-        body = l10n.tParams(
-          isBottle ? 'alertLowBottleBody' : 'alertLowBidonBody',
-          {'remain': remain ?? '', 'threshold': threshold ?? ''},
-        );
+          title = l10n.tParams(
+            isBottle ? 'alertLowBottleTitle' : 'alertLowBidonTitle',
+            {'product': productName},
+          );
+          body = l10n.tParams(
+            isBottle ? 'alertLowBottleBody' : 'alertLowBidonBody',
+            {'remain': remain ?? '', 'threshold': threshold ?? ''},
+          );
+        }
+      } else if (widget.alert.type == AlertType.refillLimit) {
+        final titleMatch = RegExp(r'Room (\S+)').firstMatch(widget.alert.title);
+        final bodyMatch = RegExp(r'(\d+)/(\d+)').firstMatch(widget.alert.body);
+        if (titleMatch != null && bodyMatch != null) {
+          title = l10n.tParams('alertRefillLimitTitle', {
+            'room': titleMatch.group(1) ?? '',
+            'product': product.label(lang),
+          });
+          body = l10n.tParams('alertRefillLimitBody', {
+            'used': bodyMatch.group(1) ?? '',
+            'max': bodyMatch.group(2) ?? '',
+          });
+        }
+      } else if (widget.alert.type == AlertType.bottleAgeLimit) {
+        final titleMatch = RegExp(r'Room (\S+)').firstMatch(widget.alert.title);
+        final bodyMatch = RegExp(r'is (\d+) days.*?is (\d+) days').firstMatch(widget.alert.body);
+        if (titleMatch != null && bodyMatch != null) {
+          title = l10n.tParams('alertBottleAgeLimitTitle', {
+            'room': titleMatch.group(1) ?? '',
+            'product': product.label(lang),
+          });
+          body = l10n.tParams('alertBottleAgeLimitBody', {
+            'age': bodyMatch.group(1) ?? '',
+            'limit': bodyMatch.group(2) ?? '',
+          });
+        }
       }
     }
+
+    if (widget.alert.type == AlertType.pendingApproval) {
+      final titleMatch = RegExp(r'Pending approval:\s+(.+)').firstMatch(widget.alert.title);
+      final bodyMatch = RegExp(r'Requested by\s+(.+)\.').firstMatch(widget.alert.body);
+      if (titleMatch != null && bodyMatch != null) {
+        title = l10n.tParams('alertPendingApprovalTitle', {
+          'request': titleMatch.group(1) ?? '',
+        });
+        body = l10n.tParams('alertPendingApprovalBody', {
+          'name': bodyMatch.group(1) ?? '',
+        });
+      }
+    }
+
+    final hotelsAsync = ref.watch(hotelsProvider);
+    final hotel = hotelsAsync.valueOrNull
+        ?.where((h) => h.id == widget.alert.hotelId)
+        .firstOrNull;
+    final hotelName = hotel?.name ?? '';
 
     // Muted opacity for resolved alerts
     final contentOpacity = isResolved ? 0.45 : 1.0;
@@ -570,22 +616,41 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                   const SizedBox(width: 12),
                                   // Title
                                   Expanded(
-                                    child: Text(
-                                      title,
-                                      style:
-                                          theme.textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.w800,
-                                        color: colorScheme.onSurface
-                                            .withValues(alpha: contentOpacity),
-                                        decoration: isResolved
-                                            ? TextDecoration.lineThrough
-                                            : null,
-                                        decorationColor: colorScheme.onSurface
-                                            .withValues(alpha: 0.35),
-                                        letterSpacing: -0.2,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        if (hotelName.isNotEmpty)
+                                          Padding(
+                                            padding: const EdgeInsets.only(bottom: 2),
+                                            child: Text(
+                                              hotelName,
+                                              style: theme.textTheme.labelSmall?.copyWith(
+                                                color: colorScheme.primary,
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 0.2,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        Text(
+                                          title,
+                                          style: theme.textTheme.titleMedium?.copyWith(
+                                            fontWeight: FontWeight.w800,
+                                            color: colorScheme.onSurface
+                                                .withValues(alpha: contentOpacity),
+                                            decoration: isResolved
+                                                ? TextDecoration.lineThrough
+                                                : null,
+                                            decorationColor: colorScheme.onSurface
+                                                .withValues(alpha: 0.35),
+                                            letterSpacing: -0.2,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   const SizedBox(width: 8),

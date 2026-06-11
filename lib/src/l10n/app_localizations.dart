@@ -449,8 +449,14 @@ class AppLocalizations {
       'alertLowBidonBody': '{remain} full bidons remain. Threshold is {threshold}.',
       'alertTypeLowBottleStock': 'Low bottles',
       'alertTypeBottleAgeLimit': 'Bottle age',
+      'alertBottleAgeLimitTitle': 'Room {room} {product} bottle is too old',
+      'alertBottleAgeLimitBody': 'Bottle age is {age} days. Limit is {limit} days.',
       'alertTypeRefillLimit': 'Refill limit',
+      'alertRefillLimitTitle': 'Room {room} {product} reached refill limit',
+      'alertRefillLimitBody': '{used}/{max} refills used. Replace and recycle the bottle.',
       'alertTypePendingApproval': 'Approval',
+      'alertPendingApprovalTitle': 'Pending approval: {request}',
+      'alertPendingApprovalBody': 'Requested by {name}.',
       'alertTypeSuspiciousActivity': 'Suspicious activity',
       'alertTypeInactiveHotel': 'Inactive hotel',
       'refillEventApproved': 'Approved',
@@ -921,8 +927,14 @@ class AppLocalizations {
       'alertLowBidonBody': 'Il reste {remain} bidons pleins. Le seuil est {threshold}.',
       'alertTypeLowBottleStock': 'Stock bas (bouteilles)',
       'alertTypeBottleAgeLimit': 'Âge bouteille',
+      'alertBottleAgeLimitTitle': 'Chambre {room} : la bouteille de {product} est trop vieille',
+      'alertBottleAgeLimitBody': 'L\'âge de la bouteille est de {age} jours. La limite est de {limit} jours.',
       'alertTypeRefillLimit': 'Limite de recharges',
+      'alertRefillLimitTitle': 'Chambre {room} : {product} a atteint la limite de recharges',
+      'alertRefillLimitBody': '{used}/{max} recharges utilisées. Remplacez et recyclez la bouteille.',
       'alertTypePendingApproval': 'Approbation',
+      'alertPendingApprovalTitle': 'Approbation en attente : {request}',
+      'alertPendingApprovalBody': 'Demandé par {name}.',
       'alertTypeSuspiciousActivity': 'Activité suspecte',
       'alertTypeInactiveHotel': 'Hôtel inactif',
       'refillEventApproved': 'Approuvé',
@@ -1337,6 +1349,15 @@ class AppLocalizations {
           '\u0639\u0648\u062f\u0629 \u0644\u0644\u0627\u062a\u0635\u0627\u0644! \u062a\u0645\u062a \u0645\u0632\u0627\u0645\u0646\u0629 {count} \u0625\u062c\u0631\u0627\u0621\u0627\u062a',
       'offlineBannerSyncFailed':
           '\u0641\u0634\u0644\u062a \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629 \u0644\u0628\u0639\u0636 \u0627\u0644\u0625\u062c\u0631\u0627\u0621\u0627\u062a',
+      'alertTypeBottleAgeLimit': 'عمر الزجاجة',
+      'alertBottleAgeLimitTitle': 'غرفة {room}: زجاجة {product} قديمة جدًا',
+      'alertBottleAgeLimitBody': 'عمر الزجاجة {age} يوم. الحد الأقصى هو {limit} يوم.',
+      'alertTypeRefillLimit': 'حد إعادة التعبئة',
+      'alertRefillLimitTitle': 'غرفة {room}: وصلت زجاجة {product} إلى الحد الأقصى لإعادة التعبئة',
+      'alertRefillLimitBody': 'تم استخدام {used}/{max} من مرات إعادة التعبئة. استبدل الزجاجة وأعد تدويرها.',
+      'alertTypePendingApproval': 'موافقة',
+      'alertPendingApprovalTitle': 'في انتظار الموافقة: {request}',
+      'alertPendingApprovalBody': 'مطلوب بواسطة {name}.',
       'teamInvitationCancelled':
           '\u062a\u0645 \u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u062f\u0639\u0648\u0629 \u0644\u0640 {email}',
       'teamInvitationResent':
@@ -1409,11 +1430,7 @@ class AppLocalizations {
       'alertLowBidonBody': 'تبقى {remain} قوارير ممتلئة. الحد الأدنى هو {threshold}.',
       'alertTypeLowBottleStock':
           '\u0645\u062e\u0632\u0648\u0646 \u0632\u062c\u0627\u062c\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
-      'alertTypeBottleAgeLimit':
-          '\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0629',
-      'alertTypeRefillLimit':
-          '\u062d\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629',
-      'alertTypePendingApproval': '\u0645\u0648\u0627\u0641\u0642\u0629',
+
       'alertTypeSuspiciousActivity':
           '\u0646\u0634\u0627\u0637 \u0645\u0634\u0628\u0648\u0647',
       'alertTypeInactiveHotel':
@@ -1898,8 +1915,14 @@ class AppLocalizations {
       'alertLowBidonBody': 'Rimangono {remain} taniche piene. La soglia è {threshold}.',
       'alertTypeLowBottleStock': 'Scorte basse (bottiglie)',
       'alertTypeBottleAgeLimit': 'Et\u00e0 bottiglia',
+      'alertBottleAgeLimitTitle': 'Camera {room}: la bottiglia di {product} è troppo vecchia',
+      'alertBottleAgeLimitBody': 'L\'età della bottiglia è di {age} giorni. Il limite è di {limit} giorni.',
       'alertTypeRefillLimit': 'Limite ricariche',
+      'alertRefillLimitTitle': 'Camera {room}: {product} ha raggiunto il limite di ricariche',
+      'alertRefillLimitBody': '{used}/{max} ricariche utilizzate. Sostituisci e ricicla la bottiglia.',
       'alertTypePendingApproval': 'Approvazione',
+      'alertPendingApprovalTitle': 'Approvazione in sospeso: {request}',
+      'alertPendingApprovalBody': 'Richiesto da {name}.',
       'alertTypeSuspiciousActivity': 'Attivit\u00e0 sospetta',
       'alertTypeInactiveHotel': 'Hotel inattivo',
       'refillEventApproved': 'Approvato',
