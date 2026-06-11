@@ -294,7 +294,7 @@ class SupabaseIvraRepository implements IvraRepository {
     if (hotelId != null) query = query.eq('hotel_id', hotelId);
     final rows = await _fetchWithCache(
       'recent_refill_events_${hotelId ?? 'all'}',
-      () => query.order('occurred_at', ascending: false).limit(50),
+      () => query.order('occurred_at', ascending: false).limit(500),
     );
     return rows.map<RefillEvent>(_refillEventFromMap).toList();
   }

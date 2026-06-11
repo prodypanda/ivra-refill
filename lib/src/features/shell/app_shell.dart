@@ -426,7 +426,7 @@ class _DrawerFooter extends StatelessWidget {
   const _DrawerFooter();
 
   // Keep this in sync with pubspec.yaml version
-  static const _appVersion = '1.0.5';
+  static const _appVersion = '1.0.6';
 
   @override
   Widget build(BuildContext context) {
