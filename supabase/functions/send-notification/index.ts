@@ -85,7 +85,10 @@ serve(async (req) => {
     let targetUserIds: string[] | null = null;
 
     if (targetType === 'hotel') {
-      const { data: p } = await supabaseAdmin.from('profiles').select('id').eq('hotel_id', targetValue);
+      const { data: p } = await supabaseAdmin
+        .from('profiles')
+        .select('id')
+        .or(`hotel_id.eq.${targetValue},role.in.(app_admin,app_manager)`);
       targetUserIds = p?.map(x => x.id) || [];
     } else if (targetType === 'role') {
       const { data: p } = await supabaseAdmin.from('profiles').select('id').eq('role', targetValue);
