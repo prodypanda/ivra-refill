@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:vector_math/vector_math_64.dart' as v3;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -185,8 +186,8 @@ class _MetricCardState extends State<_MetricCard> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 theme.colorScheme.surface.withValues(alpha: 0.9),
                 theme.colorScheme.surface.withValues(alpha: 0.7),
@@ -260,22 +261,37 @@ class _MetricCardState extends State<_MetricCard> {
   }
 }
 
-class _MobileHero extends StatelessWidget {
+class _MobileHero extends StatefulWidget {
   const _MobileHero({required this.data});
 
   final DashboardMetrics data;
+
+  @override
+  State<_MobileHero> createState() => _MobileHeroState();
+}
+
+class _MobileHeroState extends State<_MobileHero> {
+  bool _isTapped = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isTapped = true),
+      onTapUp: (_) => setState(() => _isTapped = false),
+      onTapCancel: () => setState(() => _isTapped = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutCubic,
+        transformAlignment: Alignment.center,
+        transform: Matrix4.identity()..scaleByVector3(v3.Vector3.all(_isTapped ? 0.98 : 1.0)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          gradient: LinearGradient(
+            begin: AlignmentDirectional.topStart,
+            end: AlignmentDirectional.bottomEnd,
           colors: [
             theme.colorScheme.primary,
             theme.colorScheme.primary.withRed(220).withGreen(120),
@@ -283,16 +299,16 @@ class _MobileHero extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.primary.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: theme.colorScheme.primary.withValues(alpha: _isTapped ? 0.15 : 0.3),
+            blurRadius: _isTapped ? 10 : 20,
+            offset: Offset(0, _isTapped ? 5 : 10),
           ),
         ],
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: -20,
+          PositionedDirectional(
+            end: -20,
             top: -20,
             child: Icon(
               Icons.spa,
@@ -306,8 +322,7 @@ class _MobileHero extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -330,7 +345,7 @@ class _MobileHero extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  data.bottlesToReplace.toString(),
+                  widget.data.bottlesToReplace.toString(),
                   style: theme.textTheme.displayMedium?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w900,
@@ -349,14 +364,14 @@ class _MobileHero extends StatelessWidget {
                   children: [
                     _HeroPill(
                       label: l10n.t('metricOpenAlerts'),
-                      value: data.openAlerts,
+                      value: widget.data.openAlerts,
                       icon: Icons.notifications_active,
                       color: Colors.white,
                     ),
                     const SizedBox(width: 12),
                     _HeroPill(
                       label: l10n.t('metricPendingApprovals'),
-                      value: data.pendingApprovals,
+                      value: widget.data.pendingApprovals,
                       icon: Icons.fact_check,
                       color: Colors.white,
                     ),
@@ -367,7 +382,7 @@ class _MobileHero extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
 
@@ -458,8 +473,13 @@ class _ActivityChart extends StatelessWidget {
           const SizedBox(height: 32),
           SizedBox(
             height: 220,
-            child: LineChart(
-              LineChartData(
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0, end: 1),
+              duration: const Duration(milliseconds: 1000),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, child) {
+                return LineChart(
+                  LineChartData(
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
@@ -546,14 +566,14 @@ class _ActivityChart extends StatelessWidget {
                 ),
                 lineBarsData: [
                   LineChartBarData(
-                    spots: const [
-                      FlSpot(0, 15),
-                      FlSpot(1, 28),
-                      FlSpot(2, 18),
-                      FlSpot(3, 45),
-                      FlSpot(4, 32),
-                      FlSpot(5, 55),
-                      FlSpot(6, 42),
+                    spots: [
+                      FlSpot(0, 15 * value),
+                      FlSpot(1, 28 * value),
+                      FlSpot(2, 18 * value),
+                      FlSpot(3, 45 * value),
+                      FlSpot(4, 32 * value),
+                      FlSpot(5, 55 * value),
+                      FlSpot(6, 42 * value),
                     ],
                     isCurved: true,
                     curveSmoothness: 0.35,
@@ -575,7 +595,7 @@ class _ActivityChart extends StatelessWidget {
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          theme.colorScheme.primary.withValues(alpha: 0.3),
+                          theme.colorScheme.primary.withValues(alpha: 0.3 * value),
                           theme.colorScheme.primary.withValues(alpha: 0.0),
                         ],
                         begin: Alignment.topCenter,
@@ -585,8 +605,9 @@ class _ActivityChart extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ),
+            );
+          },
+        )),
         ],
       ),
     );
