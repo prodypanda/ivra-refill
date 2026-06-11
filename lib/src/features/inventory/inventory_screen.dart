@@ -904,6 +904,7 @@ class _StockAdjustmentDialogState
   final _reason = TextEditingController();
   late String _inventoryItemId;
   var _isSaving = false;
+  bool _showAdvanced = false;
 
   @override
   void initState() {
@@ -1005,16 +1006,35 @@ class _StockAdjustmentDialogState
                       controller: _fullBidons,
                       label: l10n.t('inventoryTableFullBidons'),
                     ),
-                    const SizedBox(height: 12),
-                    _DeltaField(
-                      controller: _openBidons,
-                      label: l10n.t('inventoryTableOpenBidons'),
+                    const SizedBox(height: 8),
+                    TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _showAdvanced = !_showAdvanced;
+                        });
+                      },
+                      icon: Icon(_showAdvanced
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down),
+                      label: Text(l10n.t('more')),
+                      style: TextButton.styleFrom(
+                        foregroundColor: theme.colorScheme.onSurfaceVariant,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                      ),
                     ),
-                    const SizedBox(height: 12),
-                    _DeltaField(
-                      controller: _emptyBidons,
-                      label: emptyBidonsLabel,
-                    ),
+                    if (_showAdvanced) ...[
+                      const SizedBox(height: 8),
+                      _DeltaField(
+                        controller: _openBidons,
+                        label: l10n.t('inventoryTableOpenBidons'),
+                      ),
+                      const SizedBox(height: 12),
+                      _DeltaField(
+                        controller: _emptyBidons,
+                        label: emptyBidonsLabel,
+                      ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 12),
