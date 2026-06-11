@@ -1098,6 +1098,27 @@ class _StockAdjustmentDialogState
                 emptyBidonsDelta: payload['emptyBidonsDelta'] as int,
                 reason: payload['reason'] as String,
               );
+              
+          final newAlertsCount = await ref.read(repositoryProvider).refreshSmartAlerts(hotelId: item.hotelId);
+          if (newAlertsCount > 0) {
+            ref.invalidate(alertsProvider);
+            try {
+              if (Supabase.instance.client.auth.currentSession != null) {
+                await Supabase.instance.client.functions.invoke(
+                  'send-notification',
+                  body: {
+                    'title': l10n?.t('alerts') ?? 'Alerts',
+                    'body': l10n?.t('productsLabelLowStock') ?? 'Low stock alert',
+                    'targetType': 'hotel',
+                    'targetValue': item.hotelId,
+                    'targetPage': '/alerts',
+                  },
+                );
+              }
+            } catch (e) {
+              debugPrint('Failed to dispatch alert push notification: $e');
+            }
+          }
         } catch (e) {
           if (e.toString().contains('SocketException') ||
               e.toString().contains('ClientException') ||

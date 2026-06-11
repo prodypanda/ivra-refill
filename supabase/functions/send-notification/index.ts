@@ -62,14 +62,24 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError || !user) throw new Error("Unauthorized");
 
-    const { data: profile } = await supabaseAdmin.from('profiles').select('role').eq('id', user.id).single();
-    if (!profile || (profile.role !== 'app_admin' && profile.role !== 'app_manager')) {
-      throw new Error("Insufficient permissions");
-    }
-
     const { title, body, targetType, targetValue, actionButtons, targetPage, data } = await req.json();
     if (!title || !body || !targetType) {
       throw new Error("Missing required fields");
+    }
+
+    const { data: profile } = await supabaseAdmin.from('profiles').select('role, hotel_id').eq('id', user.id).single();
+    if (!profile) {
+      throw new Error("User profile not found");
+    }
+    
+    // Check if user has permission
+    if (profile.role === 'hotel_manager' || profile.role === 'hotel_staff') {
+       const isSendingToOwnHotel = targetType === 'hotel' && targetValue === profile.hotel_id;
+       if (!isSendingToOwnHotel) {
+           throw new Error("Insufficient permissions: You can only send notifications to your own hotel.");
+       }
+    } else if (profile.role !== 'app_admin' && profile.role !== 'app_manager') {
+       throw new Error("Insufficient permissions");
     }
 
     let targetUserIds: string[] | null = null;
