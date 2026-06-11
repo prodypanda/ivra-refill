@@ -1107,50 +1107,30 @@ class _StockAdjustmentDialogState
             try {
               if (Supabase.instance.client.auth.currentSession != null) {
                 final lang = Localizations.localeOf(context).languageCode;
-                final newFullBottles = item.fullBottles + (payload['fullBottlesDelta'] as int);
-                final newFullBidons = item.fullBidons + (payload['fullBidonsDelta'] as int);
                 
-                bool sentNotification = false;
+                // Fetch the new alerts
+                final latestAlerts = await ref.read(alertsProvider.future);
+                final products = await ref.read(productsProvider.future);
                 
-                if (newFullBottles <= item.product.lowBottleThreshold) {
-                  sentNotification = true;
-                  await Supabase.instance.client.functions.invoke(
-                    'send-notification',
-                    body: {
-                      'title': l10n.tParams('alertLowBottleTitle', {'product': item.product.label(lang)}),
-                      'body': l10n.tParams('alertLowBottleBody', {'remain': newFullBottles.toString(), 'threshold': item.product.lowBottleThreshold.toString()}),
-                      'targetType': 'hotel',
-                      'targetValue': item.hotelId,
-                      'targetPage': '/alerts',
-                    },
-                  );
-                }
+                final unresolved = latestAlerts.where((a) => !a.isResolved).toList();
                 
-                if (newFullBidons <= item.product.lowBidonThreshold) {
-                  sentNotification = true;
-                  await Supabase.instance.client.functions.invoke(
-                    'send-notification',
-                    body: {
-                      'title': l10n.tParams('alertLowBidonTitle', {'product': item.product.label(lang)}),
-                      'body': l10n.tParams('alertLowBidonBody', {'remain': newFullBidons.toString(), 'threshold': item.product.lowBidonThreshold.toString()}),
-                      'targetType': 'hotel',
-                      'targetValue': item.hotelId,
-                      'targetPage': '/alerts',
-                    },
-                  );
-                }
-                
-                if (!sentNotification) {
-                  await Supabase.instance.client.functions.invoke(
-                    'send-notification',
-                    body: {
-                      'title': l10n.t('alerts'),
-                      'body': l10n.t('productsLabelLowStock'),
-                      'targetType': 'hotel',
-                      'targetValue': item.hotelId,
-                      'targetPage': '/alerts',
-                    },
-                  );
+                // Send up to newAlertsCount notifications
+                for (var i = 0; i < newAlertsCount && i < unresolved.length; i++) {
+                   final alert = unresolved[i];
+                   final product = products.where((p) => p.id == alert.productId).firstOrNull;
+                   
+                   final (pushTitle, pushBody) = alert.localizedStrings(l10n, lang, product);
+                   
+                   await Supabase.instance.client.functions.invoke(
+                     'send-notification',
+                     body: {
+                       'title': pushTitle,
+                       'body': pushBody,
+                       'targetType': 'hotel',
+                       'targetValue': item.hotelId,
+                       'targetPage': '/alerts',
+                     },
+                   );
                 }
               }
             } catch (e) {

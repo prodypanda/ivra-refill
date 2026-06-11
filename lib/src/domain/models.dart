@@ -519,6 +519,85 @@ class AlertItem {
       isResolved: isResolved ?? this.isResolved,
     );
   }
+
+  (String, String) localizedStrings(dynamic l10n, String lang, Product? product) {
+    String translatedTitle = title;
+    String translatedBody = body;
+
+    if (product != null) {
+      if (type == AlertType.lowBottleStock || type == AlertType.lowBidonStock) {
+        final isBottle = type == AlertType.lowBottleStock;
+        final regex = RegExp(r'(\d+).*?(\d+)\.');
+        final match = regex.firstMatch(body);
+        if (match != null) {
+          final remain = match.group(1);
+          final threshold = match.group(2);
+          final productName = product.label(lang);
+
+          translatedTitle = l10n.tParams(
+            isBottle ? 'alertLowBottleTitle' : 'alertLowBidonTitle',
+            {'product': productName},
+          );
+          translatedBody = l10n.tParams(
+            isBottle ? 'alertLowBottleBody' : 'alertLowBidonBody',
+            {'remain': remain ?? '', 'threshold': threshold ?? ''},
+          );
+        }
+      } else if (type == AlertType.refillLimit) {
+        final titleMatch = RegExp(r'Room (\S+)').firstMatch(title);
+        final bodyMatch = RegExp(r'(\d+)/(\d+)').firstMatch(body);
+        if (titleMatch != null && bodyMatch != null) {
+          translatedTitle = l10n.tParams('alertRefillLimitTitle', {
+            'room': titleMatch.group(1) ?? '',
+            'product': product.label(lang),
+          });
+          translatedBody = l10n.tParams('alertRefillLimitBody', {
+            'used': bodyMatch.group(1) ?? '',
+            'max': bodyMatch.group(2) ?? '',
+          });
+        }
+      } else if (type == AlertType.bottleAgeLimit) {
+        final titleMatch = RegExp(r'Room (\S+)').firstMatch(title);
+        final bodyMatch = RegExp(r'is (\d+) days.*?is (\d+) days').firstMatch(body);
+        if (titleMatch != null && bodyMatch != null) {
+          translatedTitle = l10n.tParams('alertBottleAgeLimitTitle', {
+            'room': titleMatch.group(1) ?? '',
+            'product': product.label(lang),
+          });
+          translatedBody = l10n.tParams('alertBottleAgeLimitBody', {
+            'age': bodyMatch.group(1) ?? '',
+            'limit': bodyMatch.group(2) ?? '',
+          });
+        }
+      }
+    }
+
+    if (type == AlertType.pendingApproval) {
+      final titleMatch = RegExp(r'Pending approval:\s+(.+)').firstMatch(title);
+      final bodyMatch = RegExp(r'Requested by\s+(.+)\.').firstMatch(body);
+      if (titleMatch != null && bodyMatch != null) {
+        translatedTitle = l10n.tParams('alertPendingApprovalTitle', {
+          'request': titleMatch.group(1) ?? '',
+        });
+        translatedBody = l10n.tParams('alertPendingApprovalBody', {
+          'user': bodyMatch.group(1) ?? '',
+        });
+      }
+    } else if (type == AlertType.suspiciousActivity) {
+      final bodyMatch = RegExp(r'(.+) reported suspicious activity').firstMatch(body);
+      if (bodyMatch != null) {
+        translatedTitle = l10n.t('alertSuspiciousActivityTitle');
+        translatedBody = l10n.tParams('alertSuspiciousActivityBody', {
+          'user': bodyMatch.group(1) ?? '',
+        });
+      }
+    } else if (type == AlertType.inactiveHotel) {
+      translatedTitle = l10n.t('alertInactiveHotelTitle');
+      translatedBody = l10n.t('alertInactiveHotelBody');
+    }
+
+    return (translatedTitle, translatedBody);
+  }
 }
 
 class SuggestedOrder {

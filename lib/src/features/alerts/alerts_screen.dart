@@ -49,75 +49,6 @@ Color _severityColor(int severity, ColorScheme colorScheme) {
   return Colors.blue.shade600;
 }
 
-(String, String) _getLocalizedAlertStrings(AlertItem alert, AppLocalizations l10n, String lang, Product? product) {
-  String title = alert.title;
-  String body = alert.body;
-
-  if (product != null) {
-    if (alert.type == AlertType.lowBottleStock ||
-        alert.type == AlertType.lowBidonStock) {
-      final isBottle = alert.type == AlertType.lowBottleStock;
-      final regex = RegExp(r'(\d+).*?(\d+)\.');
-      final match = regex.firstMatch(alert.body);
-      if (match != null) {
-        final remain = match.group(1);
-        final threshold = match.group(2);
-        final productName = product.label(lang);
-
-        title = l10n.tParams(
-          isBottle ? 'alertLowBottleTitle' : 'alertLowBidonTitle',
-          {'product': productName},
-        );
-        body = l10n.tParams(
-          isBottle ? 'alertLowBottleBody' : 'alertLowBidonBody',
-          {'remain': remain ?? '', 'threshold': threshold ?? ''},
-        );
-      }
-    } else if (alert.type == AlertType.refillLimit) {
-      final titleMatch = RegExp(r'Room (\S+)').firstMatch(alert.title);
-      final bodyMatch = RegExp(r'(\d+)/(\d+)').firstMatch(alert.body);
-      if (titleMatch != null && bodyMatch != null) {
-        title = l10n.tParams('alertRefillLimitTitle', {
-          'room': titleMatch.group(1) ?? '',
-          'product': product.label(lang),
-        });
-        body = l10n.tParams('alertRefillLimitBody', {
-          'used': bodyMatch.group(1) ?? '',
-          'max': bodyMatch.group(2) ?? '',
-        });
-      }
-    } else if (alert.type == AlertType.bottleAgeLimit) {
-      final titleMatch = RegExp(r'Room (\S+)').firstMatch(alert.title);
-      final bodyMatch = RegExp(r'is (\d+) days.*?is (\d+) days').firstMatch(alert.body);
-      if (titleMatch != null && bodyMatch != null) {
-        title = l10n.tParams('alertBottleAgeLimitTitle', {
-          'room': titleMatch.group(1) ?? '',
-          'product': product.label(lang),
-        });
-        body = l10n.tParams('alertBottleAgeLimitBody', {
-          'age': bodyMatch.group(1) ?? '',
-          'limit': bodyMatch.group(2) ?? '',
-        });
-      }
-    }
-  }
-
-  if (alert.type == AlertType.pendingApproval) {
-    final titleMatch = RegExp(r'Pending approval:\s+(.+)').firstMatch(alert.title);
-    final bodyMatch = RegExp(r'Requested by\s+(.+)\.').firstMatch(alert.body);
-    if (titleMatch != null && bodyMatch != null) {
-      title = l10n.tParams('alertPendingApprovalTitle', {
-        'request': titleMatch.group(1) ?? '',
-      });
-      body = l10n.tParams('alertPendingApprovalBody', {
-        'name': bodyMatch.group(1) ?? '',
-      });
-    }
-  }
-
-  return (title, body);
-}
-
 // ---------------------------------------------------------------------------
 // Screen
 // ---------------------------------------------------------------------------
@@ -195,7 +126,7 @@ class AlertsScreen extends ConsumerWidget {
 
       for (final alert in newAlerts) {
         final product = products.where((p) => p.id == alert.productId).firstOrNull;
-        final (title, body) = _getLocalizedAlertStrings(alert, l10n, lang, product);
+        final (title, body) = alert.localizedStrings(l10n, lang, product);
 
         await flutterLocalNotificationsPlugin.show(
           id: alert.id.hashCode,
@@ -539,7 +470,7 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
         ?.where((p) => p.id == widget.alert.productId)
         .firstOrNull;
 
-    final (title, body) = _getLocalizedAlertStrings(widget.alert, l10n, lang, product);
+    final (title, body) = widget.alert.localizedStrings(l10n, lang, product);
 
     final hotelsAsync = ref.watch(hotelsProvider);
     final hotel = hotelsAsync.valueOrNull
