@@ -989,29 +989,31 @@ class _StockAdjustmentDialogState
                   ),
                 ),
                 const SizedBox(height: 16),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
+                Column(
                   children: [
                     _DeltaField(
                       controller: _fullBottles,
-                      label: '${l10n.t('inventoryTableFullBottles')} (+/-)',
+                      label: l10n.t('inventoryTableFullBottles'),
                     ),
+                    const SizedBox(height: 12),
                     _DeltaField(
                       controller: _emptyBottles,
-                      label: '${l10n.t('inventoryTableEmptyBottles')} (+/-)',
+                      label: l10n.t('inventoryTableEmptyBottles'),
                     ),
+                    const SizedBox(height: 12),
                     _DeltaField(
                       controller: _fullBidons,
-                      label: '${l10n.t('inventoryTableFullBidons')} (+/-)',
+                      label: l10n.t('inventoryTableFullBidons'),
                     ),
+                    const SizedBox(height: 12),
                     _DeltaField(
                       controller: _openBidons,
-                      label: '${l10n.t('inventoryTableOpenBidons')} (+/-)',
+                      label: l10n.t('inventoryTableOpenBidons'),
                     ),
+                    const SizedBox(height: 12),
                     _DeltaField(
                       controller: _emptyBidons,
-                      label: '$emptyBidonsLabel (+/-)',
+                      label: emptyBidonsLabel,
                     ),
                   ],
                 ),
@@ -1110,7 +1112,7 @@ class _StockAdjustmentDialogState
   }
 }
 
-class _DeltaField extends StatelessWidget {
+class _DeltaField extends StatefulWidget {
   const _DeltaField({
     required this.controller,
     required this.label,
@@ -1120,20 +1122,90 @@ class _DeltaField extends StatelessWidget {
   final String label;
 
   @override
+  State<_DeltaField> createState() => _DeltaFieldState();
+}
+
+class _DeltaFieldState extends State<_DeltaField> {
+  void _increment() {
+    final current = int.tryParse(widget.controller.text) ?? 0;
+    widget.controller.text = (current + 1).toString();
+  }
+
+  void _decrement() {
+    final current = int.tryParse(widget.controller.text) ?? 0;
+    widget.controller.text = (current - 1).toString();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return SizedBox(
-      width: 164,
-      child: TextFormField(
-        controller: controller,
-        keyboardType: const TextInputType.numberWithOptions(signed: true),
-        decoration: InputDecoration(labelText: label),
-        validator: (value) {
-          if (int.tryParse(value ?? '') == null) {
-            return l10n.t('enterNumberError');
-          }
-          return null;
-        },
+    final theme = Theme.of(context);
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              widget.label,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove, size: 20),
+                  onPressed: _decrement,
+                  visualDensity: VisualDensity.compact,
+                ),
+                SizedBox(
+                  width: 48,
+                  child: TextFormField(
+                    controller: widget.controller,
+                    textAlign: TextAlign.center,
+                    keyboardType: const TextInputType.numberWithOptions(signed: true),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                      isDense: true,
+                    ),
+                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    validator: (value) {
+                      if (int.tryParse(value ?? '') == null) {
+                        return '!';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add, size: 20),
+                  onPressed: _increment,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
