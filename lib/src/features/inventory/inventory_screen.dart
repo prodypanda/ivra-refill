@@ -1102,24 +1102,35 @@ class _StockAdjustmentDialogState
               );
               
           final newAlertsCount = await ref.read(repositoryProvider).refreshSmartAlerts(hotelId: item.hotelId);
+          debugPrint('[ALERT-PUSH] refreshSmartAlerts returned $newAlertsCount new alerts');
           if (newAlertsCount > 0) {
             ref.invalidate(alertsProvider);
             try {
               if (Supabase.instance.client.auth.currentSession != null) {
                 final lang = Localizations.localeOf(context).languageCode;
                 
-                // Fetch the new alerts
-                final latestAlerts = await ref.read(alertsProvider.future);
+                // Fetch the new alerts directly from repository to bypass any Riverpod cache issues
+                final latestAlerts = await ref.read(repositoryProvider).alerts(hotelId: item.hotelId);
                 final products = await ref.read(productsProvider.future);
                 
-                final unresolved = latestAlerts.where((a) => !a.isResolved).toList();
+                debugPrint('[ALERT-PUSH] Fetched ${latestAlerts.length} alerts, ${products.length} products');
                 
-                // Send up to newAlertsCount notifications
+                final unresolved = latestAlerts.where((a) => !a.isResolved).toList()
+                  ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+                
+                debugPrint('[ALERT-PUSH] ${unresolved.length} unresolved alerts, sending up to $newAlertsCount');
+                
+                // Send notifications for the newest alerts (most recently created)
                 for (var i = 0; i < newAlertsCount && i < unresolved.length; i++) {
                    final alert = unresolved[i];
                    final product = products.where((p) => p.id == alert.productId).firstOrNull;
                    
+                   debugPrint('[ALERT-PUSH] Alert type=${alert.type.value}, productId=${alert.productId}, product found=${product != null}');
+                   debugPrint('[ALERT-PUSH] Raw title="${alert.title}", Raw body="${alert.body}"');
+                   
                    final (pushTitle, pushBody) = alert.localizedStrings(l10n, lang, product);
+                   
+                   debugPrint('[ALERT-PUSH] Translated title="$pushTitle", body="$pushBody"');
                    
                    await Supabase.instance.client.functions.invoke(
                      'send-notification',
@@ -1131,10 +1142,11 @@ class _StockAdjustmentDialogState
                        'targetPage': '/alerts',
                      },
                    );
+                   debugPrint('[ALERT-PUSH] Notification sent successfully for alert ${alert.id}');
                 }
               }
             } catch (e) {
-              debugPrint('Failed to dispatch alert push notification: $e');
+              debugPrint('[ALERT-PUSH] Failed to dispatch alert push notification: $e');
             }
           }
         } catch (e) {
