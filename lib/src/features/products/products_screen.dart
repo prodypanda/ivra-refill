@@ -1,5 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -489,7 +492,8 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
   late final TextEditingController _maxBottleAgeDays;
   late final TextEditingController _lowBottleThreshold;
   late final TextEditingController _lowBidonThreshold;
-  late final TextEditingController _imageUrl;
+  XFile? _selectedImage;
+  String? _currentImageUrl;
   var _isSaving = false;
 
   bool get _isEditing => widget.product != null;
@@ -521,7 +525,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
     _lowBidonThreshold = TextEditingController(
       text: '${product?.lowBidonThreshold ?? 4}',
     );
-    _imageUrl = TextEditingController(text: product?.imageUrl ?? '');
+    _currentImageUrl = product?.imageUrl;
   }
 
   @override
@@ -537,7 +541,6 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
     _maxBottleAgeDays.dispose();
     _lowBottleThreshold.dispose();
     _lowBidonThreshold.dispose();
-    _imageUrl.dispose();
     super.dispose();
   }
 
@@ -613,12 +616,40 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _imageUrl,
-                        decoration: InputDecoration(
-                          labelText: l10n.t('productsLabelImage'),
-                          hintText: l10n.t('productsLabelImageHint'),
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _selectedImage != null
+                                  ? 'Selected: ${_selectedImage!.name}'
+                                  : (_currentImageUrl != null && _currentImageUrl!.isNotEmpty
+                                      ? 'Image is set (tap to change)'
+                                      : 'No image selected'),
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: _selectedImage != null || (_currentImageUrl != null && _currentImageUrl!.isNotEmpty)
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          OutlinedButton.icon(
+                            icon: const Icon(Icons.image_search),
+                            label: Text(l10n.t('productsLabelImage')),
+                            onPressed: () async {
+                              final picker = ImagePicker();
+                              final image = await picker.pickImage(source: ImageSource.gallery);
+                              if (image != null) {
+                                setState(() {
+                                  _selectedImage = image;
+                                });
+                              }
+                            },
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 12),
                       Wrap(
@@ -688,6 +719,33 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
     try {
       final repository = ref.read(repositoryProvider);
       final product = widget.product;
+      String? finalImageUrl = _currentImageUrl;
+      if (_selectedImage != null) {
+        final bytes = await _selectedImage!.readAsBytes();
+        final ext = _selectedImage!.name.contains('.') ? _selectedImage!.name.split('.').last : 'jpg';
+        final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
+        
+        try {
+          await Supabase.instance.client.storage
+              .from('products')
+              .uploadBinary(fileName, bytes,
+                  fileOptions: const FileOptions(upsert: true));
+        } catch (e) {
+          // If bucket doesn't exist or other error, let's try to create it just in case
+          try {
+            await Supabase.instance.client.storage.createBucket('products', const BucketOptions(public: true));
+            await Supabase.instance.client.storage
+                .from('products')
+                .uploadBinary(fileName, bytes,
+                    fileOptions: const FileOptions(upsert: true));
+          } catch (_) {}
+        }
+        
+        finalImageUrl = Supabase.instance.client.storage
+            .from('products')
+            .getPublicUrl(fileName);
+      }
+
       if (product == null) {
         await repository.createProduct(
           sku: _sku.text.trim(),
@@ -701,7 +759,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           maxBottleAgeDays: int.parse(_maxBottleAgeDays.text),
           lowBottleThreshold: int.parse(_lowBottleThreshold.text),
           lowBidonThreshold: int.parse(_lowBidonThreshold.text),
-          imageUrl: _imageUrl.text.trim(),
+          imageUrl: finalImageUrl,
         );
       } else {
         await repository.updateProduct(
@@ -717,7 +775,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           maxBottleAgeDays: int.parse(_maxBottleAgeDays.text),
           lowBottleThreshold: int.parse(_lowBottleThreshold.text),
           lowBidonThreshold: int.parse(_lowBidonThreshold.text),
-          imageUrl: _imageUrl.text.trim(),
+          imageUrl: finalImageUrl,
         );
       }
       if (mounted) Navigator.of(context).pop();

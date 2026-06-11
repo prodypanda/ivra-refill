@@ -137,6 +137,18 @@ class NotificationService {
     try {
       final payload = jsonDecode(payloadStr);
       final context = scaffoldMessengerKey.currentContext;
+
+      String? alertId = payload['alertId']?.toString();
+      String? hotelId = payload['hotelId']?.toString();
+      if (payload['data'] != null) {
+        try {
+          final nestedData = payload['data'] is String ? jsonDecode(payload['data']) : payload['data'];
+          if (nestedData is Map) {
+            alertId ??= nestedData['alertId']?.toString();
+            hotelId ??= nestedData['hotelId']?.toString();
+          }
+        } catch (_) {}
+      }
       
       if (actionId == 'Dismiss') {
         return;
@@ -148,8 +160,7 @@ class NotificationService {
         }
         
         if (actionId == 'more_info') {
-          final hotelId = payload['hotelId'];
-          if (hotelId != null && hotelId.toString().isNotEmpty) {
+          if (hotelId != null && hotelId.isNotEmpty) {
             GoRouter.of(context).go('/inventory?hotelId=$hotelId');
           } else {
             GoRouter.of(context).go('/inventory');
@@ -158,9 +169,8 @@ class NotificationService {
         }
         
         if (actionId == 'resolve') {
-          final alertId = payload['alertId'];
-          if (alertId != null && alertId.toString().isNotEmpty) {
-            _ref.read(repositoryProvider).resolveAlert(alertId: alertId.toString()).then((_) {
+          if (alertId != null && alertId.isNotEmpty) {
+            _ref.read(repositoryProvider).resolveAlert(alertId: alertId).then((_) {
               if (!context.mounted) return;
               _ref.invalidate(alertsProvider);
               ScaffoldMessenger.of(context).showSnackBar(
@@ -186,9 +196,8 @@ class NotificationService {
         }
         
         if (actionId == 'delete') {
-          final alertId = payload['alertId'];
-          if (alertId != null && alertId.toString().isNotEmpty) {
-            _ref.read(repositoryProvider).deleteAlert(alertId.toString()).then((_) {
+          if (alertId != null && alertId.isNotEmpty) {
+            _ref.read(repositoryProvider).deleteAlert(alertId).then((_) {
               if (!context.mounted) return;
               _ref.invalidate(alertsProvider);
               ScaffoldMessenger.of(context).showSnackBar(
