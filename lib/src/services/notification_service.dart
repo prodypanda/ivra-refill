@@ -32,6 +32,23 @@ class NotificationService {
   final Ref _ref;
   FirebaseMessaging? _fcm;
 
+  static NotificationResponse? _pendingNotificationResponse;
+
+  void _checkAndProcessPending() {
+    final response = _pendingNotificationResponse;
+    if (response == null) return;
+
+    final context = scaffoldMessengerKey.currentContext;
+    if (context != null) {
+      _pendingNotificationResponse = null;
+      _handleNotificationAction(response.payload, response.actionId);
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkAndProcessPending();
+      });
+    }
+  }
+
   Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -43,7 +60,8 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        _handleNotificationAction(response.payload, response.actionId);
+        _pendingNotificationResponse = response;
+        _checkAndProcessPending();
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
@@ -97,6 +115,21 @@ class NotificationService {
     } catch (e) {
       debugPrint('Error initializing FCM: $e');
     }
+
+    // Check if app was launched from a notification
+    try {
+      final launchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+      if (launchDetails != null && launchDetails.didNotificationLaunchApp) {
+        final response = launchDetails.notificationResponse;
+        if (response != null) {
+          _pendingNotificationResponse = response;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error getting notification launch details: $e');
+    }
+
+    _checkAndProcessPending();
   }
 
   void _handleNotificationAction(String? payloadStr, String? actionId) {
@@ -251,8 +284,11 @@ class NotificationService {
 
       String deviceType = 'web';
       if (!kIsWeb) {
-        if (Platform.isAndroid) deviceType = 'android';
-        else if (Platform.isIOS) deviceType = 'ios';
+        if (Platform.isAndroid) {
+          deviceType = 'android';
+        } else if (Platform.isIOS) {
+          deviceType = 'ios';
+        }
       }
 
       await _supabase.rpc('register_fcm_token', params: {

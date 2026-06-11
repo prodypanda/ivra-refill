@@ -92,6 +92,8 @@ class AlertsScreen extends ConsumerWidget {
           onRefresh: () => _refreshAlerts(context, ref),
           onResolve: (alertId) => _resolveAlert(context, ref, alertId),
           onDelete: (alertId) => _deleteAlert(context, ref, alertId),
+          onResolveAll: () => _resolveAllAlerts(context, ref, alerts),
+          onDeleteAll: () => _deleteAllAlerts(context, ref, alerts),
         ),
       ),
     );
@@ -111,8 +113,9 @@ class AlertsScreen extends ConsumerWidget {
       final newAlertsList = await ref.read(repositoryProvider).alerts(hotelId: user.hotelId);
       final newAlerts = newAlertsList.where((a) => !oldIds.contains(a.id)).toList();
       
+      if (!context.mounted) return;
       final l10n = AppLocalizations.of(context);
-      final lang = Localizations.localeOf(context).languageCode;
+      final langCode = Localizations.localeOf(context).languageCode;
       final products = await ref.read(productsProvider.future);
       
       const androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -126,7 +129,7 @@ class AlertsScreen extends ConsumerWidget {
 
       for (final alert in newAlerts) {
         final product = products.where((p) => p.id == alert.productId).firstOrNull;
-        final (title, body) = alert.localizedStrings(l10n, lang, product);
+        final (title, body) = alert.localizedStrings(l10n, langCode, product);
 
         await flutterLocalNotificationsPlugin.show(
           id: alert.id.hashCode,
@@ -211,6 +214,89 @@ class AlertsScreen extends ConsumerWidget {
       }
     }
   }
+
+  Future<void> _resolveAllAlerts(
+    BuildContext context,
+    WidgetRef ref,
+    List<AlertItem> alerts,
+  ) async {
+    final openAlerts = alerts.where((a) => !a.isResolved).toList();
+    if (openAlerts.isEmpty) return;
+
+    HapticFeedback.mediumImpact();
+    final repository = ref.read(repositoryProvider);
+    try {
+      await Future.wait(openAlerts.map((a) => repository.resolveAlert(alertId: a.id)));
+      ref.invalidate(alertsProvider);
+      ref.invalidate(dashboardProvider);
+      if (context.mounted) {
+        PremiumSnackbar.show(
+          context,
+          AppLocalizations.of(context).t('alertResolvedToast'),
+          icon: Icons.check_circle_outline,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to resolve all alerts: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteAllAlerts(
+    BuildContext context,
+    WidgetRef ref,
+    List<AlertItem> alerts,
+  ) async {
+    if (alerts.isEmpty) return;
+
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.t('delete')),
+        content: Text('Delete all alerts?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnCancel')),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.delete_outline),
+            label: Text(l10n.t('delete')),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      final repository = ref.read(repositoryProvider);
+      try {
+        await Future.wait(alerts.map((a) => repository.deleteAlert(a.id)));
+        ref.invalidate(alertsProvider);
+        ref.invalidate(dashboardProvider);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to delete all alerts: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -223,12 +309,16 @@ class _AlertsList extends StatelessWidget {
     required this.onRefresh,
     required this.onResolve,
     required this.onDelete,
+    required this.onResolveAll,
+    required this.onDeleteAll,
   });
 
   final List<AlertItem> alerts;
   final VoidCallback onRefresh;
   final ValueChanged<String> onResolve;
   final ValueChanged<String> onDelete;
+  final VoidCallback onResolveAll;
+  final VoidCallback onDeleteAll;
 
   @override
   Widget build(BuildContext context) {
@@ -250,6 +340,8 @@ class _AlertsList extends StatelessWidget {
     final criticalCount =
         alerts.where((a) => !a.isResolved && a.severity >= 3).length;
     final resolvedCount = alerts.length - openCount;
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,6 +353,46 @@ class _AlertsList extends StatelessWidget {
           resolvedCount: resolvedCount,
         ),
         const SizedBox(height: 20),
+        // ── Resolve All / Delete All actions ──
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Row(
+            children: [
+              if (openCount > 0)
+                Expanded(
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: theme.colorScheme.primary,
+                      side: BorderSide(color: theme.colorScheme.primary),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: onResolveAll,
+                    icon: const Icon(Icons.done_all),
+                    label: Text(
+                      l10n.t('resolveAll'),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              if (openCount > 0) const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: theme.colorScheme.error,
+                    side: BorderSide(color: theme.colorScheme.error),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: onDeleteAll,
+                  icon: const Icon(Icons.delete_sweep_outlined),
+                  label: Text(
+                    l10n.t('deleteAll'),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         // ── Alert cards ──
         for (final alert in sortedAlerts)
           Padding(
