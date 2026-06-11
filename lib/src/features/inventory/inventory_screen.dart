@@ -1106,16 +1106,52 @@ class _StockAdjustmentDialogState
             ref.invalidate(alertsProvider);
             try {
               if (Supabase.instance.client.auth.currentSession != null) {
-                await Supabase.instance.client.functions.invoke(
-                  'send-notification',
-                  body: {
-                    'title': l10n.t('alerts'),
-                    'body': l10n.t('productsLabelLowStock'),
-                    'targetType': 'hotel',
-                    'targetValue': item.hotelId,
-                    'targetPage': '/alerts',
-                  },
-                );
+                final lang = Localizations.localeOf(context).languageCode;
+                final newFullBottles = item.fullBottles + (payload['fullBottlesDelta'] as int);
+                final newFullBidons = item.fullBidons + (payload['fullBidonsDelta'] as int);
+                
+                bool sentNotification = false;
+                
+                if (newFullBottles <= item.product.lowBottleThreshold) {
+                  sentNotification = true;
+                  await Supabase.instance.client.functions.invoke(
+                    'send-notification',
+                    body: {
+                      'title': l10n.tParams('alertLowBottleTitle', {'product': item.product.label(lang)}),
+                      'body': l10n.tParams('alertLowBottleBody', {'remain': newFullBottles.toString(), 'threshold': item.product.lowBottleThreshold.toString()}),
+                      'targetType': 'hotel',
+                      'targetValue': item.hotelId,
+                      'targetPage': '/alerts',
+                    },
+                  );
+                }
+                
+                if (newFullBidons <= item.product.lowBidonThreshold) {
+                  sentNotification = true;
+                  await Supabase.instance.client.functions.invoke(
+                    'send-notification',
+                    body: {
+                      'title': l10n.tParams('alertLowBidonTitle', {'product': item.product.label(lang)}),
+                      'body': l10n.tParams('alertLowBidonBody', {'remain': newFullBidons.toString(), 'threshold': item.product.lowBidonThreshold.toString()}),
+                      'targetType': 'hotel',
+                      'targetValue': item.hotelId,
+                      'targetPage': '/alerts',
+                    },
+                  );
+                }
+                
+                if (!sentNotification) {
+                  await Supabase.instance.client.functions.invoke(
+                    'send-notification',
+                    body: {
+                      'title': l10n.t('alerts'),
+                      'body': l10n.t('productsLabelLowStock'),
+                      'targetType': 'hotel',
+                      'targetValue': item.hotelId,
+                      'targetPage': '/alerts',
+                    },
+                  );
+                }
               }
             } catch (e) {
               debugPrint('Failed to dispatch alert push notification: $e');
