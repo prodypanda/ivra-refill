@@ -28,24 +28,9 @@ class NotificationService {
   NotificationService(this._supabase);
 
   final SupabaseClient _supabase;
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  FirebaseMessaging? _fcm;
 
   Future<void> initialize() async {
-    final settings = await _fcm.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional: false,
-    );
-
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      debugPrint('User granted push notification permission');
-      await _registerToken();
-      _fcm.onTokenRefresh.listen((_) => _registerToken());
-    } else {
-      debugPrint('User declined or has not accepted notification permission');
-    }
-
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
         
@@ -61,8 +46,8 @@ class NotificationService {
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
-    // Create default channel
-    if (Platform.isAndroid) {
+    // Create default channel and request local permissions
+    if (!kIsWeb && Platform.isAndroid) {
       const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'high_importance_channel_v2',
         'High Importance Notifications',
@@ -70,17 +55,46 @@ class NotificationService {
         importance: Importance.max,
         playSound: true,
       );
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-          ?.createNotificationChannel(channel);
+      
+      final androidPlugin = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+          
+      await androidPlugin?.createNotificationChannel(channel);
+      await androidPlugin?.requestNotificationsPermission();
     }
 
-    // Handle foreground messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('Got a message whilst in the foreground!');
-      debugPrint('Message data: ${message.data}');
-      NotificationService.showLocalNotification(message);
-    });
+    try {
+      if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
+         debugPrint('FCM not supported on this desktop platform natively.');
+         return;
+      }
+      
+      _fcm = FirebaseMessaging.instance;
+      
+      final settings = await _fcm!.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+      );
+
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        debugPrint('User granted push notification permission');
+        await _registerToken();
+        _fcm!.onTokenRefresh.listen((_) => _registerToken());
+      } else {
+        debugPrint('User declined or has not accepted notification permission');
+      }
+
+      // Handle foreground messages
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        debugPrint('Got a message whilst in the foreground!');
+        debugPrint('Message data: ${message.data}');
+        NotificationService.showLocalNotification(message);
+      });
+    } catch (e) {
+      debugPrint('Error initializing FCM: $e');
+    }
   }
 
   void _handleNotificationAction(String? payloadStr, String? actionId) {
@@ -155,7 +169,8 @@ class NotificationService {
 
   Future<void> _registerToken() async {
     try {
-      final token = await _fcm.getToken();
+      if (_fcm == null) return;
+      final token = await _fcm!.getToken();
       if (token == null) return;
 
       String deviceType = 'web';
