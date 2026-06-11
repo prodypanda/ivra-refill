@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../../services/notification_service.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/empty_state.dart';
@@ -45,6 +47,75 @@ Color _severityColor(int severity, ColorScheme colorScheme) {
   if (severity >= 3) return colorScheme.error;
   if (severity == 2) return Colors.amber.shade700;
   return Colors.blue.shade600;
+}
+
+(String, String) _getLocalizedAlertStrings(AlertItem alert, AppLocalizations l10n, String lang, Product? product) {
+  String title = alert.title;
+  String body = alert.body;
+
+  if (product != null) {
+    if (alert.type == AlertType.lowBottleStock ||
+        alert.type == AlertType.lowBidonStock) {
+      final isBottle = alert.type == AlertType.lowBottleStock;
+      final regex = RegExp(r'(\d+).*?(\d+)\.');
+      final match = regex.firstMatch(alert.body);
+      if (match != null) {
+        final remain = match.group(1);
+        final threshold = match.group(2);
+        final productName = product.label(lang);
+
+        title = l10n.tParams(
+          isBottle ? 'alertLowBottleTitle' : 'alertLowBidonTitle',
+          {'product': productName},
+        );
+        body = l10n.tParams(
+          isBottle ? 'alertLowBottleBody' : 'alertLowBidonBody',
+          {'remain': remain ?? '', 'threshold': threshold ?? ''},
+        );
+      }
+    } else if (alert.type == AlertType.refillLimit) {
+      final titleMatch = RegExp(r'Room (\S+)').firstMatch(alert.title);
+      final bodyMatch = RegExp(r'(\d+)/(\d+)').firstMatch(alert.body);
+      if (titleMatch != null && bodyMatch != null) {
+        title = l10n.tParams('alertRefillLimitTitle', {
+          'room': titleMatch.group(1) ?? '',
+          'product': product.label(lang),
+        });
+        body = l10n.tParams('alertRefillLimitBody', {
+          'used': bodyMatch.group(1) ?? '',
+          'max': bodyMatch.group(2) ?? '',
+        });
+      }
+    } else if (alert.type == AlertType.bottleAgeLimit) {
+      final titleMatch = RegExp(r'Room (\S+)').firstMatch(alert.title);
+      final bodyMatch = RegExp(r'is (\d+) days.*?is (\d+) days').firstMatch(alert.body);
+      if (titleMatch != null && bodyMatch != null) {
+        title = l10n.tParams('alertBottleAgeLimitTitle', {
+          'room': titleMatch.group(1) ?? '',
+          'product': product.label(lang),
+        });
+        body = l10n.tParams('alertBottleAgeLimitBody', {
+          'age': bodyMatch.group(1) ?? '',
+          'limit': bodyMatch.group(2) ?? '',
+        });
+      }
+    }
+  }
+
+  if (alert.type == AlertType.pendingApproval) {
+    final titleMatch = RegExp(r'Pending approval:\s+(.+)').firstMatch(alert.title);
+    final bodyMatch = RegExp(r'Requested by\s+(.+)\.').firstMatch(alert.body);
+    if (titleMatch != null && bodyMatch != null) {
+      title = l10n.tParams('alertPendingApprovalTitle', {
+        'request': titleMatch.group(1) ?? '',
+      });
+      body = l10n.tParams('alertPendingApprovalBody', {
+        'name': bodyMatch.group(1) ?? '',
+      });
+    }
+  }
+
+  return (title, body);
 }
 
 // ---------------------------------------------------------------------------
@@ -97,9 +168,44 @@ class AlertsScreen extends ConsumerWidget {
 
   Future<void> _refreshAlerts(BuildContext context, WidgetRef ref) async {
     final user = await ref.read(currentUserProvider.future);
+    
+    final oldAlerts = await ref.read(repositoryProvider).alerts(hotelId: user.hotelId);
+    final oldIds = oldAlerts.map((a) => a.id).toSet();
+
     final created = await ref
         .read(repositoryProvider)
         .refreshSmartAlerts(hotelId: user.hotelId);
+
+    if (created > 0) {
+      final newAlertsList = await ref.read(repositoryProvider).alerts(hotelId: user.hotelId);
+      final newAlerts = newAlertsList.where((a) => !oldIds.contains(a.id)).toList();
+      
+      final l10n = AppLocalizations.of(context);
+      final lang = Localizations.localeOf(context).languageCode;
+      final products = await ref.read(productsProvider.future);
+      
+      const androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'high_importance_channel_v2',
+        'High Importance Notifications',
+        importance: Importance.max,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      );
+      const platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+
+      for (final alert in newAlerts) {
+        final product = products.where((p) => p.id == alert.productId).firstOrNull;
+        final (title, body) = _getLocalizedAlertStrings(alert, l10n, lang, product);
+
+        await flutterLocalNotificationsPlugin.show(
+          id: alert.id.hashCode,
+          title: title,
+          body: body,
+          notificationDetails: platformChannelSpecifics,
+        );
+      }
+    }
+
     ref.invalidate(alertsProvider);
     ref.invalidate(dashboardProvider);
     if (!context.mounted) return;
@@ -428,75 +534,12 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
     final l10n = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
 
-    String title = widget.alert.title;
-    String body = widget.alert.body;
-
     final productsAsync = ref.watch(productsProvider);
     final product = productsAsync.valueOrNull
         ?.where((p) => p.id == widget.alert.productId)
         .firstOrNull;
 
-    if (product != null) {
-      if (widget.alert.type == AlertType.lowBottleStock ||
-          widget.alert.type == AlertType.lowBidonStock) {
-        final isBottle = widget.alert.type == AlertType.lowBottleStock;
-        final regex = RegExp(r'(\d+).*?(\d+)\.');
-        final match = regex.firstMatch(widget.alert.body);
-        if (match != null) {
-          final remain = match.group(1);
-          final threshold = match.group(2);
-          final productName = product.label(lang);
-
-          title = l10n.tParams(
-            isBottle ? 'alertLowBottleTitle' : 'alertLowBidonTitle',
-            {'product': productName},
-          );
-          body = l10n.tParams(
-            isBottle ? 'alertLowBottleBody' : 'alertLowBidonBody',
-            {'remain': remain ?? '', 'threshold': threshold ?? ''},
-          );
-        }
-      } else if (widget.alert.type == AlertType.refillLimit) {
-        final titleMatch = RegExp(r'Room (\S+)').firstMatch(widget.alert.title);
-        final bodyMatch = RegExp(r'(\d+)/(\d+)').firstMatch(widget.alert.body);
-        if (titleMatch != null && bodyMatch != null) {
-          title = l10n.tParams('alertRefillLimitTitle', {
-            'room': titleMatch.group(1) ?? '',
-            'product': product.label(lang),
-          });
-          body = l10n.tParams('alertRefillLimitBody', {
-            'used': bodyMatch.group(1) ?? '',
-            'max': bodyMatch.group(2) ?? '',
-          });
-        }
-      } else if (widget.alert.type == AlertType.bottleAgeLimit) {
-        final titleMatch = RegExp(r'Room (\S+)').firstMatch(widget.alert.title);
-        final bodyMatch = RegExp(r'is (\d+) days.*?is (\d+) days').firstMatch(widget.alert.body);
-        if (titleMatch != null && bodyMatch != null) {
-          title = l10n.tParams('alertBottleAgeLimitTitle', {
-            'room': titleMatch.group(1) ?? '',
-            'product': product.label(lang),
-          });
-          body = l10n.tParams('alertBottleAgeLimitBody', {
-            'age': bodyMatch.group(1) ?? '',
-            'limit': bodyMatch.group(2) ?? '',
-          });
-        }
-      }
-    }
-
-    if (widget.alert.type == AlertType.pendingApproval) {
-      final titleMatch = RegExp(r'Pending approval:\s+(.+)').firstMatch(widget.alert.title);
-      final bodyMatch = RegExp(r'Requested by\s+(.+)\.').firstMatch(widget.alert.body);
-      if (titleMatch != null && bodyMatch != null) {
-        title = l10n.tParams('alertPendingApprovalTitle', {
-          'request': titleMatch.group(1) ?? '',
-        });
-        body = l10n.tParams('alertPendingApprovalBody', {
-          'name': bodyMatch.group(1) ?? '',
-        });
-      }
-    }
+    final (title, body) = _getLocalizedAlertStrings(widget.alert, l10n, lang, product);
 
     final hotelsAsync = ref.watch(hotelsProvider);
     final hotel = hotelsAsync.valueOrNull
