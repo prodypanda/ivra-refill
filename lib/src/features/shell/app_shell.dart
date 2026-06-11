@@ -425,6 +425,9 @@ class _NavItem {
 class _DrawerFooter extends StatelessWidget {
   const _DrawerFooter();
 
+  // Keep this in sync with pubspec.yaml version
+  static const _appVersion = '1.0.3';
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -433,9 +436,9 @@ class _DrawerFooter extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            'App Version (v1.0.2)',
-            style: TextStyle(
+          Text(
+            'App Version (v$_appVersion)',
+            style: const TextStyle(
               fontSize: 10,
               color: Colors.grey,
             ),

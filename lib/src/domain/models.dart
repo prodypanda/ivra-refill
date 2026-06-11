@@ -527,11 +527,13 @@ class AlertItem {
     if (product != null) {
       if (type == AlertType.lowBottleStock || type == AlertType.lowBidonStock) {
         final isBottle = type == AlertType.lowBottleStock;
-        final regex = RegExp(r'(\d+).*?(\d+)\.');
-        final match = regex.firstMatch(body);
+        // SQL body format: "HotelName has N full bottles/bidons remaining. Threshold is N."
+        final bodyRegex = RegExp(r'^(.+?)\s+has\s+(\d+).*?(\d+)\.$');
+        final match = bodyRegex.firstMatch(body);
         if (match != null) {
-          final remain = match.group(1);
-          final threshold = match.group(2);
+          final hotelName = match.group(1) ?? '';
+          final remain = match.group(2) ?? '';
+          final threshold = match.group(3) ?? '';
           final productName = product.label(lang);
 
           translatedTitle = l10n.tParams(
@@ -540,7 +542,7 @@ class AlertItem {
           );
           translatedBody = l10n.tParams(
             isBottle ? 'alertLowBottleBody' : 'alertLowBidonBody',
-            {'remain': remain ?? '', 'threshold': threshold ?? ''},
+            {'hotel': hotelName, 'remain': remain, 'threshold': threshold},
           );
         }
       } else if (type == AlertType.refillLimit) {
