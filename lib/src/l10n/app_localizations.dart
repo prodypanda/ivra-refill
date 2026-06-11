@@ -443,6 +443,10 @@ class AppLocalizations {
           'Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.',
       'alertsEmptyAction': 'Refresh alerts',
       'alertTypeLowBidonStock': 'Low bidons',
+      'alertLowBottleTitle': 'Low {product} bottle stock',
+      'alertLowBidonTitle': 'Low {product} bidon stock',
+      'alertLowBottleBody': '{remain} full bottles remain. Threshold is {threshold}.',
+      'alertLowBidonBody': '{remain} full bidons remain. Threshold is {threshold}.',
       'alertTypeLowBottleStock': 'Low bottles',
       'alertTypeBottleAgeLimit': 'Bottle age',
       'alertTypeRefillLimit': 'Refill limit',
@@ -911,6 +915,10 @@ class AppLocalizations {
           'Actualisez les alertes intelligentes pour analyser le stock, les limites de recharge, l\'âge des bouteilles et les approbations en attente.',
       'alertsEmptyAction': 'Actualiser les alertes',
       'alertTypeLowBidonStock': 'Stock bas (bidons)',
+      'alertLowBottleTitle': 'Stock de bouteilles faible ({product})',
+      'alertLowBidonTitle': 'Stock de bidons faible ({product})',
+      'alertLowBottleBody': 'Il reste {remain} bouteilles pleines. Le seuil est {threshold}.',
+      'alertLowBidonBody': 'Il reste {remain} bidons pleins. Le seuil est {threshold}.',
       'alertTypeLowBottleStock': 'Stock bas (bouteilles)',
       'alertTypeBottleAgeLimit': 'Âge bouteille',
       'alertTypeRefillLimit': 'Limite de recharges',
@@ -1390,11 +1398,15 @@ class AppLocalizations {
       'alertsEmptyTitle':
           '\u0644\u0627 \u062a\u0648\u062c\u062f \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0628\u0639\u062f',
       'alertsEmptyMessage':
-          '\u062d\u062f\u0651\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0630\u0643\u064a\u0651\u0629 \u0644\u0641\u062d\u0635 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u062d\u062f\u0648\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629 \u0648\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0627\u062a \u0648\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0627\u062a \u0627\u0644\u0645\u0639\u0644\u0651\u0642\u0629.',
+          '\u062d\u062f\u0651\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0630\u0643\u064a\u0651\u0629 \u0644\u0641\u062d\u0635 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u062d\u062f\u0648\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629 \u0648\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0627\u062a \u0648\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0627\u062a \u0627\u0644\u0645\u0649\u0639\u0644\u0651\u0642\u0629.',
       'alertsEmptyAction':
           '\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a',
       'alertTypeLowBidonStock':
           '\u0645\u062e\u0632\u0648\u0646 \u0628\u064a\u062f\u0648\u0646\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
+      'alertLowBottleTitle': 'انخفاض مخزون زجاجات {product}',
+      'alertLowBidonTitle': 'انخفاض مخزون قوارير {product}',
+      'alertLowBottleBody': 'تبقى {remain} زجاجات ممتلئة. الحد الأدنى هو {threshold}.',
+      'alertLowBidonBody': 'تبقى {remain} قوارير ممتلئة. الحد الأدنى هو {threshold}.',
       'alertTypeLowBottleStock':
           '\u0645\u062e\u0632\u0648\u0646 \u0632\u062c\u0627\u062c\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
       'alertTypeBottleAgeLimit':
@@ -1880,6 +1892,10 @@ class AppLocalizations {
           'Aggiorna gli avvisi intelligenti per scansionare scorte, limiti di ricarica, et\u00e0 delle bottiglie e approvazioni in sospeso.',
       'alertsEmptyAction': 'Aggiorna avvisi',
       'alertTypeLowBidonStock': 'Scorte basse (bidoni)',
+      'alertLowBottleTitle': 'Scorte basse di bottiglie di {product}',
+      'alertLowBidonTitle': 'Scorte basse di taniche di {product}',
+      'alertLowBottleBody': 'Rimangono {remain} bottiglie piene. La soglia è {threshold}.',
+      'alertLowBidonBody': 'Rimangono {remain} taniche piene. La soglia è {threshold}.',
       'alertTypeLowBottleStock': 'Scorte basse (bottiglie)',
       'alertTypeBottleAgeLimit': 'Et\u00e0 bottiglia',
       'alertTypeRefillLimit': 'Limite ricariche',

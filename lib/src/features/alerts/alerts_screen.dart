@@ -401,7 +401,7 @@ class _MetricCard extends StatelessWidget {
 // Alert card
 // ---------------------------------------------------------------------------
 
-class _AlertCard extends StatefulWidget {
+class _AlertCard extends ConsumerStatefulWidget {
   const _AlertCard({
     required this.alert,
     required this.onResolve,
@@ -413,10 +413,10 @@ class _AlertCard extends StatefulWidget {
   final ValueChanged<String> onDelete;
 
   @override
-  State<_AlertCard> createState() => _AlertCardState();
+  ConsumerState<_AlertCard> createState() => _AlertCardState();
 }
 
-class _AlertCardState extends State<_AlertCard> {
+class _AlertCardState extends ConsumerState<_AlertCard> {
   bool _isHovered = false;
 
   @override
@@ -426,6 +426,37 @@ class _AlertCardState extends State<_AlertCard> {
     final isResolved = widget.alert.isResolved;
     final severityCol = _severityColor(widget.alert.severity, colorScheme);
     final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+
+    String title = widget.alert.title;
+    String body = widget.alert.body;
+
+    final productsAsync = ref.watch(productsProvider);
+    final product = productsAsync.valueOrNull
+        ?.where((p) => p.id == widget.alert.productId)
+        .firstOrNull;
+
+    if (product != null &&
+        (widget.alert.type == AlertType.lowBottleStock ||
+            widget.alert.type == AlertType.lowBidonStock)) {
+      final isBottle = widget.alert.type == AlertType.lowBottleStock;
+      final regex = RegExp(r'(\d+).*?(\d+)\.');
+      final match = regex.firstMatch(widget.alert.body);
+      if (match != null) {
+        final remain = match.group(1);
+        final threshold = match.group(2);
+        final productName = product.label(lang);
+
+        title = l10n.tParams(
+          isBottle ? 'alertLowBottleTitle' : 'alertLowBidonTitle',
+          {'product': productName},
+        );
+        body = l10n.tParams(
+          isBottle ? 'alertLowBottleBody' : 'alertLowBidonBody',
+          {'remain': remain ?? '', 'threshold': threshold ?? ''},
+        );
+      }
+    }
 
     // Muted opacity for resolved alerts
     final contentOpacity = isResolved ? 0.45 : 1.0;
@@ -540,7 +571,7 @@ class _AlertCardState extends State<_AlertCard> {
                                   // Title
                                   Expanded(
                                     child: Text(
-                                      widget.alert.title,
+                                      title,
                                       style:
                                           theme.textTheme.titleMedium?.copyWith(
                                         fontWeight: FontWeight.w800,
@@ -575,7 +606,7 @@ class _AlertCardState extends State<_AlertCard> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 2),
                                 child: Text(
-                                  widget.alert.body,
+                                  body,
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: colorScheme.onSurface.withValues(
                                         alpha: isResolved ? 0.35 : 0.72),
