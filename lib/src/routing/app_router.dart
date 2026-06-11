@@ -139,7 +139,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: InventoryScreen.route,
-            builder: (context, state) => const InventoryScreen(),
+            builder: (context, state) {
+              final hotelId = state.uri.queryParameters['hotelId'];
+              return InventoryScreen(hotelId: hotelId);
+            },
           ),
           GoRoute(
             path: ProductsScreen.route,

@@ -15,7 +15,8 @@ import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
-  const InventoryScreen({super.key});
+  final String? hotelId;
+  const InventoryScreen({super.key, this.hotelId});
 
   static const route = '/inventory';
 
@@ -32,6 +33,19 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    if (widget.hotelId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(selectedHotelIdProvider.notifier).state = widget.hotelId;
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant InventoryScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.hotelId != oldWidget.hotelId && widget.hotelId != null) {
+      ref.read(selectedHotelIdProvider.notifier).state = widget.hotelId;
+    }
   }
 
   @override
@@ -1140,6 +1154,24 @@ class _StockAdjustmentDialogState
                        'targetType': 'hotel',
                        'targetValue': item.hotelId,
                        'targetPage': '/alerts',
+                       'actionButtons': [
+                         {
+                           'id': 'more_info',
+                           'title': l10n.t('notificationMoreInfo'),
+                         },
+                         {
+                           'id': 'resolve',
+                           'title': l10n.t('alertsResolve'),
+                         },
+                         {
+                           'id': 'delete',
+                           'title': l10n.t('delete'),
+                         },
+                       ],
+                       'data': {
+                         'alertId': alert.id,
+                         'hotelId': item.hotelId,
+                       },
                      },
                    );
                    debugPrint('[ALERT-PUSH] Notification sent successfully for alert ${alert.id}');

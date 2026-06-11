@@ -362,6 +362,7 @@ class AppLocalizations {
       'accountYou': 'You',
       'alertsRefreshSmart': 'Refresh smart alerts',
       'alertsResolve': 'Resolve',
+      'delete': 'Delete',
       'approvalsEmpty': 'No pending approvals',
       'approvalsEmptySubtitle': 'All approval requests have been processed.',
       'approvalsApprove': 'Approve',
@@ -437,6 +438,8 @@ class AppLocalizations {
       'invitationStatusCancelled': 'Cancelled',
       'invitationStatusExpired': 'Expired',
       'alertResolvedToast': 'Alert resolved',
+      'alertDeletedToast': 'Alert deleted',
+      'notificationMoreInfo': 'More info',
       'alertsRefreshedToast': '{count} smart alerts created',
       'alertsEmptyTitle': 'No alerts yet',
       'alertsEmptyMessage':
@@ -835,6 +838,7 @@ class AppLocalizations {
       'accountYou': 'Vous',
       'alertsRefreshSmart': 'Actualiser les alertes',
       'alertsResolve': 'Résoudre',
+      'delete': 'Supprimer',
       'approvalsEmpty': 'Aucune approbation en attente',
       'approvalsEmptySubtitle':
           'Toutes les demandes d\'approbation ont été traitées.',
@@ -915,6 +919,8 @@ class AppLocalizations {
       'invitationStatusCancelled': 'Annulée',
       'invitationStatusExpired': 'Expirée',
       'alertResolvedToast': 'Alerte résolue',
+      'alertDeletedToast': 'Alerte supprimée',
+      'notificationMoreInfo': "Plus d'infos",
       'alertsRefreshedToast': '{count} alertes intelligentes créées',
       'alertsEmptyTitle': 'Aucune alerte pour le moment',
       'alertsEmptyMessage':
@@ -1305,6 +1311,7 @@ class AppLocalizations {
       'accountYou': 'أنت',
       'alertsRefreshSmart': 'تحديث التنبيهات الذكية',
       'alertsResolve': 'حل',
+      'delete': 'حذف',
       'approvalsEmpty': 'لا توجد موافقات معلقة',
       'approvalsEmptySubtitle': 'تمت معالجة جميع طلبات الموافقة.',
       'approvalsApprove': 'موافقة',
@@ -1414,6 +1421,8 @@ class AppLocalizations {
       'invitationStatusExpired': '\u0645\u0646\u062a\u0647\u064a\u0629',
       'alertResolvedToast':
           '\u062a\u0645\u0651 \u062d\u0644\u0651 \u0627\u0644\u062a\u0646\u0628\u064a\u0647',
+      'alertDeletedToast': 'تم حذف التنبيه',
+      'notificationMoreInfo': 'مزيد من المعلومات',
       'alertsRefreshedToast':
           '\u062a\u0645\u0651 \u0625\u0646\u0634\u0627\u0621 {count} \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0630\u0643\u064a\u0651\u0629',
       'alertsEmptyTitle':
@@ -1827,6 +1836,7 @@ class AppLocalizations {
       'accountYou': 'Tu',
       'alertsRefreshSmart': 'Aggiorna avvisi intelligenti',
       'alertsResolve': 'Risolvi',
+      'delete': 'Elimina',
       'approvalsEmpty': 'Nessuna approvazione in sospeso',
       'approvalsEmptySubtitle':
           'Tutte le richieste di approvazione sono state elaborate.',
@@ -1903,6 +1913,8 @@ class AppLocalizations {
       'invitationStatusCancelled': 'Annullato',
       'invitationStatusExpired': 'Scaduto',
       'alertResolvedToast': 'Avviso risolto',
+      'alertDeletedToast': 'Avviso eliminato',
+      'notificationMoreInfo': 'Più info',
       'alertsRefreshedToast': '{count} avvisi intelligenti creati',
       'alertsEmptyTitle': 'Nessun avviso al momento',
       'alertsEmptyMessage':

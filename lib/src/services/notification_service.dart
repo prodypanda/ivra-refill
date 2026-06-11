@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 
 import '../app/ivra_app.dart';
 import '../state/app_state.dart';
+import '../l10n/app_localizations.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -21,13 +22,14 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 final notificationServiceProvider = Provider((ref) {
-  return NotificationService(Supabase.instance.client);
+  return NotificationService(Supabase.instance.client, ref);
 });
 
 class NotificationService {
-  NotificationService(this._supabase);
+  NotificationService(this._supabase, this._ref);
 
   final SupabaseClient _supabase;
+  final Ref _ref;
   FirebaseMessaging? _fcm;
 
   Future<void> initialize() async {
@@ -112,6 +114,72 @@ class NotificationService {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Acknowledged')));
         }
         
+        if (actionId == 'more_info') {
+          final hotelId = payload['hotelId'];
+          if (hotelId != null && hotelId.toString().isNotEmpty) {
+            GoRouter.of(context).go('/inventory?hotelId=$hotelId');
+          } else {
+            GoRouter.of(context).go('/inventory');
+          }
+          return;
+        }
+        
+        if (actionId == 'resolve') {
+          final alertId = payload['alertId'];
+          if (alertId != null && alertId.toString().isNotEmpty) {
+            _ref.read(repositoryProvider).resolveAlert(alertId: alertId.toString()).then((_) {
+              if (!context.mounted) return;
+              _ref.invalidate(alertsProvider);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(AppLocalizations.of(context).t('alertResolvedToast')),
+                  backgroundColor: const Color(0xFF4CAF50),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }).catchError((e) {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to resolve alert: $e'),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            });
+          }
+          GoRouter.of(context).go('/alerts');
+          return;
+        }
+        
+        if (actionId == 'delete') {
+          final alertId = payload['alertId'];
+          if (alertId != null && alertId.toString().isNotEmpty) {
+            _ref.read(repositoryProvider).deleteAlert(alertId.toString()).then((_) {
+              if (!context.mounted) return;
+              _ref.invalidate(alertsProvider);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(AppLocalizations.of(context).t('alertDeletedToast')),
+                  backgroundColor: const Color(0xFF4CAF50),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }).catchError((e) {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to delete alert: $e'),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            });
+          }
+          GoRouter.of(context).go('/alerts');
+          return;
+        }
+
         final targetPage = payload['targetPage'];
         if (targetPage != null && targetPage.toString().isNotEmpty) {
            GoRouter.of(context).go(targetPage.toString());
@@ -133,11 +201,19 @@ class NotificationService {
       try {
         final List<dynamic> btns = jsonDecode(actionButtonsStr);
         for (var btn in btns) {
-          actions.add(AndroidNotificationAction(
-            btn.toString(),
-            btn.toString(),
-            showsUserInterface: true,
-          ));
+          if (btn is Map) {
+            actions.add(AndroidNotificationAction(
+              btn['id'].toString(),
+              btn['title'].toString(),
+              showsUserInterface: true,
+            ));
+          } else {
+            actions.add(AndroidNotificationAction(
+              btn.toString(),
+              btn.toString(),
+              showsUserInterface: true,
+            ));
+          }
         }
       } catch (e) {
         debugPrint('Error parsing actionButtons: $e');
