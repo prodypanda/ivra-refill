@@ -21,13 +21,16 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 final notificationServiceProvider = Provider((ref) {
-  return NotificationService(Supabase.instance.client);
+  final useSupabase = ref.watch(useSupabaseProvider);
+  return NotificationService(
+    useSupabase ? Supabase.instance.client : null,
+  );
 });
 
 class NotificationService {
   NotificationService(this._supabase);
 
-  final SupabaseClient _supabase;
+  final SupabaseClient? _supabase;
   FirebaseMessaging? _fcm;
 
   Future<void> initialize() async {
@@ -179,11 +182,13 @@ class NotificationService {
         else if (Platform.isIOS) deviceType = 'ios';
       }
 
-      await _supabase.rpc('register_fcm_token', params: {
-        'p_token': token,
-        'p_device_type': deviceType,
-      });
-      debugPrint('FCM Token registered successfully.');
+      if (_supabase != null) {
+        await _supabase!.rpc('register_fcm_token', params: {
+          'p_token': token,
+          'p_device_type': deviceType,
+        });
+        debugPrint('FCM Token registered successfully.');
+      }
     } catch (e) {
       debugPrint('Error registering FCM token: $e');
     }

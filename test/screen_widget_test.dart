@@ -20,7 +20,17 @@ import 'package:ivra_refill/src/features/shared/offline_banner.dart';
 import 'package:ivra_refill/src/features/team/team_screen.dart';
 import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class _MockNotificationService extends NotificationService {
+  _MockNotificationService() : super(null);
+
+  @override
+  Future<void> initialize() async {
+    // No-op for tests
+  }
+}
 
 void main() {
   SharedPreferences.setMockInitialValues({});
@@ -946,6 +956,7 @@ Future<void> _pumpIvraApp(
         connectivityProvider.overrideWith(
           (ref) => ConnectivityNotifier(host: null),
         ),
+        notificationServiceProvider.overrideWith((ref) => _MockNotificationService()),
       ],
       child: const IvraApp(),
     ),
