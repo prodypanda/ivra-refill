@@ -58,6 +58,13 @@ class AppLocalizations {
       'selectRole': 'Select Role',
       'selectHotel': 'Select Hotel',
       'userEmail': 'User Email',
+      'menuAuditLogs': 'Audit Logs',
+      'auditLogs': 'Audit Logs',
+      'auditAction': 'Action',
+      'auditDevice': 'Device / OS',
+      'auditIpAddress': 'IP Address',
+      'auditTimestamp': 'Time',
+      'auditUser': 'User',
       'enterSpecificUserEmail': 'Enter specific user email',
       'dispatchNotification': 'Dispatch Notification',
       'pleaseEnterTitleBody': 'Please enter a title and body',
@@ -543,16 +550,19 @@ class AppLocalizations {
       'byUserEmail': 'Par e-mail',
       'selectRole': 'Sélectionner un rôle',
       'selectHotel': 'Sélectionner un hôtel',
-      'userEmail': 'E-mail de l\'utilisateur',
+      'userEmail': 'Email de l\'utilisateur',
+      'menuAuditLogs': 'Journaux d\'audit',
+      'auditLogs': 'Journaux d\'audit',
+      'auditAction': 'Action',
+      'auditDevice': 'Appareil / OS',
+      'auditIpAddress': 'Adresse IP',
+      'auditTimestamp': 'Heure',
+      'auditUser': 'Utilisateur',
       'enterSpecificUserEmail': 'Entrez un e-mail spécifique',
       'dispatchNotification': 'Diffuser la notification',
       'pleaseEnterTitleBody': 'Veuillez entrer un titre et un corps',
       'pleaseSelectTarget': 'Veuillez sélectionner une valeur cible',
       'notificationSent': 'Envoyé : {successCount} succès, {failureCount} échecs',
-
-
-
-
       'dashboardShort': 'T. de bord',
       'dashboardHeroTitle': 'Aujourd’hui chez Ivra',
       'dashboardRefillActivity': 'Activité de recharge (7 derniers jours)',
@@ -1036,9 +1046,6 @@ class AppLocalizations {
       'markAsRead': 'Marquer comme lu',
     },
     'ar': {
-
-
-
       'actionAndRouting': 'الإجراءات والتوجيه',
       'openSpecificPage': 'فتح صفحة محددة (اختياري)',
       'defaultNoPage': 'الافتراضي (لا توجد صفحة)',
@@ -1050,7 +1057,6 @@ class AppLocalizations {
       'dismiss': 'تجاهل',
       'acknowledge': 'تأكيد',
       'openApp': 'فتح التطبيق',
-
       'sendNotification': 'إرسال إشعار',
       'targetAudience': 'الجمهور المستهدف',
       'allUsers': 'جميع المستخدمين',
@@ -1059,16 +1065,19 @@ class AppLocalizations {
       'byUserEmail': 'حسب البريد الإلكتروني',
       'selectRole': 'حدد الدور',
       'selectHotel': 'حدد الفندق',
-      'userEmail': 'البريد الإلكتروني',
+      'userEmail': 'البريد الإلكتروني للمستخدم',
+      'menuAuditLogs': 'سجلات التدقيق',
+      'auditLogs': 'سجلات التدقيق',
+      'auditAction': 'إجراء',
+      'auditDevice': 'الجهاز',
+      'auditIpAddress': 'عنوان IP',
+      'auditTimestamp': 'الوقت',
+      'auditUser': 'المستخدم',
       'enterSpecificUserEmail': 'أدخل بريد إلكتروني محدد',
       'dispatchNotification': 'إرسال الإشعار',
       'pleaseEnterTitleBody': 'الرجاء إدخال عنوان ونص',
       'pleaseSelectTarget': 'الرجاء تحديد القيمة المستهدفة',
       'notificationSent': 'تم الإرسال: {successCount} نجاح، {failureCount} فشل',
-
-
-
-
       'dashboardShort': 'التحكم',
       'dashboardHeroTitle': 'اليوم في Ivra',
       'dashboardRefillActivity': 'نشاط التعبئة (آخر 7 أيام)',
@@ -1431,7 +1440,7 @@ class AppLocalizations {
       'teamInvitationCancelled':
           '\u062a\u0645 \u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u062f\u0639\u0648\u0629 \u0644\u0640 {email}',
       'teamInvitationResent':
-          '\u062a\u0645\u062a \u0625\u0639\u0627\u062f\u0629 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u062f\u0639\u0648\u0629 \u0625\u0644\u0649 {email}',
+          '\u062a\u0645\u062a \u0625\u0639\u0627\u062f\u0629 \u0625\u0631\u0633\u0624\u0644 \u0627\u0644\u062f\u0639\u0648\u0629 \u0625\u0644\u0649 {email}',
       'teamInvitationCopied':
           '\u062a\u0645 \u0646\u0633\u062e \u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0639\u0648\u0629 \u0644\u0640 {email}',
       'approvalsRequestedBy':
@@ -1497,7 +1506,7 @@ class AppLocalizations {
       'alertsEmptyTitle':
           '\u0644\u0627 \u062a\u0648\u062c\u062f \u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0628\u0639\u062f',
       'alertsEmptyMessage':
-          '\u062d\u062f\u0651\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0630\u0643\u064a\u0651\u0629 \u0644\u0641\u062d\u0635 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u062d\u062f\u0648\u062f \u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0628\u0626\u0629 \u0648\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0627\u062a \u0648\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0627\u062a \u0627\u0644\u0645\u0649\u0639\u0644\u0651\u0642\u0629.',
+          '\u062d\u062f\u0651\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a \u0627\u0644\u0630\u0643\u064a\u0651\u0629 \u0644\u0641\u062d\u0635 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u062d\u062f\u0648\u062f \u0625\u0639\u0627\u062f\u0629 \u0625\u0627\u0644\u062a\u0639\u0628\u0626\u0629 \u0648\u0639\u0645\u0631 \u0627\u0644\u0632\u062c\u0627\u062c\u0627\u062a \u0648\u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0627\u062a \u0627\u0644\u0645\u0649\u0639\u0644\u0651\u0642\u0629.',
       'alertsEmptyAction':
           '\u062a\u062d\u062f\u064a\u062b \u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a',
       'alertTypeLowBidonStock':
@@ -1508,7 +1517,6 @@ class AppLocalizations {
       'alertLowBidonBody': '{hotel}: تبقى {remain} قوارير ممتلئة. الحد الأدنى هو {threshold}.',
       'alertTypeLowBottleStock':
           '\u0645\u062e\u0632\u0648\u0646 \u0632\u062c\u0627\u062c\u0627\u062a \u0645\u0646\u062e\u0641\u0636',
-
       'alertTypeSuspiciousActivity':
           '\u0646\u0634\u0627\u0637 \u0645\u0634\u0628\u0648\u0647',
       'alertTypeInactiveHotel':
@@ -1534,7 +1542,7 @@ class AppLocalizations {
       'inviteSubtitleNoHotel':
           '\u062a\u0645\u0651\u062a \u062f\u0639\u0648\u0629 {name} \u0628\u0635\u0641\u0629 {role}.',
       'inviteEmailMismatch':
-          '\u0627\u0633\u062a\u062e\u062f\u0645 \u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0627\u0644\u0630\u064a \u0623\u064f\u0631\u0633\u0644\u062a \u0625\u0644\u064a\u0647 \u0647\u0630\u0647 \u0627\u0644\u062f\u0639\u0648\u0629.',
+          '\u0627\u0633\u062a\u062f\u062e\u062f\u0645 \u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0627\u0644\u0630\u064a \u0623\u064f\u0631\u0633\u0644\u062a \u0625\u0644\u064a\u0647 \u0647\u0630\u0647 \u0627\u0644\u062f\u0639\u0648\u0629.',
       'inviteAccountCreatedConfirm':
           '\u062a\u0645 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u062d\u0633\u0627\u0628. \u0623\u0643\u0651\u062f \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u060c \u062b\u0645 \u0639\u064f\u062f \u0625\u0644\u0649 \u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0639\u0648\u0629 \u0648\u0623\u062f\u062e\u0644 \u0646\u0641\u0633 \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u0644\u0625\u0643\u0645\u0627\u0644 \u0627\u0644\u0627\u0646\u0636\u0645\u0627\u0645.',
       'inviteInvalidHeading':
@@ -1572,9 +1580,6 @@ class AppLocalizations {
       'markAsRead': 'تحديد كمقروء',
     },
     'it': {
-
-
-
       'actionAndRouting': 'Azioni e Routing',
       'openSpecificPage': 'Apri Pagina Specifica (Opzionale)',
       'defaultNoPage': 'Predefinito (Nessuna pagina)',
@@ -1586,7 +1591,6 @@ class AppLocalizations {
       'dismiss': 'Ignora',
       'acknowledge': 'Conferma',
       'openApp': 'Apri App',
-
       'sendNotification': 'Invia Notifica',
       'targetAudience': 'Destinatari',
       'allUsers': 'Tutti gli utenti',
@@ -1595,7 +1599,14 @@ class AppLocalizations {
       'byUserEmail': 'Per email',
       'selectRole': 'Seleziona ruolo',
       'selectHotel': 'Seleziona hotel',
-      'userEmail': 'Email Utente',
+      'userEmail': 'Email dell\'utente',
+      'menuAuditLogs': 'Registri di Controllo',
+      'auditLogs': 'Registri di Controllo',
+      'auditAction': 'Azione',
+      'auditDevice': 'Dispositivo / OS',
+      'auditIpAddress': 'Indirizzo IP',
+      'auditTimestamp': 'Ora',
+      'auditUser': 'Utente',
       'enterSpecificUserEmail': 'Inserisci un\'email specifica',
       'dispatchNotification': 'Invia la notifica',
       'pleaseEnterTitleBody': 'Inserisci un titolo e un corpo',

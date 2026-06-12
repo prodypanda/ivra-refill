@@ -11,6 +11,7 @@ import '../auth/login_screen.dart';
 import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
+import '../../services/audit_service.dart';
 
 class AccountScreen extends ConsumerStatefulWidget {
   const AccountScreen({super.key});
@@ -176,6 +177,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
   Future<void> _signOut() async {
     setState(() => _isSigningOut = true);
     try {
+      ref.read(auditServiceProvider).logAction('User logged off');
       await Supabase.instance.client.auth.signOut();
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);

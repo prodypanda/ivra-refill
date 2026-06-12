@@ -6,12 +6,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/app_enums.dart';
 import '../domain/models.dart';
+import '../services/audit_service.dart';
 import 'ivra_repository.dart';
 
 class SupabaseIvraRepository implements IvraRepository {
-  SupabaseIvraRepository(this._client);
+  SupabaseIvraRepository(this._client) {
+    _auditService = AuditService(_client);
+  }
 
   final SupabaseClient _client;
+  late final AuditService _auditService;
 
   Future<T> _fetchWithCache<T>(String key, Future<T> Function() fetcher) async {
     try {
@@ -122,20 +126,22 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
-  Future<void> updateCurrentUserProfile({required String fullName}) {
-    return _client.rpc('update_current_profile', params: {
+  Future<void> updateCurrentUserProfile({required String fullName}) async {
+    await _client.rpc('update_current_profile', params: {
       'p_full_name': fullName,
     });
+      _auditService.logAction('Updated current user profile', details: {'full_name': fullName});
   }
 
   @override
   Future<void> updateUserProfile({
     required String userId,
     required String fullName,
-  }) {
-    return _client.from('profiles').update({
+  }) async {
+    await _client.from('profiles').update({
       'full_name': fullName,
     }).eq('id', userId);
+      _auditService.logAction('Updated user profile', details: {'user_id': userId, 'full_name': fullName});
   }
 
   @override
@@ -204,6 +210,21 @@ class SupabaseIvraRepository implements IvraRepository {
     return rows
         .map<TeamInvitation>((row) => TeamInvitation.fromMap(row))
         .toList();
+  }
+
+  @override
+  Future<List<AuditLog>> fetchAuditLogs() async {
+    final rows = await _fetchWithCache(
+      'audit_logs',
+      () => _client.from('audit_logs').select().order('created_at', ascending: false).limit(200),
+    );
+    return rows.map<AuditLog>((row) => AuditLog.fromMap(row)).toList();
+  }
+
+  @override
+  Future<void> clearAuditLogs() async {
+    await _client.rpc('clear_audit_logs');
+    _auditService.logAction('Cleared audit logs');
   }
 
   @override
@@ -310,8 +331,8 @@ class SupabaseIvraRepository implements IvraRepository {
     required String phone,
     String address = '',
     String notes = '',
-  }) {
-    return _client.from('hotels').insert({
+  }) async {
+    await _client.from('hotels').insert({
       'name': name,
       'legal_name': legalName,
       'city': city,
@@ -322,36 +343,43 @@ class SupabaseIvraRepository implements IvraRepository {
       'address': address,
       'notes': notes,
     });
+    _auditService.logAction('Created hotel', details: {'name': name});
   }
 
   @override
   Future<void> deleteHotel(String hotelId) async {
     await _client.from('hotels').delete().eq('id', hotelId);
+    _auditService.logAction('Deleted hotel', details: {'hotel_id': hotelId});
   }
 
   @override
   Future<void> deleteRoom(String roomId) async {
     await _client.from('rooms').delete().eq('id', roomId);
+    _auditService.logAction('Deleted room', details: {'room_id': roomId});
   }
 
   @override
   Future<void> deleteFloor(String floorId) async {
     await _client.from('floors').delete().eq('id', floorId);
+    _auditService.logAction('Deleted floor', details: {'floor_id': floorId});
   }
 
   @override
   Future<void> deleteUser(String userId) async {
     await _client.rpc('delete_user', params: {'target_user_id': userId});
+    _auditService.logAction('Deleted user', details: {'user_id': userId});
   }
 
   @override
   Future<void> deleteAlert(String alertId) async {
     await _client.from('alerts').delete().eq('id', alertId);
+    _auditService.logAction('Deleted alert', details: {'alert_id': alertId});
   }
 
   @override
   Future<void> deleteProduct(String productId) async {
     await _client.from('products').delete().eq('id', productId);
+    _auditService.logAction('Deleted product', details: {'product_id': productId});
   }
 
   @override
@@ -361,14 +389,15 @@ class SupabaseIvraRepository implements IvraRepository {
     required int firstRoomNumber,
     required int roomCount,
     required List<String> productIds,
-  }) {
-    return _client.rpc('create_rooms_from_template', params: {
+  }) async {
+    await _client.rpc('create_rooms_from_template', params: {
       'p_hotel_id': hotelId,
       'p_floor_number': floorNumber,
       'p_first_room_number': firstRoomNumber,
       'p_room_count': roomCount,
       'p_product_ids': productIds,
     });
+    _auditService.logAction('Created rooms from template', details: {'hotel_id': hotelId, 'floor_number': floorNumber, 'room_count': roomCount});
   }
 
   @override
@@ -377,12 +406,18 @@ class SupabaseIvraRepository implements IvraRepository {
     required String fullName,
     required String role,
     String? hotelId,
-  }) {
-    return _client.rpc('create_team_invitation', params: {
+  }) async {
+    await _client.rpc('create_team_invitation', params: {
       'p_email': email,
       'p_full_name': fullName,
       'p_role': role,
       'p_hotel_id': hotelId,
+    });
+    
+    _auditService.logAction('Invited team member', details: {
+      'email': email,
+      'role': role,
+      'hotel_id': hotelId,
     });
   }
 
@@ -403,34 +438,42 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
-  Future<void> acceptTeamInvitation({required String token}) {
-    return _client.rpc('accept_team_invitation', params: {
+  Future<void> acceptTeamInvitation({required String token}) async {
+    await _client.rpc('accept_team_invitation', params: {
       'p_token': token,
     });
+    _auditService.logAction('Accepted team invitation', details: {});
   }
 
   @override
-  Future<void> cancelTeamInvitation({required String invitationId}) {
-    return _client.rpc('cancel_team_invitation', params: {
+  Future<void> cancelTeamInvitation({required String invitationId}) async {
+    await _client.rpc('cancel_team_invitation', params: {
       'p_invitation_id': invitationId,
     });
+    _auditService.logAction('Canceled team invitation', details: {'invitation_id': invitationId});
   }
 
   @override
-  Future<void> resendTeamInvitation({required String invitationId}) {
-    return _client.rpc('resend_team_invitation', params: {
+  Future<void> resendTeamInvitation({required String invitationId}) async {
+    await _client.rpc('resend_team_invitation', params: {
       'p_invitation_id': invitationId,
     });
+    _auditService.logAction('Resent team invitation', details: {'invitation_id': invitationId});
   }
 
   @override
   Future<void> setTeamMemberActive({
     required String userId,
     required bool isActive,
-  }) {
-    return _client.rpc('set_team_member_active', params: {
+  }) async {
+    await _client.rpc('set_team_member_active', params: {
       'p_user_id': userId,
       'p_is_active': isActive,
+    });
+    
+    _auditService.logAction('Set team member active status', details: {
+      'user_id': userId,
+      'is_active': isActive,
     });
   }
 
@@ -448,8 +491,8 @@ class SupabaseIvraRepository implements IvraRepository {
     required int lowBottleThreshold,
     required int lowBidonThreshold,
     String? imageUrl,
-  }) {
-    return _client.from('products').insert({
+  }) async {
+    await _client.from('products').insert({
       'sku': sku,
       'default_name': nameEn,
       'name_en': nameEn,
@@ -464,6 +507,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'low_bidon_threshold': lowBidonThreshold,
       'image_url': imageUrl,
     });
+    _auditService.logAction('Created product', details: {'sku': sku});
   }
 
   @override
@@ -481,8 +525,8 @@ class SupabaseIvraRepository implements IvraRepository {
     required int lowBottleThreshold,
     required int lowBidonThreshold,
     String? imageUrl,
-  }) {
-    return _client.from('products').update({
+  }) async {
+    await _client.from('products').update({
       'sku': sku,
       'default_name': nameEn,
       'name_en': nameEn,
@@ -497,6 +541,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'low_bidon_threshold': lowBidonThreshold,
       'image_url': imageUrl,
     }).eq('id', productId);
+    _auditService.logAction('Updated product', details: {'product_id': productId});
   }
 
   @override
@@ -504,23 +549,25 @@ class SupabaseIvraRepository implements IvraRepository {
     required String roomProductId,
     String? notes,
     String? clientRequestId,
-  }) {
-    return _client.rpc('record_refill', params: {
+  }) async {
+    await _client.rpc('record_refill', params: {
       'p_room_product_id': roomProductId,
       'p_notes': notes,
       'p_client_request_id': clientRequestId,
     });
+    _auditService.logAction('Recorded refill', details: {'room_product_id': roomProductId});
   }
 
   @override
   Future<void> undoRefill({
     required String refillEventId,
     String? clientRequestId,
-  }) {
-    return _client.rpc('undo_refill', params: {
+  }) async {
+    await _client.rpc('undo_refill', params: {
       'p_refill_event_id': refillEventId,
       'p_client_request_id': clientRequestId,
     });
+    _auditService.logAction('Undid refill', details: {'refill_event_id': refillEventId});
   }
 
   @override
@@ -528,12 +575,13 @@ class SupabaseIvraRepository implements IvraRepository {
     required String refillEventId,
     required String reason,
     String? clientRequestId,
-  }) {
-    return _client.rpc('request_refill_correction', params: {
+  }) async {
+    await _client.rpc('request_refill_correction', params: {
       'p_refill_event_id': refillEventId,
       'p_reason': reason,
       'p_client_request_id': clientRequestId,
     });
+    _auditService.logAction('Requested stock correction', details: {'refill_event_id': refillEventId});
   }
 
   @override
@@ -541,12 +589,13 @@ class SupabaseIvraRepository implements IvraRepository {
     required String roomProductId,
     String? notes,
     String? clientRequestId,
-  }) {
-    return _client.rpc('replace_bottle', params: {
+  }) async {
+    await _client.rpc('replace_bottle', params: {
       'p_room_product_id': roomProductId,
       'p_notes': notes,
       'p_client_request_id': clientRequestId,
     });
+    _auditService.logAction('Replaced bottle', details: {'room_product_id': roomProductId});
   }
 
   @override
@@ -558,8 +607,8 @@ class SupabaseIvraRepository implements IvraRepository {
     required Map<String, dynamic> oldData,
     required Map<String, dynamic> newData,
     String? clientRequestId,
-  }) {
-    return _client.rpc('submit_change_request', params: {
+  }) async {
+    final result = await _client.rpc('submit_change_request', params: {
       'p_hotel_id': hotelId,
       'p_title': title,
       'p_target_table': targetTable,
@@ -569,6 +618,11 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_new_data': newData,
       'p_client_request_id': clientRequestId,
     }).then((value) => value?.toString());
+    _auditService.logAction('Submitted change request', details: {
+      'target_table': targetTable, 
+      'target_id': targetId
+    });
+    return result;
   }
 
   @override
@@ -582,8 +636,8 @@ class SupabaseIvraRepository implements IvraRepository {
     int emptyBidonsDelta = 0,
     String reason = '',
     String? clientRequestId,
-  }) {
-    return _client.rpc('record_stock_adjustment', params: {
+  }) async {
+    await _client.rpc('record_stock_adjustment', params: {
       'p_hotel_id': hotelId,
       'p_product_id': productId,
       'p_full_bottles_delta': fullBottlesDelta,
@@ -594,16 +648,21 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_reason': reason,
       'p_client_request_id': clientRequestId,
     });
+    _auditService.logAction('Recorded stock adjustment', details: {'hotel_id': hotelId, 'product_id': productId});
   }
 
   @override
   Future<void> approveRequest({
     required String approvalRequestId,
     String? notes,
-  }) {
-    return _client.rpc('approve_change_request', params: {
+  }) async {
+    await _client.rpc('approve_change_request', params: {
       'p_request_id': approvalRequestId,
       'p_notes': notes,
+    });
+    
+    _auditService.logAction('Approved change request', details: {
+      'request_id': approvalRequestId,
     });
   }
 
@@ -611,11 +670,12 @@ class SupabaseIvraRepository implements IvraRepository {
   Future<void> rejectRequest({
     required String approvalRequestId,
     String? notes,
-  }) {
-    return _client.rpc('reject_change_request', params: {
+  }) async {
+    await _client.rpc('reject_change_request', params: {
       'p_request_id': approvalRequestId,
       'p_notes': notes,
     });
+    _auditService.logAction('Rejected change request', details: {'request_id': approvalRequestId});
   }
 
   @override
@@ -629,9 +689,13 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
-  Future<void> resolveAlert({required String alertId}) {
-    return _client.rpc('resolve_alert', params: {
+  Future<void> resolveAlert({required String alertId}) async {
+    await _client.rpc('resolve_alert', params: {
       'p_alert_id': alertId,
+    });
+    
+    _auditService.logAction('Resolved alert', details: {
+      'alert_id': alertId,
     });
   }
 
@@ -661,22 +725,24 @@ class SupabaseIvraRepository implements IvraRepository {
   Future<void> assignUserHotel({
     required String userId,
     required String hotelId,
-  }) {
-    return _client.rpc('assign_user_hotel', params: {
+  }) async {
+    await _client.rpc('assign_user_hotel', params: {
       'p_user_id': userId,
       'p_hotel_id': hotelId,
     });
+    _auditService.logAction('Assigned user to hotel', details: {'user_id': userId, 'hotel_id': hotelId});
   }
 
   @override
   Future<void> unassignUserHotel({
     required String userId,
     required String hotelId,
-  }) {
-    return _client.rpc('unassign_user_hotel', params: {
+  }) async {
+    await _client.rpc('unassign_user_hotel', params: {
       'p_user_id': userId,
       'p_hotel_id': hotelId,
     });
+    _auditService.logAction('Unassigned user from hotel', details: {'user_id': userId, 'hotel_id': hotelId});
   }
 
   RoomProduct _roomProductFromMap(Map<String, dynamic> map) {

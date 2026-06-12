@@ -635,3 +635,35 @@ class DashboardMetrics {
   final int bottlesToReplace;
   final int lowStockProducts;
 }
+
+class AuditLog {
+  const AuditLog({
+    required this.id,
+    required this.createdAt,
+    this.userId,
+    required this.action,
+    this.details,
+    this.ipAddress,
+    this.deviceInfo,
+  });
+
+  final String id;
+  final DateTime createdAt;
+  final String? userId;
+  final String action;
+  final Map<String, dynamic>? details;
+  final String? ipAddress;
+  final String? deviceInfo;
+
+  factory AuditLog.fromMap(Map<String, dynamic> map) {
+    return AuditLog(
+      id: map['id'] as String,
+      createdAt: DateTime.parse(map['created_at'] as String),
+      userId: map['user_id'] as String?,
+      action: map['action'] as String,
+      details: map['details'] as Map<String, dynamic>?,
+      ipAddress: map['ip_address'] as String?,
+      deviceInfo: map['device_info'] as String?,
+    );
+  }
+}

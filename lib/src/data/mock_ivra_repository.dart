@@ -611,6 +611,12 @@ class MockIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<List<AuditLog>> fetchAuditLogs() async => [];
+
+  @override
+  Future<void> clearAuditLogs() async {}
+
+  @override
   Future<List<RefillEvent>> recentRefillEvents({String? hotelId}) async {
     if (hotelId == null) return _events;
     final roomProductIds = _roomProducts

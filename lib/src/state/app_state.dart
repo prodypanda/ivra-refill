@@ -76,6 +76,10 @@ final productsProvider = FutureProvider<List<Product>>((ref) {
   return ref.watch(repositoryProvider).products();
 });
 
+final auditLogsProvider = FutureProvider.autoDispose<List<AuditLog>>((ref) {
+  return ref.watch(repositoryProvider).fetchAuditLogs();
+});
+
 final teamMembersProvider = FutureProvider<List<UserProfile>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
   final members = await ref.watch(repositoryProvider).teamMembers(hotelId: hotelId);

@@ -8,6 +8,7 @@ import '../../state/app_state.dart';
 
 import '../alerts/alerts_screen.dart';
 import '../approvals/approvals_screen.dart';
+import '../audit/audit_logs_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../hotels/hotels_screen.dart';
 import '../inventory/inventory_screen.dart';
@@ -236,6 +237,14 @@ class _AppShellState extends ConsumerState<AppShell> {
         },
       ),
       _NavItem(
+        l10n.t('menuAuditLogs'),
+        Icons.security_outlined,
+        AuditLogsScreen.route,
+        const {
+          UserRole.appAdmin,
+        },
+      ),
+      _NavItem(
         l10n.t('settings'),
         Icons.settings_outlined,
         SettingsScreen.route,
@@ -426,7 +435,7 @@ class _DrawerFooter extends StatelessWidget {
   const _DrawerFooter();
 
   // Keep this in sync with pubspec.yaml version
-  static const _appVersion = '1.0.6';
+  static const _appVersion = '1.0.9';
 
   @override
   Widget build(BuildContext context) {

@@ -11,6 +11,7 @@ import '../shared/offline_banner.dart';
 import 'auth_validation.dart';
 import 'biometric_auth.dart';
 import 'reset_password_screen.dart';
+import '../../services/audit_service.dart';
 
 String buildPasswordResetRedirectUrl(Uri base) {
   if (base.hasScheme && (base.scheme == 'http' || base.scheme == 'https')) {
@@ -465,6 +466,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         OAuthProvider.google,
         redirectTo: isWeb ? base.toString() : 'ivra://app/login-callback',
       );
+      ref.read(auditServiceProvider).logAction('User initiated Google Sign In');
       // Note: for web, the browser will redirect automatically.
       // For mobile, the OS deep links back and Supabase flutter handles the session.
       // The actual routing to Dashboard happens via our app state listeners.
@@ -493,6 +495,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+      
+      ref.read(auditServiceProvider).logAction('User logged in', details: {'method': 'password', 'email': _emailController.text.trim()});
 
       await saveLoginCredentials(
         _emailController.text.trim(),
@@ -595,6 +599,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _error = null;
     });
     try {
+      ref.read(auditServiceProvider).logAction('User logged off');
       await Supabase.instance.client.auth.signOut();
       // Drop the offline read-cache so a different account signing in next
       // can't be served this user's cached data.
