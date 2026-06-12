@@ -13,6 +13,7 @@ import '../shared/empty_state.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/premium_snackbar.dart';
+import '../shared/shimmer_loading.dart';
 
 class ApprovalsScreen extends ConsumerWidget {
   const ApprovalsScreen({super.key});
@@ -35,6 +36,15 @@ class ApprovalsScreen extends ConsumerWidget {
       child: AsyncValueView(
         value: ref.watch(approvalsProvider),
         onRetry: () => ref.invalidate(approvalsProvider),
+        loadingWidget: Column(
+          children: List.generate(
+            4,
+            (index) => const Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: CardShimmer(),
+            ),
+          ),
+        ),
         builder: (requests) {
           if (requests.isEmpty) {
             return EmptyState(
@@ -58,8 +68,8 @@ class ApprovalsScreen extends ConsumerWidget {
                       color: Colors.green.shade600,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 24),
+                    alignment: AlignmentDirectional.centerStart,
+                    padding: const EdgeInsetsDirectional.only(start: 24),
                     child: const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
                   ),
                   secondaryBackground: Container(
@@ -67,8 +77,8 @@ class ApprovalsScreen extends ConsumerWidget {
                       color: Colors.red.shade600,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 24),
+                    alignment: AlignmentDirectional.centerEnd,
+                    padding: const EdgeInsetsDirectional.only(end: 24),
                     child: const Icon(Icons.cancel_outlined, color: Colors.white, size: 28),
                   ),
                   onDismissed: (direction) async {
