@@ -443,7 +443,7 @@ class _DrawerFooter extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'App Version (v$appVersion)',
+            'App Version v$appVersion',
             style: const TextStyle(
               fontSize: 10,
               color: Colors.grey,
