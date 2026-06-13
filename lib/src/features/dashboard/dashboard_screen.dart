@@ -63,12 +63,80 @@ class DashboardScreen extends ConsumerWidget {
         builder: (data) => LayoutBuilder(
           builder: (context, constraints) {
             final isMobile = MediaQuery.sizeOf(context).width < 720;
+            
+            final currentUser = ref.watch(currentUserProvider).valueOrNull;
+            final isStaff = currentUser?.role == UserRole.hotelStaff;
+            final isManager = currentUser?.role == UserRole.hotelManager || currentUser?.role == UserRole.appManager;
+            final isAdmin = currentUser?.role == UserRole.appAdmin;
+
+            // Compute visible cards dynamically
+            final List<Widget> visibleCards = [];
+            
+            if (isAdmin || (isManager && data.hotelCount > 1)) {
+              visibleCards.add(_MetricCard(
+                label: l10n.t('metricHotels'),
+                value: data.hotelCount,
+                icon: Icons.apartment_outlined,
+                iconColor: theme.colorScheme.primary,
+                onTap: () => context.go('/hotels'),
+              ));
+            }
+            
+            // Everyone sees rooms
+            visibleCards.add(_MetricCard(
+              label: l10n.t('metricRooms'),
+              value: data.roomCount,
+              icon: Icons.meeting_room_outlined,
+              iconColor: Colors.orange,
+              onTap: () => context.go('/rooms'),
+            ));
+            
+            if (!isStaff) {
+              visibleCards.add(_MetricCard(
+                label: l10n.t('metricPendingApprovals'),
+                value: data.pendingApprovals,
+                icon: Icons.fact_check_outlined,
+                iconColor: Colors.amber.shade800,
+                onTap: () => context.go('/approvals'),
+              ));
+            }
+            
+            // Everyone sees alerts
+            visibleCards.add(_MetricCard(
+              label: l10n.t('metricOpenAlerts'),
+              value: data.openAlerts,
+              icon: Icons.notifications_active_outlined,
+              iconColor: theme.colorScheme.error,
+              onTap: () => context.go('/alerts'),
+            ));
+            
+            // Everyone sees bottles to replace
+            visibleCards.add(_MetricCard(
+              label: l10n.t('metricBottlesToReplace'),
+              value: data.bottlesToReplace,
+              icon: Icons.recycling_outlined,
+              iconColor: Colors.orange.shade700,
+              onTap: () => context.go('/rooms'),
+            ));
+            
+            if (!isStaff) {
+              visibleCards.add(_MetricCard(
+                label: l10n.t('metricLowStockProducts'),
+                value: data.lowStockProducts,
+                icon: Icons.inventory_2_outlined,
+                iconColor: Colors.indigo.shade600,
+                onTap: () => context.go('/inventory'),
+              ));
+            }
+
+            // Adjust grid columns based on number of cards and screen width
             final columns = constraints.maxWidth >= 1000
-                ? 3
+                ? (visibleCards.length >= 3 ? 3 : visibleCards.length)
                 : constraints.maxWidth >= 640
                     ? 2
                     : 1;
             final aspectRatio = _metricAspectRatio(constraints.maxWidth);
+            
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -83,53 +151,13 @@ class DashboardScreen extends ConsumerWidget {
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                   childAspectRatio: aspectRatio,
-                  children: [
-                    _MetricCard(
-                      label: l10n.t('metricHotels'),
-                      value: data.hotelCount,
-                      icon: Icons.apartment_outlined,
-                      iconColor: theme.colorScheme.primary,
-                      onTap: () => context.go('/hotels'),
-                    ),
-                    _MetricCard(
-                      label: l10n.t('metricRooms'),
-                      value: data.roomCount,
-                      icon: Icons.meeting_room_outlined,
-                      iconColor: Colors.orange,
-                      onTap: () => context.go('/rooms'),
-                    ),
-                    _MetricCard(
-                      label: l10n.t('metricPendingApprovals'),
-                      value: data.pendingApprovals,
-                      icon: Icons.fact_check_outlined,
-                      iconColor: Colors.amber.shade800,
-                      onTap: () => context.go('/approvals'),
-                    ),
-                    _MetricCard(
-                      label: l10n.t('metricOpenAlerts'),
-                      value: data.openAlerts,
-                      icon: Icons.notifications_active_outlined,
-                      iconColor: theme.colorScheme.error,
-                      onTap: () => context.go('/alerts'),
-                    ),
-                    _MetricCard(
-                      label: l10n.t('metricBottlesToReplace'),
-                      value: data.bottlesToReplace,
-                      icon: Icons.recycling_outlined,
-                      iconColor: Colors.orange.shade700,
-                      onTap: () => context.go('/rooms'),
-                    ),
-                    _MetricCard(
-                      label: l10n.t('metricLowStockProducts'),
-                      value: data.lowStockProducts,
-                      icon: Icons.inventory_2_outlined,
-                      iconColor: Colors.indigo.shade600,
-                      onTap: () => context.go('/inventory'),
-                    ),
-                  ],
+                  children: visibleCards,
                 ),
                 const SizedBox(height: 32),
-                _ActivityChart(),
+                _ActivityChart(
+                  isStaff: isStaff,
+                  currentUserId: currentUser?.id,
+                ),
                 const SizedBox(height: 32),
               ],
             );
@@ -172,19 +200,32 @@ class _MetricCardState extends State<_MetricCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: AnimatedScale(
-        scale: _isHovered ? 1.02 : 1.0,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOutBack,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        cursor: SystemMouseCursors.click,
+        child: AnimatedScale(
+          scale: _isHovered ? 1.02 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutBack,
+          child: GestureDetector(
+            onTap: widget.onTap,
+            child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -257,7 +298,7 @@ class _MetricCardState extends State<_MetricCard> {
           ),
         ),
       ),
-    ));
+    )));
   }
 }
 
@@ -278,11 +319,24 @@ class _MobileHeroState extends State<_MobileHero> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.95 + (0.05 * value),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -402,7 +456,7 @@ class _MobileHeroState extends State<_MobileHero> {
           ),
         ],
       ),
-    );
+    ));
   }
 }
 
@@ -458,7 +512,13 @@ class _HeroPill extends StatelessWidget {
 enum ChartDateRange { last7Days, lastMonth, lastYear }
 
 class _ActivityChart extends ConsumerStatefulWidget {
-  const _ActivityChart();
+  const _ActivityChart({
+    this.isStaff = false,
+    this.currentUserId,
+  });
+
+  final bool isStaff;
+  final String? currentUserId;
 
   @override
   ConsumerState<_ActivityChart> createState() => _ActivityChartState();
@@ -476,20 +536,33 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final refillEventsAsync = ref.watch(refillEventsProvider);
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: theme.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 800),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: child,
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(24),
-      child: Column(
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          color: theme.colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header layout with selectors
@@ -497,7 +570,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
             builder: (context, headerConstraints) {
               final isWide = headerConstraints.maxWidth > 600;
               final titleText = Text(
-                l10n.t('refillActivity'),
+                widget.isStaff ? l10n.t('myCompletedTasksThisWeek') : l10n.t('refillActivity'),
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.5,
@@ -551,8 +624,14 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
               ),
             ),
             data: (refillEvents) {
-              // Only aggregate refill events
-              final refills = refillEvents.where((e) => e.type == RefillEventType.refill).toList();
+              // Aggregate refill events, filtering by user if staff
+              final refills = refillEvents.where((e) {
+                if (e.type != RefillEventType.refill) return false;
+                if (widget.isStaff && widget.currentUserId != null) {
+                  return e.performedBy == widget.currentUserId;
+                }
+                return true;
+              }).toList();
               
               final now = DateTime.now();
               final today = DateTime(now.year, now.month, now.day);
@@ -791,10 +870,11 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildSelectors(BuildContext context, List<Hotel> hotels, String? selectedHotelId) {
+    if (widget.isStaff) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final showHotelSelector = hotels.length > 1;
