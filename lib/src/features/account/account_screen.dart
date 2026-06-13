@@ -195,7 +195,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       if (mounted) context.go(LoginScreen.route);
     } catch (error) {
       if (!mounted) return;
-      PremiumSnackbar.showSuccess(context, localizeAuthError(
+      PremiumSnackbar.showError(context, localizeAuthError(
             AppLocalizations.of(context),
             error,
             fallbackKey: 'accountSignOutFailed',

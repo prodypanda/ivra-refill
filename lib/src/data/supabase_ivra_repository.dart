@@ -224,7 +224,7 @@ class SupabaseIvraRepository implements IvraRepository {
   @override
   Future<void> clearAuditLogs() async {
     await _client.rpc('clear_audit_logs');
-    _auditService.logAction('Cleared audit logs');
+    await _auditService.logAction('Cleared audit logs');
   }
 
   @override

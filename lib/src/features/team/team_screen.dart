@@ -569,7 +569,7 @@ class _InviteTeamMemberDialogState
       if (mounted) Navigator.of(context).pop();
     } catch (error) {
       if (!mounted) return;
-      PremiumSnackbar.showSuccess(context, localizeAuthError(
+      PremiumSnackbar.showError(context, localizeAuthError(
             AppLocalizations.of(context),
             error,
             fallbackKey: 'teamInviteFailed',

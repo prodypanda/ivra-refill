@@ -585,7 +585,7 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
       }
     } catch (error) {
       if (!mounted) return;
-      PremiumSnackbar.showSuccess(context, localizeAuthError(
+      PremiumSnackbar.showError(context, localizeAuthError(
             AppLocalizations.of(context),
             error,
             fallbackKey: 'hotelCreateFailed',
@@ -854,7 +854,7 @@ class _HotelEditRequestDialogState
       }
     } catch (error) {
       if (!mounted) return;
-      PremiumSnackbar.showSuccess(context, localizeAuthError(
+      PremiumSnackbar.showError(context, localizeAuthError(
             l10n,
             error,
             fallbackKey: 'hotelUpdateFailed',
