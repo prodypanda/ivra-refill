@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
+import '../shared/product_image.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
 import '../shared/glass_card.dart';
@@ -761,12 +762,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         ref.invalidate(roomProductsProvider);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          PremiumSnackbar.showError(context, e);
         }
       }
     }
@@ -811,12 +807,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         ref.invalidate(roomProductsProvider);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          PremiumSnackbar.showError(context, e);
         }
       }
     }
@@ -1623,26 +1614,10 @@ class _RoomCardProductRow extends ConsumerWidget {
             ],
           ),
           clipBehavior: Clip.antiAlias,
-          child: Image.asset(
-            item.product.imagePath,
+          child: ProductImage(
+            imagePath: item.product.imagePath,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF0C4A3A),
-                    Color(0xFF267D65),
-                  ],
-                ),
-              ),
-              child: const Icon(
-                Icons.spa_outlined,
-                size: 20,
-                color: Colors.white,
-              ),
-            ),
+            iconSize: 20,
           ),
         );
 
@@ -2014,17 +1989,11 @@ class _BottleLifecycleEditDialogState
       );
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              offline
+        PremiumSnackbar.showSuccess(context, offline
                   ? l10n.t('roomsMsgEditRequestQueued')
                   : appliedImmediately
                       ? l10n.t('roomsMsgDetailsUpdated')
-                      : l10n.t('roomsMsgEditRequestSubmitted'),
-            ),
-          ),
-        );
+                      : l10n.t('roomsMsgEditRequestSubmitted'),);
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -2162,17 +2131,11 @@ class _RoomEditRequestDialogState
       );
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              offline
+        PremiumSnackbar.showSuccess(context, offline
                   ? l10n.t('roomsMsgRoomEditQueued')
                   : appliedImmediately
                       ? l10n.t('roomsMsgRoomDetailsUpdated')
-                      : l10n.t('roomsMsgRoomEditSubmitted'),
-            ),
-          ),
-        );
+                      : l10n.t('roomsMsgRoomEditSubmitted'),);
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -2600,15 +2563,9 @@ class _CorrectionRequestDialogState
       }
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              offline
+        PremiumSnackbar.showSuccess(context, offline
                   ? l10n.t('roomsMsgCorrectionQueued')
-                  : l10n.t('roomsMsgCorrectionSubmitted'),
-            ),
-          ),
-        );
+                  : l10n.t('roomsMsgCorrectionSubmitted'),);
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);

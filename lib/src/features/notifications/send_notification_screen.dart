@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../shared/premium_snackbar.dart';
 
 class SendNotificationScreen extends ConsumerStatefulWidget {
   const SendNotificationScreen({super.key});
@@ -86,12 +87,7 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        PremiumSnackbar.showError(context, e);
       }
     } finally {
       if (mounted) {

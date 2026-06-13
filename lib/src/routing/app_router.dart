@@ -22,6 +22,7 @@ import '../features/shared/not_found_screen.dart';
 import '../features/shell/app_shell.dart';
 import '../features/team/team_screen.dart';
 import '../features/notifications/send_notification_screen.dart';
+import '../features/audit/audit_logs_screen.dart';
 import '../domain/app_enums.dart';
 import '../state/app_state.dart';
 
@@ -139,7 +140,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: InventoryScreen.route,
-            builder: (context, state) => const InventoryScreen(),
+            builder: (context, state) {
+              final hotelId = state.uri.queryParameters['hotelId'];
+              return InventoryScreen(hotelId: hotelId);
+            },
           ),
           GoRoute(
             path: ProductsScreen.route,
@@ -175,6 +179,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: SettingsScreen.route,
             builder: (context, state) => const SettingsScreen(),
           ),
+          GoRoute(
+            path: AuditLogsScreen.route,
+            builder: (context, state) => const AuditLogsScreen(),
+          ),
         ],
       ),
     ],
@@ -199,6 +207,7 @@ const _allowedRoutesByRole = {
     AlertsScreen.route,
     ReportsScreen.route,
     SendNotificationScreen.route,
+    AuditLogsScreen.route,
     SettingsScreen.route,
   },
   UserRole.appManager: {

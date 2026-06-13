@@ -30,6 +30,8 @@ abstract class IvraRepository {
   Future<List<ApprovalRequest>> approvalRequests({String? hotelId});
   Future<List<AlertItem>> alerts({String? hotelId});
   Future<List<RefillEvent>> recentRefillEvents({String? hotelId});
+  Future<List<AuditLog>> fetchAuditLogs();
+  Future<void> clearAuditLogs();
 
   Future<void> createHotel({
     required String name,

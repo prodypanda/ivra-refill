@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,7 +14,8 @@ import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
-  const InventoryScreen({super.key});
+  final String? hotelId;
+  const InventoryScreen({super.key, this.hotelId});
 
   static const route = '/inventory';
 
@@ -23,15 +23,31 @@ class InventoryScreen extends ConsumerStatefulWidget {
   ConsumerState<InventoryScreen> createState() => _InventoryScreenState();
 }
 
+enum InventorySortOption { nameAsc, nameDesc, fullBottlesDesc, emptyBottlesDesc }
+
 class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   String _searchQuery = '';
   String _statusFilter = 'all'; // 'all', 'lowStock'
+  InventorySortOption _sortOption = InventorySortOption.nameAsc;
   late final TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    if (widget.hotelId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(selectedHotelIdProvider.notifier).state = widget.hotelId;
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant InventoryScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.hotelId != oldWidget.hotelId && widget.hotelId != null) {
+      ref.read(selectedHotelIdProvider.notifier).state = widget.hotelId;
+    }
   }
 
   @override
@@ -69,6 +85,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           tooltip: l10n.t('adjustStockTitle'),
           icon: const Icon(Icons.add_box_outlined),
           onPressed: () => _showStockAdjustmentDialog(context),
+        ),
+        IconButton(
+          tooltip: l10n.t('bulkAdjustStockTitle'),
+          icon: const Icon(Icons.playlist_add_check_outlined),
+          onPressed: () => _showBulkStockAdjustmentDialog(context),
         ),
       ],
       child: AsyncValueView(
@@ -172,6 +193,21 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                       }
                       return true;
                     }).toList();
+
+                    // Apply sort
+                    final languageCode = Localizations.localeOf(context).languageCode;
+                    filteredItems.sort((a, b) {
+                      switch (_sortOption) {
+                        case InventorySortOption.nameAsc:
+                          return a.product.label(languageCode).compareTo(b.product.label(languageCode));
+                        case InventorySortOption.nameDesc:
+                          return b.product.label(languageCode).compareTo(a.product.label(languageCode));
+                        case InventorySortOption.fullBottlesDesc:
+                          return b.fullBottles.compareTo(a.fullBottles);
+                        case InventorySortOption.emptyBottlesDesc:
+                          return b.emptyBottles.compareTo(a.emptyBottles);
+                      }
+                    });
 
                     return _InventoryTable(items: filteredItems);
                   },
@@ -376,7 +412,74 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 16),
+          // Sort Options
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                const Icon(Icons.sort, size: 18, color: Colors.grey),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(l10n.t('sortNameAsc') ?? 'Name (A-Z)'),
+                  selected: _sortOption == InventorySortOption.nameAsc,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _sortOption = InventorySortOption.nameAsc);
+                  },
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(l10n.t('sortNameDesc') ?? 'Name (Z-A)'),
+                  selected: _sortOption == InventorySortOption.nameDesc,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _sortOption = InventorySortOption.nameDesc);
+                  },
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(l10n.t('sortMostFullBottles') ?? 'Most Full Bottles'),
+                  selected: _sortOption == InventorySortOption.fullBottlesDesc,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _sortOption = InventorySortOption.fullBottlesDesc);
+                  },
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(l10n.t('sortMostEmptyBottles') ?? 'Most Empty Bottles'),
+                  selected: _sortOption == InventorySortOption.emptyBottlesDesc,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _sortOption = InventorySortOption.emptyBottlesDesc);
+                  },
+                ),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _showBulkStockAdjustmentDialog(BuildContext context) async {
+    final selectedHotelId = ref.read(selectedHotelIdProvider);
+    final l10n = AppLocalizations.of(context);
+
+    if (selectedHotelId == null) {
+      PremiumSnackbar.show(
+        context,
+        l10n.t('roomsSelectHotelFirst'),
+        icon: Icons.domain_outlined,
+      );
+      return;
+    }
+
+    final products = await ref.read(productsProvider.future);
+    if (!context.mounted) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => _BulkStockAdjustmentDialog(
+        hotelId: selectedHotelId,
+        products: products,
       ),
     );
   }
@@ -403,6 +506,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
     // Fetch all available products so we can allow adding stock for products not yet in the hotel's inventory.
     final products = await ref.read(productsProvider.future);
+    if (!context.mounted) return;
     final allHotelItems = products.map((product) {
       final existing = hotelItems
           .where((item) => item.product.id == product.id)
@@ -449,7 +553,6 @@ class _InventoryTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
-    final theme = Theme.of(context);
     final isMobile = MediaQuery.sizeOf(context).width < 720;
 
     if (items.isEmpty) {
@@ -827,63 +930,6 @@ class _InventoryStatusPill extends StatelessWidget {
   }
 }
 
-class _InventoryCountTile extends StatelessWidget {
-  const _InventoryCountTile({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
-
-  final String label;
-  final int value;
-  final IconData icon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: color, size: 18),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value.toString(),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _StockAdjustmentDialog extends ConsumerStatefulWidget {
   const _StockAdjustmentDialog({required this.items});
@@ -1074,6 +1120,7 @@ class _StockAdjustmentDialogState
     if (!_formKey.currentState!.validate()) return;
     final item = widget.items.firstWhere((item) => item.id == _inventoryItemId);
     final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
 
     setState(() => _isSaving = true);
     try {
@@ -1107,8 +1154,6 @@ class _StockAdjustmentDialogState
             ref.invalidate(alertsProvider);
             try {
               if (Supabase.instance.client.auth.currentSession != null) {
-                final lang = Localizations.localeOf(context).languageCode;
-                
                 // Fetch the new alerts directly from repository to bypass any Riverpod cache issues
                 final latestAlerts = await ref.read(repositoryProvider).alerts(hotelId: item.hotelId);
                 final products = await ref.read(productsProvider.future);
@@ -1140,6 +1185,24 @@ class _StockAdjustmentDialogState
                        'targetType': 'hotel',
                        'targetValue': item.hotelId,
                        'targetPage': '/alerts',
+                       'actionButtons': [
+                         {
+                           'id': 'more_info',
+                           'title': l10n.t('notificationMoreInfo'),
+                         },
+                         {
+                           'id': 'resolve',
+                           'title': l10n.t('alertsResolve'),
+                         },
+                         {
+                           'id': 'delete',
+                           'title': l10n.t('delete'),
+                         },
+                       ],
+                       'data': {
+                         'alertId': alert.id,
+                         'hotelId': item.hotelId,
+                       },
                      },
                    );
                    debugPrint('[ALERT-PUSH] Notification sent successfully for alert ${alert.id}');
@@ -1419,5 +1482,301 @@ extension _ColorExtension on Color {
   Color darkenForContrast() {
     final hsl = HSLColor.fromColor(this);
     return hsl.withLightness((hsl.lightness - 0.15).clamp(0.0, 1.0)).toColor();
+  }
+}
+
+class _BulkStockAdjustmentDialog extends ConsumerStatefulWidget {
+  const _BulkStockAdjustmentDialog({
+    required this.hotelId,
+    required this.products,
+  });
+
+  final String hotelId;
+  final List<Product> products;
+
+  @override
+  ConsumerState<_BulkStockAdjustmentDialog> createState() =>
+      _BulkStockAdjustmentDialogState();
+}
+
+class _BulkStockAdjustmentDialogState
+    extends ConsumerState<_BulkStockAdjustmentDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _fullBottles = TextEditingController(text: '0');
+  final _emptyBottles = TextEditingController(text: '0');
+  final _fullBidons = TextEditingController(text: '0');
+  final _openBidons = TextEditingController(text: '0');
+  final _emptyBidons = TextEditingController(text: '0');
+  final _reason = TextEditingController();
+  var _isSaving = false;
+  bool _showAdvanced = false;
+  Set<String> _selectedProductIds = {};
+
+  @override
+  void dispose() {
+    _fullBottles.dispose();
+    _emptyBottles.dispose();
+    _fullBidons.dispose();
+    _openBidons.dispose();
+    _emptyBidons.dispose();
+    _reason.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    final emptyBidonsLabel = l10n.t('inventoryTableEmptyBidons').isNotEmpty
+        ? l10n.t('inventoryTableEmptyBidons')
+        : 'Empty Bidons';
+
+    return AlertDialog(
+      title: Text(
+        l10n.t('bulkAdjustStockTitle'),
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: SizedBox(
+        width: 400,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  l10n.t('bulkAdjustStockHint'),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.t('bulkAdjustSelectProducts') ?? 'Select Products',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedProductIds = widget.products.map((p) => p.id).toSet();
+                        });
+                      },
+                      child: Text(l10n.t('bulkAdjustSelectAll') ?? 'Select All'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedProductIds.clear();
+                        });
+                      },
+                      child: Text(l10n.t('bulkAdjustDeselectAll') ?? 'Deselect All'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: widget.products.map((p) {
+                    final isSelected = _selectedProductIds.contains(p.id);
+                    return FilterChip(
+                      label: Text(p.label(Localizations.localeOf(context).languageCode)),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            _selectedProductIds.add(p.id);
+                          } else {
+                            _selectedProductIds.remove(p.id);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 24),
+                Column(
+                  children: [
+                    _DeltaField(
+                      controller: _fullBottles,
+                      label: l10n.t('inventoryTableFullBottles'),
+                    ),
+                    const SizedBox(height: 12),
+                    _DeltaField(
+                      controller: _emptyBottles,
+                      label: l10n.t('inventoryTableEmptyBottles'),
+                    ),
+                    const SizedBox(height: 12),
+                    _DeltaField(
+                      controller: _fullBidons,
+                      label: l10n.t('inventoryTableFullBidons'),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _showAdvanced = !_showAdvanced;
+                        });
+                      },
+                      icon: Icon(_showAdvanced
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down),
+                      label: Text(l10n.t('more')),
+                      style: TextButton.styleFrom(
+                        foregroundColor: theme.colorScheme.onSurfaceVariant,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                      ),
+                    ),
+                    if (_showAdvanced) ...[
+                      const SizedBox(height: 8),
+                      _DeltaField(
+                        controller: _openBidons,
+                        label: l10n.t('inventoryTableOpenBidons'),
+                      ),
+                      const SizedBox(height: 12),
+                      _DeltaField(
+                        controller: _emptyBidons,
+                        label: emptyBidonsLabel,
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _reason,
+                  decoration:
+                      InputDecoration(labelText: l10n.t('hotelLabelNotes')),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return l10n.t('requiredField');
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+          child: Text(l10n.t('btnCancel')),
+        ),
+        FilledButton.icon(
+          onPressed: _isSaving ? null : _save,
+          icon: const Icon(Icons.playlist_add_check_outlined),
+          label: Text(l10n.t('btnSave')),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return;
+    final l10n = AppLocalizations.of(context);
+
+    if (_selectedProductIds.isEmpty) {
+      PremiumSnackbar.showError(
+        context,
+        l10n.t('bulkAdjustNoProductsSelected') ?? 'Please select at least one product.',
+      );
+      return;
+    }
+
+    setState(() => _isSaving = true);
+    try {
+      final fullBottlesDelta = int.parse(_fullBottles.text);
+      final emptyBottlesDelta = int.parse(_emptyBottles.text);
+      final fullBidonsDelta = int.parse(_fullBidons.text);
+      final openBidonsDelta = int.parse(_openBidons.text);
+      final emptyBidonsDelta = int.parse(_emptyBidons.text);
+      final reason = _reason.text.trim();
+
+      var isOffline = ref.read(offlineModeProvider);
+
+      final selectedProducts = widget.products.where((p) => _selectedProductIds.contains(p.id));
+
+      for (final product in selectedProducts) {
+        final payload = {
+          'hotelId': widget.hotelId,
+          'productId': product.id,
+          'fullBottlesDelta': fullBottlesDelta,
+          'emptyBottlesDelta': emptyBottlesDelta,
+          'fullBidonsDelta': fullBidonsDelta,
+          'openBidonsDelta': openBidonsDelta,
+          'emptyBidonsDelta': emptyBidonsDelta,
+          'reason': reason,
+        };
+
+        if (!isOffline) {
+          try {
+            await ref.read(repositoryProvider).recordStockAdjustment(
+                  hotelId: widget.hotelId,
+                  productId: product.id,
+                  fullBottlesDelta: fullBottlesDelta,
+                  emptyBottlesDelta: emptyBottlesDelta,
+                  fullBidonsDelta: fullBidonsDelta,
+                  openBidonsDelta: openBidonsDelta,
+                  emptyBidonsDelta: emptyBidonsDelta,
+                  reason: reason,
+                );
+          } catch (e) {
+            if (e.toString().contains('SocketException') ||
+                e.toString().contains('ClientException') ||
+                e.toString().contains('Failed host lookup') ||
+                e.toString().contains('XMLHttpRequest')) {
+              isOffline = true;
+            } else {
+              rethrow;
+            }
+          }
+        }
+
+        if (isOffline) {
+          await ref.read(offlineSyncServiceProvider).enqueue(
+                type: SyncActionType.stockAdjustment,
+                payload: payload,
+              );
+        }
+      }
+
+      if (!isOffline) {
+        await ref.read(repositoryProvider).refreshSmartAlerts(hotelId: widget.hotelId);
+      }
+
+      ref.invalidate(inventoryProvider);
+      ref.invalidate(suggestedOrdersProvider);
+      ref.invalidate(alertsProvider);
+
+      if (isOffline) {
+        ref.invalidate(offlineActionsProvider);
+      }
+
+      if (mounted) {
+        Navigator.of(context).pop();
+        PremiumSnackbar.show(
+          context,
+          isOffline
+              ? (l10n.t('bulkAdjustStockOfflineQueued'))
+              : (l10n.t('bulkAdjustStockSuccess')),
+          icon: isOffline ? Icons.cloud_queue : Icons.check_circle_outline,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        PremiumSnackbar.showError(context, e);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
   }
 }

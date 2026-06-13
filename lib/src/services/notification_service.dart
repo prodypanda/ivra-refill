@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 
 import '../app/ivra_app.dart';
 import '../state/app_state.dart';
+import '../l10n/app_localizations.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -21,14 +22,32 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 final notificationServiceProvider = Provider((ref) {
-  return NotificationService(Supabase.instance.client);
+  return NotificationService(Supabase.instance.client, ref);
 });
 
 class NotificationService {
-  NotificationService(this._supabase);
+  NotificationService(this._supabase, this._ref);
 
   final SupabaseClient _supabase;
+  final Ref _ref;
   FirebaseMessaging? _fcm;
+
+  static NotificationResponse? _pendingNotificationResponse;
+
+  void _checkAndProcessPending() {
+    final response = _pendingNotificationResponse;
+    if (response == null) return;
+
+    final context = scaffoldMessengerKey.currentContext;
+    if (context != null) {
+      _pendingNotificationResponse = null;
+      _handleNotificationAction(response.payload, response.actionId);
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkAndProcessPending();
+      });
+    }
+  }
 
   Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -41,7 +60,8 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        _handleNotificationAction(response.payload, response.actionId);
+        _pendingNotificationResponse = response;
+        _checkAndProcessPending();
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
@@ -95,6 +115,21 @@ class NotificationService {
     } catch (e) {
       debugPrint('Error initializing FCM: $e');
     }
+
+    // Check if app was launched from a notification
+    try {
+      final launchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+      if (launchDetails != null && launchDetails.didNotificationLaunchApp) {
+        final response = launchDetails.notificationResponse;
+        if (response != null) {
+          _pendingNotificationResponse = response;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error getting notification launch details: $e');
+    }
+
+    _checkAndProcessPending();
   }
 
   void _handleNotificationAction(String? payloadStr, String? actionId) {
@@ -102,6 +137,18 @@ class NotificationService {
     try {
       final payload = jsonDecode(payloadStr);
       final context = scaffoldMessengerKey.currentContext;
+
+      String? alertId = payload['alertId']?.toString();
+      String? hotelId = payload['hotelId']?.toString();
+      if (payload['data'] != null) {
+        try {
+          final nestedData = payload['data'] is String ? jsonDecode(payload['data']) : payload['data'];
+          if (nestedData is Map) {
+            alertId ??= nestedData['alertId']?.toString();
+            hotelId ??= nestedData['hotelId']?.toString();
+          }
+        } catch (_) {}
+      }
       
       if (actionId == 'Dismiss') {
         return;
@@ -112,6 +159,69 @@ class NotificationService {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Acknowledged')));
         }
         
+        if (actionId == 'more_info') {
+          if (hotelId != null && hotelId.isNotEmpty) {
+            GoRouter.of(context).go('/inventory?hotelId=$hotelId');
+          } else {
+            GoRouter.of(context).go('/inventory');
+          }
+          return;
+        }
+        
+        if (actionId == 'resolve') {
+          if (alertId != null && alertId.isNotEmpty) {
+            _ref.read(repositoryProvider).resolveAlert(alertId: alertId).then((_) {
+              if (!context.mounted) return;
+              _ref.invalidate(alertsProvider);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(AppLocalizations.of(context).t('alertResolvedToast')),
+                  backgroundColor: const Color(0xFF4CAF50),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }).catchError((e) {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to resolve alert: $e'),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            });
+          }
+          GoRouter.of(context).go('/alerts');
+          return;
+        }
+        
+        if (actionId == 'delete') {
+          if (alertId != null && alertId.isNotEmpty) {
+            _ref.read(repositoryProvider).deleteAlert(alertId).then((_) {
+              if (!context.mounted) return;
+              _ref.invalidate(alertsProvider);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(AppLocalizations.of(context).t('alertDeletedToast')),
+                  backgroundColor: const Color(0xFF4CAF50),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }).catchError((e) {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to delete alert: $e'),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            });
+          }
+          GoRouter.of(context).go('/alerts');
+          return;
+        }
+
         final targetPage = payload['targetPage'];
         if (targetPage != null && targetPage.toString().isNotEmpty) {
            GoRouter.of(context).go(targetPage.toString());
@@ -133,11 +243,19 @@ class NotificationService {
       try {
         final List<dynamic> btns = jsonDecode(actionButtonsStr);
         for (var btn in btns) {
-          actions.add(AndroidNotificationAction(
-            btn.toString(),
-            btn.toString(),
-            showsUserInterface: true,
-          ));
+          if (btn is Map) {
+            actions.add(AndroidNotificationAction(
+              btn['id'].toString(),
+              btn['title'].toString(),
+              showsUserInterface: true,
+            ));
+          } else {
+            actions.add(AndroidNotificationAction(
+              btn.toString(),
+              btn.toString(),
+              showsUserInterface: true,
+            ));
+          }
         }
       } catch (e) {
         debugPrint('Error parsing actionButtons: $e');
@@ -175,8 +293,11 @@ class NotificationService {
 
       String deviceType = 'web';
       if (!kIsWeb) {
-        if (Platform.isAndroid) deviceType = 'android';
-        else if (Platform.isIOS) deviceType = 'ios';
+        if (Platform.isAndroid) {
+          deviceType = 'android';
+        } else if (Platform.isIOS) {
+          deviceType = 'ios';
+        }
       }
 
       await _supabase.rpc('register_fcm_token', params: {

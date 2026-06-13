@@ -1,6 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
+import '../../utils/error_translator.dart';
+import '../../l10n/app_localizations.dart';
+
 class PremiumSnackbar {
   static void show(
     BuildContext context,
@@ -71,5 +74,26 @@ class PremiumSnackbar {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
+  }
+
+  static void showError(BuildContext context, Object error) {
+    final l10n = AppLocalizations.of(context);
+    final message = translateError(error, l10n);
+    show(
+      context,
+      message,
+      icon: Icons.error_outline,
+      isError: true,
+    );
+  }
+
+  static void showSuccess(BuildContext context, String message) {
+    show(
+      context,
+      message,
+      icon: Icons.check_circle_outline,
+      iconColor: Colors.green,
+      isError: false,
+    );
   }
 }

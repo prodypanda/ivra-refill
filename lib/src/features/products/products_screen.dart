@@ -1,5 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -7,6 +10,8 @@ import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/product_image.dart';
+import '../shared/premium_snackbar.dart';
 
 /// Product create/edit/delete is restricted server-side to Ivra-level roles
 /// (`app_admin`/`app_manager`, see the `products_write_ivra` RLS policy).
@@ -194,29 +199,10 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(
-                      widget.product.imagePath,
+                    ProductImage(
+                      imagePath: widget.product.imagePath,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xFF0C4A3A),
-                              Color(0xFF267D65),
-                              Color(0xFF3EA47E),
-                            ],
-                          ),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.spa_outlined,
-                            size: 64,
-                            color: Colors.white.withValues(alpha: 0.8),
-                          ),
-                        ),
-                      ),
+                      iconSize: 64,
                     ),
                     // Gradient overlay
                     Positioned.fill(
@@ -402,12 +388,7 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
         ref.invalidate(productsProvider);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          PremiumSnackbar.showError(context, e);
         }
       }
     }
@@ -489,7 +470,8 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
   late final TextEditingController _maxBottleAgeDays;
   late final TextEditingController _lowBottleThreshold;
   late final TextEditingController _lowBidonThreshold;
-  late final TextEditingController _imageUrl;
+  XFile? _selectedImage;
+  String? _currentImageUrl;
   var _isSaving = false;
 
   bool get _isEditing => widget.product != null;
@@ -521,7 +503,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
     _lowBidonThreshold = TextEditingController(
       text: '${product?.lowBidonThreshold ?? 4}',
     );
-    _imageUrl = TextEditingController(text: product?.imageUrl ?? '');
+    _currentImageUrl = product?.imageUrl;
   }
 
   @override
@@ -537,7 +519,6 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
     _maxBottleAgeDays.dispose();
     _lowBottleThreshold.dispose();
     _lowBidonThreshold.dispose();
-    _imageUrl.dispose();
     super.dispose();
   }
 
@@ -613,12 +594,40 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _imageUrl,
-                        decoration: InputDecoration(
-                          labelText: l10n.t('productsLabelImage'),
-                          hintText: l10n.t('productsLabelImageHint'),
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _selectedImage != null
+                                  ? 'Selected: ${_selectedImage!.name}'
+                                  : (_currentImageUrl != null && _currentImageUrl!.isNotEmpty
+                                      ? 'Image is set (tap to change)'
+                                      : 'No image selected'),
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: _selectedImage != null || (_currentImageUrl != null && _currentImageUrl!.isNotEmpty)
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          OutlinedButton.icon(
+                            icon: const Icon(Icons.image_search),
+                            label: Text(l10n.t('productsLabelImage')),
+                            onPressed: () async {
+                              final picker = ImagePicker();
+                              final image = await picker.pickImage(source: ImageSource.gallery);
+                              if (image != null) {
+                                setState(() {
+                                  _selectedImage = image;
+                                });
+                              }
+                            },
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 12),
                       Wrap(
@@ -688,6 +697,33 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
     try {
       final repository = ref.read(repositoryProvider);
       final product = widget.product;
+      String? finalImageUrl = _currentImageUrl;
+      if (_selectedImage != null) {
+        final bytes = await _selectedImage!.readAsBytes();
+        final ext = _selectedImage!.name.contains('.') ? _selectedImage!.name.split('.').last : 'jpg';
+        final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
+        
+        try {
+          await Supabase.instance.client.storage
+              .from('products')
+              .uploadBinary(fileName, bytes,
+                  fileOptions: const FileOptions(upsert: true));
+        } catch (e) {
+          // If bucket doesn't exist or other error, let's try to create it just in case
+          try {
+            await Supabase.instance.client.storage.createBucket('products', const BucketOptions(public: true));
+            await Supabase.instance.client.storage
+                .from('products')
+                .uploadBinary(fileName, bytes,
+                    fileOptions: const FileOptions(upsert: true));
+          } catch (_) {}
+        }
+        
+        finalImageUrl = Supabase.instance.client.storage
+            .from('products')
+            .getPublicUrl(fileName);
+      }
+
       if (product == null) {
         await repository.createProduct(
           sku: _sku.text.trim(),
@@ -701,7 +737,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           maxBottleAgeDays: int.parse(_maxBottleAgeDays.text),
           lowBottleThreshold: int.parse(_lowBottleThreshold.text),
           lowBidonThreshold: int.parse(_lowBidonThreshold.text),
-          imageUrl: _imageUrl.text.trim(),
+          imageUrl: finalImageUrl,
         );
       } else {
         await repository.updateProduct(
@@ -717,10 +753,16 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           maxBottleAgeDays: int.parse(_maxBottleAgeDays.text),
           lowBottleThreshold: int.parse(_lowBottleThreshold.text),
           lowBidonThreshold: int.parse(_lowBidonThreshold.text),
-          imageUrl: _imageUrl.text.trim(),
+          imageUrl: finalImageUrl,
         );
       }
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) {
+        PremiumSnackbar.showSuccess(
+          context,
+          widget.product == null ? 'Product added successfully' : 'Product updated successfully',
+        );
+        Navigator.of(context).pop();
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

@@ -44,6 +44,18 @@ String localizeAuthError(
   if (error is AuthException) {
     return error.message;
   }
+  if (error is PostgrestException) {
+    if (error.code == '23505') {
+      return l10n.t('errorUniqueViolation') ?? 'This record already exists.';
+    }
+    if (error.code == '23503') {
+      return l10n.t('errorForeignKeyViolation') ?? 'Related record not found.';
+    }
+    if (error.code == '42501') {
+      return l10n.t('errorPermissionDenied') ?? 'You do not have permission to perform this action.';
+    }
+    return l10n.t('errorGeneric') ?? 'An unexpected database error occurred. Please try again.';
+  }
   final raw = error.toString();
   if (raw.contains('This account has been deactivated')) {
     return l10n.t('authAccountDeactivated');

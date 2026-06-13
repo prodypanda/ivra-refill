@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../../version.dart';
 
 import '../alerts/alerts_screen.dart';
 import '../approvals/approvals_screen.dart';
+import '../audit/audit_logs_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../hotels/hotels_screen.dart';
 import '../inventory/inventory_screen.dart';
@@ -236,6 +237,14 @@ class _AppShellState extends ConsumerState<AppShell> {
         },
       ),
       _NavItem(
+        l10n.t('menuAuditLogs'),
+        Icons.security_outlined,
+        AuditLogsScreen.route,
+        const {
+          UserRole.appAdmin,
+        },
+      ),
+      _NavItem(
         l10n.t('settings'),
         Icons.settings_outlined,
         SettingsScreen.route,
@@ -425,9 +434,6 @@ class _NavItem {
 class _DrawerFooter extends StatelessWidget {
   const _DrawerFooter();
 
-  // Keep this in sync with pubspec.yaml version
-  static const _appVersion = '1.0.3';
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -437,7 +443,7 @@ class _DrawerFooter extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'App Version (v$_appVersion)',
+            'App Version (v$appVersion)',
             style: const TextStyle(
               fontSize: 10,
               color: Colors.grey,

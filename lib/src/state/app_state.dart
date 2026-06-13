@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/export_file_service.dart';
@@ -73,6 +74,10 @@ final hotelsProvider = FutureProvider<List<Hotel>>((ref) {
 
 final productsProvider = FutureProvider<List<Product>>((ref) {
   return ref.watch(repositoryProvider).products();
+});
+
+final auditLogsProvider = FutureProvider.autoDispose<List<AuditLog>>((ref) {
+  return ref.watch(repositoryProvider).fetchAuditLogs();
 });
 
 final teamMembersProvider = FutureProvider<List<UserProfile>>((ref) async {
@@ -207,4 +212,33 @@ void invalidateAccountScopedData(WidgetRef ref) {
 final refillEventsProvider = FutureProvider<List<RefillEvent>>((ref) {
   final hotelId = ref.watch(selectedHotelIdProvider);
   return ref.watch(repositoryProvider).recentRefillEvents(hotelId: hotelId);
+});
+
+class DownloadBannerNotifier extends StateNotifier<bool> {
+  DownloadBannerNotifier() : super(false) {
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      state = prefs.getBool('download_banner_collapsed') ?? false;
+    } catch (e) {
+      debugPrint('Error loading download banner state: $e');
+    }
+  }
+
+  Future<void> setCollapsed(bool collapsed) async {
+    state = collapsed;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('download_banner_collapsed', collapsed);
+    } catch (e) {
+      debugPrint('Error saving download banner state: $e');
+    }
+  }
+}
+
+final downloadBannerCollapsedProvider = StateNotifierProvider<DownloadBannerNotifier, bool>((ref) {
+  return DownloadBannerNotifier();
 });
