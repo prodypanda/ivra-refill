@@ -9,6 +9,7 @@ import '../../state/app_state.dart';
 import '../auth/biometric_auth.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/premium_snackbar.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -602,10 +603,9 @@ class _DemoUserSwitcher extends ConsumerWidget {
                       .switchDemoUser(userId: value);
                   _refreshAppData(ref);
                   if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(AppLocalizations.of(context)
-                            .t('settingsDemoUserChanged'))),
+                  PremiumSnackbar.showSuccess(
+                    context, 
+                    AppLocalizations.of(context).t('settingsDemoUserChanged'),
                   );
                 },
               ),

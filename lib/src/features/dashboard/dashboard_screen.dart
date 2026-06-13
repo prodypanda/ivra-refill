@@ -230,7 +230,7 @@ class _MetricCardState extends State<_MetricCard> {
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.2,
                       ),
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -261,17 +261,26 @@ class _MetricCardState extends State<_MetricCard> {
   }
 }
 
-class _MobileHero extends StatelessWidget {
+class _MobileHero extends StatefulWidget {
   const _MobileHero({required this.data});
 
   final DashboardMetrics data;
+
+  @override
+  State<_MobileHero> createState() => _MobileHeroState();
+}
+
+class _MobileHeroState extends State<_MobileHero> {
+  bool _isExpanded = true;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
@@ -306,62 +315,87 @@ class _MobileHero extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                GestureDetector(
+                  onTap: () => setState(() => _isExpanded = !_isExpanded),
+                  behavior: HitTestBehavior.opaque,
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.insights, color: Colors.white, size: 16),
-                      const SizedBox(width: 6),
-                      Text(
-                        l10n.t('dashboardHeroTitle'),
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
+                      Container(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(20),
                         ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.insights, color: Colors.white, size: 16),
+                            const SizedBox(width: 6),
+                            Text(
+                              l10n.t('dashboardHeroTitle'),
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        _isExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: Colors.white,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  data.bottlesToReplace.toString(),
-                  style: theme.textTheme.displayMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    height: 1.1,
+                AnimatedCrossFade(
+                  firstChild: const SizedBox(height: 0, width: double.infinity),
+                  secondChild: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 24),
+                      Text(
+                        widget.data.bottlesToReplace.toString(),
+                        style: theme.textTheme.displayMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          height: 1.1,
+                        ),
+                      ),
+                      Text(
+                        l10n.t('metricBottlesToReplace'),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          _HeroPill(
+                            label: l10n.t('metricOpenAlerts'),
+                            value: widget.data.openAlerts,
+                            icon: Icons.notifications_active,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 12),
+                          _HeroPill(
+                            label: l10n.t('metricPendingApprovals'),
+                            value: widget.data.pendingApprovals,
+                            icon: Icons.fact_check,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-                Text(
-                  l10n.t('metricBottlesToReplace'),
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    _HeroPill(
-                      label: l10n.t('metricOpenAlerts'),
-                      value: data.openAlerts,
-                      icon: Icons.notifications_active,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 12),
-                    _HeroPill(
-                      label: l10n.t('metricPendingApprovals'),
-                      value: data.pendingApprovals,
-                      icon: Icons.fact_check,
-                      color: Colors.white,
-                    ),
-                  ],
+                  crossFadeState: _isExpanded
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                  duration: const Duration(milliseconds: 300),
                 ),
               ],
             ),

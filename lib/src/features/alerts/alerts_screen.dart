@@ -204,12 +204,7 @@ class AlertsScreen extends ConsumerWidget {
         ref.invalidate(dashboardProvider);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          PremiumSnackbar.showError(context, e);
         }
       }
     }

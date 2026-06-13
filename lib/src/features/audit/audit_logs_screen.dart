@@ -18,6 +18,16 @@ class AuditLogsScreen extends ConsumerStatefulWidget {
 
 class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
   final _scrollController = ScrollController();
+  int? _sortColumnIndex = 0;
+  bool _sortAscending = false;
+  String? _selectedActionFilter;
+
+  void _onSort(int columnIndex, bool ascending) {
+    setState(() {
+      _sortColumnIndex = columnIndex;
+      _sortAscending = ascending;
+    });
+  }
 
   @override
   void dispose() {
@@ -70,34 +80,86 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
         value: auditLogsAsync,
         builder: (logs) {
           final teamMembers = teamMembersAsync.valueOrNull ?? [];
+          final uniqueActions = logs.map((l) => l.action).toSet().toList()..sort();
           
-          return SingleChildScrollView(
-            child: Card(
-              margin: EdgeInsets.zero,
-              child: Scrollbar(
-                controller: _scrollController,
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                  columns: [
-                    DataColumn(label: Text(l10n.t('auditTimestamp'))),
-                    DataColumn(label: Text(l10n.t('auditUser'))),
-                    DataColumn(label: Text(l10n.t('auditAction'))),
-                    DataColumn(label: Text(l10n.t('auditIpAddress'))),
-                    DataColumn(label: Text(l10n.t('auditDevice'))),
-                  ],
-                  rows: logs.map((log) {
-                    final user = log.userId != null 
-                        ? teamMembers.where((m) => m.id == log.userId).firstOrNull 
-                        : null;
-                    final userDisplay = user != null ? user.email : (log.userId ?? 'System');
-                    
-                    final date = DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createdAt);
+          var filteredLogs = _selectedActionFilter == null 
+              ? logs.toList()
+              : logs.where((l) => l.action == _selectedActionFilter).toList();
+              
+          filteredLogs.sort((a, b) {
+            final asc = _sortAscending ? 1 : -1;
+            switch (_sortColumnIndex) {
+              case 0:
+                return a.createdAt.compareTo(b.createdAt) * asc;
+              case 1:
+                final userA = a.userId != null ? teamMembers.where((m) => m.id == a.userId).firstOrNull?.email ?? a.userId! : 'System';
+                final userB = b.userId != null ? teamMembers.where((m) => m.id == b.userId).firstOrNull?.email ?? b.userId! : 'System';
+                return userA.compareTo(userB) * asc;
+              case 2:
+                return a.action.compareTo(b.action) * asc;
+              case 3:
+                return (a.ipAddress ?? '').compareTo(b.ipAddress ?? '') * asc;
+              case 4:
+                return (a.deviceInfo ?? '').compareTo(b.deviceInfo ?? '') * asc;
+              default:
+                return b.createdAt.compareTo(a.createdAt); // default descending
+            }
+          });
+          
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (uniqueActions.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      FilterChip(
+                        label: Text(l10n.t('auditFilterAllActions') ?? 'All Actions'),
+                        selected: _selectedActionFilter == null,
+                        onSelected: (_) => setState(() => _selectedActionFilter = null),
+                      ),
+                      ...uniqueActions.map((action) => FilterChip(
+                        label: Text(action),
+                        selected: _selectedActionFilter == action,
+                        onSelected: (selected) {
+                          setState(() => _selectedActionFilter = selected ? action : null);
+                        },
+                      )),
+                    ],
+                  ),
+                ),
+              Expanded(
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  child: Scrollbar(
+                    controller: _scrollController,
+                    thumbVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                      sortColumnIndex: _sortColumnIndex,
+                      sortAscending: _sortAscending,
+                      columns: [
+                        DataColumn(label: Text(l10n.t('auditTimestamp')), onSort: _onSort),
+                        DataColumn(label: Text(l10n.t('auditUser')), onSort: _onSort),
+                        DataColumn(label: Text(l10n.t('auditAction')), onSort: _onSort),
+                        DataColumn(label: Text(l10n.t('auditIpAddress')), onSort: _onSort),
+                        DataColumn(label: Text(l10n.t('auditDevice')), onSort: _onSort),
+                      ],
+                      rows: filteredLogs.map((log) {
+                        final user = log.userId != null 
+                            ? teamMembers.where((m) => m.id == log.userId).firstOrNull 
+                            : null;
+                        final userDisplay = user != null ? user.email : (log.userId ?? 'System');
+                        
+                        final date = DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createdAt);
 
-                    return DataRow(
-                      cells: [
+                        return DataRow(
+                          cells: [
                         DataCell(Text(date)),
                         DataCell(Text(userDisplay)),
                         DataCell(
@@ -123,9 +185,11 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
               ),
             ),
           ),
-        );
-      },
-    ),
-  );
+        ),
+      ],
+    );
+  },
+),
+);
 }
 }

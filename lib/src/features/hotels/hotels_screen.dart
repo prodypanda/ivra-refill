@@ -9,6 +9,7 @@ import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/premium_snackbar.dart';
 
 class HotelsScreen extends ConsumerWidget {
   const HotelsScreen({super.key});
@@ -89,18 +90,11 @@ class HotelsScreen extends ConsumerWidget {
         await ref.read(repositoryProvider).deleteHotel(hotel.id);
         ref.invalidate(hotelsProvider);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.t('hotelDeleted'))),
-          );
+          PremiumSnackbar.showSuccess(context, l10n.t('hotelDeleted'));
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          PremiumSnackbar.showError(context, e);
         }
       }
     }
@@ -587,25 +581,15 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
           );
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context).t('hotelCreatedSuccessfully'),
-            ),
-          ),
-        );
+        PremiumSnackbar.showSuccess(context, AppLocalizations.of(context).t('hotelCreatedSuccessfully'),);
       }
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(localizeAuthError(
+      PremiumSnackbar.showSuccess(context, localizeAuthError(
             AppLocalizations.of(context),
             error,
             fallbackKey: 'hotelCreateFailed',
-          )),
-        ),
-      );
+          ));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -862,29 +846,19 @@ class _HotelEditRequestDialogState
       }
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              offline
+        PremiumSnackbar.showSuccess(context, offline
                   ? l10n.t('editRequestQueued')
                   : widget.applyImmediately
                       ? l10n.t('hotelUpdated')
-                      : l10n.t('editRequestSubmitted'),
-            ),
-          ),
-        );
+                      : l10n.t('editRequestSubmitted'),);
       }
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(localizeAuthError(
+      PremiumSnackbar.showSuccess(context, localizeAuthError(
             l10n,
             error,
             fallbackKey: 'hotelUpdateFailed',
-          )),
-        ),
-      );
+          ));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

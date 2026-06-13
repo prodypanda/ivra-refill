@@ -12,6 +12,7 @@ import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../../services/audit_service.dart';
+import '../shared/premium_snackbar.dart';
 
 class AccountScreen extends ConsumerStatefulWidget {
   const AccountScreen({super.key});
@@ -194,15 +195,11 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       if (mounted) context.go(LoginScreen.route);
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(localizeAuthError(
+      PremiumSnackbar.showSuccess(context, localizeAuthError(
             AppLocalizations.of(context),
             error,
             fallbackKey: 'accountSignOutFailed',
-          )),
-        ),
-      );
+          ));
     } finally {
       if (mounted) setState(() => _isSigningOut = false);
     }

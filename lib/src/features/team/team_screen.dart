@@ -9,6 +9,7 @@ import '../../l10n/app_localizations.dart';
 import '../auth/accept_invitation_screen.dart';
 import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
+import '../shared/premium_snackbar.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/glass_card.dart';
 
@@ -143,14 +144,11 @@ class TeamScreen extends ConsumerWidget {
         );
     ref.invalidate(teamMembersProvider);
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context).tParams(
-            isActive ? 'teamMemberReactivated' : 'teamMemberDeactivated',
-            {'name': member.fullName},
-          ),
-        ),
+    PremiumSnackbar.showSuccess(
+      context,
+      AppLocalizations.of(context).tParams(
+        isActive ? 'teamMemberReactivated' : 'teamMemberDeactivated',
+        {'name': member.fullName},
       ),
     );
   }
@@ -190,12 +188,7 @@ class TeamScreen extends ConsumerWidget {
         ref.invalidate(teamMembersProvider);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          PremiumSnackbar.showError(context, e);
         }
       }
     }
@@ -211,14 +204,11 @@ class TeamScreen extends ConsumerWidget {
         );
     ref.invalidate(teamInvitationsProvider);
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context).tParams(
-            'teamInvitationCancelled',
-            {'email': invitation.email},
-          ),
-        ),
+    PremiumSnackbar.showSuccess(
+      context,
+      AppLocalizations.of(context).tParams(
+        'teamInvitationCancelled',
+        {'email': invitation.email},
       ),
     );
   }
@@ -233,14 +223,11 @@ class TeamScreen extends ConsumerWidget {
         );
     ref.invalidate(teamInvitationsProvider);
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context).tParams(
-            'teamInvitationResent',
-            {'email': invitation.email},
-          ),
-        ),
+    PremiumSnackbar.showSuccess(
+      context,
+      AppLocalizations.of(context).tParams(
+        'teamInvitationResent',
+        {'email': invitation.email},
       ),
     );
   }
@@ -251,10 +238,9 @@ class TeamScreen extends ConsumerWidget {
   ) async {
     final token = invitation.inviteToken;
     if (token == null || token.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                AppLocalizations.of(context).t('teamInviteLinkUnavailable'))),
+      PremiumSnackbar.showError(
+        context,
+        AppLocalizations.of(context).t('teamInviteLinkUnavailable'),
       );
       return;
     }
@@ -267,14 +253,11 @@ class TeamScreen extends ConsumerWidget {
         Uri.base.replace(path: '/', query: '', fragment: invitePath).toString();
     await Clipboard.setData(ClipboardData(text: link));
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context).tParams(
-            'teamInvitationCopied',
-            {'email': invitation.email},
-          ),
-        ),
+    PremiumSnackbar.showSuccess(
+      context,
+      AppLocalizations.of(context).tParams(
+        'teamInvitationCopied',
+        {'email': invitation.email},
       ),
     );
   }
@@ -586,15 +569,11 @@ class _InviteTeamMemberDialogState
       if (mounted) Navigator.of(context).pop();
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(localizeAuthError(
+      PremiumSnackbar.showSuccess(context, localizeAuthError(
             AppLocalizations.of(context),
             error,
             fallbackKey: 'teamInviteFailed',
-          )),
-        ),
-      );
+          ));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

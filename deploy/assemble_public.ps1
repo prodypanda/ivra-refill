@@ -18,6 +18,7 @@ Set-Location $repoRoot
 
 Write-Host "==> Building Flutter web app (base href /app/)..." -ForegroundColor Cyan
 flutter build web --release `
+  --tree-shake-icons `
   --base-href "/app/" `
   --dart-define=SUPABASE_URL=$SupabaseUrl `
   --dart-define=SUPABASE_ANON_KEY=$SupabaseAnonKey

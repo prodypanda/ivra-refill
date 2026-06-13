@@ -23,9 +23,12 @@ class InventoryScreen extends ConsumerStatefulWidget {
   ConsumerState<InventoryScreen> createState() => _InventoryScreenState();
 }
 
+enum InventorySortOption { nameAsc, nameDesc, fullBottlesDesc, emptyBottlesDesc }
+
 class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   String _searchQuery = '';
   String _statusFilter = 'all'; // 'all', 'lowStock'
+  InventorySortOption _sortOption = InventorySortOption.nameAsc;
   late final TextEditingController _searchController;
 
   @override
@@ -190,6 +193,21 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                       }
                       return true;
                     }).toList();
+
+                    // Apply sort
+                    final languageCode = Localizations.localeOf(context).languageCode;
+                    filteredItems.sort((a, b) {
+                      switch (_sortOption) {
+                        case InventorySortOption.nameAsc:
+                          return a.product.label(languageCode).compareTo(b.product.label(languageCode));
+                        case InventorySortOption.nameDesc:
+                          return b.product.label(languageCode).compareTo(a.product.label(languageCode));
+                        case InventorySortOption.fullBottlesDesc:
+                          return b.fullBottles.compareTo(a.fullBottles);
+                        case InventorySortOption.emptyBottlesDesc:
+                          return b.emptyBottles.compareTo(a.emptyBottles);
+                      }
+                    });
 
                     return _InventoryTable(items: filteredItems);
                   },
@@ -389,6 +407,48 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   ),
                   onSelected: (selected) {
                     if (selected) setState(() => _statusFilter = 'lowStock');
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Sort Options
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                const Icon(Icons.sort, size: 18, color: Colors.grey),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(l10n.t('sortNameAsc') ?? 'Name (A-Z)'),
+                  selected: _sortOption == InventorySortOption.nameAsc,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _sortOption = InventorySortOption.nameAsc);
+                  },
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(l10n.t('sortNameDesc') ?? 'Name (Z-A)'),
+                  selected: _sortOption == InventorySortOption.nameDesc,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _sortOption = InventorySortOption.nameDesc);
+                  },
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(l10n.t('sortMostFullBottles') ?? 'Most Full Bottles'),
+                  selected: _sortOption == InventorySortOption.fullBottlesDesc,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _sortOption = InventorySortOption.fullBottlesDesc);
+                  },
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(l10n.t('sortMostEmptyBottles') ?? 'Most Empty Bottles'),
+                  selected: _sortOption == InventorySortOption.emptyBottlesDesc,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _sortOption = InventorySortOption.emptyBottlesDesc);
                   },
                 ),
               ],
@@ -1450,6 +1510,7 @@ class _BulkStockAdjustmentDialogState
   final _reason = TextEditingController();
   var _isSaving = false;
   bool _showAdvanced = false;
+  Set<String> _selectedProductIds = {};
 
   @override
   void dispose() {
@@ -1477,12 +1538,13 @@ class _BulkStockAdjustmentDialogState
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       content: SizedBox(
-        width: 320,
+        width: 400,
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
                   l10n.t('bulkAdjustStockHint'),
@@ -1491,6 +1553,53 @@ class _BulkStockAdjustmentDialogState
                   ),
                 ),
                 const SizedBox(height: 16),
+                Text(
+                  l10n.t('bulkAdjustSelectProducts') ?? 'Select Products',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedProductIds = widget.products.map((p) => p.id).toSet();
+                        });
+                      },
+                      child: Text(l10n.t('bulkAdjustSelectAll') ?? 'Select All'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedProductIds.clear();
+                        });
+                      },
+                      child: Text(l10n.t('bulkAdjustDeselectAll') ?? 'Deselect All'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: widget.products.map((p) {
+                    final isSelected = _selectedProductIds.contains(p.id);
+                    return FilterChip(
+                      label: Text(p.label(Localizations.localeOf(context).languageCode)),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            _selectedProductIds.add(p.id);
+                          } else {
+                            _selectedProductIds.remove(p.id);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 24),
                 Column(
                   children: [
                     _DeltaField(
@@ -1573,6 +1682,14 @@ class _BulkStockAdjustmentDialogState
     if (!_formKey.currentState!.validate()) return;
     final l10n = AppLocalizations.of(context);
 
+    if (_selectedProductIds.isEmpty) {
+      PremiumSnackbar.showError(
+        context,
+        l10n.t('bulkAdjustNoProductsSelected') ?? 'Please select at least one product.',
+      );
+      return;
+    }
+
     setState(() => _isSaving = true);
     try {
       final fullBottlesDelta = int.parse(_fullBottles.text);
@@ -1584,7 +1701,9 @@ class _BulkStockAdjustmentDialogState
 
       var isOffline = ref.read(offlineModeProvider);
 
-      for (final product in widget.products) {
+      final selectedProducts = widget.products.where((p) => _selectedProductIds.contains(p.id));
+
+      for (final product in selectedProducts) {
         final payload = {
           'hotelId': widget.hotelId,
           'productId': product.id,
@@ -1652,12 +1771,7 @@ class _BulkStockAdjustmentDialogState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        PremiumSnackbar.showError(context, e);
       }
     } finally {
       if (mounted) {

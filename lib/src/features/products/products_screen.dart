@@ -10,6 +10,8 @@ import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/product_image.dart';
+import '../shared/premium_snackbar.dart';
 
 /// Product create/edit/delete is restricted server-side to Ivra-level roles
 /// (`app_admin`/`app_manager`, see the `products_write_ivra` RLS policy).
@@ -197,29 +199,10 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(
-                      widget.product.imagePath,
+                    ProductImage(
+                      imagePath: widget.product.imagePath,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xFF0C4A3A),
-                              Color(0xFF267D65),
-                              Color(0xFF3EA47E),
-                            ],
-                          ),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.spa_outlined,
-                            size: 64,
-                            color: Colors.white.withValues(alpha: 0.8),
-                          ),
-                        ),
-                      ),
+                      iconSize: 64,
                     ),
                     // Gradient overlay
                     Positioned.fill(
@@ -405,12 +388,7 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
         ref.invalidate(productsProvider);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          PremiumSnackbar.showError(context, e);
         }
       }
     }
@@ -778,7 +756,13 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           imageUrl: finalImageUrl,
         );
       }
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) {
+        PremiumSnackbar.showSuccess(
+          context,
+          widget.product == null ? 'Product added successfully' : 'Product updated successfully',
+        );
+        Navigator.of(context).pop();
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

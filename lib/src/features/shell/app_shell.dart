@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../../version.dart';
 
 import '../alerts/alerts_screen.dart';
 import '../approvals/approvals_screen.dart';
@@ -434,9 +434,6 @@ class _NavItem {
 class _DrawerFooter extends StatelessWidget {
   const _DrawerFooter();
 
-  // Keep this in sync with pubspec.yaml version
-  static const _appVersion = '1.0.9';
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -446,7 +443,7 @@ class _DrawerFooter extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'App Version (v$_appVersion)',
+            'App Version (v$appVersion)',
             style: const TextStyle(
               fontSize: 10,
               color: Colors.grey,
