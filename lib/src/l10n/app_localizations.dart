@@ -25,6 +25,17 @@ class AppLocalizations {
   static const _values = {
     'en': {
       'markAsRead': 'Mark as Read',
+      'confirmDeleteHotel': 'Are you sure you want to delete the hotel \'{hotelName}\'? This action is permanent, cannot be undone, and will permanently remove all associated rooms, staff assignments, and records.',
+      'confirmDeleteRoom': 'Are you sure you want to delete room \'{roomNumber}\'? This action is permanent, cannot be undone, and will permanently remove all associated products and history.',
+      'confirmDeleteFloor': 'Are you sure you want to delete floor \'{floorNumber}\' and all of its rooms? This action is permanent and cannot be undone.',
+      'confirmDeleteUser': 'Are you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.',
+      'confirmDeleteProduct': 'Are you sure you want to delete product \'{productName}\'? This action is permanent, cannot be undone, and will affect inventory tracking.',
+      'confirmDeleteAlert': 'Are you sure you want to delete this alert? This action is permanent and cannot be undone.',
+      'confirmDeleteAllAlerts': 'Are you sure you want to delete all alerts? This action is permanent, cannot be undone, and will clear all current notifications.',
+      'clearAuditLogs': 'Clear Logs',
+      'confirmAction': 'Confirm Action',
+      'confirmClearLogs': 'Are you sure you want to clear all audit logs? This action is permanent and cannot be undone.',
+      'btnConfirm': 'Confirm',
 
 
       'composeMessage': 'Compose Message',
@@ -540,6 +551,17 @@ class AppLocalizations {
       'sendPushTitle': 'Send Notification',
     },
     'fr': {
+      'confirmDeleteHotel': 'Voulez-vous vraiment supprimer l\'hôtel \'{hotelName}\' ? Cette action est irréversible et supprimera définitivement toutes les chambres, affectations de personnel et enregistrements associés.',
+      'confirmDeleteRoom': 'Voulez-vous vraiment supprimer la chambre \'{roomNumber}\' ? Cette action est irréversible et supprimera définitivement tous les produits et l\'historique associés.',
+      'confirmDeleteFloor': 'Voulez-vous vraiment supprimer l\'étage \'{floorNumber}\' et toutes ses chambres ? Cette action est irréversible.',
+      'confirmDeleteUser': 'Voulez-vous vraiment supprimer le membre de l\'équipe \'{userName}\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.',
+      'confirmDeleteProduct': 'Voulez-vous vraiment supprimer le produit \'{productName}\' ? Cette action est irréversible et affectera le suivi des stocks.',
+      'confirmDeleteAlert': 'Voulez-vous vraiment supprimer cette alerte ? Cette action est irréversible.',
+      'confirmDeleteAllAlerts': 'Voulez-vous vraiment supprimer toutes les alertes ? Cette action est irréversible et effacera toutes les notifications actuelles.',
+      'clearAuditLogs': 'Effacer les journaux',
+      'confirmAction': 'Confirmer l\'action',
+      'confirmClearLogs': 'Voulez-vous vraiment effacer tous les journaux d\'audit ? Cette action est irréversible.',
+      'btnConfirm': 'Confirmer',
 
 
 
@@ -1072,6 +1094,17 @@ class AppLocalizations {
       'markAsRead': 'Marquer comme lu',
     },
     'ar': {
+      'confirmDeleteHotel': 'هل أنت متأكد من رغبتك في حذف الفندق \'{hotelName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع الغرف المرتبطة، وتعيينات الموظفين، والسجلات بشكل نهائي.',
+      'confirmDeleteRoom': 'هل أنت متأكد من رغبتك في حذف الغرفة \'{roomNumber}\'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع المنتجات والسجلات المرتبطة بشكل نهائي.',
+      'confirmDeleteFloor': 'هل أنت متأكد من رغبتك في حذف الطابق \'{floorNumber}\' وجميع غرفه؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.',
+      'confirmDeleteUser': 'هل أنت متأكد من رغبتك في حذف عضو الفريق \'{userName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.',
+      'confirmDeleteProduct': 'هل أنت متأكد من رغبتك في حذف المنتج \'{productName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيؤثر على تتبع المخزون.',
+      'confirmDeleteAlert': 'هل أنت متأكد من رغبتك في حذف هذا التنبيه؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.',
+      'confirmDeleteAllAlerts': 'هل أنت متأكد من رغبتك في حذف جميع التنبيهات؟ لا يمكن التراجع عن هذا الإجراء وسيؤدي إلى مسح جميع الإشعارات الحالية.',
+      'clearAuditLogs': 'مسح السجلات',
+      'confirmAction': 'تأكيد الإجراء',
+      'confirmClearLogs': 'هل أنت متأكد من رغبتك في مسح جميع سجلات التدقيق؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.',
+      'btnConfirm': 'تأكيد',
       'actionAndRouting': 'الإجراءات والتوجيه',
       'openSpecificPage': 'فتح صفحة محددة (اختياري)',
       'defaultNoPage': 'الافتراضي (لا توجد صفحة)',
@@ -1619,6 +1652,17 @@ class AppLocalizations {
       'markAsRead': 'تحديد كمقروء',
     },
     'it': {
+      'confirmDeleteHotel': 'Sei sicuro di voler eliminare l\'hotel \'{hotelName}\'? Questa azione è permanente, non può essere annullata ed eliminerà tutte le camere, assegnazioni del personale e record associati.',
+      'confirmDeleteRoom': 'Sei sicuro di voler eliminare la camera \'{roomNumber}\'? Questa azione è permanente, non può essere annullata ed eliminerà tutti i prodotti e la cronologia associati.',
+      'confirmDeleteFloor': 'Sei sicuro di voler eliminare il piano \'{floorNumber}\' e tutte le sue camere? Questa azione è permanente e non può essere annullata.',
+      'confirmDeleteUser': 'Sei sicuro di voler eliminare il membro del team \'{userName}\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.',
+      'confirmDeleteProduct': 'Sei sicuro di voler eliminare il prodotto \'{productName}\'? Questa azione è permanente, non può essere annullata e influirà sul tracciamento dell\'inventario.',
+      'confirmDeleteAlert': 'Sei sicuro di voler eliminare questo avviso? Questa azione è permanente e non può essere annullata.',
+      'confirmDeleteAllAlerts': 'Sei sicuro di voler eliminare tutti gli avvisi? Questa azione è permanente, non può essere annullata e cancellerà tutte le notifiche correnti.',
+      'clearAuditLogs': 'Cancella registri',
+      'confirmAction': 'Conferma azione',
+      'confirmClearLogs': 'Sei sicuro di voler cancellare tutti i registri di controllo? Questa azione è permanente e non può essere annullata.',
+      'btnConfirm': 'Conferma',
       'actionAndRouting': 'Azioni e Routing',
       'openSpecificPage': 'Apri Pagina Specifica (Opzionale)',
       'defaultNoPage': 'Predefinito (Nessuna pagina)',

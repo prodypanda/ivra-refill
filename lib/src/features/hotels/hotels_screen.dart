@@ -10,6 +10,7 @@ import '../shared/async_value_view.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/premium_snackbar.dart';
+import '../shared/premium_confirm_dialog.dart';
 
 class HotelsScreen extends ConsumerWidget {
   const HotelsScreen({super.key});
@@ -21,8 +22,6 @@ class HotelsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
     final canCreateHotel = currentUser?.isIvraUser ?? false;
-    final theme = Theme.of(context);
-
     return PageScaffold(
       title: l10n.t('hotels'),
       onRefresh: () async {
@@ -62,30 +61,13 @@ class HotelsScreen extends ConsumerWidget {
     Hotel hotel,
   ) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.t('delete')),
-        content: Text(l10n.tParams('confirmDeleteHotel', {'hotelName': hotel.name})),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('btnCancel')),
-          ),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l10n.t('delete')),
-          ),
-        ],
-      ),
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.tParams('confirmDeleteHotel', {'hotelName': hotel.name}),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       try {
         await ref.read(repositoryProvider).deleteHotel(hotel.id);
         ref.invalidate(hotelsProvider);

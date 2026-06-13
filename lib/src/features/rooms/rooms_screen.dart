@@ -14,6 +14,7 @@ import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
 import '../shared/premium_loading.dart';
+import '../shared/premium_confirm_dialog.dart';
 
 class RoomsScreen extends ConsumerStatefulWidget {
   const RoomsScreen({super.key});
@@ -732,30 +733,13 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   Future<void> _confirmDeleteRoom(
       BuildContext context, WidgetRef ref, String roomId, String roomNumber) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.t('delete')),
-        content: Text('${l10n.t('roomsLabelRoom')} $roomNumber?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('btnCancel')),
-          ),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l10n.t('delete')),
-          ),
-        ],
-      ),
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.tParams('confirmDeleteRoom', {'roomNumber': roomNumber}),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       try {
         await ref.read(repositoryProvider).deleteRoom(roomId);
         ref.invalidate(roomsProvider);
@@ -773,34 +757,18 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final l10n = AppLocalizations.of(context);
     
     final roomsList = await ref.read(roomsProvider.future);
+    if (!context.mounted) return;
     final floorInfo = roomsList.where((r) => r.floorNumber == floorNumber).firstOrNull;
     if (floorInfo == null) return;
     final floorId = floorInfo.floorId;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.t('delete')),
-        content: Text('${l10n.t('roomsLabelFloor')} $floorNumber?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('btnCancel')),
-          ),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l10n.t('delete')),
-          ),
-        ],
-      ),
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.tParams('confirmDeleteFloor', {'floorNumber': floorNumber.toString()}),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       try {
         await ref.read(repositoryProvider).deleteFloor(floorId);
         ref.invalidate(roomsProvider);

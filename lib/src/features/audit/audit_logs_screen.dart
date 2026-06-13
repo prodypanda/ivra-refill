@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/premium_confirm_dialog.dart';
 
 class AuditLogsScreen extends ConsumerStatefulWidget {
   const AuditLogsScreen({super.key});
@@ -46,26 +47,14 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
       actions: [
         IconButton(
           icon: const Icon(Icons.delete_sweep),
-          tooltip: l10n.t('clearAuditLogs') ?? 'Clear Logs',
+          tooltip: l10n.t('clearAuditLogs'),
           onPressed: () async {
-            final confirm = await showDialog<bool>(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: Text(l10n.t('confirmAction') ?? 'Confirm Action'),
-                content: Text(l10n.t('confirmClearLogs') ?? 'Are you sure you want to clear all audit logs? This cannot be undone.'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(false),
-                    child: Text(l10n.t('btnCancel') ?? 'Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(true),
-                    child: Text(l10n.t('btnClear') ?? 'Clear', style: TextStyle(color: Theme.of(context).colorScheme.error)),
-                  ),
-                ],
-              ),
+            final confirm = await PremiumConfirmDialog.show(
+              context,
+              title: l10n.t('confirmAction'),
+              message: l10n.t('confirmClearLogs'),
             );
-            if (confirm == true) {
+            if (confirm) {
               await ref.read(repositoryProvider).clearAuditLogs();
               ref.invalidate(auditLogsProvider);
             }
