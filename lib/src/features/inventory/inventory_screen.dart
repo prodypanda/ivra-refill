@@ -12,6 +12,7 @@ import '../shared/page_scaffold.dart';
 import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
+import '../shared/premium_qr_scanner_dialog.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
   final String? hotelId;
@@ -333,8 +334,12 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     hintText: l10n.t('roomsSearchPlaceholder'),
                     prefixIcon:
                         const Icon(Icons.search, size: 20, color: Colors.grey),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (_searchQuery.isNotEmpty)
+                          IconButton(
                             icon: const Icon(Icons.clear, size: 16),
                             onPressed: () {
                               _searchController.clear();
@@ -342,8 +347,14 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                                 _searchQuery = '';
                               });
                             },
-                          )
-                        : null,
+                          ),
+                        IconButton(
+                          tooltip: l10n.t('qrScanTitle'),
+                          icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+                          onPressed: () => _scanProductQr(context),
+                        ),
+                      ],
+                    ),
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
                     border: OutlineInputBorder(
@@ -484,10 +495,46 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     );
   }
 
-  Future<void> _showStockAdjustmentDialog(BuildContext context) async {
-    final items = await ref.read(inventoryProvider.future);
+  Future<void> _scanProductQr(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final selectedHotelId = ref.read(selectedHotelIdProvider);
+    if (selectedHotelId == null) {
+      PremiumSnackbar.show(
+        context,
+        l10n.t('roomsSelectHotelFirst'),
+        icon: Icons.domain_outlined,
+      );
+      return;
+    }
+
+    final products = await ref.read(productsProvider.future);
     if (!context.mounted) return;
 
+    final productSkus = products.map((p) => 'product:${p.sku}').toList();
+
+    final code = await PremiumQrScannerDialog.show(context, demoCodes: productSkus);
+    if (code == null || code.trim().isEmpty) return;
+
+    final trimmed = code.trim();
+    final sku = trimmed.startsWith('product:') ? trimmed.split(':')[1] : trimmed;
+
+    final matchedProduct = products.where((p) => p.sku.toLowerCase() == sku.toLowerCase()).firstOrNull;
+    if (matchedProduct == null) {
+      if (context.mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('roomsNoRoomsFound'),
+          icon: Icons.error_outline_rounded,
+        );
+      }
+      return;
+    }
+
+    if (!context.mounted) return;
+    await _showStockAdjustmentDialog(context, initialProductId: matchedProduct.id);
+  }
+
+  Future<void> _showStockAdjustmentDialog(BuildContext context, {String? initialProductId}) async {
     final l10n = AppLocalizations.of(context);
     final selectedHotelId = ref.read(selectedHotelIdProvider);
 
@@ -500,14 +547,26 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       return;
     }
 
+    final List<InventoryItem> itemsList;
+    final List<Product> productsList;
+
+    final cachedItems = ref.read(inventoryProvider).valueOrNull;
+    final cachedProducts = ref.read(productsProvider).valueOrNull;
+
+    if (cachedItems != null && cachedProducts != null) {
+      itemsList = cachedItems;
+      productsList = cachedProducts;
+    } else {
+      itemsList = cachedItems ?? await ref.read(inventoryProvider.future);
+      if (!context.mounted) return;
+      productsList = cachedProducts ?? await ref.read(productsProvider.future);
+      if (!context.mounted) return;
+    }
+
     // Filter available adjustment items to only the currently selected hotel's inventory items!
     final hotelItems =
-        items.where((item) => item.hotelId == selectedHotelId).toList();
-
-    // Fetch all available products so we can allow adding stock for products not yet in the hotel's inventory.
-    final products = await ref.read(productsProvider.future);
-    if (!context.mounted) return;
-    final allHotelItems = products.map((product) {
+        itemsList.where((item) => item.hotelId == selectedHotelId).toList();
+    final allHotelItems = productsList.map((product) {
       final existing = hotelItems
           .where((item) => item.product.id == product.id)
           .firstOrNull;
@@ -533,9 +592,18 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       return;
     }
 
+    String? initialItemId;
+    if (initialProductId != null) {
+      final existing = hotelItems.where((item) => item.product.id == initialProductId).firstOrNull;
+      initialItemId = existing?.id ?? 'new_$initialProductId';
+    }
+
     await showDialog<void>(
       context: context,
-      builder: (context) => _StockAdjustmentDialog(items: allHotelItems),
+      builder: (context) => _StockAdjustmentDialog(
+        items: allHotelItems,
+        initialItemId: initialItemId,
+      ),
     );
 
     ref.invalidate(inventoryProvider);
