@@ -1,6 +1,9 @@
 import 'dart:ui';
+import 'dart:io' as io;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../l10n/app_localizations.dart';
 
 class PremiumQrScannerDialog extends StatefulWidget {
@@ -30,6 +33,8 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
     with SingleTickerProviderStateMixin {
   late final AnimationController _scanController;
   late final TextEditingController _inputController;
+  MobileScannerController? _cameraController;
+  bool _isCameraInitialized = false;
 
   @override
   void initState() {
@@ -39,12 +44,28 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
     _inputController = TextEditingController();
+    _initCamera();
+  }
+
+  void _initCamera() {
+    final bool isTestEnv = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+    if (isTestEnv) {
+      return;
+    }
+    _cameraController = MobileScannerController(
+      detectionSpeed: DetectionSpeed.noDuplicates,
+      facing: CameraFacing.back,
+    );
+    setState(() {
+      _isCameraInitialized = true;
+    });
   }
 
   @override
   void dispose() {
     _scanController.dispose();
     _inputController.dispose();
+    _cameraController?.dispose();
     super.dispose();
   }
 
@@ -126,24 +147,75 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
                         child: Stack(
                           clipBehavior: Clip.antiAlias,
                           children: [
-                            // Glass backdrop blur inside viewfinder
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(22),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                                child: Container(color: Colors.transparent),
+                            // Camera preview or fallback glass backdrop
+                            if (!_isCameraInitialized)
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(22),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                  child: Container(color: Colors.transparent),
+                                ),
+                              )
+                            else
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(22),
+                                child: MobileScanner(
+                                  controller: _cameraController,
+                                  onDetect: (capture) {
+                                    final List<Barcode> barcodes = capture.barcodes;
+                                    for (final barcode in barcodes) {
+                                      if (barcode.rawValue != null) {
+                                        _onCodeScanned(barcode.rawValue!);
+                                        break;
+                                      }
+                                    }
+                                  },
+                                  errorBuilder: (context, error) {
+                                    final isPermission = error.errorCode ==
+                                        MobileScannerErrorCode.permissionDenied;
+                                    return Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              isPermission
+                                                  ? Icons.no_photography_outlined
+                                                  : Icons.error_outline_rounded,
+                                              color: Colors.redAccent,
+                                              size: 36,
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              isPermission
+                                                  ? 'Camera permission denied'
+                                                  : 'Camera unavailable',
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
+                            // Target Overlay Icon (only visible when camera not working / initializing)
+                            if (!_isCameraInitialized)
+                              Center(
+                                child: Icon(
+                                  Icons.qr_code_scanner_rounded,
+                                  size: 56,
+                                  color: Colors.white.withValues(alpha: 0.3),
+                                ),
+                              ),
                             // Corners Overlay
                             const _ViewfinderCorners(),
-                            // Target Icon in center
-                            Center(
-                              child: Icon(
-                                Icons.qr_code_scanner_rounded,
-                                size: 56,
-                                color: Colors.white.withValues(alpha: 0.3),
-                              ),
-                            ),
                             // Scanning Laser Animation
                             AnimatedBuilder(
                               animation: _scanController,
