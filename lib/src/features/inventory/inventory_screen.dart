@@ -588,7 +588,7 @@ class _InventoryTable extends StatelessWidget {
   }
 }
 
-class _PremiumInventoryCard extends StatefulWidget {
+class _PremiumInventoryCard extends ConsumerStatefulWidget {
   const _PremiumInventoryCard({
     required this.item,
     required this.language,
@@ -598,11 +598,58 @@ class _PremiumInventoryCard extends StatefulWidget {
   final String language;
 
   @override
-  State<_PremiumInventoryCard> createState() => _PremiumInventoryCardState();
+  ConsumerState<_PremiumInventoryCard> createState() => _PremiumInventoryCardState();
 }
 
-class _PremiumInventoryCardState extends State<_PremiumInventoryCard> {
+class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
   bool _isHovered = false;
+
+  Future<void> _adjustStock(BuildContext context) async {
+    try {
+      final items = await ref.read(inventoryProvider.future);
+      final products = await ref.read(productsProvider.future);
+      if (!context.mounted) return;
+
+      final selectedHotelId = widget.item.hotelId;
+      final hotelItems =
+          items.where((item) => item.hotelId == selectedHotelId).toList();
+
+      final allHotelItems = products.map((product) {
+        final existing = hotelItems
+            .where((item) => item.product.id == product.id)
+            .firstOrNull;
+        return existing ??
+            InventoryItem(
+              id: 'new_${product.id}',
+              hotelId: selectedHotelId,
+              product: product,
+              fullBottles: 0,
+              emptyBottles: 0,
+              fullBidons: 0,
+              openBidons: 0,
+              emptyBidons: 0,
+            );
+      }).toList();
+
+      if (allHotelItems.isEmpty) return;
+
+      await showDialog<void>(
+        context: context,
+        builder: (context) => _StockAdjustmentDialog(
+          items: allHotelItems,
+          initialItemId: widget.item.id,
+        ),
+      );
+
+      ref.invalidate(inventoryProvider);
+      ref.invalidate(suggestedOrdersProvider);
+      ref.invalidate(dashboardProvider);
+    } catch (e) {
+      if (context.mounted) {
+        PremiumSnackbar.showError(context, e);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -690,7 +737,24 @@ class _PremiumInventoryCardState extends State<_PremiumInventoryCard> {
                       ],
                     ),
                   ),
-                  _InventoryStatusPill(lowStock: lowStock),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      _InventoryStatusPill(lowStock: lowStock),
+                      const SizedBox(height: 8),
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined, size: 20),
+                        tooltip: l10n.t('adjustStockTitle'),
+                        onPressed: () => _adjustStock(context),
+                        style: IconButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.08),
+                          foregroundColor: theme.colorScheme.primary,
+                          padding: const EdgeInsets.all(8),
+                          minimumSize: const Size(36, 36),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
               const Spacer(),
@@ -932,9 +996,10 @@ class _InventoryStatusPill extends StatelessWidget {
 
 
 class _StockAdjustmentDialog extends ConsumerStatefulWidget {
-  const _StockAdjustmentDialog({required this.items});
+  const _StockAdjustmentDialog({required this.items, this.initialItemId});
 
   final List<InventoryItem> items;
+  final String? initialItemId;
 
   @override
   ConsumerState<_StockAdjustmentDialog> createState() =>
@@ -957,7 +1022,9 @@ class _StockAdjustmentDialogState
   @override
   void initState() {
     super.initState();
-    _inventoryItemId = widget.items.first.id;
+    final hasInitialId = widget.initialItemId != null &&
+        widget.items.any((item) => item.id == widget.initialItemId);
+    _inventoryItemId = hasInitialId ? widget.initialItemId! : widget.items.first.id;
   }
 
   @override
