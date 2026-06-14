@@ -1291,7 +1291,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
         if (mounted) {
           PremiumSnackbar.show(
             context,
-            l10n.t('errorPermissionDenied'),
+            l10n.t('bottleCannotRefillRecycled'),
             icon: Icons.error_outline_rounded,
           );
         }
@@ -1338,6 +1338,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
 
       ref.invalidate(roomProductsProvider);
       ref.invalidate(refillEventsProvider);
+      ref.invalidate(approvalsProvider);
       ref.invalidate(dashboardProvider);
 
       if (mounted) {
@@ -1603,6 +1604,14 @@ class _MobileRoomHeader extends StatelessWidget {
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              tooltip: l10n.t('qrScanTitle'),
+              icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+              color: statusColor,
+              onPressed: onScanPressed,
+              visualDensity: VisualDensity.compact,
             ),
           ],
         ),
