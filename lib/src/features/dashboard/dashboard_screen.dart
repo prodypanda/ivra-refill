@@ -227,8 +227,8 @@ class _MetricCardState extends State<_MetricCard> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 theme.colorScheme.surface.withValues(alpha: 0.9),
                 theme.colorScheme.surface.withValues(alpha: 0.7),
@@ -338,8 +338,8 @@ class _MobileHeroState extends State<_MobileHero> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             theme.colorScheme.primary,
             theme.colorScheme.primary.withRed(220).withGreen(120),
@@ -355,8 +355,8 @@ class _MobileHeroState extends State<_MobileHero> {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: -20,
+          PositionedDirectional(
+            end: -20,
             top: -20,
             child: Icon(
               Icons.spa,

@@ -31,7 +31,7 @@ class PageScaffold extends ConsumerWidget {
     }
 
     final accountButton = Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsetsDirectional.only(end: 8),
       child: GestureDetector(
         onTap: () => context.go(AccountScreen.route),
         child: CircleAvatar(
