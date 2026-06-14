@@ -13,6 +13,7 @@ import '../shared/page_scaffold.dart';
 import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
+import '../shared/premium_confirm_dialog.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -174,30 +175,13 @@ class AlertsScreen extends ConsumerWidget {
     String alertId,
   ) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.t('delete')),
-        content: Text('${l10n.t('delete')}?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('btnCancel')),
-          ),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l10n.t('delete')),
-          ),
-        ],
-      ),
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.t('confirmDeleteAlert'),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       try {
         await ref.read(repositoryProvider).deleteAlert(alertId);
         ref.invalidate(alertsProvider);
@@ -251,30 +235,13 @@ class AlertsScreen extends ConsumerWidget {
     if (alerts.isEmpty) return;
 
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.t('delete')),
-        content: Text('Delete all alerts?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('btnCancel')),
-          ),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l10n.t('delete')),
-          ),
-        ],
-      ),
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.t('confirmDeleteAllAlerts'),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       final repository = ref.read(repositoryProvider);
       try {
         await Future.wait(alerts.map((a) => repository.deleteAlert(a.id)));

@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +11,7 @@ import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/product_image.dart';
 import '../shared/premium_snackbar.dart';
+import '../shared/premium_confirm_dialog.dart';
 
 /// Product create/edit/delete is restricted server-side to Ivra-level roles
 /// (`app_admin`/`app_manager`, see the `products_write_ivra` RLS policy).
@@ -359,30 +359,15 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.t('delete')),
-        content: Text('${l10n.t('productsLabelNameEn')}: ${widget.product.nameEn}?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('btnCancel')),
-          ),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l10n.t('delete')),
-          ),
-        ],
-      ),
+    final productName = widget.product.label(l10n.locale.languageCode);
+
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.tParams('confirmDeleteProduct', {'productName': productName}),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       try {
         await ref.read(repositoryProvider).deleteProduct(widget.product.id);
         ref.invalidate(productsProvider);

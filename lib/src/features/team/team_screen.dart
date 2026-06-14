@@ -10,6 +10,7 @@ import '../auth/accept_invitation_screen.dart';
 import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
 import '../shared/premium_snackbar.dart';
+import '../shared/premium_confirm_dialog.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/glass_card.dart';
 
@@ -159,30 +160,13 @@ class TeamScreen extends ConsumerWidget {
     UserProfile member,
   ) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.t('delete')),
-        content: Text('${l10n.t('teamLabelFullName')}: ${member.fullName}?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('btnCancel')),
-          ),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l10n.t('delete')),
-          ),
-        ],
-      ),
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.tParams('confirmDeleteUser', {'userName': member.fullName}),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       try {
         await ref.read(repositoryProvider).deleteUser(member.id);
         ref.invalidate(teamMembersProvider);
@@ -938,7 +922,9 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -955,7 +941,6 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
@@ -1112,7 +1097,9 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -1129,7 +1116,6 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),

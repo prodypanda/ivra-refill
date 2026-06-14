@@ -14,6 +14,8 @@ import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
 import '../shared/premium_loading.dart';
+import '../shared/premium_confirm_dialog.dart';
+import '../shared/premium_qr_scanner_dialog.dart';
 
 class RoomsScreen extends ConsumerStatefulWidget {
   const RoomsScreen({super.key});
@@ -26,19 +28,23 @@ class RoomsScreen extends ConsumerStatefulWidget {
 
 class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   String _searchQuery = '';
+  String _productSearchQuery = '';
   String _statusFilter = 'all'; // 'all', 'ok', 'refill', 'attention'
   bool _showDetailedView = true; // true = Detailed, false = Compact
   late final TextEditingController _searchController;
+  late final TextEditingController _productSearchController;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _productSearchController = TextEditingController();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _productSearchController.dispose();
     super.dispose();
   }
 
@@ -173,6 +179,19 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         }
                       }
 
+                      // Product search filter
+                      if (_productSearchQuery.isNotEmpty) {
+                        final query = _productSearchQuery.toLowerCase();
+                        final matches = entry.value.any((item) {
+                          final name = item.product.label(Localizations.localeOf(context).languageCode).toLowerCase();
+                          final sku = item.product.sku.toLowerCase();
+                          return name.contains(query) || sku.contains(query);
+                        });
+                        if (!matches) {
+                          return false;
+                        }
+                      }
+
                       // Status filter
                       if (_statusFilter != 'all') {
                         final overallStatus =
@@ -260,15 +279,15 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(bottom: 16),
-                                          child: _RoomCard(
-                                            roomId: entry.key,
-                                            roomProducts: entry.value,
-                                            onDeleteRoom: canDeleteRooms
-                                                ? () => _confirmDeleteRoom(
-                                                    context, ref, entry.key, entry.value.first.roomNumber)
-                                                : null,
-                                          ),
-                                        ),
+                                            child: _RoomCard(
+                                              roomId: entry.key,
+                                              roomProducts: entry.value,
+                                              onDeleteRoom: canDeleteRooms
+                                                  ? () => _confirmDeleteRoom(
+                                                      context, ref, entry.key, entry.value.first.roomNumber)
+                                                  : null,
+                                              productSearchQuery: _productSearchQuery,
+                                            ),),
                                     ],
                                   )
                                 : Padding(
@@ -429,6 +448,11 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     UserProfile? currentUser,
     String? selectedHotelId,
   ) {
+    final roomProducts = ref.watch(roomProductsProvider).valueOrNull ?? const [];
+    final hotelItems = selectedHotelId != null
+        ? roomProducts.where((item) => item.hotelId == selectedHotelId).toList()
+        : const <RoomProduct>[];
+
     // Lock the hotel selector when the user has nothing to choose between:
     // hotel-scoped users (staff/manager with hotelId) always work in their own
     // hotel, and app-wide users with a single visible hotel have no choice to
@@ -493,8 +517,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
           LayoutBuilder(
             builder: (context, constraints) {
               final isWide = constraints.maxWidth > 800;
-              final searchField = SizedBox(
-                width: isWide ? 300 : double.infinity,
+              final roomSearchField = SizedBox(
                 height: 44,
                 child: TextField(
                   controller: _searchController,
@@ -502,8 +525,12 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     hintText: l10n.t('roomsSearchPlaceholder'),
                     prefixIcon:
                         const Icon(Icons.search, size: 20, color: Colors.grey),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (_searchQuery.isNotEmpty)
+                          IconButton(
                             icon: const Icon(Icons.clear, size: 16),
                             onPressed: () {
                               HapticFeedback.lightImpact();
@@ -512,8 +539,14 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                 _searchQuery = '';
                               });
                             },
-                          )
-                        : null,
+                          ),
+                        IconButton(
+                          tooltip: l10n.t('qrScanTitle'),
+                          icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+                          onPressed: () => _scanRoomOrProductQr(context, hotelItems),
+                        ),
+                      ],
+                    ),
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
                     border: OutlineInputBorder(
@@ -529,6 +562,56 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                   onChanged: (val) {
                     setState(() {
                       _searchQuery = val.trim();
+                    });
+                  },
+                ),
+              );
+
+              final productSearchField = SizedBox(
+                height: 44,
+                child: TextField(
+                  controller: _productSearchController,
+                  decoration: InputDecoration(
+                    hintText: l10n.t('roomsSearchProductPlaceholder'),
+                    prefixIcon:
+                        const Icon(Icons.spa_outlined, size: 20, color: Colors.grey),
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (_productSearchQuery.isNotEmpty)
+                          IconButton(
+                            icon: const Icon(Icons.clear, size: 16),
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              _productSearchController.clear();
+                              setState(() {
+                                _productSearchQuery = '';
+                              });
+                            },
+                          ),
+                        IconButton(
+                          tooltip: l10n.t('qrScanTitle'),
+                          icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+                          onPressed: () => _scanProductQrGlobal(context, hotelItems),
+                        ),
+                      ],
+                    ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide:
+                          BorderSide(color: theme.colorScheme.outlineVariant),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: primaryColor, width: 2),
+                    ),
+                  ),
+                  onChanged: (val) {
+                    setState(() {
+                      _productSearchQuery = val.trim();
                     });
                   },
                 ),
@@ -564,8 +647,10 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               if (isWide) {
                 return Row(
                   children: [
-                    searchField,
-                    const Spacer(),
+                    Expanded(child: roomSearchField),
+                    const SizedBox(width: 12),
+                    Expanded(child: productSearchField),
+                    const SizedBox(width: 16),
                     viewToggle,
                   ],
                 );
@@ -574,7 +659,9 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  searchField,
+                  roomSearchField,
+                  const SizedBox(height: 12),
+                  productSearchField,
                   const SizedBox(height: 12),
                   viewToggle,
                 ],
@@ -677,6 +764,63 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     );
   }
 
+  Future<void> _scanRoomOrProductQr(BuildContext context, List<RoomProduct> hotelItems) async {
+    final roomCodes = hotelItems.map((e) => 'room:${e.hotelId}:${e.roomNumber}').toSet().toList();
+    final productCodes = hotelItems.map((e) => 'product:${e.product.sku}').toSet().toList();
+    final allDemoCodes = [...roomCodes, ...productCodes];
+
+    final code = await PremiumQrScannerDialog.show(context, demoCodes: allDemoCodes);
+    if (code == null || code.trim().isEmpty) return;
+
+    final trimmed = code.trim();
+    if (trimmed.startsWith('room:')) {
+      final parts = trimmed.split(':');
+      if (parts.length >= 3) {
+        final hotelId = parts[1];
+        final roomNumber = parts[2];
+        ref.read(selectedHotelIdProvider.notifier).state = hotelId;
+        _searchController.text = roomNumber;
+        setState(() {
+          _searchQuery = roomNumber;
+        });
+      }
+    } else if (trimmed.startsWith('product:')) {
+      final sku = trimmed.split(':')[1];
+      _productSearchController.text = sku;
+      setState(() {
+        _productSearchQuery = sku;
+      });
+    } else {
+      // Check if it matches a product SKU in hotelItems
+      final isSku = hotelItems.any((e) => e.product.sku.toLowerCase() == trimmed.toLowerCase());
+      if (isSku) {
+        _productSearchController.text = trimmed;
+        setState(() {
+          _productSearchQuery = trimmed;
+        });
+      } else {
+        // Assume it's a room number
+        _searchController.text = trimmed;
+        setState(() {
+          _searchQuery = trimmed;
+        });
+      }
+    }
+  }
+
+  Future<void> _scanProductQrGlobal(BuildContext context, List<RoomProduct> hotelItems) async {
+    final productCodes = hotelItems.map((e) => 'product:${e.product.sku}').toSet().toList();
+    final code = await PremiumQrScannerDialog.show(context, demoCodes: productCodes);
+    if (code == null || code.trim().isEmpty) return;
+
+    final trimmed = code.trim();
+    final sku = trimmed.startsWith('product:') ? trimmed.split(':')[1] : trimmed;
+    _productSearchController.text = sku;
+    setState(() {
+      _productSearchQuery = sku;
+    });
+  }
+
   void _showRoomDetailsDialog(
     BuildContext context,
     String roomNumber,
@@ -699,6 +843,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
             roomId: roomProducts.first.roomId,
             roomProducts: roomProducts,
             isDialog: true,
+            productSearchQuery: _productSearchQuery,
           ),
         ),
       ),
@@ -732,30 +877,13 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   Future<void> _confirmDeleteRoom(
       BuildContext context, WidgetRef ref, String roomId, String roomNumber) async {
     final l10n = AppLocalizations.of(context);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.t('delete')),
-        content: Text('${l10n.t('roomsLabelRoom')} $roomNumber?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('btnCancel')),
-          ),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l10n.t('delete')),
-          ),
-        ],
-      ),
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.tParams('confirmDeleteRoom', {'roomNumber': roomNumber}),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       try {
         await ref.read(repositoryProvider).deleteRoom(roomId);
         ref.invalidate(roomsProvider);
@@ -773,34 +901,18 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final l10n = AppLocalizations.of(context);
     
     final roomsList = await ref.read(roomsProvider.future);
+    if (!context.mounted) return;
     final floorInfo = roomsList.where((r) => r.floorNumber == floorNumber).firstOrNull;
     if (floorInfo == null) return;
     final floorId = floorInfo.floorId;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.t('delete')),
-        content: Text('${l10n.t('roomsLabelFloor')} $floorNumber?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.t('btnCancel')),
-          ),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l10n.t('delete')),
-          ),
-        ],
-      ),
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.tParams('confirmDeleteFloor', {'floorNumber': floorNumber.toString()}),
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       try {
         await ref.read(repositoryProvider).deleteFloor(floorId);
         ref.invalidate(roomsProvider);
@@ -1102,25 +1214,148 @@ Future<void> _replaceBottle(
 }
 
 // Room-Centric Grouped Card Widget
-class _RoomCard extends StatefulWidget {
+class _RoomCard extends ConsumerStatefulWidget {
   const _RoomCard({
     required this.roomId,
     required this.roomProducts,
     this.isDialog = false,
     this.onDeleteRoom,
+    this.productSearchQuery = '',
+    super.key,
   });
 
   final String roomId;
   final List<RoomProduct> roomProducts;
   final bool isDialog;
   final VoidCallback? onDeleteRoom;
+  final String productSearchQuery;
 
   @override
-  State<_RoomCard> createState() => _RoomCardState();
+  ConsumerState<_RoomCard> createState() => _RoomCardState();
 }
 
-class _RoomCardState extends State<_RoomCard> {
+class _RoomCardState extends ConsumerState<_RoomCard> {
   bool _isHovered = false;
+
+  Future<void> _scanCardProductQr(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final products = widget.roomProducts.map((e) => 'product:${e.product.sku}').toList();
+
+    final code = await PremiumQrScannerDialog.show(context, demoCodes: products);
+    if (code == null) return;
+
+    final sku = code.startsWith('product:') ? code.split(':')[1] : code;
+    final matchedItem = widget.roomProducts.where((e) => e.product.sku.toLowerCase() == sku.toLowerCase()).firstOrNull;
+
+    if (matchedItem == null) {
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('roomsNoRoomsFound'),
+          icon: Icons.error_outline_rounded,
+        );
+      }
+      return;
+    }
+
+    if (!mounted) return;
+
+    final selection = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(l10n.t('qrActionPrompt')),
+          content: Text(l10n.t('qrActionMessage').replaceAll('{product}', matchedItem.product.label(Localizations.localeOf(context).languageCode))),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop('refill'),
+              child: Text(l10n.t('qrActionRefill')),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop('replace'),
+              child: Text(l10n.t('qrActionReplace')),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.t('btnCancel')),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selection == 'refill') {
+      if (matchedItem.canRefill) {
+        await _performRefillAction(matchedItem);
+      } else {
+        if (mounted) {
+          PremiumSnackbar.show(
+            context,
+            l10n.t('bottleCannotRefillRecycled'),
+            icon: Icons.error_outline_rounded,
+          );
+        }
+      }
+    } else if (selection == 'replace') {
+      if (matchedItem.status != BottleStatus.recycled) {
+        if (mounted) {
+          await _replaceBottle(context, ref, matchedItem);
+        }
+      }
+    }
+  }
+
+  Future<void> _performRefillAction(RoomProduct item) async {
+    final l10n = AppLocalizations.of(context);
+    try {
+      var isOffline = ref.read(offlineModeProvider);
+      if (!isOffline) {
+        try {
+          await ref.read(repositoryProvider).recordRefill(
+                roomProductId: item.id,
+              );
+        } catch (e) {
+          if (e.toString().contains('SocketException') ||
+              e.toString().contains('ClientException') ||
+              e.toString().contains('Failed host lookup') ||
+              e.toString().contains('XMLHttpRequest')) {
+            isOffline = true;
+          } else {
+            rethrow;
+          }
+        }
+      }
+
+      if (isOffline) {
+        await ref.read(offlineSyncServiceProvider).enqueue(
+              type: SyncActionType.refill,
+              payload: {
+                'roomProductId': item.id,
+              },
+            );
+        ref.invalidate(offlineActionsProvider);
+      }
+
+      ref.invalidate(roomProductsProvider);
+      ref.invalidate(refillEventsProvider);
+      ref.invalidate(approvalsProvider);
+      ref.invalidate(dashboardProvider);
+
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          isOffline
+              ? '${l10n.t('roomsRefillQueued')} ${item.roomNumber}'
+              : '${l10n.t('roomsRefillRecorded')} ${item.roomNumber}',
+          icon: Icons.check_circle_outline,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        PremiumSnackbar.showError(context, e);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1155,6 +1390,15 @@ class _RoomCardState extends State<_RoomCard> {
       overallColor = Colors.green;
       overallIcon = Icons.check_circle_outline;
     }
+
+    final lang = Localizations.localeOf(context).languageCode;
+    final displayedProducts = widget.roomProducts.where((item) {
+      if (widget.productSearchQuery.isEmpty) return true;
+      final name = item.product.label(lang).toLowerCase();
+      final sku = item.product.sku.toLowerCase();
+      final query = widget.productSearchQuery.toLowerCase();
+      return name.contains(query) || sku.contains(query);
+    }).toList();
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -1200,6 +1444,7 @@ class _RoomCardState extends State<_RoomCard> {
                           status: overallStatus,
                           statusColor: overallColor,
                           statusIcon: overallIcon,
+                          onScanPressed: () => _scanCardProductQr(context),
                         )
                       : Row(
                           children: [
@@ -1214,6 +1459,14 @@ class _RoomCardState extends State<_RoomCard> {
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              tooltip: l10n.t('qrScanTitle'),
+                              icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+                              color: overallColor,
+                              onPressed: () => _scanCardProductQr(context),
+                              visualDensity: VisualDensity.compact,
                             ),
                             const SizedBox(width: 8),
                             Container(
@@ -1289,9 +1542,9 @@ class _RoomCardState extends State<_RoomCard> {
                   padding: EdgeInsets.all(isMobile ? 14 : 16),
                   child: Column(
                     children: [
-                      for (int i = 0; i < widget.roomProducts.length; i++) ...[
+                      for (int i = 0; i < displayedProducts.length; i++) ...[
                         if (i > 0) Divider(height: isMobile ? 18 : 24),
-                        _RoomCardProductRow(item: widget.roomProducts[i]),
+                        _RoomCardProductRow(item: displayedProducts[i]),
                       ],
                     ],
                   ),
@@ -1312,6 +1565,7 @@ class _MobileRoomHeader extends StatelessWidget {
     required this.status,
     required this.statusColor,
     required this.statusIcon,
+    required this.onScanPressed,
   });
 
   final String roomNumber;
@@ -1319,6 +1573,7 @@ class _MobileRoomHeader extends StatelessWidget {
   final String status;
   final Color statusColor;
   final IconData statusIcon;
+  final VoidCallback onScanPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -1349,6 +1604,14 @@ class _MobileRoomHeader extends StatelessWidget {
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              tooltip: l10n.t('qrScanTitle'),
+              icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+              color: statusColor,
+              onPressed: onScanPressed,
+              visualDensity: VisualDensity.compact,
             ),
           ],
         ),

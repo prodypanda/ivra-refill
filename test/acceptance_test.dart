@@ -731,10 +731,10 @@ void main() {
       expect(fr.t('dashboard'), 'Tableau de bord');
       expect(fr.t('hotels'), 'Hôtels');
       expect(fr.t('rooms'), 'Chambres');
-      expect(fr.t('inventory'), 'Stock');
+      expect(fr.t('inventory'), 'Inventaire');
 
       // Arabic labels
-      expect(ar.t('dashboard'), 'لوحة التحكم');
+      expect(ar.t('dashboard'), 'لوحة القيادة');
       expect(ar.t('hotels'), 'الفنادق');
       expect(ar.t('rooms'), 'الغرف');
       expect(ar.t('inventory'), 'المخزون');
