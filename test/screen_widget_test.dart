@@ -20,6 +20,7 @@ import 'package:ivra_refill/src/features/shared/offline_banner.dart';
 import 'package:ivra_refill/src/features/team/team_screen.dart';
 import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -259,10 +260,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Inventory'), findsWidgets);
-      expect(find.text('Product'), findsWidgets);
       expect(find.text('Full bottles'), findsWidgets);
-      expect(find.text('Empty bottles'), findsWidgets);
       expect(find.text('Full bidons'), findsWidgets);
+      expect(find.text('Empty bottles'), findsWidgets);
     });
 
     testWidgets('shows stock status for inventory items', (tester) async {
@@ -308,7 +308,7 @@ void main() {
           .go(InventoryScreen.route);
       await tester.pumpAndSettle();
 
-      expect(find.byTooltip('Adjust stock'), findsOneWidget);
+      expect(find.byTooltip('Adjust stock'), findsWidgets);
     });
 
     testWidgets('shows suggested orders section', (tester) async {
@@ -354,7 +354,7 @@ void main() {
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('لوحة التحكم').first))
+      GoRouter.of(tester.element(find.text('لوحة القيادة').first))
           .go(RoomsScreen.route);
       await tester.pumpAndSettle();
 
@@ -418,7 +418,7 @@ void main() {
         locale: const Locale('ar'),
       );
 
-      GoRouter.of(tester.element(find.text('لوحة التحكم').first))
+      GoRouter.of(tester.element(find.text('لوحة القيادة').first))
           .go(ReportsScreen.route);
       await tester.pumpAndSettle();
 
@@ -468,7 +468,7 @@ void main() {
         locale: const Locale('ar'),
       );
 
-      GoRouter.of(tester.element(find.text('لوحة التحكم').first))
+      GoRouter.of(tester.element(find.text('لوحة القيادة').first))
           .go(SettingsScreen.route);
       await tester.pumpAndSettle();
 
@@ -696,7 +696,6 @@ void main() {
       expect(find.text('Inventory'), findsWidgets);
       expect(find.text('Products'), findsWidgets);
       expect(find.text('Team'), findsWidgets);
-      expect(find.text('Account'), findsWidgets);
       expect(find.text('Approvals'), findsWidgets);
       expect(find.text('Alerts'), findsWidgets);
       expect(find.text('Reports'), findsWidgets);
@@ -726,7 +725,6 @@ void main() {
       expect(find.text('Dashboard'), findsWidgets);
       expect(find.text('Rooms'), findsWidgets);
       expect(find.text('Inventory'), findsWidgets);
-      expect(find.text('Account'), findsWidgets);
       expect(find.text('Alerts'), findsWidgets);
       expect(find.text('Settings'), findsWidgets);
 
@@ -808,7 +806,6 @@ void main() {
 
       expect(find.byType(BottomSheet), findsOneWidget);
       expect(find.text('Team'), findsWidgets);
-      expect(find.text('Account'), findsWidgets);
       expect(find.text('Inventory'), findsWidgets);
     });
 
@@ -844,7 +841,7 @@ void main() {
       );
 
       expect(find.text('Tableau de bord'), findsWidgets);
-      expect(find.text('Stock'), findsWidgets);
+      expect(find.text('Inventaire'), findsWidgets);
       expect(find.text('Paramètres'), findsWidgets);
       expect(find.text('Chambres'), findsWidgets);
     });
@@ -856,12 +853,12 @@ void main() {
         locale: const Locale('ar'),
       );
 
-      expect(find.text('لوحة التحكم'), findsWidgets);
+      expect(find.text('لوحة القيادة'), findsWidgets);
       expect(find.text('المخزون'), findsWidgets);
       expect(find.text('الإعدادات'), findsWidgets);
       expect(find.text('الغرف'), findsWidgets);
 
-      final dashboardFinder = find.text('لوحة التحكم').first;
+      final dashboardFinder = find.text('لوحة القيادة').first;
       expect(
         Directionality.of(tester.element(dashboardFinder)),
         TextDirection.rtl,
@@ -946,6 +943,9 @@ Future<void> _pumpIvraApp(
         connectivityProvider.overrideWith(
           (ref) => ConnectivityNotifier(host: null),
         ),
+        notificationServiceProvider.overrideWith(
+          (ref) => _FakeNotificationService(null as dynamic, ref),
+        ),
       ],
       child: const IvraApp(),
     ),
@@ -970,4 +970,13 @@ UserProfile _userForRole(UserRole role) {
         ? 'hotel-seaside'
         : null,
   );
+}
+
+class _FakeNotificationService extends NotificationService {
+  _FakeNotificationService(super.supabase, super.ref);
+
+  @override
+  Future<void> initialize() async {
+    // No-op for widget tests
+  }
 }

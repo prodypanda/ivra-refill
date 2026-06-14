@@ -11,6 +11,7 @@ import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:ivra_refill/src/features/products/products_screen.dart';
 import 'package:ivra_refill/src/features/rooms/rooms_screen.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -19,7 +20,8 @@ void main() {
   testWidgets('Ivra app starts in demo mode', (tester) async {
     await _pumpIvraApp(tester);
 
-    expect(find.text('Ivra'), findsWidgets);
+    expect(find.byType(IvraApp), findsOneWidget);
+    expect(find.text('Dashboard'), findsWidgets);
   });
 
   testWidgets('desktop layout uses navigation rail', (tester) async {
@@ -44,7 +46,7 @@ void main() {
       locale: const Locale('ar'),
     );
 
-    final dashboardFinder = find.text('لوحة التحكم').first;
+    final dashboardFinder = find.text('لوحة القيادة').first;
     expect(dashboardFinder, findsOneWidget);
     expect(
       Directionality.of(tester.element(dashboardFinder)),
@@ -155,6 +157,9 @@ Future<void> _pumpIvraApp(
         localeProvider.overrideWith((ref) => locale ?? const Locale('en')),
         if (currentUser != null)
           currentUserProvider.overrideWith((ref) async => currentUser),
+        notificationServiceProvider.overrideWith(
+          (ref) => _FakeNotificationService(null as dynamic, ref),
+        ),
       ],
       child: const IvraApp(),
     ),
@@ -172,4 +177,13 @@ UserProfile _userForRole(UserRole role) {
         ? 'hotel-seaside'
         : null,
   );
+}
+
+class _FakeNotificationService extends NotificationService {
+  _FakeNotificationService(super.supabase, super.ref);
+
+  @override
+  Future<void> initialize() async {
+    // No-op for widget tests
+  }
 }

@@ -922,7 +922,9 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -939,7 +941,6 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
@@ -1096,7 +1097,9 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -1113,7 +1116,6 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),

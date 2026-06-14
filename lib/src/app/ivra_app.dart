@@ -37,10 +37,16 @@ class IvraApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       builder: (context, child) {
-        return SelectionArea(
-          child: DeepLinkListener(
-            child: _GlobalSplashGate(child: child!),
-          ),
+        return Overlay(
+          initialEntries: [
+            OverlayEntry(
+              builder: (context) => SelectionArea(
+                child: DeepLinkListener(
+                  child: _GlobalSplashGate(child: child!),
+                ),
+              ),
+            ),
+          ],
         );
       },
       routerConfig: router,

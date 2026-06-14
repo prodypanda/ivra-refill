@@ -28,7 +28,7 @@ final notificationServiceProvider = Provider((ref) {
 class NotificationService {
   NotificationService(this._supabase, this._ref);
 
-  final SupabaseClient _supabase;
+  final SupabaseClient? _supabase;
   final Ref _ref;
   FirebaseMessaging? _fcm;
 
@@ -300,7 +300,11 @@ class NotificationService {
         }
       }
 
-      await _supabase.rpc('register_fcm_token', params: {
+      if (_supabase == null) {
+        debugPrint('SupabaseClient is null, skipping token registration.');
+        return;
+      }
+      await _supabase!.rpc('register_fcm_token', params: {
         'p_token': token,
         'p_device_type': deviceType,
       });
