@@ -136,7 +136,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: RoomsScreen.route,
-            builder: (context, state) => const RoomsScreen(),
+            builder: (context, state) {
+              final scan = state.uri.queryParameters['scan'] == 'true';
+              return RoomsScreen(autoStartScan: scan);
+            },
           ),
           GoRoute(
             path: InventoryScreen.route,

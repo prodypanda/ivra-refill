@@ -72,6 +72,15 @@ final hotelsProvider = FutureProvider<List<Hotel>>((ref) {
   return ref.watch(repositoryProvider).hotels();
 });
 
+final activeHotelNameProvider = Provider<String?>((ref) {
+  final hotels = ref.watch(hotelsProvider).valueOrNull ?? [];
+  final selectedHotelId = ref.watch(selectedHotelIdProvider);
+  if (selectedHotelId == null || hotels.isEmpty) return null;
+  final matches = hotels.where((h) => h.id == selectedHotelId);
+  if (matches.isEmpty) return null;
+  return matches.first.name;
+});
+
 final productsProvider = FutureProvider<List<Product>>((ref) {
   return ref.watch(repositoryProvider).products();
 });

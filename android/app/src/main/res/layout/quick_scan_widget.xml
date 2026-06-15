@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="16dp">
+
+    <!-- Brand Header -->
+    <TextView
+        android:id="@+id/widget_brand_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IVRA REFILL"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:textColor="#FFB95F"
+        android:letterSpacing="0.1"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Active Hotel Name -->
+    <TextView
+        android:id="@+id/widget_hotel_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No Hotel Selected"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Middle Spacer to push button to bottom -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Scan Button -->
+    <LinearLayout
+        android:id="@+id/widget_button_scan"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/widget_button_background"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📷  SCAN &amp; REFILL"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:letterSpacing="0.05" />
+    </LinearLayout>
+
+</LinearLayout>

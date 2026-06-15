@@ -144,6 +144,45 @@ void main() {
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
     });
+
+    testWidgets('Navigating to /rooms?scan=true auto-starts the QR scanner dialog and clears the URL param on dismiss', (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.hotelManager),
+      );
+
+      // Navigate directly with deep link query parameter
+      final context = tester.element(find.text('Dashboard').first);
+      GoRouter.of(context).go('/rooms?scan=true');
+      await tester.pump(); // Start navigation/build
+      
+      // Let the page load, run postFrameCallbacks, and show dialog
+      for (int i = 0; i < 15; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      // Scanner dialog should be automatically open
+      expect(find.byType(PremiumQrScannerDialog), findsOneWidget);
+
+      // Find room 205 demo chip and tap it
+      final room205Chip = find.text('205');
+      expect(room205Chip, findsOneWidget);
+      await tester.tap(room205Chip, warnIfMissed: false);
+
+      // Pump to settle transitions and verify URL clean up
+      await tester.pumpAndSettle();
+
+      // Scanner should be closed
+      expect(find.byType(PremiumQrScannerDialog), findsNothing);
+      // Results should be filtered to Room 205
+      expect(find.text('Room 205'), findsOneWidget);
+
+      // The router URL should be cleaned up to "/rooms" without query parameter
+      final roomsContext = tester.element(find.byType(RoomsScreen));
+      final currentUri = GoRouter.of(roomsContext).routeInformationProvider.value.uri;
+      expect(currentUri.queryParameters['scan'], isNull);
+    });
   });
 }
 
