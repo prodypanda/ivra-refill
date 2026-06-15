@@ -667,3 +667,16 @@ class AuditLog {
     );
   }
 }
+
+class DailyRefillProgress {
+  const DailyRefillProgress({
+    required this.refilledRoomsCount,
+    required this.totalRoomsCount,
+    required this.nextPriorityRoom,
+  });
+
+  final int refilledRoomsCount;
+  final int totalRoomsCount;
+  final String nextPriorityRoom;
+}
+

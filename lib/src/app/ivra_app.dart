@@ -99,8 +99,19 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
       if (!kIsWeb) {
         HomeWidget.saveWidgetData<String>('active_hotel_name', next ?? '');
         HomeWidget.updateWidget(androidName: 'QuickScanWidgetProvider');
+        HomeWidget.updateWidget(androidName: 'DailyRefillWidgetProvider');
       }
     });
+
+    ref.listen<DailyRefillProgress?>(dailyRefillProgressProvider, (prev, next) {
+      if (!kIsWeb) {
+        HomeWidget.saveWidgetData<int>('refilled_rooms_count', next?.refilledRoomsCount ?? 0);
+        HomeWidget.saveWidgetData<int>('total_rooms_count', next?.totalRoomsCount ?? 0);
+        HomeWidget.saveWidgetData<String>('next_priority_room', next?.nextPriorityRoom ?? 'None');
+        HomeWidget.updateWidget(androidName: 'DailyRefillWidgetProvider');
+      }
+    });
+
 
     final currentUserAsync = ref.watch(currentUserProvider);
 
