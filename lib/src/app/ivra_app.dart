@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
 
 import '../domain/models.dart';
 import '../features/shared/premium_loading.dart';
@@ -90,6 +92,13 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
       
       if (nextUser != null && prevUserId != nextUser.id) {
         ref.read(notificationServiceProvider).initialize();
+      }
+    });
+
+    ref.listen<String?>(activeHotelNameProvider, (prev, next) {
+      if (!kIsWeb) {
+        HomeWidget.saveWidgetData<String>('active_hotel_name', next ?? '');
+        HomeWidget.updateWidget(androidName: 'QuickScanWidgetProvider');
       }
     });
 

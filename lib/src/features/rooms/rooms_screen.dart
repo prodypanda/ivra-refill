@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -18,9 +19,10 @@ import '../shared/premium_confirm_dialog.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 
 class RoomsScreen extends ConsumerStatefulWidget {
-  const RoomsScreen({super.key});
+  const RoomsScreen({super.key, this.autoStartScan = false});
 
   static const route = '/rooms';
+  final bool autoStartScan;
 
   @override
   ConsumerState<RoomsScreen> createState() => _RoomsScreenState();
@@ -33,6 +35,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   bool _showDetailedView = true; // true = Detailed, false = Compact
   late final TextEditingController _searchController;
   late final TextEditingController _productSearchController;
+  bool _scanTriggered = false;
 
   @override
   void initState() {
@@ -148,6 +151,18 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     final hotelItems = items
                         .where((item) => item.hotelId == selectedHotelId)
                         .toList();
+
+                    if (widget.autoStartScan && !_scanTriggered) {
+                      _scanTriggered = true;
+                      WidgetsBinding.instance.addPostFrameCallback((_) async {
+                        if (context.mounted) {
+                          await _scanRoomOrProductQr(context, hotelItems);
+                          if (context.mounted) {
+                            context.go(RoomsScreen.route);
+                          }
+                        }
+                      });
+                    }
 
                     if (hotelItems.isEmpty) {
                       return EmptyState(
