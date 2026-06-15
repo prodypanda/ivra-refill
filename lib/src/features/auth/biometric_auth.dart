@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+const _secureStorage = FlutterSecureStorage();
 
 /// Shared-preferences keys used by the auth + biometric flow.
 ///
@@ -40,13 +43,28 @@ Future<void> saveLoginCredentials(String email, String password) async {
   final prefs = await SharedPreferences.getInstance();
   final trimmed = email.trim();
   await prefs.setString(AuthPrefs.savedEmail, trimmed);
-  await prefs.setString(AuthPrefs.passwordKey(trimmed), password);
+  await _secureStorage.write(key: AuthPrefs.passwordKey(trimmed), value: password);
+  // Remove plaintext password if it existed in SharedPreferences
+  if (prefs.containsKey(AuthPrefs.passwordKey(trimmed))) {
+    await prefs.remove(AuthPrefs.passwordKey(trimmed));
+  }
 }
 
 /// The saved password for [email], if any.
 Future<String?> savedPasswordFor(String email) async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(AuthPrefs.passwordKey(email));
+  var password = await _secureStorage.read(key: AuthPrefs.passwordKey(email));
+  if (password == null) {
+    // Fallback and migrate from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey(AuthPrefs.passwordKey(email))) {
+      password = prefs.getString(AuthPrefs.passwordKey(email));
+      if (password != null) {
+        await _secureStorage.write(key: AuthPrefs.passwordKey(email), value: password);
+        await prefs.remove(AuthPrefs.passwordKey(email));
+      }
+    }
+  }
+  return password;
 }
 
 /// Whether biometric unlock is currently enabled for [email].
@@ -120,6 +138,10 @@ class BiometricAccountNotifier extends StateNotifier<String?> {
     if (prefs.containsKey(AuthPrefs.legacyBiometricEnabled)) {
       await prefs.remove(AuthPrefs.legacyBiometricEnabled);
     }
+    // Drop legacy global plaintext password as well.
+    if (prefs.containsKey(AuthPrefs.legacyPassword)) {
+      await prefs.remove(AuthPrefs.legacyPassword);
+    }
     if (!mounted) return;
     final account = prefs.getString(AuthPrefs.biometricAccount);
     state = (account != null && account.isNotEmpty) ? account : null;
@@ -146,6 +168,10 @@ Future<bool> hasBiometricCredentials() async {
   final prefs = await SharedPreferences.getInstance();
   final account = prefs.getString(AuthPrefs.biometricAccount);
   if (account == null || account.isEmpty) return false;
-  final password = prefs.getString(AuthPrefs.passwordKey(account));
+  var password = await _secureStorage.read(key: AuthPrefs.passwordKey(account));
+  if (password == null) {
+    // Fallback to check SharedPreferences (it will be migrated on read)
+    password = prefs.getString(AuthPrefs.passwordKey(account));
+  }
   return password != null && password.isNotEmpty;
 }
