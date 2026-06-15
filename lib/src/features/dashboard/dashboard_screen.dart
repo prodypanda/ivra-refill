@@ -10,14 +10,93 @@ import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/shimmer_loading.dart';
+import '../shared/premium_snackbar.dart';
 
-class DashboardScreen extends ConsumerWidget {
-  const DashboardScreen({super.key});
+class DashboardScreen extends ConsumerStatefulWidget {
+  const DashboardScreen({this.autoSync = false, super.key});
 
+  final bool autoSync;
   static const route = '/';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  bool _syncTriggered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.autoSync) {
+      _triggerSync();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant DashboardScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.autoSync && !oldWidget.autoSync) {
+      _triggerSync();
+    }
+  }
+
+  void _triggerSync() {
+    if (_syncTriggered) return;
+    _syncTriggered = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _performSync();
+    });
+  }
+
+  Future<void> _performSync() async {
+    final l10n = AppLocalizations.of(context);
+    PremiumSnackbar.show(
+      context,
+      l10n.t('syncingData') ?? 'Syncing data...',
+      icon: Icons.sync,
+    );
+    try {
+      final repository = ref.read(repositoryProvider);
+      await ref.read(offlineSyncServiceProvider).syncPending(repository);
+
+      ref.invalidate(dashboardProvider);
+      ref.invalidate(hotelsProvider);
+      ref.invalidate(roomsProvider);
+      ref.invalidate(roomProductsProvider);
+      ref.invalidate(refillEventsProvider);
+      ref.invalidate(alertsProvider);
+      ref.invalidate(approvalsProvider);
+
+      await ref.read(dashboardProvider.future);
+
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('syncComplete') ?? 'Sync complete',
+          icon: Icons.check_circle_outline,
+        );
+
+        final state = GoRouterState.of(context);
+        if (state.uri.queryParameters.containsKey('sync')) {
+          context.go(DashboardScreen.route);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        PremiumSnackbar.showError(context, e);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _syncTriggered = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final metrics = ref.watch(dashboardProvider);
     final theme = Theme.of(context);

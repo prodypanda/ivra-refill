@@ -128,7 +128,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: DashboardScreen.route,
-            builder: (context, state) => const DashboardScreen(),
+            builder: (context, state) {
+              final sync = state.uri.queryParameters['sync'] == 'true';
+              return DashboardScreen(autoSync: sync);
+            },
           ),
           GoRoute(
             path: HotelsScreen.route,

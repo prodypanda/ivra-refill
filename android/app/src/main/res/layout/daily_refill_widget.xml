@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_body"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="16dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Brand Header -->
+    <TextView
+        android:id="@+id/widget_brand_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IVRA REFILL"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:textColor="#FFB95F"
+        android:letterSpacing="0.1"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Active Hotel Name -->
+    <TextView
+        android:id="@+id/widget_hotel_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No Hotel Selected"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Progress Text -->
+    <TextView
+        android:id="@+id/widget_progress_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rooms Refilled: 0/0"
+        android:textSize="13sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="6dp" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/widget_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_marginBottom="10dp"
+        android:progressBackgroundTint="#2D333F"
+        android:progressTint="#FFB95F"
+        android:max="100"
+        android:progress="0" />
+
+    <!-- Next priority room -->
+    <TextView
+        android:id="@+id/widget_next_room_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Next: None"
+        android:textSize="12sp"
+        android:textColor="#B3FFFFFF"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Middle Spacer to push button to bottom -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Refresh Button -->
+    <LinearLayout
+        android:id="@+id/widget_button_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@drawable/widget_button_background"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔄  REFRESH"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:letterSpacing="0.05" />
+    </LinearLayout>
+
+</LinearLayout>

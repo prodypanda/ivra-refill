@@ -251,3 +251,129 @@ class DownloadBannerNotifier extends StateNotifier<bool> {
 final downloadBannerCollapsedProvider = StateNotifierProvider<DownloadBannerNotifier, bool>((ref) {
   return DownloadBannerNotifier();
 });
+
+final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
+  final hotelId = ref.watch(selectedHotelIdProvider);
+  if (hotelId == null) return null;
+
+  final roomProductsAsync = ref.watch(roomProductsProvider);
+  final refillEventsAsync = ref.watch(refillEventsProvider);
+
+  if (roomProductsAsync.isLoading || refillEventsAsync.isLoading) {
+    return null;
+  }
+  if (roomProductsAsync.hasError || refillEventsAsync.hasError) {
+    return null;
+  }
+
+  final products = roomProductsAsync.value ?? [];
+  final events = refillEventsAsync.value ?? [];
+
+  if (products.isEmpty) {
+    return const DailyRefillProgress(
+      refilledRoomsCount: 0,
+      totalRoomsCount: 0,
+      nextPriorityRoom: 'None',
+    );
+  }
+
+  // Group products by room number
+  final roomMap = <String, List<RoomProduct>>{};
+  for (final p in products) {
+    roomMap.putIfAbsent(p.roomNumber, () => []).add(p);
+  }
+  final totalRoomsCount = roomMap.length;
+
+  final now = DateTime.now();
+  final refilledRoomNumbers = <String>{};
+
+  // Filter events to today's refill events
+  final todayRefillEvents = events.where((e) {
+    if (e.type != RefillEventType.refill) return false;
+    final occurredLocal = e.occurredAt.toLocal();
+    return occurredLocal.year == now.year &&
+        occurredLocal.month == now.month &&
+        occurredLocal.day == now.day;
+  }).toList();
+
+  final refilledProductIds = todayRefillEvents.map((e) => e.roomProductId).toSet();
+
+  for (final entry in roomMap.entries) {
+    final roomNumber = entry.key;
+    final roomProducts = entry.value;
+    final anyProductRefilledToday =
+        roomProducts.any((p) => refilledProductIds.contains(p.id));
+    if (anyProductRefilledToday) {
+      refilledRoomNumbers.add(roomNumber);
+    }
+  }
+
+  final refilledRoomsCount = refilledRoomNumbers.length;
+  final remainingRooms = roomMap.entries
+      .where((entry) => !refilledRoomNumbers.contains(entry.key))
+      .toList();
+
+  String nextPriorityRoom = 'All Done! 🎉';
+  if (remainingRooms.isNotEmpty) {
+    final criticalRooms = <MapEntry<String, List<RoomProduct>>>[];
+    final warningRooms = <MapEntry<String, List<RoomProduct>>>[];
+    final normalRooms = <MapEntry<String, List<RoomProduct>>>[];
+
+    for (final entry in remainingRooms) {
+      final roomProducts = entry.value;
+      final hasCritical = roomProducts.any((item) =>
+          item.status == BottleStatus.refillLimitReached ||
+          item.status == BottleStatus.tooOld ||
+          item.status == BottleStatus.needsReplacement ||
+          item.status == BottleStatus.damaged ||
+          item.status == BottleStatus.lost);
+
+      final hasWarning =
+          roomProducts.any((item) => item.status == BottleStatus.needsRefill);
+
+      if (hasCritical) {
+        criticalRooms.add(entry);
+      } else if (hasWarning) {
+        warningRooms.add(entry);
+      } else {
+        normalRooms.add(entry);
+      }
+    }
+
+    int compareRoomNumbers(
+      MapEntry<String, List<RoomProduct>> a,
+      MapEntry<String, List<RoomProduct>> b,
+    ) {
+      final aFloor = a.value.first.floorNumber;
+      final bFloor = b.value.first.floorNumber;
+      if (aFloor != bFloor) {
+        return aFloor.compareTo(bFloor);
+      }
+      final aNum = int.tryParse(a.key) ?? 0;
+      final bNum = int.tryParse(b.key) ?? 0;
+      if (aNum != 0 && bNum != 0) {
+        return aNum.compareTo(bNum);
+      }
+      return a.key.compareTo(b.key);
+    }
+
+    criticalRooms.sort(compareRoomNumbers);
+    warningRooms.sort(compareRoomNumbers);
+    normalRooms.sort(compareRoomNumbers);
+
+    if (criticalRooms.isNotEmpty) {
+      nextPriorityRoom = 'Room ${criticalRooms.first.key}';
+    } else if (warningRooms.isNotEmpty) {
+      nextPriorityRoom = 'Room ${warningRooms.first.key}';
+    } else if (normalRooms.isNotEmpty) {
+      nextPriorityRoom = 'Room ${normalRooms.first.key}';
+    }
+  }
+
+  return DailyRefillProgress(
+    refilledRoomsCount: refilledRoomsCount,
+    totalRoomsCount: totalRoomsCount,
+    nextPriorityRoom: nextPriorityRoom,
+  );
+});
+
