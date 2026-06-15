@@ -64,6 +64,23 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final roomProductsAsync = ref.watch(roomProductsProvider);
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
 
+    if (widget.autoStartScan && !_scanTriggered && roomProductsAsync.hasValue) {
+      _scanTriggered = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (context.mounted) {
+          final roomProducts = roomProductsAsync.value ?? const [];
+          final hotelItems = selectedHotelId != null
+              ? roomProducts.where((item) => item.hotelId == selectedHotelId).toList()
+              : roomProducts;
+
+          await _scanRoomOrProductQr(context, hotelItems);
+          if (context.mounted) {
+            context.go(RoomsScreen.route);
+          }
+        }
+      });
+    }
+
     return PageScaffold(
       title: l10n.t('rooms'),
       onRefresh: () async {
@@ -152,17 +169,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         .where((item) => item.hotelId == selectedHotelId)
                         .toList();
 
-                    if (widget.autoStartScan && !_scanTriggered) {
-                      _scanTriggered = true;
-                      WidgetsBinding.instance.addPostFrameCallback((_) async {
-                        if (context.mounted) {
-                          await _scanRoomOrProductQr(context, hotelItems);
-                          if (context.mounted) {
-                            context.go(RoomsScreen.route);
-                          }
-                        }
-                      });
-                    }
+
 
                     if (hotelItems.isEmpty) {
                       return EmptyState(
