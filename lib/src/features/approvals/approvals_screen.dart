@@ -47,7 +47,7 @@ class ApprovalsScreen extends ConsumerWidget {
           children: [
             for (final request in requests)
               Padding(
-                padding: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsetsDirectional.only(bottom: 12),
                 child: Dismissible(
                   key: ValueKey(request.id),
                   direction: (canReviewRequests && request.status == ApprovalStatus.pending)
@@ -58,8 +58,8 @@ class ApprovalsScreen extends ConsumerWidget {
                       color: Colors.green.shade600,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 24),
+                    alignment: AlignmentDirectional.centerStart,
+                    padding: const EdgeInsetsDirectional.only(start: 24),
                     child: const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
                   ),
                   secondaryBackground: Container(
@@ -67,8 +67,8 @@ class ApprovalsScreen extends ConsumerWidget {
                       color: Colors.red.shade600,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 24),
+                    alignment: AlignmentDirectional.centerEnd,
+                    padding: const EdgeInsetsDirectional.only(end: 24),
                     child: const Icon(Icons.cancel_outlined, color: Colors.white, size: 28),
                   ),
                   onDismissed: (direction) async {

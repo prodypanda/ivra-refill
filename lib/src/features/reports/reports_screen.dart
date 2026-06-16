@@ -367,12 +367,12 @@ class _ReportActionState extends State<_ReportAction> {
                           theme.colorScheme.primaryContainer
                               .withValues(alpha: 0.1),
                         ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                        begin: AlignmentDirectional.topStart,
+                        end: AlignmentDirectional.bottomEnd,
                       ),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+                      borderRadius: const BorderRadiusDirectional.only(
+                        topStart: Radius.circular(20),
+                        topEnd: Radius.circular(20),
                       ),
                     ),
                     child: Row(
@@ -418,18 +418,7 @@ class _ReportActionState extends State<_ReportAction> {
                           runSpacing: 12,
                           children: [
                             for (final action in widget.actions)
-                              FilledButton.icon(
-                                onPressed: action.onPressed,
-                                icon: Icon(action.icon, size: 18),
-                                label: Text(action.label),
-                                style: FilledButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              ),
+                              _AnimatedReportButton(action: action),
                           ],
                         ),
                       ],
@@ -437,6 +426,46 @@ class _ReportActionState extends State<_ReportAction> {
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+class _AnimatedReportButton extends StatefulWidget {
+  const _AnimatedReportButton({
+    required this.action,
+  });
+
+  final _ReportButton action;
+
+  @override
+  State<_AnimatedReportButton> createState() => _AnimatedReportButtonState();
+}
+
+class _AnimatedReportButtonState extends State<_AnimatedReportButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.05 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutBack,
+        child: FilledButton.icon(
+          onPressed: widget.action.onPressed,
+          icon: Icon(widget.action.icon, size: 18),
+          label: Text(widget.action.label),
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),

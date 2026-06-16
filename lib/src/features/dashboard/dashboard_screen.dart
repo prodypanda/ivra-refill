@@ -53,7 +53,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final l10n = AppLocalizations.of(context);
     PremiumSnackbar.show(
       context,
-      l10n.t('syncingData') ?? 'Syncing data...',
+      l10n.t('syncingData'),
       icon: Icons.sync,
     );
     try {
@@ -73,7 +73,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       if (mounted) {
         PremiumSnackbar.show(
           context,
-          l10n.t('syncComplete') ?? 'Sync complete',
+          l10n.t('syncComplete'),
           icon: Icons.check_circle_outline,
         );
 
@@ -306,8 +306,8 @@ class _MetricCardState extends State<_MetricCard> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 theme.colorScheme.surface.withValues(alpha: 0.9),
                 theme.colorScheme.surface.withValues(alpha: 0.7),
@@ -417,8 +417,8 @@ class _MobileHeroState extends State<_MobileHero> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             theme.colorScheme.primary,
             theme.colorScheme.primary.withRed(220).withGreen(120),
@@ -859,7 +859,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
                               }
                               
                               return Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
+                                padding: const EdgeInsetsDirectional.only(top: 8.0),
                                 child: Text(
                                   xLabels[index],
                                   style: TextStyle(
@@ -914,7 +914,8 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
                       LineChartBarData(
                         spots: spots,
                         isCurved: true,
-                        curveSmoothness: 0.35,
+                        preventCurveOverShooting: true,
+                        curveSmoothness: 0.45,
                         color: theme.colorScheme.primary,
                         barWidth: 4,
                         isStrokeCapRound: true,
