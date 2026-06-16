@@ -2,7 +2,7 @@
 name: ivra_refill
 description: Ivra hotel refill operations app for Android and web.
 publish_to: none
-version: 1.0.26+27
+version: 1.0.27+28
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -41,6 +41,7 @@ dependencies:
   cached_network_image: ^3.4.1
   mobile_scanner: ^7.2.0
   home_widget: ^0.9.1
+  flutter_secure_storage: ^10.3.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
