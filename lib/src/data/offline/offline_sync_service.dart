@@ -93,6 +93,7 @@ class OfflineSyncService {
 
   Future<List<OfflineAction>> pendingActions() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
     final raw = prefs.getStringList(_storageKey) ?? const [];
     return raw
         .map((item) => OfflineAction.fromJson(jsonDecode(item)))
@@ -104,6 +105,7 @@ class OfflineSyncService {
     required Map<String, dynamic> payload,
   }) async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
     final actions = prefs.getStringList(_storageKey) ?? <String>[];
     final action = OfflineAction(
       id: _uuid.v4(),
@@ -117,6 +119,7 @@ class OfflineSyncService {
 
   Future<void> remove(String actionId) async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
     final actions = await pendingActions();
     await prefs.setStringList(
       _storageKey,
@@ -142,6 +145,7 @@ class OfflineSyncService {
 
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
     await prefs.remove(_storageKey);
   }
 
@@ -247,6 +251,7 @@ class OfflineSyncService {
 
   Future<void> _replace(OfflineAction updatedAction) async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
     final actions = await pendingActions();
     await prefs.setStringList(
       _storageKey,
