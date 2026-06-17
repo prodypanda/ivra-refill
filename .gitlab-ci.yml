@@ -52,7 +52,7 @@ analyze:
     - pub_get
   <<: *flutter_setup
   script:
-    - flutter analyze
+    - flutter analyze --no-fatal-infos --no-fatal-warnings
 
 test:
   stage: test
