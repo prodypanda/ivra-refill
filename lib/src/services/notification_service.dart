@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -25,6 +26,20 @@ final notificationServiceProvider = Provider((ref) {
   return NotificationService(Supabase.instance.client, ref);
 });
 
+/// A toast that should be shown to the user as soon as a [BuildContext] backed
+/// by [scaffoldMessengerKey] is available. Used to surface the outcome of a
+/// notification action (resolve/delete) that may have been triggered before any
+/// UI was mounted (cold start).
+class _PendingToast {
+  const _PendingToast({required this.messageKey, required this.isError});
+
+  /// Localization key resolved against [AppLocalizations]. If the key is
+  /// unknown, [AppLocalizations.t] returns the key itself, which is still safe
+  /// to display.
+  final String messageKey;
+  final bool isError;
+}
+
 class NotificationService {
   NotificationService(this._supabase, this._ref);
 
@@ -32,21 +47,92 @@ class NotificationService {
   final Ref _ref;
   FirebaseMessaging? _fcm;
 
-  static NotificationResponse? _pendingNotificationResponse;
+  /// The notification that launched the app from a terminated state, or a tap
+  /// received before the app finished building its first frame. Held until the
+  /// app is ready to act on it.
+  NotificationResponse? _pendingNotificationResponse;
 
-  void _checkAndProcessPending() {
+  /// Outcome toasts waiting for a usable [BuildContext].
+  final List<_PendingToast> _pendingToasts = <_PendingToast>[];
+
+  /// Route to navigate to once a context/router is available.
+  String? _pendingNavigation;
+
+  /// Bounds the post-frame retry loop so a missing context can never spin
+  /// forever (e.g. user dismisses the launch before any screen mounts).
+  static const int _maxContextRetries = 50; // ~ up to a few seconds of frames
+  int _contextRetries = 0;
+  bool _drainScheduled = false;
+
+  BuildContext? get _messengerContext => scaffoldMessengerKey.currentContext;
+
+  void _scheduleDrain() {
+    if (_drainScheduled) return;
+    _drainScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _drainScheduled = false;
+      _drainPending();
+    });
+  }
+
+  /// Processes any deferred notification response, navigation, and toasts.
+  /// Safe to call repeatedly. The data side of an action (resolve/delete RPC)
+  /// runs immediately and does not wait for a context; only the user-facing
+  /// toast and navigation are deferred until the UI is ready.
+  void _drainPending() {
     final response = _pendingNotificationResponse;
-    if (response == null) return;
-
-    final context = scaffoldMessengerKey.currentContext;
-    if (context != null) {
+    if (response != null) {
       _pendingNotificationResponse = null;
       _handleNotificationAction(response.payload, response.actionId);
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _checkAndProcessPending();
-      });
     }
+
+    final context = _messengerContext;
+
+    if (context == null) {
+      // Nothing can be shown/navigated yet. Retry on the next frame, bounded.
+      if ((_pendingToasts.isNotEmpty || _pendingNavigation != null) &&
+          _contextRetries < _maxContextRetries) {
+        _contextRetries++;
+        _scheduleDrain();
+      }
+      return;
+    }
+
+    _contextRetries = 0;
+
+    // Flush queued toasts.
+    if (_pendingToasts.isNotEmpty) {
+      final toasts = List<_PendingToast>.from(_pendingToasts);
+      _pendingToasts.clear();
+      final l10n = AppLocalizations.of(context);
+      for (final toast in toasts) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.t(toast.messageKey)),
+            backgroundColor:
+                toast.isError ? Colors.red : const Color(0xFF4CAF50),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+
+    // Flush deferred navigation.
+    final navigation = _pendingNavigation;
+    if (navigation != null) {
+      _pendingNavigation = null;
+      GoRouter.of(context).go(navigation);
+    }
+  }
+
+  void _queueToast(String messageKey, {required bool isError}) {
+    _pendingToasts.add(_PendingToast(messageKey: messageKey, isError: isError));
+    _scheduleDrain();
+  }
+
+  void _queueNavigation(String location) {
+    _pendingNavigation = location;
+    _scheduleDrain();
   }
 
   Future<void> initialize() async {
@@ -61,7 +147,7 @@ class NotificationService {
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         _pendingNotificationResponse = response;
-        _checkAndProcessPending();
+        _drainPending();
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
@@ -129,14 +215,13 @@ class NotificationService {
       debugPrint('Error getting notification launch details: $e');
     }
 
-    _checkAndProcessPending();
+    _drainPending();
   }
 
   void _handleNotificationAction(String? payloadStr, String? actionId) {
     if (payloadStr == null) return;
     try {
       final payload = jsonDecode(payloadStr);
-      final context = scaffoldMessengerKey.currentContext;
 
       String? alertId = payload['alertId']?.toString();
       String? hotelId = payload['hotelId']?.toString();
@@ -149,87 +234,74 @@ class NotificationService {
           }
         } catch (_) {}
       }
-      
+
       if (actionId == 'Dismiss') {
         return;
       }
-      
-      if (context != null) {
-        if (actionId == 'Acknowledge') {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Acknowledged')));
-        }
-        
-        if (actionId == 'more_info') {
-          if (hotelId != null && hotelId.isNotEmpty) {
-            GoRouter.of(context).go('/inventory?hotelId=$hotelId');
-          } else {
-            GoRouter.of(context).go('/inventory');
-          }
-          return;
-        }
-        
-        if (actionId == 'resolve') {
-          if (alertId != null && alertId.isNotEmpty) {
-            _ref.read(repositoryProvider).resolveAlert(alertId: alertId).then((_) {
-              if (!context.mounted) return;
-              _ref.invalidate(alertsProvider);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(AppLocalizations.of(context).t('alertResolvedToast')),
-                  backgroundColor: const Color(0xFF4CAF50),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }).catchError((e) {
-              if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Failed to resolve alert: $e'),
-                  backgroundColor: Colors.red,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            });
-          }
-          GoRouter.of(context).go('/alerts');
-          return;
-        }
-        
-        if (actionId == 'delete') {
-          if (alertId != null && alertId.isNotEmpty) {
-            _ref.read(repositoryProvider).deleteAlert(alertId).then((_) {
-              if (!context.mounted) return;
-              _ref.invalidate(alertsProvider);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(AppLocalizations.of(context).t('alertDeletedToast')),
-                  backgroundColor: const Color(0xFF4CAF50),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }).catchError((e) {
-              if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Failed to delete alert: $e'),
-                  backgroundColor: Colors.red,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            });
-          }
-          GoRouter.of(context).go('/alerts');
-          return;
-        }
 
-        final targetPage = payload['targetPage'];
-        if (targetPage != null && targetPage.toString().isNotEmpty) {
-           GoRouter.of(context).go(targetPage.toString());
+      if (actionId == 'Acknowledge') {
+        _queueToast('notificationAcknowledgedToast', isError: false);
+        return;
+      }
+
+      if (actionId == 'more_info') {
+        if (hotelId != null && hotelId.isNotEmpty) {
+          _queueNavigation('/inventory?hotelId=$hotelId');
+        } else {
+          _queueNavigation('/inventory');
         }
+        return;
+      }
+
+      if (actionId == 'resolve') {
+        if (alertId != null && alertId.isNotEmpty) {
+          _runAlertMutation(
+            action: _ref.read(repositoryProvider).resolveAlert(alertId: alertId),
+            successKey: 'alertResolvedToast',
+            failureKey: 'alertResolveFailedToast',
+          );
+        }
+        _queueNavigation('/alerts');
+        return;
+      }
+
+      if (actionId == 'delete') {
+        if (alertId != null && alertId.isNotEmpty) {
+          _runAlertMutation(
+            action: _ref.read(repositoryProvider).deleteAlert(alertId),
+            successKey: 'alertDeletedToast',
+            failureKey: 'alertDeleteFailedToast',
+          );
+        }
+        _queueNavigation('/alerts');
+        return;
+      }
+
+      final targetPage = payload['targetPage'];
+      if (targetPage != null && targetPage.toString().isNotEmpty) {
+        _queueNavigation(targetPage.toString());
       }
     } catch (e) {
       debugPrint('Error handling notification action: $e');
     }
+  }
+
+  /// Runs an alert mutation (resolve/delete) without requiring a live
+  /// [BuildContext]. The repository call and provider invalidation happen
+  /// immediately; the success/failure toast is queued and surfaced as soon as
+  /// the UI is ready, so the result is never silently dropped on cold start.
+  void _runAlertMutation({
+    required Future<void> action,
+    required String successKey,
+    required String failureKey,
+  }) {
+    action.then((_) {
+      _ref.invalidate(alertsProvider);
+      _queueToast(successKey, isError: false);
+    }).catchError((Object e) {
+      debugPrint('Notification alert mutation failed: $e');
+      _queueToast(failureKey, isError: true);
+    });
   }
 
   static Future<void> showLocalNotification(RemoteMessage message) async {
