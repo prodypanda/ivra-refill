@@ -171,9 +171,7 @@ serve(async (req) => {
       const status = error?.status || error?.message;
       const detailCode = error?.details?.[0]?.errorCode;
       return status === 'UNREGISTERED' ||
-        status === 'INVALID_ARGUMENT' ||
-        detailCode === 'UNREGISTERED' ||
-        detailCode === 'INVALID_ARGUMENT';
+        detailCode === 'UNREGISTERED';
     };
 
     // Send notifications in batches or individually
