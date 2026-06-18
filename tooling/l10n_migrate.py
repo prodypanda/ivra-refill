@@ -211,7 +211,7 @@ def main():
 
     # Write ARB files
     for loc in LOCALES:
-        arb = build_arb(loc, blocks[loc], en, is_template=(loc == "en"))
+        arb = build_arb(loc, blocks[loc], is_template=(loc == "en"))
         path = "lib/src/l10n/app_%s.arb" % loc
         with open(path, "w", encoding="utf-8") as f:
             json.dump(arb, f, ensure_ascii=False, indent=2)
