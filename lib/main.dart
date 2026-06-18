@@ -10,6 +10,7 @@ import 'package:workmanager/workmanager.dart';
 import 'src/app/ivra_app.dart';
 import 'src/state/app_state.dart';
 import 'src/services/notification_service.dart';
+import 'src/utils/app_logger.dart';
 
 const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
 const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
@@ -51,6 +52,11 @@ void callbackDispatcher() {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setUrlStrategy(PathUrlStrategy());
+
+  // Route uncaught framework errors through the central logging sink so they
+  // are observable in release builds (and forwardable to a real crash reporter
+  // later via AppLogger.onError).
+  FlutterError.onError = AppLogger.recordFlutterError;
 
   try {
     await Firebase.initializeApp();
