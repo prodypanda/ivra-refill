@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/app_enums.dart';
 import '../domain/models.dart';
 import '../services/audit_service.dart';
+import '../utils/app_logger.dart';
 import 'ivra_repository.dart';
 import 'offline/network_error_classifier.dart';
 
@@ -16,6 +17,15 @@ class SupabaseIvraRepository implements IvraRepository {
 
   final SupabaseClient _client;
   late final AuditService _auditService;
+
+  /// Schema version stamped into every cache envelope. Bump this whenever the
+  /// shape of any cached payload changes so entries written by older app
+  /// versions are treated as a miss instead of being misinterpreted.
+  static const int _cacheVersion = 1;
+
+  /// How long a cached offline read remains usable. Past this age the entry is
+  /// treated as a miss so we never serve arbitrarily stale data.
+  static const Duration _cacheMaxAge = Duration(hours: 24);
 
   /// Fetches [key] via [fetcher], caching successful results so they can be
   /// served when the device is offline.
@@ -35,24 +45,63 @@ class SupabaseIvraRepository implements IvraRepository {
     try {
       final data = await fetcher();
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('cache_$key', jsonEncode(data));
+      // Wrap the payload in a versioned, timestamped envelope so stale data can
+      // be expired and entries from incompatible schema versions can be
+      // discarded after an app upgrade.
+      final envelope = <String, dynamic>{
+        'v': _cacheVersion,
+        'ts': DateTime.now().millisecondsSinceEpoch,
+        'data': data,
+      };
+      await prefs.setString('cache_$key', jsonEncode(envelope));
       return data;
     } catch (e) {
       if (NetworkErrorClassifier.isOffline(e)) {
         final prefs = await SharedPreferences.getInstance();
         final cached = prefs.getString('cache_$key');
-        if (cached != null) {
-          return decode(jsonDecode(cached));
+        final payload = _readCacheEnvelope(cached);
+        if (payload != null) {
+          return decode(payload);
         }
-        // The cache is empty but we are offline. Return a safe default when the
-        // caller provided one (typically an empty list) to avoid crash screens
-        // on un-cached pages.
+        // The cache is missing/expired/incompatible but we are offline. Return
+        // a safe default when the caller provided one (typically an empty list)
+        // to avoid crash screens on un-cached pages.
         if (emptyFallback != null) {
           return emptyFallback();
         }
       }
       rethrow;
     }
+  }
+
+  /// Parses a stored cache string and returns the inner payload only when the
+  /// envelope is present, the schema version matches [_cacheVersion], and the
+  /// entry is no older than [_cacheMaxAge]. Returns `null` for a cache miss:
+  /// missing entry, legacy bare payload (no envelope), wrong version, expired,
+  /// or unparseable. Never throws.
+  static Object? _readCacheEnvelope(String? cached) {
+    if (cached == null) return null;
+    Object? decoded;
+    try {
+      decoded = jsonDecode(cached);
+    } catch (_) {
+      return null;
+    }
+    // Legacy bare-payload entries (and anything that isn't our envelope shape)
+    // are treated as a miss rather than crashing.
+    if (decoded is! Map) return null;
+    if (!decoded.containsKey('v') ||
+        !decoded.containsKey('ts') ||
+        !decoded.containsKey('data')) {
+      return null;
+    }
+    final version = decoded['v'];
+    if (version is! int || version != _cacheVersion) return null;
+    final ts = decoded['ts'];
+    if (ts is! int) return null;
+    final ageMillis = DateTime.now().millisecondsSinceEpoch - ts;
+    if (ageMillis < 0 || ageMillis > _cacheMaxAge.inMilliseconds) return null;
+    return decoded['data'];
   }
 
   /// Decodes a cached JSON payload into a `List<Map<String, dynamic>>`.
@@ -159,11 +208,6 @@ class SupabaseIvraRepository implements IvraRepository {
   Future<void> changeCurrentUserPassword({required String password}) async {
     await _client.auth.updateUser(UserAttributes(password: password));
     await _auditService.logAction('Changed current user password');
-  }
-
-  @override
-  Future<void> switchDemoUser({required String userId}) {
-    throw UnsupportedError('Demo user switching is not available.');
   }
 
   @override
@@ -378,10 +422,17 @@ class SupabaseIvraRepository implements IvraRepository {
           final value = row['client_request_id'];
           if (value is String && value.isNotEmpty) ids.add(value);
         }
-      } catch (_) {
-        // Reconciliation is best-effort. If we cannot reach the server (e.g.
-        // genuinely offline), fall back to overlaying everything so the
-        // offline-first UX is preserved.
+      } catch (e, st) {
+        // Reconciliation is best-effort and MUST NOT throw: if we cannot reach
+        // the server (e.g. genuinely offline), we fall back to overlaying
+        // everything so the offline-first UX is preserved. Persistent failures
+        // are still routed to the logging sink so they are observable instead
+        // of silently swallowed.
+        AppLogger.error(
+          e,
+          stackTrace: st,
+          context: 'appliedClientRequestIds reconcile failed for $table',
+        );
       }
     }
 
@@ -782,10 +833,27 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_user_id': userId,
     });
     if (rows is! List) return [];
+
+    // The RPC only returns ids/names. Enrich with the full hotel rows the app
+    // already exposes via hotels() (backed by the hotel_summaries view) so
+    // city/country/contact/etc. are populated, while preserving the RPC's
+    // order. If an id isn't present in hotels() (or hotels() fails), fall back
+    // to a minimal Hotel so nothing is dropped.
+    Map<String, Hotel> fullById = const {};
+    try {
+      final all = await hotels();
+      fullById = {for (final hotel in all) hotel.id: hotel};
+    } catch (_) {
+      // Best-effort enrichment: fall back to minimal Hotels below.
+    }
+
     return rows.map<Hotel>((row) {
       final map = Map<String, dynamic>.from(row as Map);
+      final id = map['hotel_id'] as String;
+      final full = fullById[id];
+      if (full != null) return full;
       return Hotel(
-        id: map['hotel_id'] as String,
+        id: id,
         name: (map['hotel_name'] ?? '') as String,
         city: '',
         country: '',

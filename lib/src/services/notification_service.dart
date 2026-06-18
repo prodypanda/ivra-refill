@@ -13,13 +13,14 @@ import 'package:go_router/go_router.dart';
 import '../app/ivra_app.dart';
 import '../state/app_state.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/app_logger.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   // Handle background tap
-  debugPrint('notificationTapBackground: ${notificationResponse.actionId}');
+  AppLogger.debug('notificationTapBackground: ${notificationResponse.actionId}');
 }
 
 final notificationServiceProvider = Provider((ref) {
@@ -215,7 +216,7 @@ class NotificationService {
       // FCM has no native implementation on desktop (Windows/Linux); skip it
       // there. iOS, macOS, Android, and web are all supported.
       if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
-         debugPrint('FCM not supported on this desktop platform natively.');
+         AppLogger.debug('FCM not supported on this desktop platform natively.');
          return;
       }
       
@@ -236,21 +237,21 @@ class NotificationService {
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized ||
           settings.authorizationStatus == AuthorizationStatus.provisional) {
-        debugPrint('User granted push notification permission');
+        AppLogger.debug('User granted push notification permission');
         await _registerToken();
         _fcm!.onTokenRefresh.listen((_) => _registerToken());
       } else {
-        debugPrint('User declined or has not accepted notification permission');
+        AppLogger.debug('User declined or has not accepted notification permission');
       }
 
       // Handle foreground messages
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        debugPrint('Got a message whilst in the foreground!');
-        debugPrint('Message data: ${message.data}');
+        AppLogger.debug('Got a message whilst in the foreground!');
+        AppLogger.debug('Message data: ${message.data}');
         NotificationService.showLocalNotification(message);
       });
-    } catch (e) {
-      debugPrint('Error initializing FCM: $e');
+    } catch (e, st) {
+      AppLogger.error(e, stackTrace: st, context: 'NotificationService.initialize FCM init failure');
     }
 
     // Check if app was launched from a notification
@@ -262,8 +263,8 @@ class NotificationService {
           _pendingNotificationResponse = response;
         }
       }
-    } catch (e) {
-      debugPrint('Error getting notification launch details: $e');
+    } catch (e, st) {
+      AppLogger.error(e, stackTrace: st, context: 'NotificationService launch-details');
     }
 
     _drainPending();
@@ -332,8 +333,8 @@ class NotificationService {
       if (targetPage != null && targetPage.toString().isNotEmpty) {
         _queueNavigation(targetPage.toString());
       }
-    } catch (e) {
-      debugPrint('Error handling notification action: $e');
+    } catch (e, st) {
+      AppLogger.error(e, stackTrace: st, context: 'NotificationService handle action');
     }
   }
 
@@ -349,8 +350,8 @@ class NotificationService {
     action.then((_) {
       _ref.invalidate(alertsProvider);
       _queueToast(successKey, isError: false);
-    }).catchError((Object e) {
-      debugPrint('Notification alert mutation failed: $e');
+    }).catchError((Object e, StackTrace st) {
+      AppLogger.error(e, stackTrace: st, context: 'NotificationService alert mutation');
       _queueToast(failureKey, isError: true);
     });
   }
@@ -380,8 +381,8 @@ class NotificationService {
             ));
           }
         }
-      } catch (e) {
-        debugPrint('Error parsing actionButtons: $e');
+      } catch (e, st) {
+        AppLogger.error(e, stackTrace: st, context: 'NotificationService parse actionButtons');
       }
     }
     
@@ -439,16 +440,16 @@ class NotificationService {
       }
 
       if (_supabase == null) {
-        debugPrint('SupabaseClient is null, skipping token registration.');
+        AppLogger.debug('SupabaseClient is null, skipping token registration.');
         return;
       }
       await _supabase!.rpc('register_fcm_token', params: {
         'p_token': token,
         'p_device_type': deviceType,
       });
-      debugPrint('FCM Token registered successfully.');
-    } catch (e) {
-      debugPrint('Error registering FCM token: $e');
+      AppLogger.debug('FCM Token registered successfully.');
+    } catch (e, st) {
+      AppLogger.error(e, stackTrace: st, context: 'NotificationService register-token');
     }
   }
 }

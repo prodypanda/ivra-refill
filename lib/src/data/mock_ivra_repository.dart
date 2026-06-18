@@ -347,7 +347,10 @@ class MockIvraRepository implements IvraRepository {
     }
   }
 
-  @override
+  /// Demo-only: switch the active demo user. This is intentionally NOT part of
+  /// the [IvraRepository] interface — it only exists on the in-memory mock used
+  /// in demo mode and tests. Production code must narrow to [MockIvraRepository]
+  /// before calling it.
   Future<void> switchDemoUser({required String userId}) async {
     final member = _teamMembers.firstWhere((item) => item.id == userId);
     _currentUser = member;

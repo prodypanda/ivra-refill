@@ -16,8 +16,6 @@ abstract class IvraRepository {
     required String password,
   });
 
-  Future<void> switchDemoUser({required String userId});
-
   Future<DashboardMetrics> dashboardMetrics({String? hotelId});
   Future<List<Hotel>> hotels();
   Future<List<UserProfile>> teamMembers({String? hotelId});
