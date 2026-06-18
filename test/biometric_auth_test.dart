@@ -1,8 +1,12 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ivra_refill/src/features/auth/biometric_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  FlutterSecureStorage.setMockInitialValues({});
+
   group('BiometricAccountNotifier', () {
     test('defaults to null when nothing is stored', () async {
       SharedPreferences.setMockInitialValues({});
@@ -80,8 +84,12 @@ void main() {
   });
 
   group('per-account credentials', () {
-    test('saveLoginCredentials stores password keyed by email', () async {
+    setUp(() {
+      FlutterSecureStorage.setMockInitialValues({});
       SharedPreferences.setMockInitialValues({});
+    });
+
+    test('saveLoginCredentials stores password keyed by email', () async {
       await saveLoginCredentials('Admin@Ivra.com', 'hunter2');
       expect(await savedPasswordFor('admin@ivra.com'), 'hunter2');
       // A different account has no stored password.
@@ -90,7 +98,6 @@ void main() {
 
     test('signing in as a second account does not overwrite the first',
         () async {
-      SharedPreferences.setMockInitialValues({});
       await saveLoginCredentials('admin@ivra.com', 'adminpw');
       await saveLoginCredentials('nashab2015@gmail.com', 'nashabpw');
       expect(await savedPasswordFor('admin@ivra.com'), 'adminpw');
@@ -99,7 +106,6 @@ void main() {
 
     test('hasBiometricCredentials reflects the opted-in account only',
         () async {
-      SharedPreferences.setMockInitialValues({});
       await saveLoginCredentials('admin@ivra.com', 'adminpw');
       // No biometric account selected yet.
       expect(await hasBiometricCredentials(), isFalse);
@@ -110,6 +116,32 @@ void main() {
       // Switch the opt-in to an account without stored credentials.
       await BiometricAccountNotifier().setAccount('nashab2015@gmail.com');
       expect(await hasBiometricCredentials(), isFalse);
+    });
+
+    test(
+        'legacy plaintext password is migrated to secure storage and scrubbed',
+        () async {
+      // Seed a legacy plaintext password directly in SharedPreferences.
+      SharedPreferences.setMockInitialValues({
+        AuthPrefs.passwordKey('admin@ivra.com'): 'legacy_password_123',
+      });
+
+      // Reading it transparently migrates via the fallback path.
+      expect(await savedPasswordFor('admin@ivra.com'), 'legacy_password_123');
+
+      // The plaintext copy must be gone from SharedPreferences.
+      final prefs = await SharedPreferences.getInstance();
+      expect(
+        prefs.containsKey(AuthPrefs.passwordKey('admin@ivra.com')),
+        isFalse,
+      );
+
+      // The password must now live in secure storage.
+      const secureStorage = FlutterSecureStorage();
+      expect(
+        await secureStorage.read(key: AuthPrefs.passwordKey('admin@ivra.com')),
+        'legacy_password_123',
+      );
     });
   });
 }

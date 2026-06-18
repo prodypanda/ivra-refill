@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -103,6 +104,20 @@ class SupabaseIvraRepository implements IvraRepository {
     if (ageMillis < 0 || ageMillis > _cacheMaxAge.inMilliseconds) return null;
     return decoded['data'];
   }
+
+  /// Schema version stamped into cache envelopes. Exposed for tests so they can
+  /// construct version-matching (and mismatching) envelopes.
+  @visibleForTesting
+  static int get cacheVersion => _cacheVersion;
+
+  /// Maximum age of a usable cache entry. Exposed for tests.
+  @visibleForTesting
+  static Duration get cacheMaxAge => _cacheMaxAge;
+
+  /// Test-only wrapper around [_readCacheEnvelope].
+  @visibleForTesting
+  static Object? readCacheEnvelopeForTest(String? cached) =>
+      _readCacheEnvelope(cached);
 
   /// Decodes a cached JSON payload into a `List<Map<String, dynamic>>`.
   static List<Map<String, dynamic>> _decodeMapList(Object? decoded) {
