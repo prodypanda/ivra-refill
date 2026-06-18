@@ -35,14 +35,13 @@ Can record refills and stock actions for their assigned hotel. They cannot edit 
 
 - Flutter shared app for Android and web.
 - Supabase Auth and Postgres backend.
-- In-app smart alerts.
+- In-app smart alerts and push notifications (Firebase Cloud Messaging).
+- QR code bottle scanning.
+- Product/photo images for products.
 - Offline action queue for refill/stock workflows.
-- English, French, and Arabic localization foundation.
+- English, French, Arabic, and Italian localization (RTL for Arabic).
 
 Out of V1:
 
-- QR code bottle tracking.
-- Photo proof.
 - Full purchase-order fulfillment.
-- Push notifications.
 

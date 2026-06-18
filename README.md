@@ -187,9 +187,9 @@ Rendered SQL files are written to `.generated/supabase/`, which is ignored by gi
 
 ## Important V1 Decisions
 
-- No QR code tracking.
-- No photo proof.
+- QR bottle scanning is supported.
+- Product/photo images are supported.
+- Push notifications (FCM) are supported, in addition to in-app/dashboard alerts.
 - Reorder flow provides suggested quantities only.
-- Alerts are in-app/dashboard alerts.
 - Undo is allowed within 30 minutes; later fixes require correction approval.
-- English, French, and Arabic are planned, including RTL for Arabic.
+- English, French, Arabic, and Italian are supported, including RTL for Arabic.
