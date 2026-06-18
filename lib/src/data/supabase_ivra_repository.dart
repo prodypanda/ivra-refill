@@ -147,6 +147,7 @@ class SupabaseIvraRepository implements IvraRepository {
     Future<Map<String, dynamic>> fetch() => _fetchWithCache(
           'current_user_$userId',
           () => _client.from('profiles').select().eq('id', userId).single(),
+          decode: _decodeMap,
         );
     try {
       return await fetch();
@@ -211,6 +212,7 @@ class SupabaseIvraRepository implements IvraRepository {
       () => _client
           .rpc('dashboard_metrics', params: params.isNotEmpty ? params : null)
           .single(),
+      decode: _decodeMap,
     );
 
     return DashboardMetrics(
@@ -228,6 +230,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'hotels',
       () => _client.from('hotel_summaries').select().order('name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<Hotel>((row) => Hotel.fromMap(row)).toList();
   }
@@ -241,6 +245,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'team_members_${hotelId ?? 'all'}',
       () => query.order('full_name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<UserProfile>((row) => UserProfile.fromMap(row)).toList();
   }
@@ -252,6 +258,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'team_invitations_${hotelId ?? 'all'}',
       () => query.eq('status', 'pending').order('created_at', ascending: false),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows
         .map<TeamInvitation>((row) => TeamInvitation.fromMap(row))
@@ -263,6 +271,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'audit_logs',
       () => _client.from('audit_logs').select().order('created_at', ascending: false).limit(200),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<AuditLog>((row) => AuditLog.fromMap(row)).toList();
   }
@@ -278,6 +288,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'products',
       () => _client.from('products').select().order('default_name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<Product>((row) => Product.fromMap(row)).toList();
   }
@@ -289,6 +301,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'rooms_${hotelId ?? 'all'}',
       () => query.order('floor_number').order('room_number'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<RoomInfo>((row) => RoomInfo.fromMap(row)).toList();
   }
@@ -304,6 +318,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'room_products_${hotelId ?? 'all'}_${roomId ?? 'all'}',
       () => query.order('room_number'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<RoomProduct>(_roomProductFromMap).toList();
   }
@@ -315,6 +331,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'inventory_${hotelId ?? 'all'}',
       () => query.order('product_name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<InventoryItem>(_inventoryFromMap).toList();
   }
@@ -326,6 +344,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'suggested_orders_${hotelId ?? 'all'}',
       () => query.order('product_name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<SuggestedOrder>(_suggestedOrderFromMap).toList();
   }
@@ -340,6 +360,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'approval_requests_${hotelId ?? 'all'}',
       () => query.order('requested_at', ascending: false),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<ApprovalRequest>(_approvalFromMap).toList();
   }
@@ -351,6 +373,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'alerts_${hotelId ?? 'all'}',
       () => query.order('created_at', ascending: false),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<AlertItem>(_alertFromMap).toList();
   }
@@ -362,6 +386,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'recent_refill_events_${hotelId ?? 'all'}',
       () => query.order('occurred_at', ascending: false).limit(500),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<RefillEvent>(_refillEventFromMap).toList();
   }
@@ -380,6 +406,8 @@ class SupabaseIvraRepository implements IvraRepository {
         final rows = await _fetchWithCache(
           'applied_request_ids_${cacheKey}_${hotelId ?? 'all'}',
           () => query,
+          decode: _decodeMapList,
+          emptyFallback: () => const <Map<String, dynamic>>[],
         );
         for (final row in rows) {
           final value = row['client_request_id'];
