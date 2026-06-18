@@ -256,9 +256,11 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
     String actionId,
   ) async {
+    // Manual retry: reset any dead-lettered action and bypass the backoff
+    // window so the user-triggered attempt always runs.
     final didSync = await ref
         .read(offlineSyncServiceProvider)
-        .syncAction(ref.read(repositoryProvider), actionId);
+        .retryDeadLetterAction(ref.read(repositoryProvider), actionId);
 
     ref.invalidate(offlineActionsProvider);
     ref.invalidate(roomProductsProvider);
