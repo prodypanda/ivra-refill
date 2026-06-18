@@ -244,7 +244,6 @@ class OfflineSyncService {
 
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
     await prefs.remove(_storageKey);
   }
 
