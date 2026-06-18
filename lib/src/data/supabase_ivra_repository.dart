@@ -56,7 +56,21 @@ class SupabaseIvraRepository implements IvraRepository {
   final SupabaseClient _client;
   late final AuditService _auditService;
 
-  Future<T> _fetchWithCache<T>(String key, Future<T> Function() fetcher) async {
+  /// Fetches [key] via [fetcher], caching successful results so they can be
+  /// served when the device is offline.
+  ///
+  /// Callers MUST provide a [decode] callback that turns the JSON-decoded cache
+  /// payload back into the expected `T`, and may provide [emptyFallback] to
+  /// return a safe default (e.g. an empty list) when the device is offline and
+  /// nothing has been cached yet. This replaces the previous, fragile approach
+  /// of inspecting `T.toString()`, which broke under minification/obfuscation
+  /// and with nested generics.
+  Future<T> _fetchWithCache<T>(
+    String key,
+    Future<T> Function() fetcher, {
+    required T Function(Object? decoded) decode,
+    T Function()? emptyFallback,
+  }) async {
     try {
       final data = await fetcher();
       final prefs = await SharedPreferences.getInstance();
@@ -67,25 +81,35 @@ class SupabaseIvraRepository implements IvraRepository {
         final prefs = await SharedPreferences.getInstance();
         final cached = prefs.getString('cache_$key');
         if (cached != null) {
-          final decoded = jsonDecode(cached);
-          if (decoded is List) {
-            return List<Map<String, dynamic>>.from(
-                decoded.map((x) => Map<String, dynamic>.from(x as Map))) as T;
-          } else if (decoded is Map) {
-            return Map<String, dynamic>.from(decoded) as T;
-          }
-          return decoded as T;
-        } else {
-          // If the cache is completely empty but we are offline,
-          // gracefully return an empty list if this query expects a list!
-          // This prevents terrifying red crash screens on un-cached pages.
-          if (T.toString().startsWith('List<')) {
-            return <Map<String, dynamic>>[] as T;
-          }
+          return decode(jsonDecode(cached));
+        }
+        // The cache is empty but we are offline. Return a safe default when the
+        // caller provided one (typically an empty list) to avoid crash screens
+        // on un-cached pages.
+        if (emptyFallback != null) {
+          return emptyFallback();
         }
       }
       rethrow;
     }
+  }
+
+  /// Decodes a cached JSON payload into a `List<Map<String, dynamic>>`.
+  static List<Map<String, dynamic>> _decodeMapList(Object? decoded) {
+    if (decoded is List) {
+      return decoded
+          .map((x) => Map<String, dynamic>.from(x as Map))
+          .toList(growable: false);
+    }
+    return const <Map<String, dynamic>>[];
+  }
+
+  /// Decodes a cached JSON payload into a `Map<String, dynamic>`.
+  static Map<String, dynamic> _decodeMap(Object? decoded) {
+    if (decoded is Map) {
+      return Map<String, dynamic>.from(decoded);
+    }
+    throw StateError('Cached value for is not a Map.');
   }
 
   @override
