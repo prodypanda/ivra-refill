@@ -101,7 +101,7 @@ class SupabaseIvraRepository implements IvraRepository {
           .map((x) => Map<String, dynamic>.from(x as Map))
           .toList(growable: false);
     }
-    return const <Map<String, dynamic>>[];
+    throw StateError('Cached JSON payload is not a List (got ${decoded.runtimeType}).');
   }
 
   /// Decodes a cached JSON payload into a `Map<String, dynamic>`.
