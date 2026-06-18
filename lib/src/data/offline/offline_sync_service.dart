@@ -244,6 +244,11 @@ class OfflineSyncService {
 
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
+    // Reload before clearing so we observe (and intentionally discard) the
+    // latest on-disk queue rather than acting on a stale per-isolate cache.
+    // Keeps clear() consistent with enqueue/remove/_replace under the
+    // workmanager + UI multi-isolate setup.
+    await prefs.reload();
     await prefs.remove(_storageKey);
   }
 
