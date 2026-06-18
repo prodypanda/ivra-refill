@@ -109,7 +109,7 @@ class SupabaseIvraRepository implements IvraRepository {
     if (decoded is Map) {
       return Map<String, dynamic>.from(decoded);
     }
-    throw StateError('Cached value for is not a Map.');
+    throw StateError('Cached JSON payload is not a Map (got ${decoded.runtimeType}).');
   }
 
   @override
