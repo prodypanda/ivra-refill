@@ -164,7 +164,7 @@ def placeholders_for(value):
     return seen
 
 
-def build_arb(locale, data, en_data, is_template):
+def build_arb(locale, data, is_template):
     arb = OrderedDict()
     arb["@@locale"] = locale
     for key, value in data.items():
