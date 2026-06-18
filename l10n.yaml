@@ -1,0 +1,21 @@
+# Configuration for Flutter's gen_l10n tool.
+#
+# Running `flutter gen-l10n` (also triggered automatically by `flutter pub get`
+# because `flutter: generate: true` is set in pubspec.yaml) reads the ARB files
+# in `lib/src/l10n/` and generates a typed localizations class.
+#
+# The generated class is named `AppL10n` (not `AppLocalizations`) so it does not
+# collide with the hand-written backwards-compatibility shim in
+# `lib/src/l10n/app_localizations.dart`, which preserves the existing
+# `t(key)` / `tParams(...)` API and the custom enum-label helpers used across
+# the call sites.
+arb-dir: lib/src/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_l10n.dart
+output-class: AppL10n
+preferred-supported-locales:
+  - en
+  - fr
+  - ar
+  - it
+nullable-getter: false

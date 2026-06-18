@@ -33,6 +33,9 @@ class IvraApp extends ConsumerWidget {
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
+        // Backwards-compatibility shim that preserves the existing
+        // `t(key)` / `tParams(...)` API and the custom enum-label helpers.
+        // Its data is generated from the same ARB files used by gen_l10n.
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
