@@ -74,15 +74,15 @@ void main() {
       expect(read(jsonEncode({'v': version, 'ts': _now()})), isNull);
     });
 
-    test('when the version is an int but does not match the current version', () {
+    test('when the version does not match the current version', () {
       expect(
-        read(_envelope(version: version + 1, ts: _now(), data: [])),
+        read(_envelope(version: '$version-mismatch', ts: _now(), data: [])),
         isNull,
       );
     });
 
-    test('when the version is not an int', () {
-      expect(read(_envelope(version: '1', ts: _now(), data: [])), isNull);
+    test('when the version is an int instead of the expected string', () {
+      expect(read(_envelope(version: 1, ts: _now(), data: [])), isNull);
     });
 
     test('when ts is not an int', () {
