@@ -182,11 +182,20 @@ class NotificationService {
     }
 
     // Request local-notification permission on iOS/macOS explicitly.
-    if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
-      final darwinPlugin = flutterLocalNotificationsPlugin
+    if (!kIsWeb && Platform.isIOS) {
+      final iosPlugin = flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>();
-      await darwinPlugin?.requestPermissions(
+      await iosPlugin?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    } else if (!kIsWeb && Platform.isMacOS) {
+      final macPlugin = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>();
+      await macPlugin?.requestPermissions(
         alert: true,
         badge: true,
         sound: true,
