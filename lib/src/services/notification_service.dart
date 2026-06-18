@@ -28,7 +28,7 @@ final notificationServiceProvider = Provider((ref) {
   // reading Supabase.instance.client would throw a LateInitialization/assertion
   // error. The service already accepts a nullable client and skips FCM token
   // registration when it is null.
-  final useSupabase = ref.watch(useSupabaseProvider);
+  final useSupabase = ref.read(useSupabaseProvider);
   return NotificationService(
     useSupabase ? Supabase.instance.client : null,
     ref,
