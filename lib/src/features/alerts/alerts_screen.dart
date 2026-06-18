@@ -315,6 +315,7 @@ class _AlertsList extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         // ── Summary metric cards ──
         _MetricsSummary(
