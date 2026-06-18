@@ -138,9 +138,21 @@ class NotificationService {
   Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-        
+
+    // iOS/macOS (Darwin) initialization. Permissions are requested explicitly
+    // below via FirebaseMessaging.requestPermission, so we defer them here to
+    // avoid a duplicate system prompt on first launch.
+    const DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
+
     const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
+      iOS: initializationSettingsDarwin,
+      macOS: initializationSettingsDarwin,
     );
     
     await flutterLocalNotificationsPlugin.initialize(
@@ -152,7 +164,7 @@ class NotificationService {
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
-    // Create default channel and request local permissions
+    // Create default channel and request local permissions (Android only).
     if (!kIsWeb && Platform.isAndroid) {
       const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'high_importance_channel_v2',
@@ -169,13 +181,33 @@ class NotificationService {
       await androidPlugin?.requestNotificationsPermission();
     }
 
+    // Request local-notification permission on iOS/macOS explicitly.
+    if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
+      final darwinPlugin = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>();
+      await darwinPlugin?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
+
     try {
+      // FCM has no native implementation on desktop (Windows/Linux); skip it
+      // there. iOS, macOS, Android, and web are all supported.
       if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
          debugPrint('FCM not supported on this desktop platform natively.');
          return;
       }
       
       _fcm = FirebaseMessaging.instance;
+
+      // On Apple platforms an APNS token must be available before an FCM token
+      // can be issued. Wait briefly for it so the first getToken() succeeds.
+      if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
+        await _fcm!.getAPNSToken();
+      }
       
       final settings = await _fcm!.requestPermission(
         alert: true,
@@ -345,8 +377,21 @@ class NotificationService {
       actions: actions,
       playSound: true,
     );
-    
-    final platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    // iOS/macOS notification presentation. Notification action buttons on
+    // Darwin require categories registered at init time, so we present a plain
+    // alert/badge/sound notification here for cross-platform parity.
+    const darwinPlatformChannelSpecifics = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: darwinPlatformChannelSpecifics,
+      macOS: darwinPlatformChannelSpecifics,
+    );
     
     await flutterLocalNotificationsPlugin.show(
       id: message.messageId.hashCode,
