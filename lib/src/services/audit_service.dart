@@ -35,11 +35,17 @@ class AuditService {
     return info;
   }
 
-  Future<void> logAction(String action, {Map<String, dynamic>? details}) async {
+  /// Records an audit entry for [action].
+  ///
+  /// Returns `true` when the entry was persisted and `false` when it failed.
+  /// Audit logging is best-effort and must never disrupt user flows, so
+  /// failures are caught and reported (via [debugPrint]) rather than rethrown.
+  /// Callers should `await` this so the failure path runs deterministically
+  /// instead of being orphaned as an unhandled async error.
+  Future<bool> logAction(String action, {Map<String, dynamic>? details}) async {
     try {
-      // We do not await this heavily to avoid slowing down the UI
       final deviceInfo = await _getDeviceInfo();
-      
+
       await _supabase.rpc(
         'log_audit_action',
         params: {
@@ -49,9 +55,13 @@ class AuditService {
         },
       );
       debugPrint('Audit Log: $action');
-    } catch (e) {
-      debugPrint('Failed to log audit action: $e');
-      // Silently fail so we don't disrupt user flows on audit logging errors
+      return true;
+    } catch (e, stackTrace) {
+      // Best-effort: never disrupt the user flow because audit logging failed,
+      // but make sure the failure is always visible in logs.
+      debugPrint('Failed to log audit action "$action": $e');
+      debugPrintStack(stackTrace: stackTrace, label: 'AuditService.logAction');
+      return false;
     }
   }
 }
