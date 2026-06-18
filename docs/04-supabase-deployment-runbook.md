@@ -56,6 +56,29 @@ Or with Supabase CLI:
 
 Use `-Login` only when the machine has not already authenticated with Supabase CLI.
 
+### Product images storage bucket
+
+The app stores uploaded product images in a public Supabase Storage bucket named
+`products`. This bucket is provisioned server-side by the migration:
+
+```text
+supabase/migrations/20260618000000_products_storage_bucket.sql
+```
+
+The app no longer creates the bucket from the client. Apply this migration along
+with the rest. It creates a public `products` bucket and storage RLS policies that
+mirror the `products_write_ivra` table policy:
+
+- public read for everyone (product images render in the catalog), and
+- insert/update/delete restricted to Ivra admins/managers (`app_admin` /
+  `app_manager`).
+
+If you provision the bucket through the Supabase Storage UI instead of the
+migration, create it as **public** and add the same write/update/delete policies
+gated on `public.is_ivra_admin()`. Without the bucket, image uploads fail
+gracefully and the user is shown a localized error instead of saving a broken
+image URL.
+
 ## 3. Create The First Admin User
 
 - Create the first user in Supabase Auth.

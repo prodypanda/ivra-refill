@@ -629,6 +629,13 @@ class MockIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<Set<String>> appliedClientRequestIds({String? hotelId}) async {
+    // The demo repository records every processed idempotency key, mirroring
+    // the server-side `client_request_id` columns on refill/inventory events.
+    return Set<String>.from(_processedClientRequestIds);
+  }
+
+  @override
   Future<void> createHotel({
     required String name,
     String legalName = '',
@@ -932,6 +939,7 @@ class MockIvraRepository implements IvraRepository {
       occurredAt: DateTime.now(),
       performedBy: _currentUser.id,
       notes: notes,
+      clientRequestId: clientRequestId,
     );
 
     _events.insert(0, event);
@@ -1035,6 +1043,7 @@ class MockIvraRepository implements IvraRepository {
         occurredAt: now,
         performedBy: _currentUser.id,
         notes: notes,
+        clientRequestId: clientRequestId,
       ),
     );
     _roomProducts[index] = RoomProduct(

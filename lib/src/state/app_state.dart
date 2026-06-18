@@ -114,12 +114,52 @@ final roomsProvider = FutureProvider<List<RoomInfo>>((ref) {
   return ref.watch(repositoryProvider).rooms(hotelId: hotelId);
 });
 
+/// Reconciles the locally-queued [OfflineAction]s against the idempotency keys
+/// the server has already applied.
+///
+/// Each action's [OfflineAction.id] is passed to the server as the
+/// `client_request_id`, so an action whose id appears in [appliedIds] has
+/// already landed on the server and is reflected in the freshly fetched rows.
+/// Such actions are:
+///   * removed from the returned list so the optimistic overlay does NOT
+///     double-count them, and
+///   * pruned from the offline queue so the UI and queue stay consistent
+///     without waiting for a manual refresh.
+///
+/// Actions that are genuinely not-yet-synced are returned unchanged so the
+/// offline-first overlay keeps working.
+Future<List<OfflineAction>> _reconcilePendingActions(
+  Ref ref,
+  List<OfflineAction> pendingActions,
+  Set<String> appliedIds,
+) async {
+  if (pendingActions.isEmpty || appliedIds.isEmpty) return pendingActions;
+
+  final service = ref.watch(offlineSyncServiceProvider);
+  final stillPending = <OfflineAction>[];
+  for (final action in pendingActions) {
+    if (appliedIds.contains(action.id)) {
+      // Confirmed synced on the server already; drop it from the queue.
+      await service.remove(action.id);
+    } else {
+      stillPending.add(action);
+    }
+  }
+  return stillPending;
+}
+
 final roomProductsProvider = FutureProvider<List<RoomProduct>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
-  final items =
-      await ref.watch(repositoryProvider).roomProducts(hotelId: hotelId);
-  final pendingActions =
+  final repository = ref.watch(repositoryProvider);
+  final items = await repository.roomProducts(hotelId: hotelId);
+  var pendingActions =
       await ref.watch(offlineSyncServiceProvider).pendingActions();
+
+  if (pendingActions.isEmpty) return items;
+
+  final appliedIds = await repository.appliedClientRequestIds(hotelId: hotelId);
+  pendingActions =
+      await _reconcilePendingActions(ref, pendingActions, appliedIds);
 
   if (pendingActions.isEmpty) return items;
 
@@ -151,9 +191,16 @@ final roomProductsProvider = FutureProvider<List<RoomProduct>>((ref) async {
 
 final inventoryProvider = FutureProvider<List<InventoryItem>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
-  final items = await ref.watch(repositoryProvider).inventory(hotelId: hotelId);
-  final pendingActions =
+  final repository = ref.watch(repositoryProvider);
+  final items = await repository.inventory(hotelId: hotelId);
+  var pendingActions =
       await ref.watch(offlineSyncServiceProvider).pendingActions();
+
+  if (pendingActions.isEmpty) return items;
+
+  final appliedIds = await repository.appliedClientRequestIds(hotelId: hotelId);
+  pendingActions =
+      await _reconcilePendingActions(ref, pendingActions, appliedIds);
 
   if (pendingActions.isEmpty) return items;
 

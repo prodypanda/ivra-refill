@@ -343,6 +343,37 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<Set<String>> appliedClientRequestIds({String? hotelId}) async {
+    final ids = <String>{};
+
+    Future<void> collect(String table, String cacheKey) async {
+      try {
+        var query = _client
+            .from(table)
+            .select('client_request_id')
+            .not('client_request_id', 'is', null);
+        if (hotelId != null) query = query.eq('hotel_id', hotelId);
+        final rows = await _fetchWithCache(
+          'applied_request_ids_${cacheKey}_${hotelId ?? 'all'}',
+          () => query,
+        );
+        for (final row in rows) {
+          final value = row['client_request_id'];
+          if (value is String && value.isNotEmpty) ids.add(value);
+        }
+      } catch (_) {
+        // Reconciliation is best-effort. If we cannot reach the server (e.g.
+        // genuinely offline), fall back to overlaying everything so the
+        // offline-first UX is preserved.
+      }
+    }
+
+    await collect('refill_events', 'refill_events');
+    await collect('inventory_events', 'inventory_events');
+    return ids;
+  }
+
+  @override
   Future<void> createHotel({
     required String name,
     String legalName = '',
@@ -861,6 +892,7 @@ class SupabaseIvraRepository implements IvraRepository {
       occurredAt: DateTime.parse(map['occurred_at'] as String),
       performedBy: map['performed_by'] as String,
       notes: map['notes'] as String?,
+      clientRequestId: map['client_request_id'] as String?,
     );
   }
 
