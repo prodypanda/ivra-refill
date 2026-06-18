@@ -1,3 +1,5 @@
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -40,6 +42,30 @@ class AppLocalizations {
     return kL10nValues[locale.languageCode]?[key] ??
         kL10nValues['en']![key] ??
         key;
+  }
+
+  /// Resolves [key] without a [BuildContext], using the current device locale.
+  ///
+  /// Background isolates and platform-channel setup (e.g. Android notification
+  /// channels, the FCM background handler) run before any widget tree exists,
+  /// so [AppLocalizations.of] is unavailable. This picks the best-matching
+  /// supported locale from [PlatformDispatcher] and falls back to English when
+  /// the device language is unsupported, so user-facing notification strings
+  /// are never hardcoded English.
+  static String tStatic(String key) {
+    final code = _resolveDeviceLanguageCode();
+    return kL10nValues[code]?[key] ?? kL10nValues['en']![key] ?? key;
+  }
+
+  static String _resolveDeviceLanguageCode() {
+    final supported =
+        supportedLocales.map((l) => l.languageCode).toSet();
+    for (final locale in PlatformDispatcher.instance.locales) {
+      if (supported.contains(locale.languageCode)) {
+        return locale.languageCode;
+      }
+    }
+    return 'en';
   }
 
   /// Resolves [key] and substitutes any `{name}` placeholders from [params].
