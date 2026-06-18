@@ -20,7 +20,21 @@ final supabaseAuthStateProvider = StreamProvider<AuthState?>((ref) {
   return Supabase.instance.client.auth.onAuthStateChange;
 });
 
-final localeProvider = StateProvider<Locale>((ref) => const Locale('fr'));
+final localeProvider = StateProvider<Locale>((ref) => resolveInitialLocale());
+
+/// Resolves the initial app [Locale] from the device/OS locales, falling back
+/// to French only when none of the device locales is supported. Previously the
+/// app always started in French regardless of the user's device language.
+Locale resolveInitialLocale() {
+  const supported = ['en', 'fr', 'ar', 'it'];
+  const fallback = Locale('fr');
+  for (final deviceLocale in PlatformDispatcher.instance.locales) {
+    if (supported.contains(deviceLocale.languageCode)) {
+      return Locale(deviceLocale.languageCode);
+    }
+  }
+  return fallback;
+}
 
 final offlineModeProvider = StateProvider<bool>((ref) => false);
 
@@ -320,7 +334,8 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
     return const DailyRefillProgress(
       refilledRoomsCount: 0,
       totalRoomsCount: 0,
-      nextPriorityRoom: 'None',
+      status: DailyRefillStatus.noRooms,
+      nextPriorityRoomNumber: null,
     );
   }
 
@@ -360,7 +375,7 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
       .where((entry) => !refilledRoomNumbers.contains(entry.key))
       .toList();
 
-  String nextPriorityRoom = 'All Done! 🎉';
+  String? nextPriorityRoomNumber;
   if (remainingRooms.isNotEmpty) {
     final criticalRooms = <MapEntry<String, List<RoomProduct>>>[];
     final warningRooms = <MapEntry<String, List<RoomProduct>>>[];
@@ -409,18 +424,21 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
     normalRooms.sort(compareRoomNumbers);
 
     if (criticalRooms.isNotEmpty) {
-      nextPriorityRoom = 'Room ${criticalRooms.first.key}';
+      nextPriorityRoomNumber = criticalRooms.first.key;
     } else if (warningRooms.isNotEmpty) {
-      nextPriorityRoom = 'Room ${warningRooms.first.key}';
+      nextPriorityRoomNumber = warningRooms.first.key;
     } else if (normalRooms.isNotEmpty) {
-      nextPriorityRoom = 'Room ${normalRooms.first.key}';
+      nextPriorityRoomNumber = normalRooms.first.key;
     }
   }
 
   return DailyRefillProgress(
     refilledRoomsCount: refilledRoomsCount,
     totalRoomsCount: totalRoomsCount,
-    nextPriorityRoom: nextPriorityRoom,
+    status: nextPriorityRoomNumber == null
+        ? DailyRefillStatus.allDone
+        : DailyRefillStatus.hasPriority,
+    nextPriorityRoomNumber: nextPriorityRoomNumber,
   );
 });
 
