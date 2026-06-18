@@ -177,7 +177,7 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.rpc('update_current_profile', params: {
       'p_full_name': fullName,
     });
-      _auditService.logAction('Updated current user profile', details: {'full_name': fullName});
+      await _auditService.logAction('Updated current user profile', details: {'full_name': fullName});
   }
 
   @override
@@ -188,7 +188,7 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.from('profiles').update({
       'full_name': fullName,
     }).eq('id', userId);
-      _auditService.logAction('Updated user profile', details: {'user_id': userId, 'full_name': fullName});
+      await _auditService.logAction('Updated user profile', details: {'user_id': userId, 'full_name': fullName});
   }
 
   @override
@@ -448,43 +448,43 @@ class SupabaseIvraRepository implements IvraRepository {
       'address': address,
       'notes': notes,
     });
-    _auditService.logAction('Created hotel', details: {'name': name});
+    await _auditService.logAction('Created hotel', details: {'name': name});
   }
 
   @override
   Future<void> deleteHotel(String hotelId) async {
     await _client.from('hotels').delete().eq('id', hotelId);
-    _auditService.logAction('Deleted hotel', details: {'hotel_id': hotelId});
+    await _auditService.logAction('Deleted hotel', details: {'hotel_id': hotelId});
   }
 
   @override
   Future<void> deleteRoom(String roomId) async {
     await _client.from('rooms').delete().eq('id', roomId);
-    _auditService.logAction('Deleted room', details: {'room_id': roomId});
+    await _auditService.logAction('Deleted room', details: {'room_id': roomId});
   }
 
   @override
   Future<void> deleteFloor(String floorId) async {
     await _client.from('floors').delete().eq('id', floorId);
-    _auditService.logAction('Deleted floor', details: {'floor_id': floorId});
+    await _auditService.logAction('Deleted floor', details: {'floor_id': floorId});
   }
 
   @override
   Future<void> deleteUser(String userId) async {
     await _client.rpc('delete_user', params: {'target_user_id': userId});
-    _auditService.logAction('Deleted user', details: {'user_id': userId});
+    await _auditService.logAction('Deleted user', details: {'user_id': userId});
   }
 
   @override
   Future<void> deleteAlert(String alertId) async {
     await _client.from('alerts').delete().eq('id', alertId);
-    _auditService.logAction('Deleted alert', details: {'alert_id': alertId});
+    await _auditService.logAction('Deleted alert', details: {'alert_id': alertId});
   }
 
   @override
   Future<void> deleteProduct(String productId) async {
     await _client.from('products').delete().eq('id', productId);
-    _auditService.logAction('Deleted product', details: {'product_id': productId});
+    await _auditService.logAction('Deleted product', details: {'product_id': productId});
   }
 
   @override
@@ -502,7 +502,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_room_count': roomCount,
       'p_product_ids': productIds,
     });
-    _auditService.logAction('Created rooms from template', details: {'hotel_id': hotelId, 'floor_number': floorNumber, 'room_count': roomCount});
+    await _auditService.logAction('Created rooms from template', details: {'hotel_id': hotelId, 'floor_number': floorNumber, 'room_count': roomCount});
   }
 
   @override
@@ -519,7 +519,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_hotel_id': hotelId,
     });
     
-    _auditService.logAction('Invited team member', details: {
+    await _auditService.logAction('Invited team member', details: {
       'email': email,
       'role': role,
       'hotel_id': hotelId,
@@ -547,7 +547,7 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.rpc('accept_team_invitation', params: {
       'p_token': token,
     });
-    _auditService.logAction('Accepted team invitation', details: {});
+    await _auditService.logAction('Accepted team invitation', details: {});
   }
 
   @override
@@ -555,7 +555,7 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.rpc('cancel_team_invitation', params: {
       'p_invitation_id': invitationId,
     });
-    _auditService.logAction('Canceled team invitation', details: {'invitation_id': invitationId});
+    await _auditService.logAction('Canceled team invitation', details: {'invitation_id': invitationId});
   }
 
   @override
@@ -563,7 +563,7 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.rpc('resend_team_invitation', params: {
       'p_invitation_id': invitationId,
     });
-    _auditService.logAction('Resent team invitation', details: {'invitation_id': invitationId});
+    await _auditService.logAction('Resent team invitation', details: {'invitation_id': invitationId});
   }
 
   @override
@@ -576,7 +576,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_is_active': isActive,
     });
     
-    _auditService.logAction('Set team member active status', details: {
+    await _auditService.logAction('Set team member active status', details: {
       'user_id': userId,
       'is_active': isActive,
     });
@@ -612,7 +612,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'low_bidon_threshold': lowBidonThreshold,
       'image_url': imageUrl,
     });
-    _auditService.logAction('Created product', details: {'sku': sku});
+    await _auditService.logAction('Created product', details: {'sku': sku});
   }
 
   @override
@@ -646,7 +646,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'low_bidon_threshold': lowBidonThreshold,
       'image_url': imageUrl,
     }).eq('id', productId);
-    _auditService.logAction('Updated product', details: {'product_id': productId});
+    await _auditService.logAction('Updated product', details: {'product_id': productId});
   }
 
   @override
@@ -660,7 +660,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_notes': notes,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Recorded refill', details: {'room_product_id': roomProductId});
+    await _auditService.logAction('Recorded refill', details: {'room_product_id': roomProductId});
   }
 
   @override
@@ -672,7 +672,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_refill_event_id': refillEventId,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Undid refill', details: {'refill_event_id': refillEventId});
+    await _auditService.logAction('Undid refill', details: {'refill_event_id': refillEventId});
   }
 
   @override
@@ -686,7 +686,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_reason': reason,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Requested stock correction', details: {'refill_event_id': refillEventId});
+    await _auditService.logAction('Requested stock correction', details: {'refill_event_id': refillEventId});
   }
 
   @override
@@ -700,7 +700,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_notes': notes,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Replaced bottle', details: {'room_product_id': roomProductId});
+    await _auditService.logAction('Replaced bottle', details: {'room_product_id': roomProductId});
   }
 
   @override
@@ -723,7 +723,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_new_data': newData,
       'p_client_request_id': clientRequestId,
     }).then((value) => value?.toString());
-    _auditService.logAction('Submitted change request', details: {
+    await _auditService.logAction('Submitted change request', details: {
       'target_table': targetTable, 
       'target_id': targetId
     });
@@ -753,7 +753,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_reason': reason,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Recorded stock adjustment', details: {'hotel_id': hotelId, 'product_id': productId});
+    await _auditService.logAction('Recorded stock adjustment', details: {'hotel_id': hotelId, 'product_id': productId});
   }
 
   @override
@@ -766,7 +766,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_notes': notes,
     });
     
-    _auditService.logAction('Approved change request', details: {
+    await _auditService.logAction('Approved change request', details: {
       'request_id': approvalRequestId,
     });
   }
@@ -780,7 +780,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_request_id': approvalRequestId,
       'p_notes': notes,
     });
-    _auditService.logAction('Rejected change request', details: {'request_id': approvalRequestId});
+    await _auditService.logAction('Rejected change request', details: {'request_id': approvalRequestId});
   }
 
   @override
@@ -799,7 +799,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_alert_id': alertId,
     });
     
-    _auditService.logAction('Resolved alert', details: {
+    await _auditService.logAction('Resolved alert', details: {
       'alert_id': alertId,
     });
   }
@@ -835,7 +835,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_user_id': userId,
       'p_hotel_id': hotelId,
     });
-    _auditService.logAction('Assigned user to hotel', details: {'user_id': userId, 'hotel_id': hotelId});
+    await _auditService.logAction('Assigned user to hotel', details: {'user_id': userId, 'hotel_id': hotelId});
   }
 
   @override
@@ -847,7 +847,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_user_id': userId,
       'p_hotel_id': hotelId,
     });
-    _auditService.logAction('Unassigned user from hotel', details: {'user_id': userId, 'hotel_id': hotelId});
+    await _auditService.logAction('Unassigned user from hotel', details: {'user_id': userId, 'hotel_id': hotelId});
   }
 
   RoomProduct _roomProductFromMap(Map<String, dynamic> map) {
