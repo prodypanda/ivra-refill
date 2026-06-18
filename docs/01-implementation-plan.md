@@ -6,6 +6,8 @@
 - Supabase handles authentication, Postgres data, row-level security, server-side refill rules, approvals, and reporting views.
 - The app uses a repository layer so screens can run against demo data first, then Supabase when credentials are provided.
 - Offline support starts with a persistent local action queue for refill, undo, correction, and stock actions.
+- QR code bottle scanning, product/photo images, and push notifications (Firebase Cloud Messaging) are supported in addition to in-app alerts.
+- Localization covers English, French, Arabic (RTL), and Italian.
 
 ## Data Model
 
