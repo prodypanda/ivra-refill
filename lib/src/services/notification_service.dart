@@ -23,7 +23,16 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 final notificationServiceProvider = Provider((ref) {
-  return NotificationService(Supabase.instance.client, ref);
+  // Only hand the service a real Supabase client when Supabase is configured.
+  // In demo/offline mode and in widget tests Supabase is never initialized, so
+  // reading Supabase.instance.client would throw a LateInitialization/assertion
+  // error. The service already accepts a nullable client and skips FCM token
+  // registration when it is null.
+  final useSupabase = ref.watch(useSupabaseProvider);
+  return NotificationService(
+    useSupabase ? Supabase.instance.client : null,
+    ref,
+  );
 });
 
 /// A toast that should be shown to the user as soon as a [BuildContext] backed

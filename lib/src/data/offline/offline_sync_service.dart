@@ -183,6 +183,12 @@ class OfflineSyncService {
 
   Future<List<OfflineAction>> pendingActions() async {
     final prefs = await SharedPreferences.getInstance();
+    // SharedPreferences caches values in memory per isolate and does not
+    // refetch from disk on getInstance(). The workmanager background isolate
+    // and the UI isolate each hold their own cache, so without an explicit
+    // reload one isolate can read stale data and clobber the other's queue
+    // (silently dropping queued refills). Reload before every read.
+    await prefs.reload();
     final raw = prefs.getStringList(_storageKey) ?? const [];
     return raw
         .map((item) => OfflineAction.fromJson(jsonDecode(item)))
@@ -194,6 +200,7 @@ class OfflineSyncService {
     required Map<String, dynamic> payload,
   }) async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
     final actions = prefs.getStringList(_storageKey) ?? <String>[];
     final action = OfflineAction(
       id: _uuid.v4(),
@@ -207,7 +214,12 @@ class OfflineSyncService {
 
   Future<void> remove(String actionId) async {
     final prefs = await SharedPreferences.getInstance();
-    final actions = await pendingActions();
+    // Reload and re-derive the list from this same reloaded instance so a
+    // concurrent isolate's write is not overwritten with a stale snapshot.
+    await prefs.reload();
+    final raw = prefs.getStringList(_storageKey) ?? const [];
+    final actions =
+        raw.map((item) => OfflineAction.fromJson(jsonDecode(item))).toList();
     await prefs.setStringList(
       _storageKey,
       actions
@@ -232,6 +244,7 @@ class OfflineSyncService {
 
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
     await prefs.remove(_storageKey);
   }
 
@@ -379,7 +392,12 @@ class OfflineSyncService {
 
   Future<void> _replace(OfflineAction updatedAction) async {
     final prefs = await SharedPreferences.getInstance();
-    final actions = await pendingActions();
+    // Reload and re-derive from this same instance so we merge against the
+    // latest on-disk queue instead of a stale cached read.
+    await prefs.reload();
+    final raw = prefs.getStringList(_storageKey) ?? const [];
+    final actions =
+        raw.map((item) => OfflineAction.fromJson(jsonDecode(item))).toList();
     await prefs.setStringList(
       _storageKey,
       [
