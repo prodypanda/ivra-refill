@@ -30,6 +30,16 @@ abstract class IvraRepository {
   Future<List<ApprovalRequest>> approvalRequests({String? hotelId});
   Future<List<AlertItem>> alerts({String? hotelId});
   Future<List<RefillEvent>> recentRefillEvents({String? hotelId});
+
+  /// Returns the set of `client_request_id`s the server has already applied for
+  /// the given hotel (refill/replace events plus stock-adjustment events).
+  ///
+  /// The optimistic offline overlay uses this to reconcile its pending queue:
+  /// an action whose id appears here has already landed on the server (and is
+  /// reflected in freshly fetched rows), so it must NOT be overlaid again and
+  /// can be pruned from the local queue.
+  Future<Set<String>> appliedClientRequestIds({String? hotelId});
+
   Future<List<AuditLog>> fetchAuditLogs();
   Future<void> clearAuditLogs();
 

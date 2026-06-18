@@ -427,6 +427,7 @@ class RefillEvent {
     required this.occurredAt,
     required this.performedBy,
     this.notes,
+    this.clientRequestId,
   });
 
   final String id;
@@ -437,6 +438,12 @@ class RefillEvent {
   final DateTime occurredAt;
   final String performedBy;
   final String? notes;
+
+  /// The idempotency key supplied by the client when the originating action was
+  /// recorded (== [OfflineAction.id]). Lets the optimistic offline overlay tell
+  /// whether a still-queued action has already been applied on the server, so
+  /// it can avoid double-counting.
+  final String? clientRequestId;
 
   bool canUndo(DateTime now, String currentUserId) {
     return type == RefillEventType.refill &&
