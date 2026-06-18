@@ -176,10 +176,10 @@ class NotificationService {
 
     // Create default channel and request local permissions (Android only).
     if (!kIsWeb && Platform.isAndroid) {
-      const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      final AndroidNotificationChannel channel = AndroidNotificationChannel(
         'high_importance_channel_v2',
-        'High Importance Notifications',
-        description: 'This channel is used for important notifications.',
+        AppLocalizations.tStatic('notificationChannelName'),
+        description: AppLocalizations.tStatic('notificationChannelDescription'),
         importance: Importance.max,
         playSound: true,
       );
@@ -358,7 +358,9 @@ class NotificationService {
 
   static Future<void> showLocalNotification(RemoteMessage message) async {
     final data = message.data;
-    final title = data['title'] ?? message.notification?.title ?? 'New Notification';
+    final title = data['title'] ??
+        message.notification?.title ??
+        AppLocalizations.tStatic('notificationDefaultTitle');
     final body = data['body'] ?? message.notification?.body ?? '';
     final actionButtonsStr = data['actionButtons'];
     
@@ -390,7 +392,7 @@ class NotificationService {
 
     final androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'high_importance_channel_v2',
-      'High Importance Notifications',
+      AppLocalizations.tStatic('notificationChannelName'),
       importance: Importance.max,
       priority: Priority.high,
       icon: '@mipmap/ic_launcher',
