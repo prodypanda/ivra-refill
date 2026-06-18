@@ -56,6 +56,11 @@ dev_dependencies:
 # classpath, so clean builds fail with "cannot find symbol JniPlugin". Pinning
 # to the last 2.2.x release keeps the platform-channel implementation and avoids
 # pulling in jni entirely. (path_provider is a transitive dep via supabase_flutter.)
+#
+# TRACKING: this is a workaround, not a fix. Remove this override once a clean
+# `flutter build apk` succeeds with the unpinned transitive version (re-test
+# after each supabase_flutter / path_provider_android upgrade). Keep the pin
+# until then to avoid breaking Android builds.
 dependency_overrides:
   path_provider_android: 2.2.17
 

@@ -8,6 +8,7 @@ import '../domain/app_enums.dart';
 import '../domain/models.dart';
 import '../services/audit_service.dart';
 import '../utils/app_logger.dart';
+import '../version.dart';
 import 'ivra_repository.dart';
 import 'offline/network_error_classifier.dart';
 
@@ -22,7 +23,21 @@ class SupabaseIvraRepository implements IvraRepository {
   /// Schema version stamped into every cache envelope. Bump this whenever the
   /// shape of any cached payload changes so entries written by older app
   /// versions are treated as a miss instead of being misinterpreted.
-  static const int _cacheVersion = 1;
+  ///
+  /// The effective cache version also incorporates the running [appVersion]
+  /// (see [_effectiveCacheVersion]): any app upgrade automatically invalidates
+  /// previously cached payloads, so a forgotten manual bump can no longer cause
+  /// a new build to misread an old cache shape.
+  static const int _cacheSchemaVersion = 1;
+
+  /// Combines the manual [_cacheSchemaVersion] with the build's [appVersion] so
+  /// the cache namespace changes on every release. This is a defensive default;
+  /// bump [_cacheSchemaVersion] as well when you want to invalidate within a
+  /// single app version (e.g. during development).
+  static String get _effectiveCacheVersion => '$_cacheSchemaVersion@$appVersion';
+
+  /// Back-compat alias retained for existing call sites/tests.
+  static String get _cacheVersion => _effectiveCacheVersion;
 
   /// How long a cached offline read remains usable. Past this age the entry is
   /// treated as a miss so we never serve arbitrarily stale data.
@@ -97,7 +112,7 @@ class SupabaseIvraRepository implements IvraRepository {
       return null;
     }
     final version = decoded['v'];
-    if (version is! int || version != _cacheVersion) return null;
+    if (version is! String || version != _cacheVersion) return null;
     final ts = decoded['ts'];
     if (ts is! int) return null;
     final ageMillis = DateTime.now().millisecondsSinceEpoch - ts;
@@ -108,7 +123,7 @@ class SupabaseIvraRepository implements IvraRepository {
   /// Schema version stamped into cache envelopes. Exposed for tests so they can
   /// construct version-matching (and mismatching) envelopes.
   @visibleForTesting
-  static int get cacheVersion => _cacheVersion;
+  static String get cacheVersion => _cacheVersion;
 
   /// Maximum age of a usable cache entry. Exposed for tests.
   @visibleForTesting

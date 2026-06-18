@@ -1,9 +1,6 @@
 {
   "@@locale": "fr",
   "markAsRead": "Marquer comme lu",
-  "alertResolveFailedToast": "Impossible de résoudre l'alerte. Réessayez.",
-  "alertDeleteFailedToast": "Impossible de supprimer l'alerte. Réessayez.",
-  "notificationAcknowledgedToast": "Notification confirmée.",
   "confirmDeleteHotel": "Voulez-vous vraiment supprimer l'hôtel '{hotelName}' ? Cette action est irréversible et supprimera définitivement toutes les chambres, affectations de personnel et enregistrements associés.",
   "confirmDeleteRoom": "Voulez-vous vraiment supprimer la chambre '{roomNumber}' ? Cette action est irréversible et supprimera définitivement tous les produits et l'historique associés.",
   "confirmDeleteFloor": "Voulez-vous vraiment supprimer l'étage '{floorNumber}' et toutes ses chambres ? Cette action est irréversible.",
