@@ -67,6 +67,38 @@ serve(async (req) => {
       throw new Error("Missing required fields");
     }
 
+    const allowedTargetTypes = new Set(['all', 'role', 'hotel', 'user']);
+    const allowedRoles = new Set(['app_admin', 'app_manager', 'hotel_manager', 'hotel_staff']);
+    const allowedActionIds = new Set(['Dismiss', 'Acknowledge', 'more_info', 'resolve', 'delete']);
+    const allowedTargetPages = new Set(['', '/dashboard', '/inventory', '/alerts', '/approvals']);
+
+    if (!allowedTargetTypes.has(targetType)) {
+      throw new Error("Invalid targetType");
+    }
+    if (targetType !== 'all' && (typeof targetValue !== 'string' || targetValue.trim().length === 0)) {
+      throw new Error("Missing targetValue");
+    }
+    if (targetType === 'role' && !allowedRoles.has(targetValue)) {
+      throw new Error("Invalid target role");
+    }
+    if (targetType === 'user' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(targetValue)) {
+      throw new Error("Invalid target email");
+    }
+    if (targetPage && !allowedTargetPages.has(targetPage)) {
+      throw new Error("Invalid targetPage");
+    }
+    if (actionButtons !== undefined && actionButtons !== null) {
+      if (!Array.isArray(actionButtons) || actionButtons.length > 4) {
+        throw new Error("Invalid actionButtons");
+      }
+      for (const button of actionButtons) {
+        const id = typeof button === 'string' ? button : button?.id;
+        if (!allowedActionIds.has(String(id))) {
+          throw new Error("Invalid notification action button");
+        }
+      }
+    }
+
     const { data: profile } = await supabaseAdmin.from('profiles').select('role, hotel_id').eq('id', user.id).single();
     if (!profile) {
       throw new Error("User profile not found");
@@ -100,7 +132,10 @@ serve(async (req) => {
       throw new Error("Invalid targetType");
     }
 
-    let tokensQuery = supabaseAdmin.from('user_fcm_tokens').select('token');
+    let tokensQuery = supabaseAdmin
+      .from('user_fcm_tokens')
+      .select('token')
+      .not('token', 'is', null);
     
     if (targetUserIds !== null) {
       if (targetUserIds.length === 0) {
@@ -125,7 +160,21 @@ serve(async (req) => {
     const tokens = [...new Set(tokensData.map(t => t.token))];
     const accessToken = await getAccessToken();
 
-    const results = { successCount: 0, failureCount: 0, errors: [] as any[] };
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      staleTokenCount: 0,
+      errors: [] as any[],
+    };
+
+    const isStaleTokenError = (error: any) => {
+      const status = error?.status || error?.message;
+      const detailCode = error?.details?.[0]?.errorCode;
+      return status === 'UNREGISTERED' ||
+        status === 'INVALID_ARGUMENT' ||
+        detailCode === 'UNREGISTERED' ||
+        detailCode === 'INVALID_ARGUMENT';
+    };
 
     // Send notifications in batches or individually
     const sendPromises = tokens.map(async (token) => {
@@ -180,8 +229,8 @@ serve(async (req) => {
       } else {
         results.failureCount++;
         results.errors.push({ token, error: resData.error });
-        // Optional: Delete token if it's UNREGISTERED
-        if (resData.error?.details?.[0]?.errorCode === 'UNREGISTERED') {
+        if (isStaleTokenError(resData.error)) {
+          results.staleTokenCount++;
           await supabaseAdmin.from('user_fcm_tokens').delete().eq('token', token);
         }
       }
