@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 
+import '../domain/app_enums.dart';
 import '../domain/models.dart';
 import '../features/shared/premium_loading.dart';
 import '../l10n/app_localizations.dart';
@@ -105,9 +106,17 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
 
     ref.listen<DailyRefillProgress?>(dailyRefillProgressProvider, (prev, next) {
       if (!kIsWeb) {
+        // Localize the next-priority-room string for the active locale before
+        // handing it to the native home widget, which cannot read Flutter's
+        // AppLocalizations itself.
+        final l10n = AppLocalizations(ref.read(localeProvider));
+        final summary = next == null
+            ? l10n.dailyRefillSummaryLabel(DailyRefillStatus.noRooms, null)
+            : l10n.dailyRefillSummaryLabel(
+                next.status, next.nextPriorityRoomNumber);
         HomeWidget.saveWidgetData<int>('refilled_rooms_count', next?.refilledRoomsCount ?? 0);
         HomeWidget.saveWidgetData<int>('total_rooms_count', next?.totalRoomsCount ?? 0);
-        HomeWidget.saveWidgetData<String>('next_priority_room', next?.nextPriorityRoom ?? 'None');
+        HomeWidget.saveWidgetData<String>('next_priority_room', summary);
         HomeWidget.updateWidget(androidName: 'DailyRefillWidgetProvider');
       }
     });

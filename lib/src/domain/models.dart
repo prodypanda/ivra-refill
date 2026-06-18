@@ -679,11 +679,21 @@ class DailyRefillProgress {
   const DailyRefillProgress({
     required this.refilledRoomsCount,
     required this.totalRoomsCount,
-    required this.nextPriorityRoom,
+    required this.status,
+    this.nextPriorityRoomNumber,
   });
 
   final int refilledRoomsCount;
   final int totalRoomsCount;
-  final String nextPriorityRoom;
+
+  /// Language-neutral state of the summary. Presentation layers (Flutter UI
+  /// and the native home widget) localize this for the active locale rather
+  /// than the provider hard-coding English text.
+  final DailyRefillStatus status;
+
+  /// Raw room number to refill next (e.g. `201`), or null when there is no
+  /// priority room (everything done, or no rooms). Never a pre-formatted,
+  /// English "Room N" string.
+  final String? nextPriorityRoomNumber;
 }
 

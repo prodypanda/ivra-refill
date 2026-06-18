@@ -2352,6 +2352,64 @@ class AppLocalizations {
         return t('syncActionPendingEdit');
     }
   }
+
+  /// Localized, human-readable summary of the next room to refill for the
+  /// daily-refill home widget. The provider returns language-neutral data
+  /// ([DailyRefillStatus] + a raw room number); this builds the displayed
+  /// string for the active locale instead of hard-coding English.
+  String dailyRefillSummaryLabel(
+    DailyRefillStatus status,
+    String? roomNumber,
+  ) {
+    switch (status) {
+      case DailyRefillStatus.noRooms:
+        return _dailyNone();
+      case DailyRefillStatus.allDone:
+        return _dailyAllDone();
+      case DailyRefillStatus.hasPriority:
+        if (roomNumber == null || roomNumber.isEmpty) return _dailyNone();
+        return _roomLabel(roomNumber);
+    }
+  }
+
+  String _dailyAllDone() {
+    switch (locale.languageCode) {
+      case 'fr':
+        return 'Termin\u00e9 ! \ud83c\udf89';
+      case 'ar':
+        return '\u062a\u0645 \u0628\u0646\u062c\u0627\u062d! \ud83c\udf89';
+      case 'it':
+        return 'Completato! \ud83c\udf89';
+      default:
+        return 'All Done! \ud83c\udf89';
+    }
+  }
+
+  String _dailyNone() {
+    switch (locale.languageCode) {
+      case 'fr':
+        return 'Aucune';
+      case 'ar':
+        return '\u0644\u0627 \u0634\u064a\u0621';
+      case 'it':
+        return 'Nessuna';
+      default:
+        return 'None';
+    }
+  }
+
+  String _roomLabel(String roomNumber) {
+    switch (locale.languageCode) {
+      case 'fr':
+        return 'Chambre $roomNumber';
+      case 'ar':
+        return '\u063a\u0631\u0641\u0629 $roomNumber';
+      case 'it':
+        return 'Camera $roomNumber';
+      default:
+        return 'Room $roomNumber';
+    }
+  }
 }
 
 class _AppLocalizationsDelegate
