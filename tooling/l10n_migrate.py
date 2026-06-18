@@ -74,6 +74,8 @@ def parse_dart_string(text, i):
     while i < len(text):
         c = text[i]
         if c == "\\":
+            if i + 1 >= len(text):
+                raise RuntimeError("Unexpected end of input after backslash in string literal")
             nxt = text[i + 1]
             mapping = {
                 "n": "\n",
