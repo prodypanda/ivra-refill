@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- Migrated the hand-maintained localization map to the standard Flutter ARB +
+  `gen_l10n` workflow (`lib/src/l10n/app_{en,fr,ar,it}.arb`, `l10n.yaml`,
+  `flutter: generate: true`).
+- Kept a backwards-compatible `AppLocalizations` shim (`t`, `tParams`,
+  `userRoleLabel`, `invitationStatusLabel`, `syncActionTypeLabel`,
+  `alertTypeLabel`) so existing call sites are unchanged.
+- Backfilled three keys that were missing from the French and Arabic maps
+  (`alertResolveFailedToast`, `alertDeleteFailedToast`,
+  `notificationAcknowledgedToast`) using the English source string (flagged for
+  translation).
+
 ## 0.1.0
 
 Initial Ivra pilot foundation.

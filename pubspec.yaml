@@ -61,6 +61,7 @@ dependency_overrides:
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/fonts/DejaVuSans.ttf
     - assets/fonts/DejaVuSans-Bold.ttf
