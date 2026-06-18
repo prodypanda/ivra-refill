@@ -78,15 +78,27 @@ class AlertsScreen extends ConsumerWidget {
       child: AsyncValueView(
         value: ref.watch(alertsProvider),
         onRetry: () => ref.invalidate(alertsProvider),
-        loadingWidget: ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16),
-          itemCount: 4,
-          itemBuilder: (context, index) => const Padding(
-            padding: EdgeInsets.only(bottom: 12),
-            child: CardShimmer(),
-          ),
+        loadingWidget: const Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: CardShimmer(),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: CardShimmer(),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: CardShimmer(),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: CardShimmer(),
+            ),
+          ],
         ),
         builder: (alerts) => _AlertsList(
           alerts: alerts,
@@ -217,11 +229,9 @@ class AlertsScreen extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to resolve all alerts: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
+        PremiumSnackbar.showError(
+          context,
+          AppLocalizations.of(context).t('alertResolveFailedToast'),
         );
       }
     }
@@ -249,11 +259,9 @@ class AlertsScreen extends ConsumerWidget {
         ref.invalidate(dashboardProvider);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to delete all alerts: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
+          PremiumSnackbar.showError(
+            context,
+            AppLocalizations.of(context).t('alertDeleteFailedToast'),
           );
         }
       }

@@ -138,7 +138,10 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.rpc('update_current_profile', params: {
       'p_full_name': fullName,
     });
-      await _auditService.logAction('Updated current user profile', details: {'full_name': fullName});
+    await _auditService.logAction(
+      'Updated current user profile',
+      details: {'full_name': fullName},
+    );
   }
 
   @override
@@ -155,6 +158,7 @@ class SupabaseIvraRepository implements IvraRepository {
   @override
   Future<void> changeCurrentUserPassword({required String password}) async {
     await _client.auth.updateUser(UserAttributes(password: password));
+    await _auditService.logAction('Changed current user password');
   }
 
   @override
@@ -749,9 +753,16 @@ class SupabaseIvraRepository implements IvraRepository {
     final result = await _client.rpc('refresh_smart_alerts', params: {
       'p_hotel_id': hotelId,
     });
-    if (result is int) return result;
-    if (result is num) return result.toInt();
-    return int.tryParse('$result') ?? 0;
+    final created = switch (result) {
+      int value => value,
+      num value => value.toInt(),
+      _ => int.tryParse('$result') ?? 0,
+    };
+    await _auditService.logAction('Refreshed smart alerts', details: {
+      'hotel_id': hotelId,
+      'created_count': created,
+    });
+    return created;
   }
 
   @override

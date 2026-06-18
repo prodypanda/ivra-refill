@@ -234,7 +234,8 @@ class NotificationService {
         provisional: false,
       );
 
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional) {
         debugPrint('User granted push notification permission');
         await _registerToken();
         _fcm!.onTokenRefresh.listen((_) => _registerToken());
@@ -432,6 +433,8 @@ class NotificationService {
           deviceType = 'android';
         } else if (Platform.isIOS) {
           deviceType = 'ios';
+        } else if (Platform.isMacOS) {
+          deviceType = 'macos';
         }
       }
 
