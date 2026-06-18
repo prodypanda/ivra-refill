@@ -78,8 +78,10 @@ class AlertsScreen extends ConsumerWidget {
       child: AsyncValueView(
         value: ref.watch(alertsProvider),
         onRetry: () => ref.invalidate(alertsProvider),
-        loadingWidget: const Column(
-          children: [
+        loadingWidget: const Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
             Padding(
               padding: EdgeInsets.only(bottom: 12),
               child: CardShimmer(),
