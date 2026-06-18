@@ -23,6 +23,133 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
   AppLogger.debug('notificationTapBackground: ${notificationResponse.actionId}');
 }
 
+/// The alert/hotel identifiers extracted from a notification payload.
+class NotificationPayloadIds {
+  const NotificationPayloadIds({this.alertId, this.hotelId});
+
+  final String? alertId;
+  final String? hotelId;
+}
+
+/// Parses the JSON payload string attached to a notification and extracts the
+/// `alertId`/`hotelId`. Identifiers may live at the top level or inside a
+/// nested `data` object, which itself may be a Map or a JSON-encoded string
+/// (FCM data messages stringify nested objects). Top-level values win; the
+/// nested object only fills in what is missing. Returns empty ids on any
+/// parse error so callers never crash on a malformed payload.
+NotificationPayloadIds parseNotificationPayloadIds(String? payloadStr) {
+  if (payloadStr == null) return const NotificationPayloadIds();
+  try {
+    final payload = jsonDecode(payloadStr);
+    if (payload is! Map) return const NotificationPayloadIds();
+
+    String? alertId = payload['alertId']?.toString();
+    String? hotelId = payload['hotelId']?.toString();
+
+    if (payload['data'] != null) {
+      try {
+        final nestedData =
+            payload['data'] is String ? jsonDecode(payload['data']) : payload['data'];
+        if (nestedData is Map) {
+          alertId ??= nestedData['alertId']?.toString();
+          hotelId ??= nestedData['hotelId']?.toString();
+        }
+      } catch (_) {}
+    }
+
+    return NotificationPayloadIds(alertId: alertId, hotelId: hotelId);
+  } catch (_) {
+    return const NotificationPayloadIds();
+  }
+}
+
+/// The kind of side effect a notification action should trigger.
+enum NotificationActionKind {
+  /// Do nothing (e.g. an explicit dismiss or an unknown action with no route).
+  none,
+
+  /// Show a toast identified by [NotificationActionDecision.toastKey].
+  toast,
+
+  /// Navigate to [NotificationActionDecision.navigation].
+  navigate,
+
+  /// Resolve the alert, then navigate to [NotificationActionDecision.navigation].
+  resolveAlert,
+
+  /// Delete the alert, then navigate to [NotificationActionDecision.navigation].
+  deleteAlert,
+}
+
+/// A pure description of what a notification action should do, free of any
+/// Supabase/Riverpod/UI dependencies so it can be unit-tested directly.
+class NotificationActionDecision {
+  const NotificationActionDecision(
+    this.kind, {
+    this.toastKey,
+    this.navigation,
+  });
+
+  final NotificationActionKind kind;
+  final String? toastKey;
+  final String? navigation;
+}
+
+/// Maps an [actionId] (and the ids parsed from the payload) to a side-effect
+/// decision. This centralises the routing rules so they can be verified in
+/// isolation:
+/// - `Dismiss` / null / unknown without a `targetPage` -> none.
+/// - `Acknowledge` -> acknowledgement toast.
+/// - `more_info` -> inventory, scoped to the hotel when known.
+/// - `resolve` / `delete` -> alert mutation, then navigate to `/alerts`.
+/// - otherwise, navigate to a `targetPage` from the payload when present.
+NotificationActionDecision resolveNotificationAction({
+  required String? actionId,
+  required String? alertId,
+  required String? hotelId,
+  Object? payload,
+}) {
+  switch (actionId) {
+    case 'Dismiss':
+      return const NotificationActionDecision(NotificationActionKind.none);
+    case 'Acknowledge':
+      return const NotificationActionDecision(
+        NotificationActionKind.toast,
+        toastKey: 'notificationAcknowledgedToast',
+      );
+    case 'more_info':
+      final route = (hotelId != null && hotelId.isNotEmpty)
+          ? '/inventory?hotelId=$hotelId'
+          : '/inventory';
+      return NotificationActionDecision(
+        NotificationActionKind.navigate,
+        navigation: route,
+      );
+    case 'resolve':
+      return const NotificationActionDecision(
+        NotificationActionKind.resolveAlert,
+        navigation: '/alerts',
+      );
+    case 'delete':
+      return const NotificationActionDecision(
+        NotificationActionKind.deleteAlert,
+        navigation: '/alerts',
+      );
+  }
+
+  // Default tap (no recognised action button): honour an explicit targetPage.
+  if (payload is Map) {
+    final targetPage = payload['targetPage'];
+    if (targetPage != null && targetPage.toString().isNotEmpty) {
+      return NotificationActionDecision(
+        NotificationActionKind.navigate,
+        navigation: targetPage.toString(),
+      );
+    }
+  }
+  return const NotificationActionDecision(NotificationActionKind.none);
+}
+
 final notificationServiceProvider = Provider((ref) {
   // Only hand the service a real Supabase client when Supabase is configured.
   // In demo/offline mode and in widget tests Supabase is never initialized, so
