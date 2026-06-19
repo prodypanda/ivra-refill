@@ -837,6 +837,58 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               ],
             ),
           ),
+          // Recent rooms shortcut
+          if (selectedHotelId != null && _recentRooms.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.history_rounded,
+                    size: 16, color: theme.colorScheme.onSurfaceVariant),
+                const SizedBox(width: 6),
+                Text(
+                  l10n.t('roomsRecentTitle'),
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    _clearRecentRooms(selectedHotelId);
+                  },
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  ),
+                  child: Text(l10n.t('roomsRecentClear')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (final roomNumber in _recentRooms)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ActionChip(
+                        avatar: Icon(Icons.meeting_room_outlined,
+                            size: 16, color: primaryColor),
+                        label: Text(roomNumber),
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          _applyRoomSearch(roomNumber);
+                        },
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
