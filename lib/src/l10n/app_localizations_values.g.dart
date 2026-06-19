@@ -250,6 +250,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsStatusAttentionRequired': 'Attention Required',
     'roomsStatusRefillNeeded': 'Refill Needed',
     'roomsSearchPlaceholder': 'Search room...',
+    'roomsRecentTitle': 'Recent rooms',
+    'roomsRecentClear': 'Clear',
     'roomsSelectHotelFirst': 'Select a hotel...',
     'roomsViewDetailed': 'Detailed View',
     'roomsViewCompact': 'Compact View',

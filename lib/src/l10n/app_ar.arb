@@ -242,6 +242,8 @@
   "roomsStatusAttentionRequired": "انتباه مطلوب",
   "roomsStatusRefillNeeded": "تعبئة مطلوبة",
   "roomsSearchPlaceholder": "البحث عن غرفة...",
+  "roomsRecentTitle": "الغرف الأخيرة",
+  "roomsRecentClear": "مسح",
   "roomsSelectHotelFirst": "اختر فندقاً...",
   "roomsViewDetailed": "عرض تفصيلي",
   "roomsViewCompact": "عرض مبسط",
