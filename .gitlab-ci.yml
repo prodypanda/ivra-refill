@@ -61,6 +61,15 @@ test:
   <<: *flutter_setup
   script:
     - flutter test --coverage
+    # Convert lcov to Cobertura so GitLab can show coverage in the diff view.
+    # Run this in `script` (not `after_script`) so the declared coverage_report
+    # artifact is guaranteed to exist before artifacts are collected, and so a
+    # conversion failure fails the job clearly instead of silently dropping the
+    # report.
+    - test -f coverage/lcov.info
+    - pip3 install --quiet lcov_cobertura
+    - python3 -m lcov_cobertura coverage/lcov.info -o coverage/cobertura.xml
+    - test -f coverage/cobertura.xml
   # Surface line coverage in the MR widget.
   # lcov.info is produced by `flutter test --coverage`.
   coverage: '/lines\.*: \d+\.\d+\%/'
@@ -68,19 +77,11 @@ test:
     when: always
     paths:
       - coverage/lcov.info
+      - coverage/cobertura.xml
     reports:
       coverage_report:
         coverage_format: cobertura
         path: coverage/cobertura.xml
-  after_script:
-    # Convert lcov to Cobertura so GitLab can show coverage in the diff view.
-    # lcov_cobertura is a small, dependency-free Python tool.
-    - dart pub global activate cobertura 2>/dev/null || true
-    - |
-      if command -v python3 >/dev/null 2>&1 && [ -f coverage/lcov.info ]; then
-        pip3 install --quiet lcov_cobertura || true
-        python3 -m lcov_cobertura coverage/lcov.info -o coverage/cobertura.xml || true
-      fi
 
 build_web:
   stage: build
