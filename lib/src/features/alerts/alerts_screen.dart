@@ -273,7 +273,7 @@ class AlertsScreen extends ConsumerWidget {
 // Alerts list + summary
 // ---------------------------------------------------------------------------
 
-class _AlertsList extends StatelessWidget {
+class _AlertsList extends StatefulWidget {
   const _AlertsList({
     required this.alerts,
     required this.onRefresh,
@@ -291,12 +291,68 @@ class _AlertsList extends StatelessWidget {
   final VoidCallback onDeleteAll;
 
   @override
+  State<_AlertsList> createState() => _AlertsListState();
+}
+
+class _AlertsListState extends State<_AlertsList> {
+  // Active filters. `null` means "All" for that dimension.
+  int? _severityFilter; // 1, 2, or 3 (3 = critical and above)
+  AlertType? _typeFilter;
+  String? _hotelFilter; // hotelId
+  String? _productFilter; // productId
+
+  bool get _hasActiveFilter =>
+      _severityFilter != null ||
+      _typeFilter != null ||
+      _hotelFilter != null ||
+      _productFilter != null;
+
+  void _clearFilters() {
+    setState(() {
+      _severityFilter = null;
+      _typeFilter = null;
+      _hotelFilter = null;
+      _productFilter = null;
+    });
+  }
+
+  bool _matches(AlertItem alert) {
+    if (_severityFilter != null) {
+      // Severity 3 acts as "critical and above"; 1 and 2 are exact matches.
+      if (_severityFilter == 3) {
+        if (alert.severity < 3) return false;
+      } else if (alert.severity != _severityFilter) {
+        return false;
+      }
+    }
+    if (_typeFilter != null && alert.type != _typeFilter) return false;
+    if (_hotelFilter != null && alert.hotelId != _hotelFilter) return false;
+    if (_productFilter != null && alert.productId != _productFilter) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final alerts = widget.alerts;
     if (alerts.isEmpty) {
-      return _EmptyAlerts(onRefresh: onRefresh);
+      return _EmptyAlerts(onRefresh: widget.onRefresh);
     }
 
-    final sortedAlerts = [...alerts]..sort((left, right) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    // Summary metrics always reflect the full (unfiltered) set so the user
+    // keeps an accurate overview regardless of the active filters.
+    final openCount = alerts.where((a) => !a.isResolved).length;
+    final criticalCount =
+        alerts.where((a) => !a.isResolved && a.severity >= 3).length;
+    final resolvedCount = alerts.length - openCount;
+
+    final filtered = alerts.where(_matches).toList();
+    final sortedAlerts = filtered
+      ..sort((left, right) {
         final leftResolved = left.isResolved ? 1 : 0;
         final rightResolved = right.isResolved ? 1 : 0;
         final resolvedCompare = leftResolved.compareTo(rightResolved);
@@ -305,13 +361,6 @@ class _AlertsList extends StatelessWidget {
         if (severityCompare != 0) return severityCompare;
         return right.createdAt.compareTo(left.createdAt);
       });
-
-    final openCount = alerts.where((a) => !a.isResolved).length;
-    final criticalCount =
-        alerts.where((a) => !a.isResolved && a.severity >= 3).length;
-    final resolvedCount = alerts.length - openCount;
-    final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,6 +373,35 @@ class _AlertsList extends StatelessWidget {
           resolvedCount: resolvedCount,
         ),
         const SizedBox(height: 20),
+        // ── Filter bar (severity / type / hotel / product) ──
+        _AlertFilterBar(
+          alerts: alerts,
+          severityFilter: _severityFilter,
+          typeFilter: _typeFilter,
+          hotelFilter: _hotelFilter,
+          productFilter: _productFilter,
+          hasActiveFilter: _hasActiveFilter,
+          onSeverityChanged: (v) => setState(() => _severityFilter = v),
+          onTypeChanged: (v) => setState(() => _typeFilter = v),
+          onHotelChanged: (v) => setState(() => _hotelFilter = v),
+          onProductChanged: (v) => setState(() => _productFilter = v),
+          onClear: _clearFilters,
+        ),
+        if (_hasActiveFilter)
+          Padding(
+            padding: const EdgeInsets.only(top: 4, bottom: 4),
+            child: Text(
+              l10n.tParams('alertsFilterShowing', {
+                'count': '${sortedAlerts.length}',
+                'total': '${alerts.length}',
+              }),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        const SizedBox(height: 12),
         // ── Resolve All / Delete All actions ──
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
@@ -337,7 +415,7 @@ class _AlertsList extends StatelessWidget {
                       side: BorderSide(color: theme.colorScheme.primary),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    onPressed: onResolveAll,
+                    onPressed: widget.onResolveAll,
                     icon: const Icon(Icons.done_all),
                     label: Text(
                       l10n.t('resolveAll'),
@@ -353,7 +431,7 @@ class _AlertsList extends StatelessWidget {
                     side: BorderSide(color: theme.colorScheme.error),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  onPressed: onDeleteAll,
+                  onPressed: widget.onDeleteAll,
                   icon: const Icon(Icons.delete_sweep_outlined),
                   label: Text(
                     l10n.t('deleteAll'),
@@ -364,17 +442,257 @@ class _AlertsList extends StatelessWidget {
             ],
           ),
         ),
-        // ── Alert cards ──
-        for (final alert in sortedAlerts)
+        // ── Alert cards (or filtered-empty message) ──
+        if (sortedAlerts.isEmpty)
           Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: _AlertCard(
-              alert: alert,
-              onResolve: onResolve,
-              onDelete: onDelete,
+            padding: const EdgeInsets.symmetric(vertical: 32),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(Icons.filter_alt_off_outlined,
+                      size: 40, color: theme.colorScheme.onSurfaceVariant),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.t('alertsFilterNoMatch'),
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton.icon(
+                    onPressed: _clearFilters,
+                    icon: const Icon(Icons.clear_all),
+                    label: Text(l10n.t('alertsFilterClear')),
+                  ),
+                ],
+              ),
             ),
-          ),
+          )
+        else
+          for (final alert in sortedAlerts)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: _AlertCard(
+                alert: alert,
+                onResolve: widget.onResolve,
+                onDelete: widget.onDelete,
+              ),
+            ),
       ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Filter bar
+// ---------------------------------------------------------------------------
+
+class _AlertFilterBar extends ConsumerWidget {
+  const _AlertFilterBar({
+    required this.alerts,
+    required this.severityFilter,
+    required this.typeFilter,
+    required this.hotelFilter,
+    required this.productFilter,
+    required this.hasActiveFilter,
+    required this.onSeverityChanged,
+    required this.onTypeChanged,
+    required this.onHotelChanged,
+    required this.onProductChanged,
+    required this.onClear,
+  });
+
+  final List<AlertItem> alerts;
+  final int? severityFilter;
+  final AlertType? typeFilter;
+  final String? hotelFilter;
+  final String? productFilter;
+  final bool hasActiveFilter;
+  final ValueChanged<int?> onSeverityChanged;
+  final ValueChanged<AlertType?> onTypeChanged;
+  final ValueChanged<String?> onHotelChanged;
+  final ValueChanged<String?> onProductChanged;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final lang = Localizations.localeOf(context).languageCode;
+
+    final hotels = ref.watch(hotelsProvider).valueOrNull ?? const [];
+    final products = ref.watch(productsProvider).valueOrNull ?? const [];
+
+    // Only offer filter options that actually occur in the current alert set,
+    // so the dropdowns never list empty categories.
+    final presentTypes =
+        alerts.map((a) => a.type).toSet().toList(growable: false);
+    final presentSeverities =
+        alerts.map((a) => a.severity).toSet().toList(growable: false)..sort();
+    final presentHotelIds =
+        alerts.map((a) => a.hotelId).whereType<String>().toSet();
+    final presentProductIds =
+        alerts.map((a) => a.productId).whereType<String>().toSet();
+
+    final hotelOptions =
+        hotels.where((h) => presentHotelIds.contains(h.id)).toList();
+    final productOptions =
+        products.where((p) => presentProductIds.contains(p.id)).toList();
+
+    Widget allItem(String label) => DropdownMenuItem<Object?>(
+          value: null,
+          child: Text(label),
+        );
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.filter_alt_outlined,
+                  size: 18, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                l10n.t('alertsFilterTitle'),
+                style: theme.textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const Spacer(),
+              if (hasActiveFilter)
+                TextButton.icon(
+                  onPressed: onClear,
+                  icon: const Icon(Icons.clear_all, size: 16),
+                  label: Text(l10n.t('alertsFilterClear')),
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              // Severity
+              _FilterDropdown<int?>(
+                label: l10n.t('alertsFilterSeverity'),
+                value: severityFilter,
+                onChanged: onSeverityChanged,
+                items: [
+                  allItem(l10n.t('alertsFilterAll')),
+                  for (final s in presentSeverities)
+                    DropdownMenuItem<int?>(
+                      value: s,
+                      child: Text(l10n.tParams(
+                          'alertsSeverityLabel', {'severity': '$s'})),
+                    ),
+                ],
+              ),
+              // Type
+              _FilterDropdown<AlertType?>(
+                label: l10n.t('alertsFilterType'),
+                value: typeFilter,
+                onChanged: onTypeChanged,
+                items: [
+                  allItem(l10n.t('alertsFilterAll')),
+                  for (final t in presentTypes)
+                    DropdownMenuItem<AlertType?>(
+                      value: t,
+                      child: Text(l10n.alertTypeLabel(t)),
+                    ),
+                ],
+              ),
+              // Hotel (only when more than one hotel is represented)
+              if (hotelOptions.length > 1)
+                _FilterDropdown<String?>(
+                  label: l10n.t('alertsFilterHotel'),
+                  value: hotelFilter,
+                  onChanged: onHotelChanged,
+                  items: [
+                    allItem(l10n.t('alertsFilterAll')),
+                    for (final h in hotelOptions)
+                      DropdownMenuItem<String?>(
+                        value: h.id,
+                        child: Text(h.name),
+                      ),
+                  ],
+                ),
+              // Product
+              if (productOptions.isNotEmpty)
+                _FilterDropdown<String?>(
+                  label: l10n.t('alertsFilterProduct'),
+                  value: productFilter,
+                  onChanged: onProductChanged,
+                  items: [
+                    allItem(l10n.t('alertsFilterAll')),
+                    for (final p in productOptions)
+                      DropdownMenuItem<String?>(
+                        value: p.id,
+                        child: Text(p.label(lang)),
+                      ),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterDropdown<T> extends StatelessWidget {
+  const _FilterDropdown({
+    required this.label,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+  });
+
+  final String label;
+  final T value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 130, maxWidth: 220),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          isDense: true,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<T>(
+            value: value,
+            isExpanded: true,
+            isDense: true,
+            icon: Icon(Icons.arrow_drop_down,
+                color: theme.colorScheme.primary),
+            items: items,
+            onChanged: (v) => onChanged(v as T),
+          ),
+        ),
+      ),
     );
   }
 }
