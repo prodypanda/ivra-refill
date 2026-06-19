@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -36,6 +37,54 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   late final TextEditingController _searchController;
   late final TextEditingController _productSearchController;
   bool _scanTriggered = false;
+
+  // Recently-visited room numbers for the currently loaded hotel, most-recent
+  // first. Persisted per hotel so housekeeping staff can jump back to rooms
+  // they just worked on without re-searching.
+  static const _maxRecentRooms = 8;
+  String? _recentRoomsHotelId;
+  List<String> _recentRooms = const [];
+
+  String _recentRoomsKey(String hotelId) => 'recent_rooms_$hotelId';
+
+  Future<void> _loadRecentRooms(String hotelId) async {
+    if (_recentRoomsHotelId == hotelId) return;
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getStringList(_recentRoomsKey(hotelId)) ?? const [];
+    if (!mounted) return;
+    setState(() {
+      _recentRoomsHotelId = hotelId;
+      _recentRooms = stored;
+    });
+  }
+
+  Future<void> _recordRecentRoom(String hotelId, String roomNumber) async {
+    final trimmed = roomNumber.trim();
+    if (trimmed.isEmpty) return;
+    final updated = <String>[
+      trimmed,
+      ..._recentRooms.where((r) => r != trimmed),
+    ].take(_maxRecentRooms).toList();
+    if (mounted) {
+      setState(() {
+        _recentRoomsHotelId = hotelId;
+        _recentRooms = updated;
+      });
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_recentRoomsKey(hotelId), updated);
+  }
+
+  Future<void> _clearRecentRooms(String hotelId) async {
+    if (mounted) setState(() => _recentRooms = const []);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_recentRoomsKey(hotelId));
+  }
+
+  void _applyRoomSearch(String roomNumber) {
+    _searchController.text = roomNumber;
+    setState(() => _searchQuery = roomNumber.trim());
+  }
 
   @override
   void initState() {
