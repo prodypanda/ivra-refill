@@ -99,4 +99,50 @@ void main() {
       expect(read(_envelope(version: version, ts: ts, data: [])), isNull);
     });
   });
+
+  group('per-resource cache versioning', () {
+    Object? readFor(String? cached, String key) =>
+        SupabaseIvraRepository.readCacheEnvelopeForTest(
+          cached,
+          expectedVersion: SupabaseIvraRepository.effectiveCacheVersionForTest(key),
+        );
+
+    test('different resource families produce different effective versions', () {
+      final hotelsVersion =
+          SupabaseIvraRepository.effectiveCacheVersionForTest('hotels');
+      final productsVersion =
+          SupabaseIvraRepository.effectiveCacheVersionForTest('products');
+      expect(hotelsVersion, isNot(productsVersion));
+    });
+
+    test('keys of the same family with different ids share a version', () {
+      final a = SupabaseIvraRepository.effectiveCacheVersionForTest(
+          'current_user_aaaaaaaaaaaa');
+      final b = SupabaseIvraRepository.effectiveCacheVersionForTest(
+          'current_user_bbbbbbbbbbbb');
+      expect(a, b);
+    });
+
+    test('reads an envelope written with the matching per-resource version', () {
+      final v =
+          SupabaseIvraRepository.effectiveCacheVersionForTest('hotels');
+      final payload = [
+        {'id': '1'},
+      ];
+      final result =
+          readFor(_envelope(version: v, ts: _now(), data: payload), 'hotels');
+      expect(result, payload);
+    });
+
+    test('treats an envelope from another resource family as a miss', () {
+      final hotelsV =
+          SupabaseIvraRepository.effectiveCacheVersionForTest('hotels');
+      // Envelope stamped for hotels, read while expecting the products family.
+      final result = readFor(
+        _envelope(version: hotelsV, ts: _now(), data: []),
+        'products',
+      );
+      expect(result, isNull);
+    });
+  });
 }
