@@ -113,6 +113,13 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final roomProductsAsync = ref.watch(roomProductsProvider);
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
 
+    // Load the recent-rooms list for the active hotel (no-op if unchanged).
+    if (selectedHotelId != null && _recentRoomsHotelId != selectedHotelId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _loadRecentRooms(selectedHotelId);
+      });
+    }
+
     if (widget.autoStartScan && !_scanTriggered && roomProductsAsync.hasValue) {
       _scanTriggered = true;
       WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -854,6 +861,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         setState(() {
           _searchQuery = roomNumber;
         });
+        _recordRecentRoom(hotelId, roomNumber);
       }
     } else if (trimmed.startsWith('product:')) {
       final sku = trimmed.split(':')[1];
@@ -897,6 +905,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     String roomNumber,
     List<RoomProduct> roomProducts,
   ) {
+    final hotelId = roomProducts.first.hotelId;
+    _recordRecentRoom(hotelId, roomNumber);
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
