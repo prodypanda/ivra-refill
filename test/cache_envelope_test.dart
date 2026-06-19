@@ -100,6 +100,38 @@ void main() {
     });
   });
 
+  group('stale-while-revalidate offline window', () {
+    final offlineMaxAge = SupabaseIvraRepository.cacheOfflineMaxAge;
+
+    test('offline window is longer than the freshness window', () {
+      expect(offlineMaxAge, greaterThan(maxAge));
+    });
+
+    test('an entry past the freshness window is a miss with the default maxAge',
+        () {
+      final ts = _now() - maxAge.inMilliseconds - 1000;
+      expect(read(_envelope(version: version, ts: ts, data: [1])), isNull);
+    });
+
+    test('the same entry is served when reading with the offline maxAge', () {
+      final ts = _now() - maxAge.inMilliseconds - 1000;
+      final result = SupabaseIvraRepository.readCacheEnvelopeForTest(
+        _envelope(version: version, ts: ts, data: [1]),
+        maxAge: offlineMaxAge,
+      );
+      expect(result, [1]);
+    });
+
+    test('an entry past the offline window is still a miss', () {
+      final ts = _now() - offlineMaxAge.inMilliseconds - 1000;
+      final result = SupabaseIvraRepository.readCacheEnvelopeForTest(
+        _envelope(version: version, ts: ts, data: [1]),
+        maxAge: offlineMaxAge,
+      );
+      expect(result, isNull);
+    });
+  });
+
   group('per-resource cache versioning', () {
     Object? readFor(String? cached, String key) =>
         SupabaseIvraRepository.readCacheEnvelopeForTest(
