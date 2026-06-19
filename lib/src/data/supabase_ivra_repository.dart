@@ -30,14 +30,48 @@ class SupabaseIvraRepository implements IvraRepository {
   /// a new build to misread an old cache shape.
   static const int _cacheSchemaVersion = 1;
 
-  /// Combines the manual [_cacheSchemaVersion] with the build's [appVersion] so
-  /// the cache namespace changes on every release. This is a defensive default;
-  /// bump [_cacheSchemaVersion] as well when you want to invalidate within a
-  /// single app version (e.g. during development).
-  static String get _effectiveCacheVersion => '$_cacheSchemaVersion@$appVersion';
+  /// Per-resource schema versions. Each cached resource family carries its own
+  /// version so that changing the shape of ONE payload only invalidates that
+  /// resource's cache, instead of wiping every cached entry. Bump the integer
+  /// for a family whenever the shape of its cached payload changes.
+  ///
+  /// The key is the resource family derived from the cache key by
+  /// [_resourceFamily] (the cache key with any trailing `_<id>` suffix
+  /// stripped). Families not listed here fall back to [_cacheSchemaVersion].
+  static const Map<String, int> _resourceSchemaVersions = <String, int>{
+    // 'hotels': 1,
+    // 'current_user': 1,
+  };
 
-  /// Back-compat alias retained for existing call sites/tests.
-  static String get _cacheVersion => _effectiveCacheVersion;
+  /// Derives the resource family from a cache [key] by stripping a trailing
+  /// `_<id>` segment (e.g. `current_user_<uuid>` -> `current_user`). Keys with
+  /// no id suffix are returned unchanged. This lets per-resource versioning
+  /// apply across all rows of the same resource.
+  static String _resourceFamily(String key) {
+    final lastUnderscore = key.lastIndexOf('_');
+    if (lastUnderscore <= 0 || lastUnderscore == key.length - 1) return key;
+    // Treat the trailing segment as an id only when it is non-trivial (uuids,
+    // numeric ids, etc.). A short alpha suffix is kept as part of the family.
+    final suffix = key.substring(lastUnderscore + 1);
+    final looksLikeId = suffix.length >= 3 &&
+        RegExp(r'^[0-9a-fA-F-]+$').hasMatch(suffix);
+    return looksLikeId ? key.substring(0, lastUnderscore) : key;
+  }
+
+  /// The effective cache version for a given [key]. Combines the resource's own
+  /// schema version (falling back to [_cacheSchemaVersion]) with the build's
+  /// [appVersion]. Because the app version is still folded in, an app upgrade
+  /// is always safe; per-resource versions let a single payload-shape change be
+  /// invalidated in isolation without bumping the global namespace.
+  static String _effectiveCacheVersionFor(String key) {
+    final family = _resourceFamily(key);
+    final schema = _resourceSchemaVersions[family] ?? _cacheSchemaVersion;
+    return '$schema@$family@$appVersion';
+  }
+
+  /// Back-compat global cache version. Retained for call sites/tests that are
+  /// not scoped to a specific resource (e.g. the cache-envelope unit tests).
+  static String get _cacheVersion => '$_cacheSchemaVersion@$appVersion';
 
   /// How long a cached offline read remains usable. Past this age the entry is
   /// treated as a miss so we never serve arbitrarily stale data.
@@ -65,7 +99,7 @@ class SupabaseIvraRepository implements IvraRepository {
       // be expired and entries from incompatible schema versions can be
       // discarded after an app upgrade.
       final envelope = <String, dynamic>{
-        'v': _cacheVersion,
+        'v': _effectiveCacheVersionFor(key),
         'ts': DateTime.now().millisecondsSinceEpoch,
         'data': data,
       };
@@ -75,7 +109,8 @@ class SupabaseIvraRepository implements IvraRepository {
       if (NetworkErrorClassifier.isOffline(e)) {
         final prefs = await SharedPreferences.getInstance();
         final cached = prefs.getString('cache_$key');
-        final payload = _readCacheEnvelope(cached);
+        final payload =
+            _readCacheEnvelope(cached, expectedVersion: _effectiveCacheVersionFor(key));
         if (payload != null) {
           return decode(payload);
         }
@@ -91,11 +126,13 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   /// Parses a stored cache string and returns the inner payload only when the
-  /// envelope is present, the schema version matches [_cacheVersion], and the
-  /// entry is no older than [_cacheMaxAge]. Returns `null` for a cache miss:
-  /// missing entry, legacy bare payload (no envelope), wrong version, expired,
-  /// or unparseable. Never throws.
-  static Object? _readCacheEnvelope(String? cached) {
+  /// envelope is present, the schema version matches [expectedVersion]
+  /// (defaulting to the global [_cacheVersion]), and the entry is no older than
+  /// [_cacheMaxAge]. Returns `null` for a cache miss: missing entry, legacy
+  /// bare payload (no envelope), wrong version, expired, or unparseable. Never
+  /// throws.
+  static Object? _readCacheEnvelope(String? cached, {String? expectedVersion}) {
+    final wantVersion = expectedVersion ?? _cacheVersion;
     if (cached == null) return null;
     Object? decoded;
     try {
@@ -112,7 +149,7 @@ class SupabaseIvraRepository implements IvraRepository {
       return null;
     }
     final version = decoded['v'];
-    if (version is! String || version != _cacheVersion) return null;
+    if (version is! String || version != wantVersion) return null;
     final ts = decoded['ts'];
     if (ts is! int) return null;
     final ageMillis = DateTime.now().millisecondsSinceEpoch - ts;
@@ -131,8 +168,14 @@ class SupabaseIvraRepository implements IvraRepository {
 
   /// Test-only wrapper around [_readCacheEnvelope].
   @visibleForTesting
-  static Object? readCacheEnvelopeForTest(String? cached) =>
-      _readCacheEnvelope(cached);
+  static Object? readCacheEnvelopeForTest(String? cached,
+          {String? expectedVersion}) =>
+      _readCacheEnvelope(cached, expectedVersion: expectedVersion);
+
+  /// Test-only accessor for the per-resource effective cache version.
+  @visibleForTesting
+  static String effectiveCacheVersionForTest(String key) =>
+      _effectiveCacheVersionFor(key);
 
   /// Decodes a cached JSON payload into a `List<Map<String, dynamic>>`.
   static List<Map<String, dynamic>> _decodeMapList(Object? decoded) {
