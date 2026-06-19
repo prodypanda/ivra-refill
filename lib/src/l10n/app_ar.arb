@@ -282,7 +282,6 @@
   "roomsLabelProductsInRoom": "المنتجات في كل غرفة",
   "roomsMsgSelectOneProduct": "حدد منتجاً واحداً على الأقل",
   "roomsMsgDuplicateRoomNumbers": "أرقام الغرف هذه موجودة بالفعل في هذا الفندق: {numbers}. اختر رقم بداية أو عدداً مختلفاً.",
-  "roomsMsgCheckingDuplicates": "جارٍ التحقق من أرقام الغرف المكررة\u2026",
   "productsCatalogTitle": "كتالوج المنتجات",
   "productsBtnCreate": "إنشاء منتج",
   "productsNoProducts": "لا توجد منتجات في الكتالوج بعد.",
