@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -37,6 +38,54 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   late final TextEditingController _productSearchController;
   bool _scanTriggered = false;
 
+  // Recently-visited room numbers for the currently loaded hotel, most-recent
+  // first. Persisted per hotel so housekeeping staff can jump back to rooms
+  // they just worked on without re-searching.
+  static const _maxRecentRooms = 8;
+  String? _recentRoomsHotelId;
+  List<String> _recentRooms = const [];
+
+  String _recentRoomsKey(String hotelId) => 'recent_rooms_$hotelId';
+
+  Future<void> _loadRecentRooms(String hotelId) async {
+    if (_recentRoomsHotelId == hotelId) return;
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getStringList(_recentRoomsKey(hotelId)) ?? const [];
+    if (!mounted) return;
+    setState(() {
+      _recentRoomsHotelId = hotelId;
+      _recentRooms = stored;
+    });
+  }
+
+  Future<void> _recordRecentRoom(String hotelId, String roomNumber) async {
+    final trimmed = roomNumber.trim();
+    if (trimmed.isEmpty) return;
+    final updated = <String>[
+      trimmed,
+      ..._recentRooms.where((r) => r != trimmed),
+    ].take(_maxRecentRooms).toList();
+    if (mounted) {
+      setState(() {
+        _recentRoomsHotelId = hotelId;
+        _recentRooms = updated;
+      });
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_recentRoomsKey(hotelId), updated);
+  }
+
+  Future<void> _clearRecentRooms(String hotelId) async {
+    if (mounted) setState(() => _recentRooms = const []);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_recentRoomsKey(hotelId));
+  }
+
+  void _applyRoomSearch(String roomNumber) {
+    _searchController.text = roomNumber;
+    setState(() => _searchQuery = roomNumber.trim());
+  }
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +112,13 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final hotelsAsync = ref.watch(hotelsProvider);
     final roomProductsAsync = ref.watch(roomProductsProvider);
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
+
+    // Load the recent-rooms list for the active hotel (no-op if unchanged).
+    if (selectedHotelId != null && _recentRoomsHotelId != selectedHotelId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _loadRecentRooms(selectedHotelId);
+      });
+    }
 
     if (widget.autoStartScan && !_scanTriggered && roomProductsAsync.hasValue) {
       _scanTriggered = true;
@@ -781,6 +837,58 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               ],
             ),
           ),
+          // Recent rooms shortcut
+          if (selectedHotelId != null && _recentRooms.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.history_rounded,
+                    size: 16, color: theme.colorScheme.onSurfaceVariant),
+                const SizedBox(width: 6),
+                Text(
+                  l10n.t('roomsRecentTitle'),
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    _clearRecentRooms(selectedHotelId);
+                  },
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  ),
+                  child: Text(l10n.t('roomsRecentClear')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (final roomNumber in _recentRooms)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ActionChip(
+                        avatar: Icon(Icons.meeting_room_outlined,
+                            size: 16, color: primaryColor),
+                        label: Text(roomNumber),
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          _applyRoomSearch(roomNumber);
+                        },
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -805,6 +913,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         setState(() {
           _searchQuery = roomNumber;
         });
+        _recordRecentRoom(hotelId, roomNumber);
       }
     } else if (trimmed.startsWith('product:')) {
       final sku = trimmed.split(':')[1];
@@ -848,6 +957,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     String roomNumber,
     List<RoomProduct> roomProducts,
   ) {
+    final hotelId = roomProducts.first.hotelId;
+    _recordRecentRoom(hotelId, roomNumber);
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

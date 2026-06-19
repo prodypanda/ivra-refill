@@ -242,6 +242,8 @@
   "roomsStatusAttentionRequired": "Attention requise",
   "roomsStatusRefillNeeded": "Recharge requise",
   "roomsSearchPlaceholder": "Rechercher une chambre...",
+  "roomsRecentTitle": "Chambres récentes",
+  "roomsRecentClear": "Effacer",
   "roomsSelectHotelFirst": "Sélectionner un hôtel...",
   "roomsViewDetailed": "Vue détaillée",
   "roomsViewCompact": "Vue compacte",
