@@ -289,6 +289,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsBtnCreateRooms': 'Create rooms',
     'roomsLabelProductsInRoom': 'Products in each room',
     'roomsMsgSelectOneProduct': 'Select at least one product',
+    'roomsMsgDuplicateRoomNumbers': 'These room numbers already exist in this hotel: {numbers}. Choose a different starting number or count.',
+    'roomsMsgCheckingDuplicates': 'Checking for duplicate room numbers\u2026',
     'productsCatalogTitle': 'Product Catalog',
     'productsBtnCreate': 'Create product',
     'productsNoProducts': 'No products in the catalog yet.',

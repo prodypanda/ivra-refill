@@ -281,6 +281,8 @@
   "roomsBtnCreateRooms": "Créer les chambres",
   "roomsLabelProductsInRoom": "Produits dans chaque chambre",
   "roomsMsgSelectOneProduct": "Sélectionnez au moins un produit",
+  "roomsMsgDuplicateRoomNumbers": "Ces numéros de chambre existent déjà dans cet hôtel\u00a0: {numbers}. Choisissez un autre numéro de départ ou un autre nombre.",
+  "roomsMsgCheckingDuplicates": "Vérification des numéros de chambre en double\u2026",
   "productsCatalogTitle": "Catalogue des produits",
   "productsBtnCreate": "Créer un produit",
   "productsNoProducts": "Aucun produit dans le catalogue.",
