@@ -281,6 +281,7 @@
   "roomsBtnCreateRooms": "Crea camere",
   "roomsLabelProductsInRoom": "Prodotti in ciascuna camera",
   "roomsMsgSelectOneProduct": "Seleziona almeno un prodotto",
+  "roomsMsgDuplicateRoomNumbers": "Questi numeri di camera esistono già in questo hotel: {numbers}. Scegli un numero iniziale o un conteggio diverso.",
   "productsCatalogTitle": "Catalogo Prodotti",
   "productsBtnCreate": "Crea prodotto",
   "productsNoProducts": "Nessun prodotto nel catalogo ancora.",

@@ -3039,13 +3039,57 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
       return;
     }
 
+    final messenger = ScaffoldMessenger.of(context);
+    final firstRoomNumber = int.parse(_firstRoomNumber.text);
+    final roomCount = int.parse(_roomCount.text);
+
+    // The template generates sequential room numbers starting at
+    // [firstRoomNumber]. Detect collisions with existing rooms in the selected
+    // hotel before hitting the backend so the user gets an immediate, clear
+    // error instead of a partial/failed bulk create.
+    final generatedNumbers = <String>[
+      for (var i = 0; i < roomCount; i++) '${firstRoomNumber + i}',
+    ];
+
     setState(() => _isSaving = true);
     try {
+      List<RoomInfo> existingRooms;
+      try {
+        existingRooms =
+            await ref.read(repositoryProvider).rooms(hotelId: _hotelId);
+      } catch (_) {
+        // If we cannot load existing rooms (e.g. offline), skip the client-side
+        // duplicate check and let the backend enforce uniqueness.
+        existingRooms = const [];
+      }
+
+      final existingNumbers = existingRooms
+          .where((room) => room.hotelId == _hotelId)
+          .map((room) => room.roomNumber.trim())
+          .toSet();
+      final duplicates = generatedNumbers
+          .where(existingNumbers.contains)
+          .toList(growable: false);
+
+      if (duplicates.isNotEmpty) {
+        if (mounted) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(
+                l10n.tParams('roomsMsgDuplicateRoomNumbers',
+                    {'numbers': duplicates.join(', ')}),
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
       await ref.read(repositoryProvider).createRoomsFromTemplate(
             hotelId: _hotelId,
             floorNumber: int.parse(_floorNumber.text),
-            firstRoomNumber: int.parse(_firstRoomNumber.text),
-            roomCount: int.parse(_roomCount.text),
+            firstRoomNumber: firstRoomNumber,
+            roomCount: roomCount,
             productIds: _selectedProductIds.toList(),
           );
       if (mounted) Navigator.of(context).pop();
