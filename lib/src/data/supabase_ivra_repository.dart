@@ -8,6 +8,7 @@ import '../domain/app_enums.dart';
 import '../domain/models.dart';
 import '../services/audit_service.dart';
 import '../utils/app_logger.dart';
+import '../utils/parse_utils.dart';
 import '../version.dart';
 import 'ivra_repository.dart';
 import 'offline/network_error_classifier.dart';
@@ -298,12 +299,12 @@ class SupabaseIvraRepository implements IvraRepository {
     );
 
     return DashboardMetrics(
-      hotelCount: data['hotel_count'] as int,
-      roomCount: data['room_count'] as int,
-      pendingApprovals: data['pending_approvals'] as int,
-      openAlerts: data['open_alerts'] as int,
-      bottlesToReplace: data['bottles_to_replace'] as int,
-      lowStockProducts: data['low_stock_products'] as int,
+      hotelCount: asInt(data['hotel_count']),
+      roomCount: asInt(data['room_count']),
+      pendingApprovals: asInt(data['pending_approvals']),
+      openAlerts: asInt(data['open_alerts']),
+      bottlesToReplace: asInt(data['bottles_to_replace']),
+      lowStockProducts: asInt(data['low_stock_products']),
     );
   }
 
@@ -965,17 +966,15 @@ class SupabaseIvraRepository implements IvraRepository {
 
   RoomProduct _roomProductFromMap(Map<String, dynamic> map) {
     return RoomProduct(
-      id: map['id'] as String,
-      hotelId: map['hotel_id'] as String,
-      roomId: map['room_id'] as String,
-      roomNumber: (map['room_number'] ?? '') as String,
-      floorNumber: (map['floor_number'] ?? 0) as int,
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
+      roomId: asString(map['room_id']),
+      roomNumber: asString(map['room_number']),
+      floorNumber: asInt(map['floor_number']),
       product: _joinedProductFromMap(map),
-      refillCount: (map['refill_count'] ?? 0) as int,
-      lastRefillAt: map['last_refill_at'] == null
-          ? null
-          : DateTime.parse(map['last_refill_at'] as String),
-      bottleStartedAt: DateTime.parse(map['bottle_started_at'] as String),
+      refillCount: asInt(map['refill_count']),
+      lastRefillAt: asNullableDateTime(map['last_refill_at']),
+      bottleStartedAt: asDateTime(map['bottle_started_at']),
       status: BottleStatus.values.firstWhere(
         (item) => item.value == map['status'],
         orElse: () => BottleStatus.active,
@@ -985,97 +984,97 @@ class SupabaseIvraRepository implements IvraRepository {
 
   InventoryItem _inventoryFromMap(Map<String, dynamic> map) {
     return InventoryItem(
-      id: map['id'] as String,
-      hotelId: map['hotel_id'] as String,
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
       product: _joinedProductFromMap(map),
-      fullBottles: (map['full_bottles'] ?? 0) as int,
-      emptyBottles: (map['empty_bottles'] ?? 0) as int,
-      fullBidons: (map['full_bidons'] ?? 0) as int,
-      openBidons: (map['open_bidons'] ?? 0) as int,
-      emptyBidons: (map['empty_bidons'] ?? 0) as int,
+      fullBottles: asInt(map['full_bottles']),
+      emptyBottles: asInt(map['empty_bottles']),
+      fullBidons: asInt(map['full_bidons']),
+      openBidons: asInt(map['open_bidons']),
+      emptyBidons: asInt(map['empty_bidons']),
     );
   }
 
   SuggestedOrder _suggestedOrderFromMap(Map<String, dynamic> map) {
     return SuggestedOrder(
-      hotelId: map['hotel_id'] as String,
+      hotelId: asString(map['hotel_id']),
       product: _joinedProductFromMap(map),
-      bottlesToOrder: (map['bottles_to_order'] ?? 0) as int,
-      bidonsToOrder: (map['bidons_to_order'] ?? 0) as int,
-      bottlesToRecycle: (map['bottles_to_recycle'] ?? 0) as int,
+      bottlesToOrder: asInt(map['bottles_to_order']),
+      bidonsToOrder: asInt(map['bidons_to_order']),
+      bottlesToRecycle: asInt(map['bottles_to_recycle']),
     );
   }
 
   ApprovalRequest _approvalFromMap(Map<String, dynamic> map) {
     return ApprovalRequest(
-      id: map['id'] as String,
-      hotelId: map['hotel_id'] as String,
-      title: (map['title'] ?? '') as String,
-      targetId: map['target_id'] as String?,
-      targetTable: (map['target_table'] ?? '') as String,
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
+      title: asString(map['title']),
+      targetId: asNullableString(map['target_id']),
+      targetTable: asString(map['target_table']),
       status: ApprovalStatus.values.firstWhere(
         (item) => item.value == map['status'],
         orElse: () => ApprovalStatus.pending,
       ),
-      requestedByName: (map['requested_by_name'] ?? '') as String,
-      requestedAt: DateTime.parse(map['requested_at'] as String),
-      oldValue: (map['old_value'] ?? '') as String,
-      newValue: (map['new_value'] ?? '') as String,
-      oldData: Map<String, dynamic>.from((map['old_data'] ?? const {}) as Map),
-      newData: Map<String, dynamic>.from((map['new_data'] ?? const {}) as Map),
+      requestedByName: asString(map['requested_by_name']),
+      requestedAt: asDateTime(map['requested_at']),
+      oldValue: asString(map['old_value']),
+      newValue: asString(map['new_value']),
+      oldData: asStringMap(map['old_data']),
+      newData: asStringMap(map['new_data']),
     );
   }
 
   AlertItem _alertFromMap(Map<String, dynamic> map) {
     return AlertItem(
-      id: map['id'] as String,
-      hotelId: map['hotel_id'] as String,
-      roomProductId: map['room_product_id'] as String?,
-      productId: map['product_id'] as String?,
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
+      roomProductId: asNullableString(map['room_product_id']),
+      productId: asNullableString(map['product_id']),
       type: AlertType.values.firstWhere(
         (item) => item.value == map['alert_type'],
         orElse: () => AlertType.pendingApproval,
       ),
-      severity: (map['severity'] ?? 1) as int,
-      title: (map['title'] ?? '') as String,
-      body: (map['body'] ?? '') as String,
-      createdAt: DateTime.parse(map['created_at'] as String),
-      isResolved: (map['is_resolved'] ?? false) as bool,
+      severity: asInt(map['severity'], fallback: 1),
+      title: asString(map['title']),
+      body: asString(map['body']),
+      createdAt: asDateTime(map['created_at']),
+      isResolved: asBool(map['is_resolved']),
     );
   }
 
   RefillEvent _refillEventFromMap(Map<String, dynamic> map) {
     return RefillEvent(
-      id: map['id'] as String,
-      roomProductId: map['room_product_id'] as String,
+      id: asString(map['id']),
+      roomProductId: asString(map['room_product_id']),
       type: RefillEventType.values.firstWhere(
         (item) => item.value == map['event_type'],
         orElse: () => RefillEventType.refill,
       ),
-      previousRefillCount: (map['previous_refill_count'] ?? 0) as int,
-      newRefillCount: (map['new_refill_count'] ?? 0) as int,
-      occurredAt: DateTime.parse(map['occurred_at'] as String),
-      performedBy: map['performed_by'] as String,
-      notes: map['notes'] as String?,
-      clientRequestId: map['client_request_id'] as String?,
+      previousRefillCount: asInt(map['previous_refill_count']),
+      newRefillCount: asInt(map['new_refill_count']),
+      occurredAt: asDateTime(map['occurred_at']),
+      performedBy: asString(map['performed_by']),
+      notes: asNullableString(map['notes']),
+      clientRequestId: asNullableString(map['client_request_id']),
     );
   }
 
   Product _joinedProductFromMap(Map<String, dynamic> map) {
     return Product(
-      id: map['product_id'] as String,
-      sku: (map['sku'] ?? '') as String,
-      nameEn: (map['name_en'] ?? '') as String,
-      nameFr: (map['name_fr'] ?? '') as String,
-      nameAr: (map['name_ar'] ?? '') as String,
-      nameIt: (map['name_it'] ?? map['name_en'] ?? '') as String,
-      bottleVolumeMl: (map['bottle_volume_ml'] ?? 1000) as int,
-      bidonVolumeMl: (map['bidon_volume_ml'] ?? 5000) as int,
-      maxRefillCount: (map['max_refill_count'] ?? 0) as int,
-      maxBottleAgeDays: (map['max_bottle_age_days'] ?? 0) as int,
-      lowBottleThreshold: (map['low_bottle_threshold'] ?? 0) as int,
-      lowBidonThreshold: (map['low_bidon_threshold'] ?? 0) as int,
-      imageUrl: map['image_url'] as String?,
+      id: asString(map['product_id']),
+      sku: asString(map['sku']),
+      nameEn: asString(map['name_en']),
+      nameFr: asString(map['name_fr']),
+      nameAr: asString(map['name_ar']),
+      nameIt: asString(map['name_it'], fallback: asString(map['name_en'])),
+      bottleVolumeMl: asInt(map['bottle_volume_ml'], fallback: 1000),
+      bidonVolumeMl: asInt(map['bidon_volume_ml'], fallback: 5000),
+      maxRefillCount: asInt(map['max_refill_count']),
+      maxBottleAgeDays: asInt(map['max_bottle_age_days']),
+      lowBottleThreshold: asInt(map['low_bottle_threshold']),
+      lowBidonThreshold: asInt(map['low_bidon_threshold']),
+      imageUrl: asNullableString(map['image_url']),
     );
   }
 }
