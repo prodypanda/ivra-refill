@@ -11,6 +11,7 @@ import '../../l10n/app_localizations.dart';
 import '../shared/product_image.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
+import '../shared/centered_sheet.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/empty_state.dart';
