@@ -3204,6 +3204,18 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
             productIds: _selectedProductIds.toList(),
           );
       if (mounted) Navigator.of(context).pop();
+    } catch (error) {
+      // Surface the real backend error instead of letting it propagate as an
+      // uncaught error (which previously only showed up as a raw HTTP 400 in
+      // the browser console with no actionable message for the user).
+      if (mounted) {
+        final message = error is PostgrestException
+            ? error.message
+            : error.toString();
+        messenger.showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
