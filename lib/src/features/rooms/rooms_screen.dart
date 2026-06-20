@@ -331,10 +331,27 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                             l10n,
                             theme,
                             primaryColor,
+                            isExpanded: _expandedFloors.contains(floor),
+                            roomCount: roomsByFloor[floor]!.length,
+                            onToggle: () {
+                              HapticFeedback.lightImpact();
+                              setState(() {
+                                if (_expandedFloors.contains(floor)) {
+                                  _expandedFloors.remove(floor);
+                                } else {
+                                  _expandedFloors.add(floor);
+                                }
+                              });
+                            },
+                            onAddRoom: canDeleteRooms
+                                ? () => _showAddRoomDialog(
+                                    context, ref, selectedHotelId, floor)
+                                : null,
                             onDeleteFloor: canDeleteRooms
                                 ? () => _confirmDeleteFloor(context, ref, floor)
                                 : null,
                           ),
+                          if (_expandedFloors.contains(floor)) ...[
                           const SizedBox(height: 12),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
@@ -393,6 +410,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                     ),
                                   ),
                           ),
+                          ],
                         ],
                         const SizedBox(height: 40),
                       ],
