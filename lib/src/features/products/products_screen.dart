@@ -778,10 +778,14 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
       final product = widget.product;
       String? finalImageUrl = _currentImageUrl;
       if (_selectedImage != null) {
-        // In demo/mock mode Supabase storage is unavailable. Skip the upload
-        // gracefully instead of crashing or saving a broken URL.
+        // In demo/mock mode Supabase storage is unavailable. Persist the picked
+        // image inline as a base64 data URI so it still shows in the catalog
+        // instead of silently discarding the upload.
         if (!_supabaseEnabled) {
-          finalImageUrl = _currentImageUrl;
+          final bytes = await _selectedImage!.readAsBytes();
+          final ext = _extensionOf(_selectedImage!.name);
+          final mime = _mimeForExtension(ext);
+          finalImageUrl = 'data:$mime;base64,${base64Encode(bytes)}';
         } else {
           final bytes = await _selectedImage!.readAsBytes();
           final ext = _extensionOf(_selectedImage!.name);
