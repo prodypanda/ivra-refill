@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../domain/models.dart';
+import '../../domain/app_enums.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
@@ -286,7 +290,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           ),
         ],
       ),
-    );
+    ],
+  ),
+);
   }
 
   List<RefillEvent> _filteredEvents(
@@ -497,6 +503,7 @@ class _ReportFilters extends StatelessWidget {
           SizedBox(
             width: 210,
             child: DropdownButtonFormField<String?>(
+              isExpanded: true,
               initialValue: hotelId,
               decoration: InputDecoration(labelText: l10n.t('hotels')),
               items: [
@@ -510,6 +517,7 @@ class _ReportFilters extends StatelessWidget {
           SizedBox(
             width: 210,
             child: DropdownButtonFormField<String?>(
+              isExpanded: true,
               initialValue: productId,
               decoration: InputDecoration(labelText: l10n.t('products')),
               items: [
@@ -526,6 +534,7 @@ class _ReportFilters extends StatelessWidget {
           SizedBox(
             width: 180,
             child: DropdownButtonFormField<String?>(
+              isExpanded: true,
               initialValue: roomId,
               decoration: InputDecoration(labelText: l10n.t('rooms')),
               items: [

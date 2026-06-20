@@ -488,7 +488,7 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
                         TextFormField(controller: _legalName, decoration: InputDecoration(labelText: l10n.t('hotelLabelLegalName'))),
                         const SizedBox(height: 12),
                         Row(children: [
-                          Expanded(child: DropdownButtonFormField<TunisianState>(initialValue: _selectedState, isExpanded: true, decoration: InputDecoration(labelText: l10n.t('hotelLabelState')), items: [for (final state in TunisianState.values) DropdownMenuItem(value: state, child: Text(state.displayName, overflow: TextOverflow.ellipsis))], onChanged: (value) { if (value != null) setState(() => _selectedState = value); })),
+                          Expanded(child: DropdownButtonFormField<TunisianState>(value: _selectedState, isExpanded: true, decoration: InputDecoration(labelText: l10n.t('hotelLabelState')), items: [for (final state in TunisianState.values) DropdownMenuItem(value: state, child: Text(state.displayName, overflow: TextOverflow.ellipsis))], onChanged: (value) { if (value != null) setState(() => _selectedState = value); })),
                           const SizedBox(width: 12),
                           Expanded(child: _RequiredTextField(controller: _country, label: l10n.t('hotelLabelCountry'))),
                         ]),
@@ -610,7 +610,13 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
     } catch (error) {
       if (mounted) PremiumSnackbar.showError(context, error);
     } finally {
-      if (mounted) setState  const _CreateHotelDialog();
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+}
+
+class _CreateHotelDialog extends ConsumerStatefulWidget {
+  const _CreateHotelDialog();
 
   @override
   ConsumerState<_CreateHotelDialog> createState() => _CreateHotelDialogState();
@@ -1088,6 +1094,33 @@ class _RequiredTextField extends StatelessWidget {
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return l10n.t('requiredField');
+        }
+        return null;
+      },
+    );
+  }
+}
+
+class _NumberField extends StatelessWidget {
+  const _NumberField({
+    required this.controller,
+    required this.label,
+  });
+
+  final TextEditingController controller;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(labelText: label),
+      validator: (value) {
+        final parsed = int.tryParse(value ?? '');
+        if (parsed == null || parsed <= 0) {
+          return l10n.t('enterNumberError');
         }
         return null;
       },

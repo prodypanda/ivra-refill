@@ -100,6 +100,7 @@ class AlertsScreen extends ConsumerWidget {
             ),
           ],
         ),
+        ),
         builder: (alerts) => _AlertsList(
           alerts: alerts,
           onRefresh: () => _refreshAlerts(context, ref),
@@ -540,7 +541,7 @@ class _AlertFilterBar extends ConsumerWidget {
     final productOptions =
         products.where((p) => presentProductIds.contains(p.id)).toList();
 
-    Widget allItem(String label) => DropdownMenuItem<Object?>(
+    DropdownMenuItem<T> allItem<T>(String label) => DropdownMenuItem<T>(
           value: null,
           child: Text(label),
         );

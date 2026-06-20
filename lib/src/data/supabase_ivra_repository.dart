@@ -77,6 +77,7 @@ class SupabaseIvraRepository implements IvraRepository {
   /// How long a cached offline read remains usable. Past this age the entry is
   /// treated as a miss so we never serve arbitrarily stale data.
   static const Duration _cacheMaxAge = Duration(hours: 24);
+  static const Duration _cacheOfflineMaxAge = Duration(days: 30);
 
   /// Fetches [key] via [fetcher], caching successful results so they can be
   /// served when the device is offline.
@@ -110,8 +111,11 @@ class SupabaseIvraRepository implements IvraRepository {
       if (NetworkErrorClassifier.isOffline(e)) {
         final prefs = await SharedPreferences.getInstance();
         final cached = prefs.getString('cache_$key');
-        final payload =
-            _readCacheEnvelope(cached, expectedVersion: _effectiveCacheVersionFor(key));
+        final payload = _readCacheEnvelope(
+          cached,
+          expectedVersion: _effectiveCacheVersionFor(key),
+          maxAge: _cacheOfflineMaxAge,
+        );
         if (payload != null) {
           return decode(payload);
         }
@@ -129,20 +133,18 @@ class SupabaseIvraRepository implements IvraRepository {
   /// Parses a stored cache string and returns the inner payload only when the
   /// envelope is present, the schema version matches [expectedVersion]
   /// (defaulting to the global [_cacheVersion]), and the entry is no older than
-  /// [_cacheMaxAge]. Returns `null` for a cache miss: missing entry, legacy
-  /// bare payload (no envelope), wrong version, expired, or unparseable. Never
-  /// throws.
-  static Object? _readCacheEnvelope(String? cached, {String? expectedVersion}) {
+  /// [maxAge] (defaulting to [_cacheMaxAge]). Returns `null` for a cache miss:
+  /// missing entry, legacy format, version mismatch, or expired entry.
+  static Object? _readCacheEnvelope(String? cached,
+      {String? expectedVersion, Duration? maxAge}) {
     final wantVersion = expectedVersion ?? _cacheVersion;
     if (cached == null) return null;
-    Object? decoded;
+    final Object? decoded;
     try {
       decoded = jsonDecode(cached);
     } catch (_) {
       return null;
     }
-    // Legacy bare-payload entries (and anything that isn't our envelope shape)
-    // are treated as a miss rather than crashing.
     if (decoded is! Map) return null;
     if (!decoded.containsKey('v') ||
         !decoded.containsKey('ts') ||
@@ -154,7 +156,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final ts = decoded['ts'];
     if (ts is! int) return null;
     final ageMillis = DateTime.now().millisecondsSinceEpoch - ts;
-    if (ageMillis < 0 || ageMillis > _cacheMaxAge.inMilliseconds) return null;
+    final limit = maxAge ?? _cacheMaxAge;
+    if (ageMillis < 0 || ageMillis > limit.inMilliseconds) return null;
     return decoded['data'];
   }
 
@@ -167,11 +170,15 @@ class SupabaseIvraRepository implements IvraRepository {
   @visibleForTesting
   static Duration get cacheMaxAge => _cacheMaxAge;
 
+  /// Maximum age of a usable offline cache entry. Exposed for tests.
+  @visibleForTesting
+  static Duration get cacheOfflineMaxAge => _cacheOfflineMaxAge;
+
   /// Test-only wrapper around [_readCacheEnvelope].
   @visibleForTesting
   static Object? readCacheEnvelopeForTest(String? cached,
-          {String? expectedVersion}) =>
-      _readCacheEnvelope(cached, expectedVersion: expectedVersion);
+          {String? expectedVersion, Duration? maxAge}) =>
+      _readCacheEnvelope(cached, expectedVersion: expectedVersion, maxAge: maxAge);
 
   /// Test-only accessor for the per-resource effective cache version.
   @visibleForTesting

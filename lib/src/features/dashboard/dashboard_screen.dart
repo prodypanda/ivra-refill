@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -377,9 +380,9 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
     for (final forecast in forecasts) {
       buffer.writeln('"${forecast.key}","${forecast.value}"');
     }
-    final result = await ref.read(exportFileServiceProvider).saveTextFile(
+    final result = await ref.read(exportFileServiceProvider).saveBytes(
       fileName: 'ivra-management-summary.csv',
-      content: buffer.toString(),
+      bytes: Uint8List.fromList(utf8.encode(buffer.toString())),
       mimeType: 'text/csv',
     );
     if (!context.mounted) return;
