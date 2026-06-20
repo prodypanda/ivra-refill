@@ -35,6 +35,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   String _productSearchQuery = '';
   String _statusFilter = 'all'; // 'all', 'ok', 'refill', 'attention'
   bool _showDetailedView = true; // true = Detailed, false = Compact
+  final Set<String> _expandedFloors = <String>{};
   late final TextEditingController _searchController;
   late final TextEditingController _productSearchController;
   bool _scanTriggered = false;
