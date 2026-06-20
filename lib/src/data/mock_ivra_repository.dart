@@ -731,9 +731,10 @@ class MockIvraRepository implements IvraRepository {
       );
 
       for (final product in products) {
+        final roomProductId = _uuid.v4();
         _roomProducts.add(
           RoomProduct(
-            id: _uuid.v4(),
+            id: roomProductId,
             hotelId: hotelId,
             roomId: roomId,
             roomNumber: roomNumber,
@@ -743,6 +744,24 @@ class MockIvraRepository implements IvraRepository {
             lastRefillAt: null,
             bottleStartedAt: DateTime.now(),
             status: BottleStatus.active,
+          ),
+        );
+
+        // Log the initial bottle placement so a freshly created room shows a
+        // "New bottle placed" entry in its history (the UI treats a
+        // bottleReplaced event with previousRefillCount == 0 as the initial
+        // placement).
+        _events.insert(
+          0,
+          RefillEvent(
+            id: _uuid.v4(),
+            roomProductId: roomProductId,
+            type: RefillEventType.bottleReplaced,
+            previousRefillCount: 0,
+            newRefillCount: 0,
+            occurredAt: DateTime.now(),
+            performedBy: _currentUser.id,
+            notes: 'Initial bottle placement',
           ),
         );
       }
