@@ -527,5 +527,15 @@
   "notFoundButton": "العودة إلى لوحة القيادة",
   "downloadAppBannerText": "للحصول على أفضل تجربة، قم بتنزيل تطبيق Android الخاص بنا.",
   "downloadAppBannerButton": "تنزيل التطبيق",
-  "sendPushTitle": "إرسال إشعار"
+  "sendPushTitle": "إرسال إشعار",
+  "teamViewAs": "العرض بصفة",
+  "impersonationBanner": "العرض بصفة {name}",
+  "@impersonationBanner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "impersonationExit": "خروج"
 }
