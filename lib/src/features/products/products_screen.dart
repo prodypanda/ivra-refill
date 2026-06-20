@@ -487,6 +487,27 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
     return name.split('.').last.toLowerCase();
   }
 
+  String _mimeForExtension(String ext) {
+    switch (ext) {
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      case 'bmp':
+        return 'image/bmp';
+      case 'heic':
+        return 'image/heic';
+      case 'heif':
+        return 'image/heif';
+      case 'jpg':
+      case 'jpeg':
+      default:
+        return 'image/jpeg';
+    }
+  }
+
   bool _isAllowedImageName(String name) {
     final ext = _extensionOf(name);
     return ext.isNotEmpty && _allowedImageExtensions.contains(ext);
