@@ -436,16 +436,54 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     return _RoomOverallStatus.allOk;
   }
 
+  Widget _buildCollapseExpandBar(
+    List<int> sortedFloors,
+    AppLocalizations l10n,
+    ThemeData theme,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton.icon(
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            setState(() => _expandedFloors.clear());
+          },
+          icon: const Icon(Icons.unfold_less_rounded, size: 18),
+          label: Text(l10n.t('roomsCollapseAll')),
+        ),
+        const SizedBox(width: 8),
+        TextButton.icon(
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            setState(() => _expandedFloors.addAll(sortedFloors));
+          },
+          icon: const Icon(Icons.unfold_more_rounded, size: 18),
+          label: Text(l10n.t('roomsExpandAll')),
+        ),
+      ],
+    );
+  }
+
   Widget _buildFloorHeader(
     int floor,
     AppLocalizations l10n,
     ThemeData theme,
     Color primaryColor, {
+    required bool isExpanded,
+    required int roomCount,
+    required VoidCallback onToggle,
+    VoidCallback? onAddRoom,
     VoidCallback? onDeleteFloor,
   }) {
     return Padding(
       padding: const EdgeInsets.only(top: 32, bottom: 20),
-      child: Container(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onToggle,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(20),
@@ -464,6 +502,13 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
+            AnimatedRotation(
+              turns: isExpanded ? 0.25 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(Icons.chevron_right_rounded,
+                  color: primaryColor, size: 26),
+            ),
+            const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -491,6 +536,22 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 letterSpacing: -0.5,
               ),
             ),
+            const SizedBox(width: 12),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: primaryColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$roomCount',
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: primaryColor,
+                ),
+              ),
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Container(
@@ -505,8 +566,16 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 ),
               ),
             ),
+            if (onAddRoom != null) ...[
+              const SizedBox(width: 8),
+              IconButton(
+                tooltip: l10n.t('roomsBtnAddRoom'),
+                icon: Icon(Icons.add_circle_outline, color: primaryColor),
+                onPressed: onAddRoom,
+              ),
+            ],
             if (onDeleteFloor != null) ...[
-              const SizedBox(width: 16),
+              const SizedBox(width: 4),
               IconButton(
                 tooltip: l10n.t('delete'),
                 icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
@@ -514,6 +583,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               ),
             ],
           ],
+        ),
+      ),
         ),
       ),
     );
