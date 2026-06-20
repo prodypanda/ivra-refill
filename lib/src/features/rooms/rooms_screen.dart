@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -3204,9 +3205,34 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
             productIds: _selectedProductIds.toList(),
           );
       if (mounted) Navigator.of(context).pop();
+    } catch (error) {
+      // Surface the actual backend reason (e.g. "Room count must be between 1
+      // and 500") instead of letting the failure propagate as an uncaught
+      // error that only shows up as a raw HTTP 400 in the browser console.
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          _roomTemplateErrorMessage(error),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
+  }
+
+  /// Extracts a human-readable message from a failed room-template create.
+  ///
+  /// Postgres RPC validation errors (raised via `raise exception` in
+  /// `create_rooms_from_template`) arrive as a [PostgrestException] whose
+  /// `message` is the exact reason, e.g. "Room count must be between 1 and
+  /// 500". For anything else fall back to the string form.
+  String _roomTemplateErrorMessage(Object error) {
+    if (error is PostgrestException) {
+      return error.message;
+    }
+    return error.toString();
   }
 }
 
