@@ -515,18 +515,25 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
 
   Future<void> _pickImage() async {
     final l10n = AppLocalizations.of(context);
-    final XFile? image;
+    XFile? image;
     try {
       final picker = ImagePicker();
-      image = await picker.pickImage(source: ImageSource.gallery);
+      // On web `ImageSource.gallery` opens the OS file chooser. Some browsers
+      // (Chrome/Edge) intermittently fail or return nothing from
+      // `pickImage`; fall back to `pickMedia` which is the supported web path.
+      try {
+        image = await picker.pickImage(source: ImageSource.gallery);
+      } catch (_) {
+        image = await picker.pickMedia();
+      }
     } catch (e) {
       // pickImage can throw on some platforms (permission denied, no gallery
-      // available, plugin not registered, etc.). Surface it instead of letting
-      // the tap appear to do nothing.
+      // available, plugin not registered, etc.). Surface the real reason so the
+      // failure is diagnosable instead of an invisible no-op.
       if (mounted) {
         PremiumSnackbar.show(
           context,
-          l10n.t('productsImageUploadFailed'),
+          '${l10n.t('productsImageUploadFailed')} ($e)',
           icon: Icons.error_outline,
           isError: true,
         );
