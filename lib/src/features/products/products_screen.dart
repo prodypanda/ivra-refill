@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -485,6 +487,27 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
     return name.split('.').last.toLowerCase();
   }
 
+  String _mimeForExtension(String ext) {
+    switch (ext) {
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      case 'bmp':
+        return 'image/bmp';
+      case 'heic':
+        return 'image/heic';
+      case 'heif':
+        return 'image/heif';
+      case 'jpg':
+      case 'jpeg':
+      default:
+        return 'image/jpeg';
+    }
+  }
+
   bool _isAllowedImageName(String name) {
     final ext = _extensionOf(name);
     return ext.isNotEmpty && _allowedImageExtensions.contains(ext);
@@ -492,8 +515,24 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
 
   Future<void> _pickImage() async {
     final l10n = AppLocalizations.of(context);
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image;
+    try {
+      final picker = ImagePicker();
+      image = await picker.pickImage(source: ImageSource.gallery);
+    } catch (e) {
+      // pickImage can throw on some platforms (permission denied, no gallery
+      // available, plugin not registered, etc.). Surface it instead of letting
+      // the tap appear to do nothing.
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('productsImageUploadFailed'),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
+      return;
+    }
     if (image == null) return;
 
     // Basic type validation (reject non-image files).
@@ -762,10 +801,14 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
       final product = widget.product;
       String? finalImageUrl = _currentImageUrl;
       if (_selectedImage != null) {
-        // In demo/mock mode Supabase storage is unavailable. Skip the upload
-        // gracefully instead of crashing or saving a broken URL.
+        // In demo/mock mode Supabase storage is unavailable. Persist the picked
+        // image inline as a base64 data URI so it still shows in the catalog
+        // instead of silently discarding the upload.
         if (!_supabaseEnabled) {
-          finalImageUrl = _currentImageUrl;
+          final bytes = await _selectedImage!.readAsBytes();
+          final ext = _extensionOf(_selectedImage!.name);
+          final mime = _mimeForExtension(ext);
+          finalImageUrl = 'data:$mime;base64,${base64Encode(bytes)}';
         } else {
           final bytes = await _selectedImage!.readAsBytes();
           final ext = _extensionOf(_selectedImage!.name);
