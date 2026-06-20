@@ -838,6 +838,18 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
         );
         Navigator.of(context).pop();
       }
+    } catch (error) {
+      // Surface the real backend reason (e.g. a PostgREST schema/validation
+      // error) instead of letting it propagate as an uncaught error that only
+      // shows up as a raw HTTP 400 in the browser console.
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          error is PostgrestException ? error.message : error.toString(),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
