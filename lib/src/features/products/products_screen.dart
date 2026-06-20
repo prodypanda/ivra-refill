@@ -632,7 +632,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: BorderRadius.circular(28),
       ),
       padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
       child: SafeArea(
@@ -826,11 +826,15 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                 .getPublicUrl(fileName);
           } catch (e) {
             // Surface the failure, keep the previous image, and abort the save
-            // so we never persist a broken/non-existent image URL.
+            // so we never persist a broken/non-existent image URL. Include the
+            // real backend reason (e.g. an RLS or storage error) so the issue
+            // can actually be diagnosed instead of a generic retry message.
             if (mounted) {
+              final reason =
+                  e is StorageException ? e.message : e.toString();
               PremiumSnackbar.show(
                 context,
-                l10n.t('productsImageUploadFailed'),
+                '${l10n.t('productsImageUploadFailed')} ($reason)',
                 icon: Icons.error_outline,
                 isError: true,
               );
