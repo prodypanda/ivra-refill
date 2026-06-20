@@ -325,6 +325,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                           ),
                           const SizedBox(height: 16),
                         ],
+                        _buildCollapseExpandBar(sortedFloors, l10n, theme),
+                        const SizedBox(height: 8),
                         for (final floor in sortedFloors) ...[
                           _buildFloorHeader(
                             floor,
