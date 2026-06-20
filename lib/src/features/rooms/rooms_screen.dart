@@ -1059,6 +1059,51 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     BuildContext context,
     WidgetRef ref,
   ) async {
+    final hotels = await ref.read(hotelsProvider.future);
+    final products = await ref.read(productsProvider.future);
+    if (!context.mounted) return;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => _RoomTemplateDialog(
+        hotels: hotels,
+        products: products,
+      ),
+    );
+
+    ref.invalidate(hotelsProvider);
+    ref.invalidate(roomsProvider);
+    ref.invalidate(roomProductsProvider);
+    ref.invalidate(dashboardProvider);
+  }
+
+  Future<void> _showAddRoomDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String hotelId,
+    int floorNumber,
+  ) async {
+    final products = await ref.read(productsProvider.future);
+    if (!context.mounted) return;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => _AddRoomDialog(
+        hotelId: hotelId,
+        floorNumber: floorNumber,
+        products: products,
+      ),
+    );
+
+    ref.invalidate(hotelsProvider);
+    ref.invalidate(roomsProvider);
+    ref.invalidate(roomProductsProvider);
+    ref.invalidate(dashboardProvider);
+  }
 
   Future<void> _confirmDeleteRoom(
       BuildContext context, WidgetRef ref, String roomId, String roomNumber) async {
