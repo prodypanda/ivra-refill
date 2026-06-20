@@ -3350,6 +3350,216 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
   }
 }
 
+class _AddRoomDialog extends ConsumerStatefulWidget {
+  const _AddRoomDialog({
+    required this.hotelId,
+    required this.floorNumber,
+    required this.products,
+  });
+
+  final String hotelId;
+  final int floorNumber;
+  final List<Product> products;
+
+  @override
+  ConsumerState<_AddRoomDialog> createState() => _AddRoomDialogState();
+}
+
+class _AddRoomDialogState extends ConsumerState<_AddRoomDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _roomNumber;
+  late final Set<String> _selectedProductIds;
+  var _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _roomNumber = TextEditingController();
+    _selectedProductIds =
+        widget.products.take(4).map((product) => product.id).toSet();
+  }
+
+  @override
+  void dispose() {
+    _roomNumber.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          left: 16,
+          right: 16,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${l10n.t('roomsDialogAddRoomTitle')} ${widget.floorNumber}',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: _roomNumber,
+                        decoration: InputDecoration(
+                            labelText: l10n.t('roomsLabelRoomNumber')),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return l10n.t('requiredField');
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          l10n.t('roomsLabelProductsInRoom'),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final product in widget.products)
+                            FilterChip(
+                              label: Text(product.label(language)),
+                              selected:
+                                  _selectedProductIds.contains(product.id),
+                              onSelected: (selected) {
+                                setState(() {
+                                  if (selected) {
+                                    _selectedProductIds.add(product.id);
+                                  } else {
+                                    _selectedProductIds.remove(product.id);
+                                  }
+                                });
+                              },
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _save,
+                  icon: const Icon(Icons.add_outlined),
+                  label: Text(l10n.t('roomsBtnAddRoom')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _save() async {
+    final l10n = AppLocalizations.of(context);
+    if (!_formKey.currentState!.validate()) return;
+    if (_selectedProductIds.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.t('roomsMsgSelectOneProduct'))),
+      );
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+    final roomNumber = _roomNumber.text.trim();
+    final parsedRoomNumber = int.tryParse(roomNumber);
+    if (parsedRoomNumber == null) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.t('enterNumberError'))),
+      );
+      return;
+    }
+
+    setState(() => _isSaving = true);
+    try {
+      // Guard against creating a duplicate room number in the same hotel.
+      List<RoomInfo> existingRooms;
+      try {
+        existingRooms =
+            await ref.read(repositoryProvider).rooms(hotelId: widget.hotelId);
+      } catch (_) {
+        existingRooms = const [];
+      }
+      final exists = existingRooms.any((room) =>
+          room.hotelId == widget.hotelId &&
+          room.roomNumber.trim() == roomNumber);
+      if (exists) {
+        if (mounted) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(
+                l10n.tParams(
+                    'roomsMsgDuplicateRoomNumbers', {'numbers': roomNumber}),
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
+      await ref.read(repositoryProvider).createRoomsFromTemplate(
+            hotelId: widget.hotelId,
+            floorNumber: widget.floorNumber,
+            firstRoomNumber: parsedRoomNumber,
+            roomCount: 1,
+            productIds: _selectedProductIds.toList(),
+          );
+      if (mounted) {
+        Navigator.of(context).pop();
+        PremiumSnackbar.showSuccess(context, l10n.t('roomsMsgRoomAdded'));
+      }
+    } catch (error) {
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          error is PostgrestException ? error.message : error.toString(),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+}
+
 class _NumberField extends StatelessWidget {
   const _NumberField({
     required this.controller,
