@@ -1297,6 +1297,12 @@ bool _canManageMember(UserProfile? currentUser, UserProfile member) {
   };
 }
 
+/// Only an app admin may "View as" another user, and never themselves.
+bool _canViewAsMember(UserProfile? currentUser, UserProfile member) {
+  if (currentUser == null || currentUser.id == member.id) return false;
+  return currentUser.role == UserRole.appAdmin;
+}
+
 bool _canManageInvitation(
   UserProfile? currentUser,
   TeamInvitation invitation,
