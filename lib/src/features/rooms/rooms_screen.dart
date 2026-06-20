@@ -2787,10 +2787,22 @@ class _RefillHistoryDialog extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final event = events[index];
                         final canUndo = event.canUndo(now, currentUser.id);
+                        // Events are ordered most-recent-first, so the oldest
+                        // event is the last one. A bottle-replaced event that is
+                        // the very first event for this product represents the
+                        // initial placement (a new bottle was put in the room),
+                        // not a replacement of a previous bottle.
+                        final isInitialPlacement =
+                            event.type == RefillEventType.bottleReplaced &&
+                                index == events.length - 1 &&
+                                event.previousRefillCount == 0;
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
-                          leading: Icon(_eventIcon(event.type)),
-                          title: Text(_eventLabel(l10n, event.type)),
+                          leading: Icon(isInitialPlacement
+                              ? Icons.add_circle_outline
+                              : _eventIcon(event.type)),
+                          title: Text(_eventLabel(
+                              l10n, event.type, isInitialPlacement)),
                           subtitle: Text(
                             '${_formatDateTime(event.occurredAt)} | '
                             '${event.previousRefillCount} -> ${event.newRefillCount}',
