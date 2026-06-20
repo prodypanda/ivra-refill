@@ -108,6 +108,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                   Expanded(
                     child: Column(
                       children: [
+                        const _ImpersonationBanner(),
                         const OfflineBanner(),
                         const WebDownloadBanner(),
                         Expanded(child: widget.child),
@@ -299,6 +300,7 @@ class _MobileShell extends StatelessWidget {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
+            const _ImpersonationBanner(),
             const OfflineBanner(),
             const WebDownloadBanner(),
             Expanded(child: child),
@@ -429,6 +431,66 @@ class _NavItem {
   final Set<UserRole> allowedRoles;
 
   String get mobileLabel => shortLabel ?? label;
+}
+
+/// A persistent banner shown across every screen while an app admin is
+/// "viewing as" another user. It keeps the admin aware that the app is scoped
+/// to someone else and offers a one-tap exit back to their own view.
+class _ImpersonationBanner extends ConsumerWidget {
+  const _ImpersonationBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final impersonated = ref.watch(impersonatedUserProvider);
+    if (impersonated == null) return const SizedBox.shrink();
+
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return Material(
+      color: theme.colorScheme.tertiaryContainer,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              Icon(
+                Icons.visibility_outlined,
+                size: 18,
+                color: theme.colorScheme.onTertiaryContainer,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.tParams(
+                    'impersonationBanner',
+                    {'name': impersonated.fullName},
+                  ),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onTertiaryContainer,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                onPressed: () {
+                  stopImpersonation(ref);
+                  context.go(DashboardScreen.route);
+                },
+                icon: const Icon(Icons.logout, size: 18),
+                label: Text(l10n.t('impersonationExit')),
+                style: TextButton.styleFrom(
+                  foregroundColor: theme.colorScheme.onTertiaryContainer,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _DrawerFooter extends StatelessWidget {
