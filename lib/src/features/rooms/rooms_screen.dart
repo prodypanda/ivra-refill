@@ -1344,10 +1344,8 @@ Future<void> _showRefillHistory(
 
   if (!context.mounted) return;
 
-  await showModalBottomSheet<void>(
+  await showCenteredFormSheet<void>(
     context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
     builder: (context) => _RefillHistoryDialog(
       item: item,
       events: itemEvents,
@@ -1366,10 +1364,8 @@ Future<void> _showRoomEditRequest(
   WidgetRef ref,
   RoomProduct item,
 ) async {
-  await showModalBottomSheet<void>(
+  await showCenteredFormSheet<void>(
     context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
     builder: (context) => _RoomEditRequestDialog(item: item),
   );
 
@@ -1385,10 +1381,8 @@ Future<void> _showBottleEditRequest(
   WidgetRef ref,
   RoomProduct item,
 ) async {
-  await showModalBottomSheet<void>(
+  await showCenteredFormSheet<void>(
     context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
     builder: (context) => _BottleLifecycleEditDialog(item: item),
   );
 
@@ -2960,10 +2954,8 @@ class _RefillHistoryDialog extends ConsumerWidget {
     WidgetRef ref,
     RefillEvent event,
   ) async {
-    await showModalBottomSheet<void>(
+    await showCenteredFormSheet<void>(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
       builder: (context) => _CorrectionRequestDialog(event: event),
     );
     if (context.mounted) Navigator.of(context).pop();
