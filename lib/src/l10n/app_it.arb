@@ -527,5 +527,15 @@
   "notFoundButton": "Torna alla Dashboard",
   "downloadAppBannerText": "Per la migliore esperienza, scarica la nostra App Android.",
   "downloadAppBannerButton": "Scarica App",
-  "sendPushTitle": "Invia notifica"
+  "sendPushTitle": "Invia notifica",
+  "teamViewAs": "Visualizza come",
+  "impersonationBanner": "Visualizzazione come {name}",
+  "@impersonationBanner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "impersonationExit": "Esci"
 }

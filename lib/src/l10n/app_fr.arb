@@ -527,5 +527,15 @@
   "notFoundButton": "Retour au Tableau de Bord",
   "downloadAppBannerText": "Pour une meilleure expérience, téléchargez notre application Android.",
   "downloadAppBannerButton": "Télécharger l'App",
-  "sendPushTitle": "Envoyer notification"
+  "sendPushTitle": "Envoyer notification",
+  "teamViewAs": "Voir en tant que",
+  "impersonationBanner": "Affichage en tant que {name}",
+  "@impersonationBanner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "impersonationExit": "Quitter"
 }

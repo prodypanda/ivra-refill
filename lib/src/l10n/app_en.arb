@@ -891,5 +891,15 @@
   "notFoundButton": "Back to Dashboard",
   "downloadAppBannerText": "For the best experience, download our Android App.",
   "downloadAppBannerButton": "Download App",
-  "sendPushTitle": "Send Notification"
+  "sendPushTitle": "Send Notification",
+  "teamViewAs": "View as",
+  "impersonationBanner": "Viewing as {name}",
+  "@impersonationBanner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "impersonationExit": "Exit"
 }
