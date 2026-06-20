@@ -1052,25 +1052,15 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   ) {
     final hotelId = roomProducts.first.hotelId;
     _recordRecentRoom(hotelId, roomNumber);
-    showModalBottomSheet<void>(
+    showCenteredFormSheet<void>(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.viewInsetsOf(context).bottom + 24,
-            top: 24,
-            left: 16,
-            right: 16,
-          ),
-          child: _RoomCard(
-            roomId: roomProducts.first.roomId,
-            roomProducts: roomProducts,
-            isDialog: true,
-            productSearchQuery: _productSearchQuery,
-          ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: _RoomCard(
+          roomId: roomProducts.first.roomId,
+          roomProducts: roomProducts,
+          isDialog: true,
+          productSearchQuery: _productSearchQuery,
         ),
       ),
     );
@@ -1084,10 +1074,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final products = await ref.read(productsProvider.future);
     if (!context.mounted) return;
 
-    await showModalBottomSheet<void>(
+    await showCenteredFormSheet<void>(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
       builder: (context) => _RoomTemplateDialog(
         hotels: hotels,
         products: products,
@@ -1109,10 +1097,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final products = await ref.read(productsProvider.future);
     if (!context.mounted) return;
 
-    await showModalBottomSheet<void>(
+    await showCenteredFormSheet<void>(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
       builder: (context) => _AddRoomDialog(
         hotelId: hotelId,
         floorNumber: floorNumber,
