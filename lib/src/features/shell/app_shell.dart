@@ -108,6 +108,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                   Expanded(
                     child: Column(
                       children: [
+                        const _ImpersonationBanner(),
                         const OfflineBanner(),
                         const WebDownloadBanner(),
                         Expanded(child: widget.child),
@@ -299,6 +300,7 @@ class _MobileShell extends StatelessWidget {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
+            const _ImpersonationBanner(),
             const OfflineBanner(),
             const WebDownloadBanner(),
             Expanded(child: child),
