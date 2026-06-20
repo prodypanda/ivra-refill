@@ -536,6 +536,9 @@ const Map<String, Map<String, String>> kL10nValues = {
     'downloadAppBannerText': 'For the best experience, download our Android App.',
     'downloadAppBannerButton': 'Download App',
     'sendPushTitle': 'Send Notification',
+    'teamViewAs': 'View as',
+    'impersonationBanner': 'Viewing as {name}',
+    'impersonationExit': 'Exit',
   },
   'fr': {
     'markAsRead': 'Marquer comme lu',
@@ -1054,6 +1057,9 @@ const Map<String, Map<String, String>> kL10nValues = {
     'downloadAppBannerText': 'Pour une meilleure expérience, téléchargez notre application Android.',
     'downloadAppBannerButton': 'Télécharger l\'App',
     'sendPushTitle': 'Envoyer notification',
+    'teamViewAs': 'Voir en tant que',
+    'impersonationBanner': 'Affichage en tant que {name}',
+    'impersonationExit': 'Quitter',
   },
   'ar': {
     'markAsRead': 'تحديد كمقروء',
@@ -1572,6 +1578,9 @@ const Map<String, Map<String, String>> kL10nValues = {
     'downloadAppBannerText': 'للحصول على أفضل تجربة، قم بتنزيل تطبيق Android الخاص بنا.',
     'downloadAppBannerButton': 'تنزيل التطبيق',
     'sendPushTitle': 'إرسال إشعار',
+    'teamViewAs': 'العرض بصفة',
+    'impersonationBanner': 'العرض بصفة {name}',
+    'impersonationExit': 'خروج',
   },
   'it': {
     'markAsRead': 'Segna come letto',
@@ -2090,5 +2099,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'downloadAppBannerText': 'Per la migliore esperienza, scarica la nostra App Android.',
     'downloadAppBannerButton': 'Scarica App',
     'sendPushTitle': 'Invia notifica',
+    'teamViewAs': 'Visualizza come',
+    'impersonationBanner': 'Visualizzazione come {name}',
+    'impersonationExit': 'Esci',
   },
 };
