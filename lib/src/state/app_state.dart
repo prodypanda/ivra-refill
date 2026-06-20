@@ -74,9 +74,53 @@ final offlineActionsProvider = FutureProvider<List<OfflineAction>>((ref) {
 
 final selectedHotelIdProvider = StateProvider<String?>((ref) => null);
 
-final currentUserProvider = FutureProvider<UserProfile>((ref) {
+/// When an app admin chooses "View as" another user, the target's profile is
+/// stored here. While set, [currentUserProvider] returns this profile instead
+/// of the real authenticated user, so navigation, route gating and every
+/// role/hotel-scoped permission check reflect the impersonated user.
+///
+/// This is a client-side view only: it does NOT change the authenticated
+/// session, so any write still executes as the real admin on the backend.
+final impersonatedUserProvider = StateProvider<UserProfile?>((ref) => null);
+
+/// The real authenticated user, ignoring any active "View as" impersonation.
+/// Use this (not [currentUserProvider]) when you need to know who is actually
+/// signed in, e.g. to decide whether the "View as" feature is available.
+final realCurrentUserProvider = FutureProvider<UserProfile>((ref) {
   return ref.watch(repositoryProvider).currentUser();
 });
+
+final currentUserProvider = FutureProvider<UserProfile>((ref) async {
+  final impersonated = ref.watch(impersonatedUserProvider);
+  if (impersonated != null) return impersonated;
+  return ref.watch(realCurrentUserProvider.future);
+});
+
+/// True while an app admin is viewing the app as another user.
+final isImpersonatingProvider = Provider<bool>((ref) {
+  return ref.watch(impersonatedUserProvider) != null;
+});
+
+/// Starts a "View as" session for [target]. Only an app admin may impersonate,
+/// and an admin can never impersonate themselves. Switching the effective user
+/// invalidates all account-scoped data so the impersonated user's hotels,
+/// dashboard, etc. are fetched immediately.
+void startImpersonation(WidgetRef ref, UserProfile target) {
+  final realUser = ref.read(realCurrentUserProvider).valueOrNull;
+  if (realUser == null || realUser.role != UserRole.appAdmin) return;
+  if (realUser.id == target.id) return;
+  ref.read(impersonatedUserProvider.notifier).state = target;
+  ref.read(selectedHotelIdProvider.notifier).state = target.hotelId;
+  invalidateAccountScopedData(ref);
+}
+
+/// Ends the active "View as" session and restores the admin's own view.
+void stopImpersonation(WidgetRef ref) {
+  if (ref.read(impersonatedUserProvider) == null) return;
+  ref.read(impersonatedUserProvider.notifier).state = null;
+  ref.read(selectedHotelIdProvider.notifier).state = null;
+  invalidateAccountScopedData(ref);
+}
 
 final dashboardProvider = FutureProvider<DashboardMetrics>((ref) {
   final hotelId = ref.watch(selectedHotelIdProvider);
