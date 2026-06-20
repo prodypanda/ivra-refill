@@ -2886,9 +2886,14 @@ class _RefillHistoryDialog extends ConsumerWidget {
     );
   }
 
-  String _eventLabel(AppLocalizations l10n, RefillEventType type) {
+  String _eventLabel(
+    AppLocalizations l10n,
+    RefillEventType type,
+    bool isInitialPlacement,
+  ) {
+    if (isInitialPlacement) return l10n.t('roomsHistoryNewBottle');
     return switch (type) {
-      RefillEventType.refill => l10n.t('refill'),
+      RefillEventType.refill => l10n.t('roomsHistoryRefill'),
       RefillEventType.undo => l10n.t('undo'),
       RefillEventType.correctionRequested => l10n.t('metricPendingApprovals'),
       RefillEventType.correctionApproved => l10n.t('refillEventApproved'),
