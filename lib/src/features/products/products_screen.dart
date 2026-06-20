@@ -492,8 +492,24 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
 
   Future<void> _pickImage() async {
     final l10n = AppLocalizations.of(context);
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image;
+    try {
+      final picker = ImagePicker();
+      image = await picker.pickImage(source: ImageSource.gallery);
+    } catch (e) {
+      // pickImage can throw on some platforms (permission denied, no gallery
+      // available, plugin not registered, etc.). Surface it instead of letting
+      // the tap appear to do nothing.
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('productsImageUploadFailed'),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
+      return;
+    }
     if (image == null) return;
 
     // Basic type validation (reject non-image files).
