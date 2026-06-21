@@ -239,6 +239,8 @@ class Product {
     required this.lowBottleThreshold,
     required this.lowBidonThreshold,
     this.imageUrl,
+    this.bottleType = BottleType.withPump,
+    this.refillType = RefillType.refillable,
   });
 
   final String id;
@@ -254,6 +256,11 @@ class Product {
   final int lowBottleThreshold;
   final int lowBidonThreshold;
   final String? imageUrl;
+  final BottleType bottleType;
+  final RefillType refillType;
+
+  bool get isRefillable => refillType == RefillType.refillable;
+  bool get isDirectReplacement => refillType == RefillType.directReplacement;
 
   String label(String languageCode) {
     return switch (languageCode) {
@@ -287,6 +294,8 @@ class Product {
       lowBottleThreshold: asInt(map['low_bottle_threshold']),
       lowBidonThreshold: asInt(map['low_bidon_threshold']),
       imageUrl: asNullableString(map['image_url']),
+      bottleType: BottleType.fromValue(asString(map['bottle_type'], fallback: 'with_pump')),
+      refillType: RefillType.fromValue(asString(map['refill_type'], fallback: 'refillable')),
     );
   }
 
@@ -303,6 +312,8 @@ class Product {
     int? lowBottleThreshold,
     int? lowBidonThreshold,
     String? imageUrl,
+    BottleType? bottleType,
+    RefillType? refillType,
   }) {
     return Product(
       id: id,
@@ -318,6 +329,8 @@ class Product {
       lowBottleThreshold: lowBottleThreshold ?? this.lowBottleThreshold,
       lowBidonThreshold: lowBidonThreshold ?? this.lowBidonThreshold,
       imageUrl: imageUrl ?? this.imageUrl,
+      bottleType: bottleType ?? this.bottleType,
+      refillType: refillType ?? this.refillType,
     );
   }
 }
@@ -349,7 +362,7 @@ class RoomProduct {
 
   int bottleAgeDays(DateTime now) => now.difference(bottleStartedAt).inDays;
 
-  bool get canRefill => status != BottleStatus.recycled;
+  bool get canRefill => status != BottleStatus.recycled && product.isRefillable;
 
   RoomProduct copyWith({
     String? roomNumber,
@@ -396,7 +409,7 @@ class InventoryItem {
   final int emptyBidons;
 
   bool get lowBottles => fullBottles <= product.lowBottleThreshold;
-  bool get lowBidons => fullBidons <= product.lowBidonThreshold;
+  bool get lowBidons => product.isRefillable && fullBidons <= product.lowBidonThreshold;
 
   InventoryItem copyWith({
     int? fullBottles,

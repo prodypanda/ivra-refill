@@ -19,7 +19,7 @@ import re
 import sys
 from collections import OrderedDict
 
-SRC = "lib/src/l10n/app_localizations.dart"
+SRC = "lib/src/l10n/app_localizations_values.g.dart"
 LOCALES = ["en", "fr", "ar", "it"]
 
 
@@ -30,7 +30,7 @@ def read_source():
 
 def find_block(text, locale):
     """Return the substring between `'<locale>': {` and its matching `}`."""
-    start_marker = "    '%s': {" % locale
+    start_marker = "  '%s': {" % locale
     idx = text.index(start_marker)
     # position right after the opening brace line
     brace_start = text.index("{", idx)
@@ -235,9 +235,9 @@ def main():
             print("[%s] extra: %s" % (loc, ", ".join(extras[loc])))
 
     # Save machine-readable report
+    with open("tooling/l10n_missing_report.json", "w", encoding="utf-8") as f:
         json.dump({"missing": report, "extras": extras}, f, ensure_ascii=False, indent=2)
         f.write("\n")
-        json.dump({"missing": report, "extras": extras}, f, ensure_ascii=False, indent=2)
 
 
 def dart_escape(s):

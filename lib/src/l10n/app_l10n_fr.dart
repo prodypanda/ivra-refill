@@ -326,7 +326,7 @@ class AppL10nFr extends AppL10n {
   String get bottles => 'Bouteilles';
 
   @override
-  String get bidons => 'Bidons';
+  String get bidons => 'Refill bottles';
 
   @override
   String get language => 'Langue';
@@ -349,14 +349,14 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get reportSuggestedOrdersBody =>
-      'Exporter les bouteilles, bidons et recommandations de recyclage.';
+      'Exporter les bouteilles, bouteilles de recharge et recommandations de recyclage.';
 
   @override
   String get reportInventorySnapshotTitle => 'Instantané du stock';
 
   @override
   String get reportInventorySnapshotBody =>
-      'Exporter le stock actuel de bouteilles et bidons par hôtel et produit.';
+      'Exporter le stock actuel de bouteilles et bouteilles de recharge par hôtel et produit.';
 
   @override
   String get reportOpenAlertsTitle => 'Alertes ouvertes';
@@ -396,13 +396,13 @@ class AppL10nFr extends AppL10n {
   String get inventoryTableEmptyBottles => 'Bouteilles vides';
 
   @override
-  String get inventoryTableEmptyBidons => 'Bidons vides';
+  String get inventoryTableEmptyBidons => 'Bouteilles de recharge vides';
 
   @override
-  String get inventoryTableFullBidons => 'Bidons pleins';
+  String get inventoryTableFullBidons => 'Bouteilles de recharge pleines';
 
   @override
-  String get inventoryTableOpenBidons => 'Bidons ouverts';
+  String get inventoryTableOpenBidons => 'Bouteilles de recharge ouvertes';
 
   @override
   String get inventoryTableStatus => 'Statut';
@@ -462,7 +462,7 @@ class AppL10nFr extends AppL10n {
 
   @override
   String orderNewBidonsText(String count) {
-    return 'Commander $count nouveaux bidons 5L';
+    return 'Commander $count nouvelles bouteilles de recharge 5L';
   }
 
   @override
@@ -794,10 +794,10 @@ class AppL10nFr extends AppL10n {
   String get roomsSearchPlaceholder => 'Rechercher une chambre...';
 
   @override
-  String get roomsRecentTitle => 'Chambres récentes';
+  String get roomsRecentTitle => 'Recent rooms';
 
   @override
-  String get roomsRecentClear => 'Effacer';
+  String get roomsRecentClear => 'Clear';
 
   @override
   String get roomsSelectHotelFirst => 'Sélectionner un hôtel...';
@@ -809,28 +809,28 @@ class AppL10nFr extends AppL10n {
   String get roomsViewCompact => 'Vue compacte';
 
   @override
-  String get roomsCollapseAll => 'Tout réduire';
+  String get roomsCollapseAll => 'Collapse all';
 
   @override
-  String get roomsExpandAll => 'Tout développer';
+  String get roomsExpandAll => 'Expand all';
 
   @override
-  String get roomsBtnAddRoom => 'Ajouter une chambre';
+  String get roomsBtnAddRoom => 'Add room';
 
   @override
-  String get roomsDialogAddRoomTitle => 'Ajouter une chambre à l\'étage';
+  String get roomsDialogAddRoomTitle => 'Add room to floor';
 
   @override
-  String get roomsMsgRoomAdded => 'Chambre ajoutée';
+  String get roomsMsgRoomAdded => 'Room added';
 
   @override
-  String get roomsMsgRoomAddQueued => 'Création de chambre mise en attente';
+  String get roomsMsgRoomAddQueued => 'Room creation queued';
 
   @override
-  String get roomsHistoryRefill => 'Rechargé';
+  String get roomsHistoryRefill => 'Refill';
 
   @override
-  String get roomsHistoryNewBottle => 'Nouvelle bouteille placée';
+  String get roomsHistoryNewBottle => 'New bottle placed';
 
   @override
   String get roomsFilterAll => 'Tout';
@@ -954,8 +954,8 @@ class AppL10nFr extends AppL10n {
   String get roomsMsgSelectOneProduct => 'Sélectionnez au moins un produit';
 
   @override
-  String roomsMsgDuplicateRoomNumbers(Object numbers) {
-    return 'Ces numéros de chambre existent déjà dans cet hôtel : $numbers. Choisissez un autre numéro de départ ou un autre nombre.';
+  String roomsMsgDuplicateRoomNumbers(String numbers) {
+    return 'These room numbers already exist in this hotel: $numbers. Choose a different starting number or count.';
   }
 
   @override
@@ -971,7 +971,7 @@ class AppL10nFr extends AppL10n {
   String get productsLabelBottleVolume => 'Volume de la bouteille';
 
   @override
-  String get productsLabelBidonVolume => 'Volume du bidon';
+  String get productsLabelBidonVolume => 'Volume de la bouteille de recharge';
 
   @override
   String get productsLabelMaxRefill => 'Limite de remplissage';
@@ -1044,7 +1044,7 @@ class AppL10nFr extends AppL10n {
   String get productsLabelBottleMl => 'Bouteille ml';
 
   @override
-  String get productsLabelBidonMl => 'Bidon ml';
+  String get productsLabelBidonMl => 'Refill bottle ml';
 
   @override
   String get productsLabelMaxRefills => 'Recharges max';
@@ -1056,7 +1056,25 @@ class AppL10nFr extends AppL10n {
   String get productsLabelLowBottles => 'Bouteilles bas';
 
   @override
-  String get productsLabelLowBidons => 'Bidons bas';
+  String get productsLabelLowBidons => 'Bouteilles de recharge basses';
+
+  @override
+  String get productsLabelBottleType => 'Type de bouteille';
+
+  @override
+  String get productsLabelBottleWithPump => 'Bouteille avec pompe';
+
+  @override
+  String get productsLabelBottleWithoutPump => 'Bouteille sans pompe';
+
+  @override
+  String get productsLabelRefillType => 'Type de recharge';
+
+  @override
+  String get productsLabelRefillable => 'Rechargeable';
+
+  @override
+  String get productsLabelDirectReplacement => 'Remplacement direct';
 
   @override
   String get productsDialogCreateTitle => 'Créer un produit';
@@ -1443,33 +1461,32 @@ class AppL10nFr extends AppL10n {
   String get alertsMetricCritical => 'Critique';
 
   @override
-  String get alertsFilterTitle => 'Filtres';
+  String get alertsFilterTitle => 'Filters';
 
   @override
-  String get alertsFilterSeverity => 'Gravité';
+  String get alertsFilterSeverity => 'Severity';
 
   @override
   String get alertsFilterType => 'Type';
 
   @override
-  String get alertsFilterHotel => 'Hôtel';
+  String get alertsFilterHotel => 'Hotel';
 
   @override
-  String get alertsFilterProduct => 'Produit';
+  String get alertsFilterProduct => 'Product';
 
   @override
-  String get alertsFilterAll => 'Tous';
+  String get alertsFilterAll => 'All';
 
   @override
-  String get alertsFilterClear => 'Effacer les filtres';
+  String get alertsFilterClear => 'Clear filters';
 
   @override
-  String get alertsFilterNoMatch =>
-      'Aucune alerte ne correspond aux filtres actuels.';
+  String get alertsFilterNoMatch => 'No alerts match the current filters.';
 
   @override
-  String alertsFilterShowing(Object count, Object total) {
-    return 'Affichage de $count sur $total';
+  String alertsFilterShowing(String count, String total) {
+    return 'Showing $count of $total';
   }
 
   @override
@@ -1556,11 +1573,11 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get alertResolveFailedToast =>
-      'Impossible de résoudre l’alerte. Veuillez réessayer.';
+      'Impossible de résoudre l\'alerte. Veuillez réessayer.';
 
   @override
   String get alertDeleteFailedToast =>
-      'Impossible de supprimer l’alerte. Veuillez réessayer.';
+      'Impossible de supprimer l\'alerte. Veuillez réessayer.';
 
   @override
   String get notificationAcknowledgedToast => 'Confirmé';
@@ -1605,7 +1622,7 @@ class AppL10nFr extends AppL10n {
   String get alertsEmptyAction => 'Actualiser les alertes';
 
   @override
-  String get alertTypeLowBidonStock => 'Stock bas (bidons)';
+  String get alertTypeLowBidonStock => 'Stock bas (bouteilles de recharge)';
 
   @override
   String alertLowBottleTitle(String product) {
@@ -1614,7 +1631,7 @@ class AppL10nFr extends AppL10n {
 
   @override
   String alertLowBidonTitle(String product) {
-    return 'Stock de bidons faible ($product)';
+    return 'Stock de bouteilles de recharge faible ($product)';
   }
 
   @override
@@ -1624,7 +1641,7 @@ class AppL10nFr extends AppL10n {
 
   @override
   String alertLowBidonBody(String hotel, String remain, String threshold) {
-    return '$hotel : il reste $remain bidons pleins. Le seuil est $threshold.';
+    return '$hotel : il reste $remain bouteilles de recharge pleines. Le seuil est $threshold.';
   }
 
   @override

@@ -145,16 +145,16 @@
   "pending": "Pending",
   "suggestedOrders": "Suggested orders",
   "bottles": "Bottles",
-  "bidons": "Bidons",
+  "bidons": "Refill bottles",
   "language": "Language",
   "demoMode": "Demo mode",
   "downloadCsv": "Download CSV",
   "downloadPdf": "Download PDF",
   "reportRefillHistoryTitle": "Refill history",
   "reportRefillHistoryBody": "Export recent refill activity by hotel, room, product, user, and time.",
-  "reportSuggestedOrdersBody": "Export bottles, bidons, and recycling recommendations.",
+  "reportSuggestedOrdersBody": "Export bottles, refill bottles, and recycling recommendations.",
   "reportInventorySnapshotTitle": "Inventory snapshot",
-  "reportInventorySnapshotBody": "Export current bottle and bidon stock by hotel and product.",
+  "reportInventorySnapshotBody": "Export current bottle and refill bottle stock by hotel and product.",
   "reportOpenAlertsTitle": "Open alerts",
   "reportOpenAlertsBody": "Export low stock, replacement, inactivity, and suspicious activity alerts.",
   "exportFailed": "Export failed",
@@ -167,9 +167,9 @@
   "inventoryTableProduct": "Product",
   "inventoryTableFullBottles": "Full bottles",
   "inventoryTableEmptyBottles": "Empty bottles",
-  "inventoryTableEmptyBidons": "Empty bidons",
-  "inventoryTableFullBidons": "Full bidons",
-  "inventoryTableOpenBidons": "Open bidons",
+  "inventoryTableEmptyBidons": "Empty refill bottles",
+  "inventoryTableFullBidons": "Full refill bottles",
+  "inventoryTableOpenBidons": "Opened refill bottles",
   "inventoryTableStatus": "Status",
   "errorUniqueViolation": "This record already exists.",
   "errorForeignKeyViolation": "Related record not found.",
@@ -194,7 +194,7 @@
       }
     }
   },
-  "orderNewBidonsText": "Order {count} new 5L bidons",
+  "orderNewBidonsText": "Order {count} new 5L refill bottles",
   "@orderNewBidonsText": {
     "placeholders": {
       "count": {
@@ -396,11 +396,18 @@
   "roomsLabelProductsInRoom": "Products in each room",
   "roomsMsgSelectOneProduct": "Select at least one product",
   "roomsMsgDuplicateRoomNumbers": "These room numbers already exist in this hotel: {numbers}. Choose a different starting number or count.",
+  "@roomsMsgDuplicateRoomNumbers": {
+    "placeholders": {
+      "numbers": {
+        "type": "String"
+      }
+    }
+  },
   "productsCatalogTitle": "Product Catalog",
   "productsBtnCreate": "Create product",
   "productsNoProducts": "No products in the catalog yet.",
   "productsLabelBottleVolume": "Bottle volume",
-  "productsLabelBidonVolume": "Bidon volume",
+  "productsLabelBidonVolume": "Refill bottle volume",
   "productsLabelMaxRefill": "Max refill limit",
   "productsLabelMaxAge": "Max bottle age",
   "productsLabelLowStock": "Low stock alert",
@@ -436,11 +443,17 @@
   "productsAddedSuccess": "Product added successfully",
   "productsUpdatedSuccess": "Product updated successfully",
   "productsLabelBottleMl": "Bottle ml",
-  "productsLabelBidonMl": "Bidon ml",
+  "productsLabelBidonMl": "Refill bottle ml",
   "productsLabelMaxRefills": "Max refills",
   "productsLabelMaxAgeDays": "Max age days",
   "productsLabelLowBottles": "Low bottles",
-  "productsLabelLowBidons": "Low bidons",
+  "productsLabelLowBidons": "Low refill bottles",
+  "productsLabelBottleType": "Bottle Type",
+  "productsLabelBottleWithPump": "Bottle with pump",
+  "productsLabelBottleWithoutPump": "Bottle without pump",
+  "productsLabelRefillType": "Refill Type",
+  "productsLabelRefillable": "Refillable",
+  "productsLabelDirectReplacement": "Direct replacement",
   "productsDialogCreateTitle": "Create product",
   "productsDialogEditTitle": "Edit product",
   "days": "days",
@@ -624,6 +637,16 @@
   "alertsFilterClear": "Clear filters",
   "alertsFilterNoMatch": "No alerts match the current filters.",
   "alertsFilterShowing": "Showing {count} of {total}",
+  "@alertsFilterShowing": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionEditTitle": "Edit queued action",
   "settingsActionConflictTitle": "Resolve sync conflict",
   "settingsActionAttempts": "Attempts {count}",
@@ -691,7 +714,7 @@
   "alertsEmptyTitle": "No alerts yet",
   "alertsEmptyMessage": "Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.",
   "alertsEmptyAction": "Refresh alerts",
-  "alertTypeLowBidonStock": "Low bidons",
+  "alertTypeLowBidonStock": "Low refill bottle stock",
   "alertLowBottleTitle": "Low {product} bottle stock",
   "@alertLowBottleTitle": {
     "placeholders": {
@@ -700,7 +723,7 @@
       }
     }
   },
-  "alertLowBidonTitle": "Low {product} bidon stock",
+  "alertLowBidonTitle": "Low {product} refill bottle stock",
   "@alertLowBidonTitle": {
     "placeholders": {
       "product": {
@@ -722,7 +745,7 @@
       }
     }
   },
-  "alertLowBidonBody": "{hotel}: {remain} full bidons remain. Threshold is {threshold}.",
+  "alertLowBidonBody": "{hotel}: {remain} full refill bottles remain. Threshold is {threshold}.",
   "@alertLowBidonBody": {
     "placeholders": {
       "hotel": {

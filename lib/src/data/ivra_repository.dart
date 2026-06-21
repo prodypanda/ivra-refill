@@ -1,4 +1,6 @@
 import '../domain/models.dart';
+import '../domain/app_enums.dart';
+
 
 abstract class IvraRepository {
   Future<UserProfile> currentUser();
@@ -101,6 +103,8 @@ abstract class IvraRepository {
     required int lowBottleThreshold,
     required int lowBidonThreshold,
     String? imageUrl,
+    BottleType bottleType = BottleType.withPump,
+    RefillType refillType = RefillType.refillable,
   });
 
   Future<void> updateProduct({
@@ -117,6 +121,8 @@ abstract class IvraRepository {
     required int lowBottleThreshold,
     required int lowBidonThreshold,
     String? imageUrl,
+    BottleType bottleType = BottleType.withPump,
+    RefillType refillType = RefillType.refillable,
   });
 
   Future<void> recordRefill({

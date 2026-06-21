@@ -831,17 +831,21 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                 label: l10n.t('inventoryTableFullBottles'),
                 value: widget.item.fullBottles,
                 threshold: widget.item.product.lowBottleThreshold,
-                icon: Icons.water_drop_outlined,
+                icon: widget.item.product.bottleType == BottleType.withPump
+                    ? Icons.sanitizer
+                    : Icons.local_drink_outlined,
                 color: Colors.orange,
               ),
-              const SizedBox(height: 12),
-              _VisualStockBar(
-                label: l10n.t('inventoryTableFullBidons'),
-                value: widget.item.fullBidons,
-                threshold: widget.item.product.lowBidonThreshold,
-                icon: Icons.propane_tank_outlined,
-                color: theme.colorScheme.primary,
-              ),
+              if (widget.item.product.isRefillable) ...[
+                const SizedBox(height: 12),
+                _VisualStockBar(
+                  label: l10n.t('inventoryTableFullBidons'),
+                  value: widget.item.fullBidons,
+                  threshold: widget.item.product.lowBidonThreshold,
+                  icon: Icons.local_drink_outlined,
+                  color: theme.colorScheme.primary,
+                ),
+              ],
               const SizedBox(height: 16),
               // Smaller stats for empties/open
               Container(
@@ -854,19 +858,25 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _MiniStat(
-                      label: l10n.t('inventoryTableEmptyBottles'),
-                      value: widget.item.emptyBottles,
-                      icon: Icons.recycling_outlined,
-                      color: theme.colorScheme.tertiary,
+                    Expanded(
+                      child: _MiniStat(
+                        label: l10n.t('inventoryTableEmptyBottles'),
+                        value: widget.item.emptyBottles,
+                        icon: Icons.recycling_outlined,
+                        color: theme.colorScheme.tertiary,
+                      ),
                     ),
-                    Container(width: 1, height: 24, color: theme.dividerColor),
-                    _MiniStat(
-                      label: l10n.t('inventoryTableOpenBidons'),
-                      value: widget.item.openBidons,
-                      icon: Icons.oil_barrel_outlined,
-                      color: Colors.indigo,
-                    ),
+                    if (widget.item.product.isRefillable) ...[
+                      Container(width: 1, height: 24, color: theme.dividerColor),
+                      Expanded(
+                        child: _MiniStat(
+                          label: l10n.t('inventoryTableOpenBidons'),
+                          value: widget.item.openBidons,
+                          icon: Icons.oil_barrel_outlined,
+                          color: Colors.indigo,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -1002,27 +1012,30 @@ class _MiniStat extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 16, color: color),
         const SizedBox(width: 6),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              value.toString(),
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w900,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                value.toString(),
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                ),
               ),
-            ),
-            Text(
-              label,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontSize: 9,
-                color: theme.colorScheme.onSurfaceVariant,
+              Text(
+                label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -1163,7 +1176,9 @@ class _StockAdjustmentDialogState
                           size: 16, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '${l10n.t('bottles')}: ${selectedItem.fullBottles} | ${l10n.t('bidons')}: ${selectedItem.fullBidons}',
+                        selectedItem.product.isRefillable
+                            ? '${l10n.t('bottles')}: ${selectedItem.fullBottles} | ${l10n.t('bidons')}: ${selectedItem.fullBidons}'
+                            : '${l10n.t('bottles')}: ${selectedItem.fullBottles}',
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
@@ -1184,39 +1199,41 @@ class _StockAdjustmentDialogState
                       controller: _emptyBottles,
                       label: l10n.t('inventoryTableEmptyBottles'),
                     ),
-                    const SizedBox(height: 12),
-                    _DeltaField(
-                      controller: _fullBidons,
-                      label: l10n.t('inventoryTableFullBidons'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          _showAdvanced = !_showAdvanced;
-                        });
-                      },
-                      icon: Icon(_showAdvanced
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down),
-                      label: Text(l10n.t('more')),
-                      style: TextButton.styleFrom(
-                        foregroundColor: theme.colorScheme.onSurfaceVariant,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                      ),
-                    ),
-                    if (_showAdvanced) ...[
-                      const SizedBox(height: 8),
-                      _DeltaField(
-                        controller: _openBidons,
-                        label: l10n.t('inventoryTableOpenBidons'),
-                      ),
+                    if (selectedItem.product.isRefillable) ...[
                       const SizedBox(height: 12),
                       _DeltaField(
-                        controller: _emptyBidons,
-                        label: emptyBidonsLabel,
+                        controller: _fullBidons,
+                        label: l10n.t('inventoryTableFullBidons'),
                       ),
+                      const SizedBox(height: 8),
+                      TextButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            _showAdvanced = !_showAdvanced;
+                          });
+                        },
+                        icon: Icon(_showAdvanced
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down),
+                        label: Text(l10n.t('more')),
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme.colorScheme.onSurfaceVariant,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                        ),
+                      ),
+                      if (_showAdvanced) ...[
+                        const SizedBox(height: 8),
+                        _DeltaField(
+                          controller: _openBidons,
+                          label: l10n.t('inventoryTableOpenBidons'),
+                        ),
+                        const SizedBox(height: 12),
+                        _DeltaField(
+                          controller: _emptyBidons,
+                          label: emptyBidonsLabel,
+                        ),
+                      ],
                     ],
                   ],
                 ),
@@ -1264,9 +1281,9 @@ class _StockAdjustmentDialogState
         'productId': item.product.id,
         'fullBottlesDelta': int.parse(_fullBottles.text),
         'emptyBottlesDelta': int.parse(_emptyBottles.text),
-        'fullBidonsDelta': int.parse(_fullBidons.text),
-        'openBidonsDelta': int.parse(_openBidons.text),
-        'emptyBidonsDelta': int.parse(_emptyBidons.text),
+        'fullBidonsDelta': item.product.isRefillable ? int.parse(_fullBidons.text) : 0,
+        'openBidonsDelta': item.product.isRefillable ? int.parse(_openBidons.text) : 0,
+        'emptyBidonsDelta': item.product.isRefillable ? int.parse(_emptyBidons.text) : 0,
         'reason': _reason.text.trim(),
       };
       var isOffline = ref.read(offlineModeProvider);
@@ -1525,32 +1542,38 @@ class _SuggestedOrders extends StatelessWidget {
                   ],
                 ),
                 const Divider(height: 24),
-                _SuggestedOrderRow(
-                  Icons.water_drop_outlined,
-                  l10n.tParams(
-                    'orderNewBottlesText',
-                    {'count': '${order.bottlesToOrder}'},
+                if (order.bottlesToOrder > 0) ...[
+                  _SuggestedOrderRow(
+                    Icons.water_drop_outlined,
+                    l10n.tParams(
+                      'orderNewBottlesText',
+                      {'count': '${order.bottlesToOrder}'},
+                    ),
+                    Colors.orange,
                   ),
-                  Colors.orange,
-                ),
-                const SizedBox(height: 8),
-                _SuggestedOrderRow(
-                  Icons.propane_tank_outlined,
-                  l10n.tParams(
-                    'orderNewBidonsText',
-                    {'count': '${order.bidonsToOrder}'},
+                  const SizedBox(height: 8),
+                ],
+                if (order.product.isRefillable && order.bidonsToOrder > 0) ...[
+                  _SuggestedOrderRow(
+                    Icons.local_drink_outlined,
+                    l10n.tParams(
+                      'orderNewBidonsText',
+                      {'count': '${order.bidonsToOrder}'},
+                    ),
+                    theme.colorScheme.primary,
                   ),
-                  theme.colorScheme.primary,
-                ),
-                const SizedBox(height: 8),
-                _SuggestedOrderRow(
-                  Icons.recycling_outlined,
-                  l10n.tParams(
-                    'recycleBottlesText',
-                    {'count': '${order.bottlesToRecycle}'},
+                  const SizedBox(height: 8),
+                ],
+                if (order.bottlesToRecycle > 0) ...[
+                  _SuggestedOrderRow(
+                    Icons.recycling_outlined,
+                    l10n.tParams(
+                      'recycleBottlesText',
+                      {'count': '${order.bottlesToRecycle}'},
+                    ),
+                    theme.colorScheme.error,
                   ),
-                  theme.colorScheme.error,
-                ),
+                ],
               ],
             ),
           ),
@@ -1735,52 +1758,60 @@ class _BulkStockAdjustmentDialogState
                   }).toList(),
                 ),
                 const SizedBox(height: 24),
-                Column(
-                  children: [
-                    _DeltaField(
-                      controller: _fullBottles,
-                      label: l10n.t('inventoryTableFullBottles'),
-                    ),
-                    const SizedBox(height: 12),
-                    _DeltaField(
-                      controller: _emptyBottles,
-                      label: l10n.t('inventoryTableEmptyBottles'),
-                    ),
-                    const SizedBox(height: 12),
-                    _DeltaField(
-                      controller: _fullBidons,
-                      label: l10n.t('inventoryTableFullBidons'),
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          _showAdvanced = !_showAdvanced;
-                        });
-                      },
-                      icon: Icon(_showAdvanced
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down),
-                      label: Text(l10n.t('more')),
-                      style: TextButton.styleFrom(
-                        foregroundColor: theme.colorScheme.onSurfaceVariant,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                      ),
-                    ),
-                    if (_showAdvanced) ...[
-                      const SizedBox(height: 8),
-                      _DeltaField(
-                        controller: _openBidons,
-                        label: l10n.t('inventoryTableOpenBidons'),
-                      ),
-                      const SizedBox(height: 12),
-                      _DeltaField(
-                        controller: _emptyBidons,
-                        label: emptyBidonsLabel,
-                      ),
-                    ],
-                  ],
+                Builder(
+                  builder: (context) {
+                    final selectedProducts = widget.products.where((p) => _selectedProductIds.contains(p.id));
+                    final showRefillFields = selectedProducts.isEmpty || selectedProducts.any((p) => p.isRefillable);
+                    return Column(
+                      children: [
+                        _DeltaField(
+                          controller: _fullBottles,
+                          label: l10n.t('inventoryTableFullBottles'),
+                        ),
+                        const SizedBox(height: 12),
+                        _DeltaField(
+                          controller: _emptyBottles,
+                          label: l10n.t('inventoryTableEmptyBottles'),
+                        ),
+                        if (showRefillFields) ...[
+                          const SizedBox(height: 12),
+                          _DeltaField(
+                            controller: _fullBidons,
+                            label: l10n.t('inventoryTableFullBidons'),
+                          ),
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                _showAdvanced = !_showAdvanced;
+                              });
+                            },
+                            icon: Icon(_showAdvanced
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down),
+                            label: Text(l10n.t('more')),
+                            style: TextButton.styleFrom(
+                              foregroundColor: theme.colorScheme.onSurfaceVariant,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                            ),
+                          ),
+                          if (_showAdvanced) ...[
+                            const SizedBox(height: 8),
+                            _DeltaField(
+                              controller: _openBidons,
+                              label: l10n.t('inventoryTableOpenBidons'),
+                            ),
+                            const SizedBox(height: 12),
+                            _DeltaField(
+                              controller: _emptyBidons,
+                              label: emptyBidonsLabel,
+                            ),
+                          ],
+                        ],
+                      ],
+                    );
+                  }
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -1844,9 +1875,9 @@ class _BulkStockAdjustmentDialogState
           'productId': product.id,
           'fullBottlesDelta': fullBottlesDelta,
           'emptyBottlesDelta': emptyBottlesDelta,
-          'fullBidonsDelta': fullBidonsDelta,
-          'openBidonsDelta': openBidonsDelta,
-          'emptyBidonsDelta': emptyBidonsDelta,
+          'fullBidonsDelta': product.isRefillable ? fullBidonsDelta : 0,
+          'openBidonsDelta': product.isRefillable ? openBidonsDelta : 0,
+          'emptyBidonsDelta': product.isRefillable ? emptyBidonsDelta : 0,
           'reason': reason,
         };
 
@@ -1857,9 +1888,9 @@ class _BulkStockAdjustmentDialogState
                   productId: product.id,
                   fullBottlesDelta: fullBottlesDelta,
                   emptyBottlesDelta: emptyBottlesDelta,
-                  fullBidonsDelta: fullBidonsDelta,
-                  openBidonsDelta: openBidonsDelta,
-                  emptyBidonsDelta: emptyBidonsDelta,
+                  fullBidonsDelta: product.isRefillable ? fullBidonsDelta : 0,
+                  openBidonsDelta: product.isRefillable ? openBidonsDelta : 0,
+                  emptyBidonsDelta: product.isRefillable ? emptyBidonsDelta : 0,
                   reason: reason,
                 );
           } catch (e) {

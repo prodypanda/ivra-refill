@@ -445,8 +445,9 @@ class MockIvraRepository implements IvraRepository {
             product: item.product,
             bottlesToOrder:
                 max(item.product.lowBottleThreshold * 2 - item.fullBottles, 0),
-            bidonsToOrder:
-                max(item.product.lowBidonThreshold * 2 - item.fullBidons, 0),
+            bidonsToOrder: item.product.isRefillable
+                ? max(item.product.lowBidonThreshold * 2 - item.fullBidons, 0)
+                : 0,
             bottlesToRecycle: recycleCount,
           );
         })
@@ -879,6 +880,8 @@ class MockIvraRepository implements IvraRepository {
     required int lowBottleThreshold,
     required int lowBidonThreshold,
     String? imageUrl,
+    BottleType bottleType = BottleType.withPump,
+    RefillType refillType = RefillType.refillable,
   }) async {
     _products.add(
       Product(
@@ -895,6 +898,8 @@ class MockIvraRepository implements IvraRepository {
         lowBottleThreshold: lowBottleThreshold,
         lowBidonThreshold: lowBidonThreshold,
         imageUrl: imageUrl,
+        bottleType: bottleType,
+        refillType: refillType,
       ),
     );
   }
@@ -914,6 +919,8 @@ class MockIvraRepository implements IvraRepository {
     required int lowBottleThreshold,
     required int lowBidonThreshold,
     String? imageUrl,
+    BottleType bottleType = BottleType.withPump,
+    RefillType refillType = RefillType.refillable,
   }) async {
     final index = _products.indexWhere((product) => product.id == productId);
     if (index == -1) return;
@@ -931,6 +938,8 @@ class MockIvraRepository implements IvraRepository {
       lowBottleThreshold: lowBottleThreshold,
       lowBidonThreshold: lowBidonThreshold,
       imageUrl: imageUrl,
+      bottleType: bottleType,
+      refillType: refillType,
     );
   }
 

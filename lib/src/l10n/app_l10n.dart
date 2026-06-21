@@ -704,7 +704,7 @@ abstract class AppL10n {
   /// No description provided for @bidons.
   ///
   /// In en, this message translates to:
-  /// **'Bidons'**
+  /// **'Refill bottles'**
   String get bidons;
 
   /// No description provided for @language.
@@ -746,7 +746,7 @@ abstract class AppL10n {
   /// No description provided for @reportSuggestedOrdersBody.
   ///
   /// In en, this message translates to:
-  /// **'Export bottles, bidons, and recycling recommendations.'**
+  /// **'Export bottles, refill bottles, and recycling recommendations.'**
   String get reportSuggestedOrdersBody;
 
   /// No description provided for @reportInventorySnapshotTitle.
@@ -758,7 +758,7 @@ abstract class AppL10n {
   /// No description provided for @reportInventorySnapshotBody.
   ///
   /// In en, this message translates to:
-  /// **'Export current bottle and bidon stock by hotel and product.'**
+  /// **'Export current bottle and refill bottle stock by hotel and product.'**
   String get reportInventorySnapshotBody;
 
   /// No description provided for @reportOpenAlertsTitle.
@@ -836,19 +836,19 @@ abstract class AppL10n {
   /// No description provided for @inventoryTableEmptyBidons.
   ///
   /// In en, this message translates to:
-  /// **'Empty bidons'**
+  /// **'Empty refill bottles'**
   String get inventoryTableEmptyBidons;
 
   /// No description provided for @inventoryTableFullBidons.
   ///
   /// In en, this message translates to:
-  /// **'Full bidons'**
+  /// **'Full refill bottles'**
   String get inventoryTableFullBidons;
 
   /// No description provided for @inventoryTableOpenBidons.
   ///
   /// In en, this message translates to:
-  /// **'Open bidons'**
+  /// **'Opened refill bottles'**
   String get inventoryTableOpenBidons;
 
   /// No description provided for @inventoryTableStatus.
@@ -956,7 +956,7 @@ abstract class AppL10n {
   /// No description provided for @orderNewBidonsText.
   ///
   /// In en, this message translates to:
-  /// **'Order {count} new 5L bidons'**
+  /// **'Order {count} new 5L refill bottles'**
   String orderNewBidonsText(String count);
 
   /// No description provided for @recycleBottlesText.
@@ -1851,7 +1851,7 @@ abstract class AppL10n {
   ///
   /// In en, this message translates to:
   /// **'These room numbers already exist in this hotel: {numbers}. Choose a different starting number or count.'**
-  String roomsMsgDuplicateRoomNumbers(Object numbers);
+  String roomsMsgDuplicateRoomNumbers(String numbers);
 
   /// No description provided for @productsCatalogTitle.
   ///
@@ -1880,7 +1880,7 @@ abstract class AppL10n {
   /// No description provided for @productsLabelBidonVolume.
   ///
   /// In en, this message translates to:
-  /// **'Bidon volume'**
+  /// **'Refill bottle volume'**
   String get productsLabelBidonVolume;
 
   /// No description provided for @productsLabelMaxRefill.
@@ -2012,7 +2012,7 @@ abstract class AppL10n {
   /// No description provided for @productsLabelBidonMl.
   ///
   /// In en, this message translates to:
-  /// **'Bidon ml'**
+  /// **'Refill bottle ml'**
   String get productsLabelBidonMl;
 
   /// No description provided for @productsLabelMaxRefills.
@@ -2036,8 +2036,44 @@ abstract class AppL10n {
   /// No description provided for @productsLabelLowBidons.
   ///
   /// In en, this message translates to:
-  /// **'Low bidons'**
+  /// **'Low refill bottles'**
   String get productsLabelLowBidons;
+
+  /// No description provided for @productsLabelBottleType.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle Type'**
+  String get productsLabelBottleType;
+
+  /// No description provided for @productsLabelBottleWithPump.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle with pump'**
+  String get productsLabelBottleWithPump;
+
+  /// No description provided for @productsLabelBottleWithoutPump.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle without pump'**
+  String get productsLabelBottleWithoutPump;
+
+  /// No description provided for @productsLabelRefillType.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Type'**
+  String get productsLabelRefillType;
+
+  /// No description provided for @productsLabelRefillable.
+  ///
+  /// In en, this message translates to:
+  /// **'Refillable'**
+  String get productsLabelRefillable;
+
+  /// No description provided for @productsLabelDirectReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct replacement'**
+  String get productsLabelDirectReplacement;
 
   /// No description provided for @productsDialogCreateTitle.
   ///
@@ -2799,7 +2835,7 @@ abstract class AppL10n {
   ///
   /// In en, this message translates to:
   /// **'Showing {count} of {total}'**
-  String alertsFilterShowing(Object count, Object total);
+  String alertsFilterShowing(String count, String total);
 
   /// No description provided for @settingsActionEditTitle.
   ///
@@ -3038,7 +3074,7 @@ abstract class AppL10n {
   /// No description provided for @alertTypeLowBidonStock.
   ///
   /// In en, this message translates to:
-  /// **'Low bidons'**
+  /// **'Low refill bottle stock'**
   String get alertTypeLowBidonStock;
 
   /// No description provided for @alertLowBottleTitle.
@@ -3050,7 +3086,7 @@ abstract class AppL10n {
   /// No description provided for @alertLowBidonTitle.
   ///
   /// In en, this message translates to:
-  /// **'Low {product} bidon stock'**
+  /// **'Low {product} refill bottle stock'**
   String alertLowBidonTitle(String product);
 
   /// No description provided for @alertLowBottleBody.
@@ -3062,7 +3098,7 @@ abstract class AppL10n {
   /// No description provided for @alertLowBidonBody.
   ///
   /// In en, this message translates to:
-  /// **'{hotel}: {remain} full bidons remain. Threshold is {threshold}.'**
+  /// **'{hotel}: {remain} full refill bottles remain. Threshold is {threshold}.'**
   String alertLowBidonBody(String hotel, String remain, String threshold);
 
   /// No description provided for @alertTypeLowBottleStock.

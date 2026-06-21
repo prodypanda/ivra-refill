@@ -28,6 +28,10 @@ void main() {
       GoRouter.of(context).go(RoomsScreen.route);
       await tester.pumpAndSettle();
 
+      // Switch to detailed view
+      await tester.tap(find.text('Detailed View'));
+      await tester.pumpAndSettle();
+
       // Find the first QR scan button (room search QR button)
       final roomQrScanFinder = find.byTooltip('Scan QR Code').first;
       expect(roomQrScanFinder, findsOneWidget);
@@ -70,6 +74,14 @@ void main() {
       // Navigate to Rooms Screen
       final context = tester.element(find.text('Dashboard').first);
       GoRouter.of(context).go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      // Switch to detailed view
+      await tester.tap(find.text('Detailed View'));
+      await tester.pumpAndSettle();
+
+      // Expand all floors
+      await tester.tap(find.text('Expand all'));
       await tester.pumpAndSettle();
 
       // Find the card-level QR scan button (tooltip 'Scan QR Code')
@@ -181,6 +193,11 @@ void main() {
 
       // Scanner should be closed
       expect(find.byType(PremiumQrScannerDialog), findsNothing);
+
+      // Switch to detailed view
+      await tester.tap(find.text('Detailed View'));
+      await tester.pumpAndSettle();
+
       // Results should be filtered to Room 205
       expect(find.text('Room 205'), findsOneWidget);
 

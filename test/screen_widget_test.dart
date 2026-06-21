@@ -261,7 +261,7 @@ void main() {
 
       expect(find.text('Inventory'), findsWidgets);
       expect(find.text('Full bottles'), findsWidgets);
-      expect(find.text('Full bidons'), findsWidgets);
+      expect(find.text('Full refill bottles'), findsWidgets);
       expect(find.text('Empty bottles'), findsWidgets);
     });
 
@@ -339,6 +339,12 @@ void main() {
           .go(RoomsScreen.route);
       await tester.pumpAndSettle();
 
+      // Switch to detailed view and expand floors
+      await tester.tap(find.text('Detailed View'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Expand all'));
+      await tester.pumpAndSettle();
+
       expect(find.text('Attention Required'), findsWidgets);
       expect(find.text('Refill Needed'), findsWidgets);
       expect(find.text('All OK'), findsWidgets);
@@ -356,6 +362,12 @@ void main() {
 
       GoRouter.of(tester.element(find.text('لوحة القيادة').first))
           .go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      // Switch to detailed view and expand floors
+      await tester.tap(find.text('عرض تفصيلي'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Expand all'));
       await tester.pumpAndSettle();
 
       final roomsContext = tester.element(find.text('الغرف').first);

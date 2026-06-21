@@ -95,6 +95,12 @@ void main() {
         .go(RoomsScreen.route);
     await tester.pumpAndSettle();
 
+    // Switch to detailed view and expand floors
+    await tester.tap(find.text('Detailed View'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Expand all'));
+    await tester.pumpAndSettle();
+
     expect(find.byTooltip('Create room template'), findsNothing);
     expect(find.text('Bottle edit'), findsNothing);
     expect(find.text('Room edit'), findsNothing);

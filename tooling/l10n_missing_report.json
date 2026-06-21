@@ -1,15 +1,7 @@
 {
   "missing": {
-    "fr": [
-      "alertResolveFailedToast",
-      "alertDeleteFailedToast",
-      "notificationAcknowledgedToast"
-    ],
-    "ar": [
-      "alertResolveFailedToast",
-      "alertDeleteFailedToast",
-      "notificationAcknowledgedToast"
-    ],
+    "fr": [],
+    "ar": [],
     "it": []
   },
   "extras": {

@@ -325,7 +325,7 @@ class AppL10nAr extends AppL10n {
   String get bottles => 'العبوات';
 
   @override
-  String get bidons => 'الجالونات';
+  String get bidons => 'قوارير إعادة التعبئة';
 
   @override
   String get language => 'اللغة';
@@ -395,13 +395,13 @@ class AppL10nAr extends AppL10n {
   String get inventoryTableEmptyBottles => 'العبوات الفارغة';
 
   @override
-  String get inventoryTableEmptyBidons => 'الجالونات الفارغة';
+  String get inventoryTableEmptyBidons => 'قوارير إعادة التعبئة الفارغة';
 
   @override
-  String get inventoryTableFullBidons => 'الجالونات الممتلئة';
+  String get inventoryTableFullBidons => 'قوارير إعادة التعبئة الممتلئة';
 
   @override
-  String get inventoryTableOpenBidons => 'الجالونات المفتوحة';
+  String get inventoryTableOpenBidons => 'قوارير إعادة التعبئة المفتوحة';
 
   @override
   String get inventoryTableStatus => 'الحالة';
@@ -458,7 +458,7 @@ class AppL10nAr extends AppL10n {
 
   @override
   String orderNewBidonsText(String count) {
-    return 'طلب $count جالونات جديدة 5 لتر';
+    return 'طلب $count قوارير إعادة تعبئة جديدة 5 لتر';
   }
 
   @override
@@ -781,10 +781,10 @@ class AppL10nAr extends AppL10n {
   String get roomsSearchPlaceholder => 'البحث عن غرفة...';
 
   @override
-  String get roomsRecentTitle => 'الغرف الأخيرة';
+  String get roomsRecentTitle => 'Recent rooms';
 
   @override
-  String get roomsRecentClear => 'مسح';
+  String get roomsRecentClear => 'Clear';
 
   @override
   String get roomsSelectHotelFirst => 'اختر فندقاً...';
@@ -796,28 +796,28 @@ class AppL10nAr extends AppL10n {
   String get roomsViewCompact => 'عرض مبسط';
 
   @override
-  String get roomsCollapseAll => 'طي الكل';
+  String get roomsCollapseAll => 'Collapse all';
 
   @override
-  String get roomsExpandAll => 'توسيع الكل';
+  String get roomsExpandAll => 'Expand all';
 
   @override
-  String get roomsBtnAddRoom => 'إضافة غرفة';
+  String get roomsBtnAddRoom => 'Add room';
 
   @override
-  String get roomsDialogAddRoomTitle => 'إضافة غرفة إلى الطابق';
+  String get roomsDialogAddRoomTitle => 'Add room to floor';
 
   @override
-  String get roomsMsgRoomAdded => 'تمت إضافة الغرفة';
+  String get roomsMsgRoomAdded => 'Room added';
 
   @override
-  String get roomsMsgRoomAddQueued => 'تمت جدولة إنشاء الغرفة';
+  String get roomsMsgRoomAddQueued => 'Room creation queued';
 
   @override
-  String get roomsHistoryRefill => 'إعادة تعبئة';
+  String get roomsHistoryRefill => 'Refill';
 
   @override
-  String get roomsHistoryNewBottle => 'تم وضع عبوة جديدة';
+  String get roomsHistoryNewBottle => 'New bottle placed';
 
   @override
   String get roomsFilterAll => 'الكل';
@@ -932,8 +932,8 @@ class AppL10nAr extends AppL10n {
   String get roomsMsgSelectOneProduct => 'حدد منتجاً واحداً على الأقل';
 
   @override
-  String roomsMsgDuplicateRoomNumbers(Object numbers) {
-    return 'أرقام الغرف هذه موجودة بالفعل في هذا الفندق: $numbers. اختر رقم بداية أو عدداً مختلفاً.';
+  String roomsMsgDuplicateRoomNumbers(String numbers) {
+    return 'These room numbers already exist in this hotel: $numbers. Choose a different starting number or count.';
   }
 
   @override
@@ -949,7 +949,7 @@ class AppL10nAr extends AppL10n {
   String get productsLabelBottleVolume => 'حجم القارورة';
 
   @override
-  String get productsLabelBidonVolume => 'حجم العبوة';
+  String get productsLabelBidonVolume => 'حجم قارورة إعادة التعبئة';
 
   @override
   String get productsLabelMaxRefill => 'الحد الأقصى للتعبئة';
@@ -1020,7 +1020,7 @@ class AppL10nAr extends AppL10n {
   String get productsLabelBottleMl => 'القارورة مل';
 
   @override
-  String get productsLabelBidonMl => 'العبوة مل';
+  String get productsLabelBidonMl => 'مل قارورة إعادة التعبئة';
 
   @override
   String get productsLabelMaxRefills => 'الحد الأقصى للتعبئة';
@@ -1032,7 +1032,25 @@ class AppL10nAr extends AppL10n {
   String get productsLabelLowBottles => 'حد انخفاض القوارير';
 
   @override
-  String get productsLabelLowBidons => 'حد انخفاض العبوات';
+  String get productsLabelLowBidons => 'حد انخفاض قوارير إعادة التعبئة';
+
+  @override
+  String get productsLabelBottleType => 'نوع الزجاجة';
+
+  @override
+  String get productsLabelBottleWithPump => 'زجاجة بمضخة';
+
+  @override
+  String get productsLabelBottleWithoutPump => 'زجاجة بدون مضخة';
+
+  @override
+  String get productsLabelRefillType => 'نوع إعادة التعبئة';
+
+  @override
+  String get productsLabelRefillable => 'قابل لإعادة التعبئة';
+
+  @override
+  String get productsLabelDirectReplacement => 'استبدال مباشر';
 
   @override
   String get productsDialogCreateTitle => 'إنشاء منتج';
@@ -1410,33 +1428,32 @@ class AppL10nAr extends AppL10n {
   String get alertsMetricCritical => 'حرج';
 
   @override
-  String get alertsFilterTitle => 'عوامل التصفية';
+  String get alertsFilterTitle => 'Filters';
 
   @override
-  String get alertsFilterSeverity => 'الخطورة';
+  String get alertsFilterSeverity => 'Severity';
 
   @override
-  String get alertsFilterType => 'النوع';
+  String get alertsFilterType => 'Type';
 
   @override
-  String get alertsFilterHotel => 'الفندق';
+  String get alertsFilterHotel => 'Hotel';
 
   @override
-  String get alertsFilterProduct => 'المنتج';
+  String get alertsFilterProduct => 'Product';
 
   @override
-  String get alertsFilterAll => 'الكل';
+  String get alertsFilterAll => 'All';
 
   @override
-  String get alertsFilterClear => 'مسح عوامل التصفية';
+  String get alertsFilterClear => 'Clear filters';
 
   @override
-  String get alertsFilterNoMatch =>
-      'لا توجد تنبيهات تطابق عوامل التصفية الحالية.';
+  String get alertsFilterNoMatch => 'No alerts match the current filters.';
 
   @override
-  String alertsFilterShowing(Object count, Object total) {
-    return 'عرض $count من $total';
+  String alertsFilterShowing(String count, String total) {
+    return 'Showing $count of $total';
   }
 
   @override
@@ -1570,7 +1587,7 @@ class AppL10nAr extends AppL10n {
   String get alertsEmptyAction => 'تحديث التنبيهات';
 
   @override
-  String get alertTypeLowBidonStock => 'مخزون بيدونات منخفض';
+  String get alertTypeLowBidonStock => 'مخزون قوارير إعادة التعبئة منخفض';
 
   @override
   String alertLowBottleTitle(String product) {
@@ -1579,7 +1596,7 @@ class AppL10nAr extends AppL10n {
 
   @override
   String alertLowBidonTitle(String product) {
-    return 'انخفاض مخزون قوارير $product';
+    return 'انخفاض مخزون قوارير إعادة التعبئة لـ $product';
   }
 
   @override
@@ -1589,7 +1606,7 @@ class AppL10nAr extends AppL10n {
 
   @override
   String alertLowBidonBody(String hotel, String remain, String threshold) {
-    return '$hotel: تبقى $remain قوارير ممتلئة. الحد الأدنى هو $threshold.';
+    return '$hotel: تبقى $remain قوارير إعادة تعبئة ممتلئة. الحد الأدنى هو $threshold.';
   }
 
   @override

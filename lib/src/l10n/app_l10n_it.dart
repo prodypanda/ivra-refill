@@ -325,7 +325,7 @@ class AppL10nIt extends AppL10n {
   String get bottles => 'Bottiglie';
 
   @override
-  String get bidons => 'Bidoni';
+  String get bidons => 'Bottiglie di ricarica';
 
   @override
   String get language => 'Lingua';
@@ -348,14 +348,14 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get reportSuggestedOrdersBody =>
-      'Esporta bottiglie, bidoni e raccomandazioni di riciclaggio.';
+      'Esporta bottiglie, bottiglie di ricarica e raccomandazioni di riciclaggio.';
 
   @override
   String get reportInventorySnapshotTitle => 'Istantanea inventario';
 
   @override
   String get reportInventorySnapshotBody =>
-      'Esporta lo stock attuale di bottiglie e bidoni per hotel e prodotto.';
+      'Esporta lo stock attuale di bottiglie e bottiglie di ricarica per hotel e prodotto.';
 
   @override
   String get reportOpenAlertsTitle => 'Avvisi aperti';
@@ -395,13 +395,13 @@ class AppL10nIt extends AppL10n {
   String get inventoryTableEmptyBottles => 'Bottiglie vuote';
 
   @override
-  String get inventoryTableEmptyBidons => 'Bidoni vuoti';
+  String get inventoryTableEmptyBidons => 'Bottiglie di ricarica vuote';
 
   @override
-  String get inventoryTableFullBidons => 'Bidoni pieni';
+  String get inventoryTableFullBidons => 'Bottiglie di ricarica piene';
 
   @override
-  String get inventoryTableOpenBidons => 'Bidoni aperti';
+  String get inventoryTableOpenBidons => 'Bottiglie di ricarica aperte';
 
   @override
   String get inventoryTableStatus => 'Stato';
@@ -459,7 +459,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String orderNewBidonsText(String count) {
-    return 'Ordina $count nuovi bidoni da 5L';
+    return 'Ordina $count nuove bottiglie di ricarica da 5L';
   }
 
   @override
@@ -789,10 +789,10 @@ class AppL10nIt extends AppL10n {
   String get roomsSearchPlaceholder => 'Cerca camera...';
 
   @override
-  String get roomsRecentTitle => 'Camere recenti';
+  String get roomsRecentTitle => 'Recent rooms';
 
   @override
-  String get roomsRecentClear => 'Cancella';
+  String get roomsRecentClear => 'Clear';
 
   @override
   String get roomsSelectHotelFirst => 'Seleziona hotel...';
@@ -945,8 +945,8 @@ class AppL10nIt extends AppL10n {
   String get roomsMsgSelectOneProduct => 'Seleziona almeno un prodotto';
 
   @override
-  String roomsMsgDuplicateRoomNumbers(Object numbers) {
-    return 'Questi numeri di camera esistono già in questo hotel: $numbers. Scegli un numero iniziale o un conteggio diverso.';
+  String roomsMsgDuplicateRoomNumbers(String numbers) {
+    return 'These room numbers already exist in this hotel: $numbers. Choose a different starting number or count.';
   }
 
   @override
@@ -962,7 +962,7 @@ class AppL10nIt extends AppL10n {
   String get productsLabelBottleVolume => 'Volume della bottiglia';
 
   @override
-  String get productsLabelBidonVolume => 'Volume del bidone';
+  String get productsLabelBidonVolume => 'Volume bottiglia di ricarica';
 
   @override
   String get productsLabelMaxRefill => 'Limite di ricariche';
@@ -1034,7 +1034,7 @@ class AppL10nIt extends AppL10n {
   String get productsLabelBottleMl => 'Bottiglia ml';
 
   @override
-  String get productsLabelBidonMl => 'Bidone ml';
+  String get productsLabelBidonMl => 'Bottiglia di ricarica ml';
 
   @override
   String get productsLabelMaxRefills => 'Ricariche max';
@@ -1046,7 +1046,25 @@ class AppL10nIt extends AppL10n {
   String get productsLabelLowBottles => 'Soglia bottiglie';
 
   @override
-  String get productsLabelLowBidons => 'Soglia bidoni';
+  String get productsLabelLowBidons => 'Soglia bottiglie di ricarica';
+
+  @override
+  String get productsLabelBottleType => 'Tipo di bottiglia';
+
+  @override
+  String get productsLabelBottleWithPump => 'Bottiglia con pompa';
+
+  @override
+  String get productsLabelBottleWithoutPump => 'Bottiglia senza pompa';
+
+  @override
+  String get productsLabelRefillType => 'Tipo di ricarica';
+
+  @override
+  String get productsLabelRefillable => 'Ricaricabile';
+
+  @override
+  String get productsLabelDirectReplacement => 'Sostituzione diretta';
 
   @override
   String get productsDialogCreateTitle => 'Crea prodotto';
@@ -1436,33 +1454,32 @@ class AppL10nIt extends AppL10n {
   String get alertsMetricCritical => 'Critico';
 
   @override
-  String get alertsFilterTitle => 'Filtri';
+  String get alertsFilterTitle => 'Filters';
 
   @override
-  String get alertsFilterSeverity => 'Gravità';
+  String get alertsFilterSeverity => 'Severity';
 
   @override
-  String get alertsFilterType => 'Tipo';
+  String get alertsFilterType => 'Type';
 
   @override
   String get alertsFilterHotel => 'Hotel';
 
   @override
-  String get alertsFilterProduct => 'Prodotto';
+  String get alertsFilterProduct => 'Product';
 
   @override
-  String get alertsFilterAll => 'Tutti';
+  String get alertsFilterAll => 'All';
 
   @override
-  String get alertsFilterClear => 'Cancella filtri';
+  String get alertsFilterClear => 'Clear filters';
 
   @override
-  String get alertsFilterNoMatch =>
-      'Nessun avviso corrisponde ai filtri attuali.';
+  String get alertsFilterNoMatch => 'No alerts match the current filters.';
 
   @override
-  String alertsFilterShowing(Object count, Object total) {
-    return 'Mostrati $count di $total';
+  String alertsFilterShowing(String count, String total) {
+    return 'Showing $count of $total';
   }
 
   @override
@@ -1598,7 +1615,7 @@ class AppL10nIt extends AppL10n {
   String get alertsEmptyAction => 'Aggiorna avvisi';
 
   @override
-  String get alertTypeLowBidonStock => 'Scorte basse (bidoni)';
+  String get alertTypeLowBidonStock => 'Scorte basse (bottiglie di ricarica)';
 
   @override
   String alertLowBottleTitle(String product) {
@@ -1607,7 +1624,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String alertLowBidonTitle(String product) {
-    return 'Scorte basse di taniche di $product';
+    return 'Scorte basse di bottiglie di ricarica di $product';
   }
 
   @override
@@ -1617,7 +1634,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String alertLowBidonBody(String hotel, String remain, String threshold) {
-    return '$hotel: rimangono $remain taniche piene. La soglia è $threshold.';
+    return '$hotel: rimangono $remain bottiglie di ricarica piene. La soglia è $threshold.';
   }
 
   @override
