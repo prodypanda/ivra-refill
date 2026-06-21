@@ -339,6 +339,11 @@ void main() {
           .go(RoomsScreen.route);
       await tester.pumpAndSettle();
 
+      // Toggle to detailed view and expand all floors to make RoomCards visible
+      await tester.tap(find.byIcon(Icons.view_agenda_outlined));
+      await tester.tap(find.byIcon(Icons.unfold_more_rounded));
+      await tester.pumpAndSettle();
+
       expect(find.text('Attention Required'), findsWidgets);
       expect(find.text('Refill Needed'), findsWidgets);
       expect(find.text('All OK'), findsWidgets);
@@ -356,6 +361,11 @@ void main() {
 
       GoRouter.of(tester.element(find.text('لوحة القيادة').first))
           .go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      // Toggle to detailed view and expand all floors to make RoomCards visible
+      await tester.tap(find.byIcon(Icons.view_agenda_outlined));
+      await tester.tap(find.byIcon(Icons.unfold_more_rounded));
       await tester.pumpAndSettle();
 
       final roomsContext = tester.element(find.text('الغرف').first);

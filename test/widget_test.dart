@@ -95,6 +95,11 @@ void main() {
         .go(RoomsScreen.route);
     await tester.pumpAndSettle();
 
+    // Toggle to detailed view and expand all floors to make RoomCards visible
+    await tester.tap(find.byIcon(Icons.view_agenda_outlined));
+    await tester.tap(find.byIcon(Icons.unfold_more_rounded));
+    await tester.pumpAndSettle();
+
     expect(find.byTooltip('Create room template'), findsNothing);
     expect(find.text('Bottle edit'), findsNothing);
     expect(find.text('Room edit'), findsNothing);

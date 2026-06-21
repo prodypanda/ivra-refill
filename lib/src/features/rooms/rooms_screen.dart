@@ -463,8 +463,11 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     AppLocalizations l10n,
     ThemeData theme,
   ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+    return Wrap(
+      alignment: WrapAlignment.end,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 8,
+      runSpacing: 4,
       children: [
         TextButton.icon(
           onPressed: () {
@@ -474,7 +477,6 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
           icon: const Icon(Icons.unfold_less_rounded, size: 18),
           label: Text(l10n.t('roomsCollapseAll')),
         ),
-        const SizedBox(width: 8),
         TextButton.icon(
           onPressed: () {
             HapticFeedback.lightImpact();
@@ -550,12 +552,16 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               child: Icon(Icons.layers_rounded, color: primaryColor, size: 24),
             ),
             const SizedBox(width: 16),
-            Text(
-              '${l10n.t('roomsLabelFloor')} $floor',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: theme.colorScheme.onSurface,
-                letterSpacing: -0.5,
+            Flexible(
+              child: Text(
+                '${l10n.t('roomsLabelFloor')} $floor',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: theme.colorScheme.onSurface,
+                  letterSpacing: -0.5,
+                  fontSize: 20,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(width: 12),
@@ -1180,6 +1186,7 @@ class _CompactRoomTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     Color overallColor = Colors.green;
@@ -1297,7 +1304,7 @@ class _CompactRoomTile extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        'Room',
+                        l10n.t('roomsLabelRoom'),
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           color: theme.colorScheme.onSurfaceVariant,
