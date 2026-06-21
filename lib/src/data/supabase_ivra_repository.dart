@@ -693,6 +693,8 @@ class SupabaseIvraRepository implements IvraRepository {
     required int lowBottleThreshold,
     required int lowBidonThreshold,
     String? imageUrl,
+    BottleType bottleType = BottleType.withPump,
+    RefillType refillType = RefillType.refillable,
   }) async {
     await _client.from('products').insert({
       'sku': sku,
@@ -708,6 +710,8 @@ class SupabaseIvraRepository implements IvraRepository {
       'low_bottle_threshold': lowBottleThreshold,
       'low_bidon_threshold': lowBidonThreshold,
       'image_url': imageUrl,
+      'bottle_type': bottleType.value,
+      'refill_type': refillType.value,
     });
     await _auditService.logAction('Created product', details: {'sku': sku});
   }
@@ -727,6 +731,8 @@ class SupabaseIvraRepository implements IvraRepository {
     required int lowBottleThreshold,
     required int lowBidonThreshold,
     String? imageUrl,
+    BottleType bottleType = BottleType.withPump,
+    RefillType refillType = RefillType.refillable,
   }) async {
     await _client.from('products').update({
       'sku': sku,
@@ -742,6 +748,8 @@ class SupabaseIvraRepository implements IvraRepository {
       'low_bottle_threshold': lowBottleThreshold,
       'low_bidon_threshold': lowBidonThreshold,
       'image_url': imageUrl,
+      'bottle_type': bottleType.value,
+      'refill_type': refillType.value,
     }).eq('id', productId);
     await _auditService.logAction('Updated product', details: {'product_id': productId});
   }

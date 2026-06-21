@@ -235,9 +235,9 @@ def main():
             print("[%s] extra: %s" % (loc, ", ".join(extras[loc])))
 
     # Save machine-readable report
+    with open("tooling/l10n_missing_report.json", "w", encoding="utf-8") as f:
         json.dump({"missing": report, "extras": extras}, f, ensure_ascii=False, indent=2)
         f.write("\n")
-        json.dump({"missing": report, "extras": extras}, f, ensure_ascii=False, indent=2)
 
 
 def dart_escape(s):

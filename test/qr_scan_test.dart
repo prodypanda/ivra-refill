@@ -28,6 +28,11 @@ void main() {
       GoRouter.of(context).go(RoomsScreen.route);
       await tester.pumpAndSettle();
 
+      // Toggle to detailed view and expand all floors to make RoomCards visible
+      await tester.tap(find.byIcon(Icons.view_agenda_outlined));
+      await tester.tap(find.byIcon(Icons.unfold_more_rounded));
+      await tester.pumpAndSettle();
+
       // Find the first QR scan button (room search QR button)
       final roomQrScanFinder = find.byTooltip('Scan QR Code').first;
       expect(roomQrScanFinder, findsOneWidget);
@@ -70,6 +75,11 @@ void main() {
       // Navigate to Rooms Screen
       final context = tester.element(find.text('Dashboard').first);
       GoRouter.of(context).go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      // Toggle to detailed view and expand all floors to make RoomCards visible
+      await tester.tap(find.byIcon(Icons.view_agenda_outlined));
+      await tester.tap(find.byIcon(Icons.unfold_more_rounded));
       await tester.pumpAndSettle();
 
       // Find the card-level QR scan button (tooltip 'Scan QR Code')
@@ -177,6 +187,11 @@ void main() {
       await tester.tap(room205Chip, warnIfMissed: false);
 
       // Pump to settle transitions and verify URL clean up
+      await tester.pumpAndSettle();
+
+      // Toggle to detailed view and expand all floors to make RoomCard visible
+      await tester.tap(find.byIcon(Icons.view_agenda_outlined));
+      await tester.tap(find.byIcon(Icons.unfold_more_rounded));
       await tester.pumpAndSettle();
 
       // Scanner should be closed

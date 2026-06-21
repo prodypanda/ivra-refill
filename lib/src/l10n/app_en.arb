@@ -49,9 +49,6 @@
   "btnConfirm": "Confirm",
   "composeMessage": "Compose Message",
   "notificationTitle": "Notification Title",
-  "notificationDefaultTitle": "New Notification",
-  "notificationChannelName": "High Importance Notifications",
-  "notificationChannelDescription": "This channel is used for important notifications.",
   "notificationTitleHint": "e.g. New Feature Alert!",
   "notificationBody": "Notification Body",
   "notificationBodyHint": "Enter the message here...",
@@ -145,16 +142,16 @@
   "pending": "Pending",
   "suggestedOrders": "Suggested orders",
   "bottles": "Bottles",
-  "bidons": "Bidons",
+  "bidons": "Refill bottles",
   "language": "Language",
   "demoMode": "Demo mode",
   "downloadCsv": "Download CSV",
   "downloadPdf": "Download PDF",
   "reportRefillHistoryTitle": "Refill history",
   "reportRefillHistoryBody": "Export recent refill activity by hotel, room, product, user, and time.",
-  "reportSuggestedOrdersBody": "Export bottles, bidons, and recycling recommendations.",
+  "reportSuggestedOrdersBody": "Export bottles, refill bottles, and recycling recommendations.",
   "reportInventorySnapshotTitle": "Inventory snapshot",
-  "reportInventorySnapshotBody": "Export current bottle and bidon stock by hotel and product.",
+  "reportInventorySnapshotBody": "Export current bottle and refill bottle stock by hotel and product.",
   "reportOpenAlertsTitle": "Open alerts",
   "reportOpenAlertsBody": "Export low stock, replacement, inactivity, and suspicious activity alerts.",
   "exportFailed": "Export failed",
@@ -167,9 +164,9 @@
   "inventoryTableProduct": "Product",
   "inventoryTableFullBottles": "Full bottles",
   "inventoryTableEmptyBottles": "Empty bottles",
-  "inventoryTableEmptyBidons": "Empty bidons",
-  "inventoryTableFullBidons": "Full bidons",
-  "inventoryTableOpenBidons": "Open bidons",
+  "inventoryTableEmptyBidons": "Empty refill bottles",
+  "inventoryTableFullBidons": "Full refill bottles",
+  "inventoryTableOpenBidons": "Open refill bottles",
   "inventoryTableStatus": "Status",
   "errorUniqueViolation": "This record already exists.",
   "errorForeignKeyViolation": "Related record not found.",
@@ -194,7 +191,7 @@
       }
     }
   },
-  "orderNewBidonsText": "Order {count} new 5L bidons",
+  "orderNewBidonsText": "Order {count} new refill bottles",
   "@orderNewBidonsText": {
     "placeholders": {
       "count": {
@@ -332,19 +329,9 @@
   "roomsStatusAttentionRequired": "Attention Required",
   "roomsStatusRefillNeeded": "Refill Needed",
   "roomsSearchPlaceholder": "Search room...",
-  "roomsRecentTitle": "Recent rooms",
-  "roomsRecentClear": "Clear",
   "roomsSelectHotelFirst": "Select a hotel...",
   "roomsViewDetailed": "Detailed View",
   "roomsViewCompact": "Compact View",
-  "roomsCollapseAll": "Collapse all",
-  "roomsExpandAll": "Expand all",
-  "roomsBtnAddRoom": "Add room",
-  "roomsDialogAddRoomTitle": "Add room to floor",
-  "roomsMsgRoomAdded": "Room added",
-  "roomsMsgRoomAddQueued": "Room creation queued",
-  "roomsHistoryRefill": "Refill",
-  "roomsHistoryNewBottle": "New bottle placed",
   "roomsFilterAll": "All",
   "roomsDialogBottleEditTitle": "Request bottle edit for room",
   "roomsLabelBottleStatus": "Bottle status",
@@ -395,12 +382,11 @@
   "roomsBtnCreateRooms": "Create rooms",
   "roomsLabelProductsInRoom": "Products in each room",
   "roomsMsgSelectOneProduct": "Select at least one product",
-  "roomsMsgDuplicateRoomNumbers": "These room numbers already exist in this hotel: {numbers}. Choose a different starting number or count.",
   "productsCatalogTitle": "Product Catalog",
   "productsBtnCreate": "Create product",
   "productsNoProducts": "No products in the catalog yet.",
   "productsLabelBottleVolume": "Bottle volume",
-  "productsLabelBidonVolume": "Bidon volume",
+  "productsLabelBidonVolume": "Refill bottle volume",
   "productsLabelMaxRefill": "Max refill limit",
   "productsLabelMaxAge": "Max bottle age",
   "productsLabelLowStock": "Low stock alert",
@@ -412,35 +398,18 @@
   "productsLabelNameIt": "Name Italian",
   "productsLabelImage": "Upload Picture",
   "productsLabelImageHint": "Select an image from your device",
-  "productsImageSelected": "Selected: {name}",
-  "@productsImageSelected": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "productsImageSet": "Image is set (tap to change)",
-  "productsImageNone": "No image selected",
-  "productsImageRemove": "Remove image",
-  "productsImageUploadFailed": "Image upload failed. Please try again.",
-  "productsImageInvalidType": "Please select a valid image file.",
-  "productsImageTooLarge": "Image is too large (max {max} MB).",
-  "@productsImageTooLarge": {
-    "placeholders": {
-      "max": {
-        "type": "String"
-      }
-    }
-  },
-  "productsAddedSuccess": "Product added successfully",
-  "productsUpdatedSuccess": "Product updated successfully",
   "productsLabelBottleMl": "Bottle ml",
-  "productsLabelBidonMl": "Bidon ml",
+  "productsLabelBidonMl": "Refill bottle ml",
   "productsLabelMaxRefills": "Max refills",
   "productsLabelMaxAgeDays": "Max age days",
   "productsLabelLowBottles": "Low bottles",
-  "productsLabelLowBidons": "Low bidons",
+  "productsLabelLowBidons": "Low refill bottles",
+  "productsLabelBottleType": "Bottle type",
+  "productsLabelBottleWithPump": "Bottle with pump",
+  "productsLabelBottleWithoutPump": "Bottle without pump",
+  "productsLabelRefillType": "Refill type",
+  "productsLabelRefillable": "Refillable",
+  "productsLabelDirectReplacement": "Direct replacement",
   "productsDialogCreateTitle": "Create product",
   "productsDialogEditTitle": "Edit product",
   "days": "days",
@@ -615,15 +584,6 @@
   "alertsStatusResolved": "Resolved",
   "alertsStatusOpen": "Open",
   "alertsMetricCritical": "Critical",
-  "alertsFilterTitle": "Filters",
-  "alertsFilterSeverity": "Severity",
-  "alertsFilterType": "Type",
-  "alertsFilterHotel": "Hotel",
-  "alertsFilterProduct": "Product",
-  "alertsFilterAll": "All",
-  "alertsFilterClear": "Clear filters",
-  "alertsFilterNoMatch": "No alerts match the current filters.",
-  "alertsFilterShowing": "Showing {count} of {total}",
   "settingsActionEditTitle": "Edit queued action",
   "settingsActionConflictTitle": "Resolve sync conflict",
   "settingsActionAttempts": "Attempts {count}",
@@ -670,9 +630,6 @@
   "invitationStatusExpired": "Expired",
   "alertResolvedToast": "Alert resolved",
   "alertDeletedToast": "Alert deleted",
-  "alertResolveFailedToast": "Could not resolve the alert. Please try again.",
-  "alertDeleteFailedToast": "Could not delete the alert. Please try again.",
-  "notificationAcknowledgedToast": "Acknowledged",
   "notificationMoreInfo": "More info",
   "bulkAdjustStockTitle": "Bulk stock adjustment",
   "bulkAdjustStockHint": "Enter quantity adjustments that will apply to ALL products.",
@@ -691,7 +648,7 @@
   "alertsEmptyTitle": "No alerts yet",
   "alertsEmptyMessage": "Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.",
   "alertsEmptyAction": "Refresh alerts",
-  "alertTypeLowBidonStock": "Low bidons",
+  "alertTypeLowBidonStock": "Low refill bottles",
   "alertLowBottleTitle": "Low {product} bottle stock",
   "@alertLowBottleTitle": {
     "placeholders": {
@@ -700,7 +657,7 @@
       }
     }
   },
-  "alertLowBidonTitle": "Low {product} bidon stock",
+  "alertLowBidonTitle": "Low {product} refill bottle stock",
   "@alertLowBidonTitle": {
     "placeholders": {
       "product": {
@@ -722,7 +679,7 @@
       }
     }
   },
-  "alertLowBidonBody": "{hotel}: {remain} full bidons remain. Threshold is {threshold}.",
+  "alertLowBidonBody": "{hotel}: {remain} full refill bottles remain. Threshold is {threshold}.",
   "@alertLowBidonBody": {
     "placeholders": {
       "hotel": {
@@ -899,15 +856,5 @@
   "notFoundButton": "Back to Dashboard",
   "downloadAppBannerText": "For the best experience, download our Android App.",
   "downloadAppBannerButton": "Download App",
-  "sendPushTitle": "Send Notification",
-  "teamViewAs": "View as",
-  "impersonationBanner": "Viewing as {name}",
-  "@impersonationBanner": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "impersonationExit": "Exit"
+  "sendPushTitle": "Send Notification"
 }

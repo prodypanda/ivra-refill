@@ -463,8 +463,11 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     AppLocalizations l10n,
     ThemeData theme,
   ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+    return Wrap(
+      alignment: WrapAlignment.end,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 8,
+      runSpacing: 4,
       children: [
         TextButton.icon(
           onPressed: () {
@@ -474,7 +477,6 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
           icon: const Icon(Icons.unfold_less_rounded, size: 18),
           label: Text(l10n.t('roomsCollapseAll')),
         ),
-        const SizedBox(width: 8),
         TextButton.icon(
           onPressed: () {
             HapticFeedback.lightImpact();
@@ -550,12 +552,16 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               child: Icon(Icons.layers_rounded, color: primaryColor, size: 24),
             ),
             const SizedBox(width: 16),
-            Text(
-              '${l10n.t('roomsLabelFloor')} $floor',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: theme.colorScheme.onSurface,
-                letterSpacing: -0.5,
+            Flexible(
+              child: Text(
+                '${l10n.t('roomsLabelFloor')} $floor',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: theme.colorScheme.onSurface,
+                  letterSpacing: -0.5,
+                  fontSize: 20,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const SizedBox(width: 12),
@@ -1180,6 +1186,7 @@ class _CompactRoomTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     Color overallColor = Colors.green;
@@ -1297,7 +1304,7 @@ class _CompactRoomTile extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        'Room',
+                        l10n.t('roomsLabelRoom'),
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           color: theme.colorScheme.onSurfaceVariant,
@@ -1500,10 +1507,11 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
           title: Text(l10n.t('qrActionPrompt')),
           content: Text(l10n.t('qrActionMessage').replaceAll('{product}', matchedItem.product.label(Localizations.localeOf(context).languageCode))),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop('refill'),
-              child: Text(l10n.t('qrActionRefill')),
-            ),
+            if (matchedItem.product.refillType == RefillType.refillable)
+              TextButton(
+                onPressed: () => Navigator.of(context).pop('refill'),
+                child: Text(l10n.t('qrActionRefill')),
+              ),
             TextButton(
               onPressed: () => Navigator.of(context).pop('replace'),
               child: Text(l10n.t('qrActionReplace')),
@@ -2150,32 +2158,36 @@ class _RoomCardProductRow extends ConsumerWidget {
           ],
         );
 
+        final isRefillable = item.product.refillType == RefillType.refillable;
+
         final statusChips = Wrap(
           spacing: 6,
           runSpacing: 4,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(4),
+            if (isRefillable) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  '${l10n.t('roomsLabelRefills')}: ${item.refillCount}',
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                ),
               ),
-              child: Text(
-                '${l10n.t('roomsLabelRefills')}: ${item.refillCount}',
-                style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  '${l10n.t('roomsLabelAge')}: ${item.bottleAgeDays(DateTime.now())}${l10n.t('roomsLabelDaysUnit')}',
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                '${l10n.t('roomsLabelAge')}: ${item.bottleAgeDays(DateTime.now())}${l10n.t('roomsLabelDaysUnit')}',
-                style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
-              ),
-            ),
+            ],
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
@@ -2198,28 +2210,47 @@ class _RoomCardProductRow extends ConsumerWidget {
         final actions = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FilledButton.icon(
-              style: FilledButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                backgroundColor: const Color(0xFF267D65),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(80, 36),
+            if (isRefillable) ...[
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  backgroundColor: const Color(0xFF267D65),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(80, 36),
+                ),
+                onPressed: item.canRefill ? performRefill : null,
+                icon: const Icon(Icons.water_drop_outlined, size: 14),
+                label:
+                    Text(l10n.t('refill'), style: const TextStyle(fontSize: 12)),
               ),
-              onPressed: item.canRefill ? performRefill : null,
-              icon: const Icon(Icons.water_drop_outlined, size: 14),
-              label:
-                  Text(l10n.t('refill'), style: const TextStyle(fontSize: 12)),
-            ),
+              const SizedBox(width: 4),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                tooltip: l10n.t('roomsBtnReplaceBottle'),
+                icon: const Icon(Icons.recycling_outlined, size: 20),
+                onPressed: item.status == BottleStatus.recycled
+                    ? null
+                    : () => _replaceBottle(context, ref, item),
+              ),
+            ] else ...[
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  backgroundColor: theme.colorScheme.secondary,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(80, 36),
+                ),
+                onPressed: item.status == BottleStatus.recycled
+                    ? null
+                    : () => _replaceBottle(context, ref, item),
+                icon: const Icon(Icons.recycling_outlined, size: 14),
+                label:
+                    Text(l10n.t('roomsBtnReplaceBottle'), style: const TextStyle(fontSize: 12)),
+              ),
+            ],
             const SizedBox(width: 4),
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              tooltip: l10n.t('roomsBtnReplaceBottle'),
-              icon: const Icon(Icons.recycling_outlined, size: 20),
-              onPressed: item.status == BottleStatus.recycled
-                  ? null
-                  : () => _replaceBottle(context, ref, item),
-            ),
             IconButton(
               visualDensity: VisualDensity.compact,
               tooltip: l10n.t('roomsBtnHistory'),

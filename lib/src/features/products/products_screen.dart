@@ -253,22 +253,70 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                       bottom: 16,
                       left: 16,
                       right: 16,
-                      child: Text(
-                        widget.product.label(widget.language),
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                          height: 1.1,
-                          shadows: [
-                            const Shadow(
-                              color: Colors.black87,
-                              blurRadius: 8,
-                              offset: Offset(0, 2),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            widget.product.label(widget.language),
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              height: 1.1,
+                              shadows: [
+                                const Shadow(
+                                  color: Colors.black87,
+                                  blurRadius: 8,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  widget.product.bottleType == BottleType.withPump
+                                      ? l10n.t('productsLabelBottleWithPump')
+                                      : l10n.t('productsLabelBottleWithoutPump'),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.secondary.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  widget.product.refillType == RefillType.refillable
+                                      ? l10n.t('productsLabelRefillable')
+                                      : l10n.t('productsLabelDirectReplacement'),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -284,22 +332,26 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                         Icons.pin_drop_outlined,
                         l10n.t('productsLabelBottleVolume'),
                         '${widget.product.bottleVolumeMl} ml'),
-                    _RuleRow(
-                        Icons.propane_tank_outlined,
-                        l10n.t('productsLabelBidonVolume'),
-                        '${widget.product.bidonVolumeMl} ml'),
-                    _RuleRow(
-                        Icons.loop_outlined,
-                        l10n.t('productsLabelMaxRefill'),
-                        '${widget.product.maxRefillCount} ${l10n.t('refills')}'),
-                    _RuleRow(
-                        Icons.calendar_today_outlined,
-                        l10n.t('productsLabelMaxAge'),
-                        '${widget.product.maxBottleAgeDays} ${l10n.t('days')}'),
+                    if (widget.product.refillType == RefillType.refillable) ...[
+                      _RuleRow(
+                          Icons.propane_tank_outlined,
+                          l10n.t('productsLabelBidonVolume'),
+                          '${widget.product.bidonVolumeMl} ml'),
+                      _RuleRow(
+                          Icons.loop_outlined,
+                          l10n.t('productsLabelMaxRefill'),
+                          '${widget.product.maxRefillCount} ${l10n.t('refills')}'),
+                      _RuleRow(
+                          Icons.calendar_today_outlined,
+                          l10n.t('productsLabelMaxAge'),
+                          '${widget.product.maxBottleAgeDays} ${l10n.t('days')}'),
+                    ],
                     _RuleRow(
                       Icons.warning_amber_outlined,
                       l10n.t('productsLabelLowStock'),
-                      '${widget.product.lowBottleThreshold} ${l10n.t('bottles').toLowerCase()} / ${widget.product.lowBidonThreshold} ${l10n.t('bidons').toLowerCase()}',
+                      widget.product.refillType == RefillType.refillable
+                          ? '${widget.product.lowBottleThreshold} ${l10n.t('bottles').toLowerCase()} / ${widget.product.lowBidonThreshold} ${l10n.t('bidons').toLowerCase()}'
+                          : '${widget.product.lowBottleThreshold} ${l10n.t('bottles').toLowerCase()}',
                     ),
                     if (widget.canManage) ...[
                       const Padding(
@@ -457,6 +509,8 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
   late final TextEditingController _maxBottleAgeDays;
   late final TextEditingController _lowBottleThreshold;
   late final TextEditingController _lowBidonThreshold;
+  late BottleType _bottleType;
+  late RefillType _refillType;
   XFile? _selectedImage;
   String? _currentImageUrl;
   var _isSaving = false;
@@ -611,6 +665,8 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
     _lowBidonThreshold = TextEditingController(
       text: '${product?.lowBidonThreshold ?? 4}',
     );
+    _bottleType = product?.bottleType ?? BottleType.withPump;
+    _refillType = product?.refillType ?? RefillType.refillable;
     _currentImageUrl = product?.imageUrl;
   }
 
@@ -738,6 +794,84 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                         ],
                       ),
                       const SizedBox(height: 12),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.t('productsLabelBottleType'),
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                const SizedBox(height: 8),
+                                SegmentedButton<BottleType>(
+                                  segments: [
+                                    ButtonSegment<BottleType>(
+                                      value: BottleType.withPump,
+                                      label: Text(l10n.t('productsLabelBottleWithPump')),
+                                    ),
+                                    ButtonSegment<BottleType>(
+                                      value: BottleType.withoutPump,
+                                      label: Text(l10n.t('productsLabelBottleWithoutPump')),
+                                    ),
+                                  ],
+                                  selected: {_bottleType},
+                                  onSelectionChanged: (val) {
+                                    setState(() {
+                                      _bottleType = val.first;
+                                    });
+                                  },
+                                  style: SegmentedButton.styleFrom(
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.t('productsLabelRefillType'),
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                const SizedBox(height: 8),
+                                SegmentedButton<RefillType>(
+                                  segments: [
+                                    ButtonSegment<RefillType>(
+                                      value: RefillType.refillable,
+                                      label: Text(l10n.t('productsLabelRefillable')),
+                                    ),
+                                    ButtonSegment<RefillType>(
+                                      value: RefillType.directReplacement,
+                                      label: Text(l10n.t('productsLabelDirectReplacement')),
+                                    ),
+                                  ],
+                                  selected: {_refillType},
+                                  onSelectionChanged: (val) {
+                                    setState(() {
+                                      _refillType = val.first;
+                                    });
+                                  },
+                                  style: SegmentedButton.styleFrom(
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
                       Wrap(
                         spacing: 12,
                         runSpacing: 12,
@@ -746,26 +880,30 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                             controller: _bottleVolumeMl,
                             label: l10n.t('productsLabelBottleMl'),
                           ),
-                          _PositiveIntField(
-                            controller: _bidonVolumeMl,
-                            label: l10n.t('productsLabelBidonMl'),
-                          ),
-                          _PositiveIntField(
-                            controller: _maxRefillCount,
-                            label: l10n.t('productsLabelMaxRefills'),
-                          ),
-                          _PositiveIntField(
-                            controller: _maxBottleAgeDays,
-                            label: l10n.t('productsLabelMaxAgeDays'),
-                          ),
+                          if (_refillType == RefillType.refillable) ...[
+                            _PositiveIntField(
+                              controller: _bidonVolumeMl,
+                              label: l10n.t('productsLabelBidonMl'),
+                            ),
+                            _PositiveIntField(
+                              controller: _maxRefillCount,
+                              label: l10n.t('productsLabelMaxRefills'),
+                            ),
+                            _PositiveIntField(
+                              controller: _maxBottleAgeDays,
+                              label: l10n.t('productsLabelMaxAgeDays'),
+                            ),
+                          ],
                           _PositiveIntField(
                             controller: _lowBottleThreshold,
                             label: l10n.t('productsLabelLowBottles'),
                           ),
-                          _PositiveIntField(
-                            controller: _lowBidonThreshold,
-                            label: l10n.t('productsLabelLowBidons'),
-                          ),
+                          if (_refillType == RefillType.refillable) ...[
+                            _PositiveIntField(
+                              controller: _lowBidonThreshold,
+                              label: l10n.t('productsLabelLowBidons'),
+                            ),
+                          ],
                         ],
                       ),
                     ],
@@ -851,6 +989,8 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
         }
       }
 
+      final isRefillable = _refillType == RefillType.refillable;
+
       if (product == null) {
         await repository.createProduct(
           sku: _sku.text.trim(),
@@ -859,12 +999,14 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           nameAr: _nameAr.text.trim(),
           nameIt: _nameIt.text.trim(),
           bottleVolumeMl: int.parse(_bottleVolumeMl.text),
-          bidonVolumeMl: int.parse(_bidonVolumeMl.text),
-          maxRefillCount: int.parse(_maxRefillCount.text),
-          maxBottleAgeDays: int.parse(_maxBottleAgeDays.text),
+          bidonVolumeMl: isRefillable ? int.parse(_bidonVolumeMl.text) : 0,
+          maxRefillCount: isRefillable ? int.parse(_maxRefillCount.text) : 0,
+          maxBottleAgeDays: isRefillable ? int.parse(_maxBottleAgeDays.text) : 0,
           lowBottleThreshold: int.parse(_lowBottleThreshold.text),
-          lowBidonThreshold: int.parse(_lowBidonThreshold.text),
+          lowBidonThreshold: isRefillable ? int.parse(_lowBidonThreshold.text) : 0,
           imageUrl: finalImageUrl,
+          bottleType: _bottleType,
+          refillType: _refillType,
         );
       } else {
         await repository.updateProduct(
@@ -875,12 +1017,14 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           nameAr: _nameAr.text.trim(),
           nameIt: _nameIt.text.trim(),
           bottleVolumeMl: int.parse(_bottleVolumeMl.text),
-          bidonVolumeMl: int.parse(_bidonVolumeMl.text),
-          maxRefillCount: int.parse(_maxRefillCount.text),
-          maxBottleAgeDays: int.parse(_maxBottleAgeDays.text),
+          bidonVolumeMl: isRefillable ? int.parse(_bidonVolumeMl.text) : 0,
+          maxRefillCount: isRefillable ? int.parse(_maxRefillCount.text) : 0,
+          maxBottleAgeDays: isRefillable ? int.parse(_maxBottleAgeDays.text) : 0,
           lowBottleThreshold: int.parse(_lowBottleThreshold.text),
-          lowBidonThreshold: int.parse(_lowBidonThreshold.text),
+          lowBidonThreshold: isRefillable ? int.parse(_lowBidonThreshold.text) : 0,
           imageUrl: finalImageUrl,
+          bottleType: _bottleType,
+          refillType: _refillType,
         );
       }
       if (mounted) {

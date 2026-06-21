@@ -135,3 +135,34 @@ enum TunisianState {
         );
   }
 }
+
+enum BottleType {
+  withPump('with_pump'),
+  withoutPump('without_pump');
+
+  const BottleType(this.value);
+  final String value;
+
+  static BottleType fromValue(String value) {
+    return BottleType.values.firstWhere(
+      (type) => type.value == value,
+      orElse: () => BottleType.withPump,
+    );
+  }
+}
+
+enum RefillType {
+  refillable('refillable'),
+  directReplacement('direct_replacement');
+
+  const RefillType(this.value);
+  final String value;
+
+  static RefillType fromValue(String value) {
+    return RefillType.values.firstWhere(
+      (type) => type.value == value,
+      orElse: () => RefillType.refillable,
+    );
+  }
+}
+
