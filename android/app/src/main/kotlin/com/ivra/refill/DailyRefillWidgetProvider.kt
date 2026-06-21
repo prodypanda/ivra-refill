@@ -16,10 +16,11 @@ class DailyRefillWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         val widgetData = HomeWidgetPlugin.getData(context)
-        val hotelName = widgetData.getString("active_hotel_name", "No Hotel Selected")
+        val hotelName = widgetData.getString("active_hotel_name", "")
+        val isLoggedIn = widgetData.getBoolean("widget_logged_in", false)
         val refilledRooms = widgetData.getInt("refilled_rooms_count", 0)
         val totalRooms = widgetData.getInt("total_rooms_count", 0)
-        val nextPriorityRoom = widgetData.getString("next_priority_room", "None")
+        val nextPriorityRoom = widgetData.getString("next_priority_room", "")
 
         for (appWidgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.daily_refill_widget)
@@ -27,19 +28,27 @@ class DailyRefillWidgetProvider : AppWidgetProvider() {
             // Set hotel name
             views.setTextViewText(
                 R.id.widget_hotel_name, 
-                if (hotelName.isNullOrEmpty()) "No Hotel Selected" else hotelName
+                when {
+                    !isLoggedIn -> "Sign in to Ivra"
+                    hotelName.isNullOrEmpty() -> "Select a hotel"
+                    else -> hotelName
+                }
             )
 
             // Set progress text
             views.setTextViewText(
                 R.id.widget_progress_text,
-                "Rooms Refilled: $refilledRooms/$totalRooms"
+                if (!isLoggedIn) "Open the app to connect your account" else "Rooms Refilled: $refilledRooms/$totalRooms"
             )
 
             // Set next room text
             views.setTextViewText(
                 R.id.widget_next_room_text,
-                "Next: $nextPriorityRoom"
+                when {
+                    !isLoggedIn -> "Login required"
+                    nextPriorityRoom.isNullOrEmpty() -> "Next: No priority room"
+                    else -> "Next: $nextPriorityRoom"
+                }
             )
 
             // Set progress bar

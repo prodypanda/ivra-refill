@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -10,6 +10,7 @@ import 'package:workmanager/workmanager.dart';
 import 'src/app/ivra_app.dart';
 import 'src/state/app_state.dart';
 import 'src/services/notification_service.dart';
+import 'src/utils/app_logger.dart';
 
 const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
 const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
@@ -52,11 +53,36 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setUrlStrategy(PathUrlStrategy());
 
+  // Route uncaught framework errors through the central logging sink so they
+  // are observable in release builds (and forwardable to a real crash reporter
+  // later via AppLogger.onError).
+  FlutterError.onError = AppLogger.recordFlutterError;
+
   try {
     await Firebase.initializeApp();
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  } catch (e) {
-    // Ignore initialization errors if missing config
+  } catch (e, stack) {
+    // Firebase is optional: the app must still start when no Firebase config
+    // is bundled (e.g. local/demo builds). Distinguish that expected case
+    // from a genuine initialization failure so real problems are observable
+    // instead of silently swallowed.
+    if (e is FirebaseException && e.code == 'no-app') {
+      // No FirebaseApp configured for this build. Expected; log at info level
+      // (suppressed in release) and continue without push messaging.
+      AppLogger.info('Firebase not configured; skipping push messaging.');
+    } else {
+      // A real failure: surface it through the central error sink so it is
+      // observable in release builds and forwardable to a crash reporter.
+      AppLogger.error(
+        e,
+        stackTrace: stack,
+        context: 'Firebase.initializeApp failed',
+      );
+      if (kDebugMode) {
+        // Extra developer-only diagnostics while debugging locally.
+        AppLogger.debug('Firebase init error detail: $e');
+      }
+    }
   }
 
   final useSupabase = _supabaseUrl.isNotEmpty && _supabaseAnonKey.isNotEmpty;

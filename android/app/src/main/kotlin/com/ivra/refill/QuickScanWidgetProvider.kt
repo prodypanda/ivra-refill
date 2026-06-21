@@ -16,7 +16,8 @@ class QuickScanWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         val widgetData = HomeWidgetPlugin.getData(context)
-        val hotelName = widgetData.getString("active_hotel_name", "No Hotel Selected")
+        val hotelName = widgetData.getString("active_hotel_name", "")
+        val isLoggedIn = widgetData.getBoolean("widget_logged_in", false)
 
         for (appWidgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.quick_scan_widget)
@@ -24,7 +25,11 @@ class QuickScanWidgetProvider : AppWidgetProvider() {
             // Set hotel name
             views.setTextViewText(
                 R.id.widget_hotel_name, 
-                if (hotelName.isNullOrEmpty()) "No Hotel Selected" else hotelName
+                when {
+                    !isLoggedIn -> "Sign in to scan"
+                    hotelName.isNullOrEmpty() -> "Select a hotel"
+                    else -> hotelName
+                }
             )
 
             // Setup deep link click pending intent: ivra://app/rooms?scan=true

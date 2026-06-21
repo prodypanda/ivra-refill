@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -9,6 +11,7 @@ import '../../l10n/app_localizations.dart';
 import '../shared/product_image.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
+import '../shared/centered_sheet.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/empty_state.dart';
@@ -32,10 +35,59 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   String _searchQuery = '';
   String _productSearchQuery = '';
   String _statusFilter = 'all'; // 'all', 'ok', 'refill', 'attention'
-  bool _showDetailedView = true; // true = Detailed, false = Compact
+  bool _showDetailedView = false; // true = Detailed, false = Compact
+  final Set<int> _expandedFloors = <int>{};
   late final TextEditingController _searchController;
   late final TextEditingController _productSearchController;
   bool _scanTriggered = false;
+
+  // Recently-visited room numbers for the currently loaded hotel, most-recent
+  // first. Persisted per hotel so housekeeping staff can jump back to rooms
+  // they just worked on without re-searching.
+  static const _maxRecentRooms = 8;
+  String? _recentRoomsHotelId;
+  List<String> _recentRooms = const [];
+
+  String _recentRoomsKey(String hotelId) => 'recent_rooms_$hotelId';
+
+  Future<void> _loadRecentRooms(String hotelId) async {
+    if (_recentRoomsHotelId == hotelId) return;
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getStringList(_recentRoomsKey(hotelId)) ?? const [];
+    if (!mounted) return;
+    setState(() {
+      _recentRoomsHotelId = hotelId;
+      _recentRooms = stored;
+    });
+  }
+
+  Future<void> _recordRecentRoom(String hotelId, String roomNumber) async {
+    final trimmed = roomNumber.trim();
+    if (trimmed.isEmpty) return;
+    final updated = <String>[
+      trimmed,
+      ..._recentRooms.where((r) => r != trimmed),
+    ].take(_maxRecentRooms).toList();
+    if (mounted) {
+      setState(() {
+        _recentRoomsHotelId = hotelId;
+        _recentRooms = updated;
+      });
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_recentRoomsKey(hotelId), updated);
+  }
+
+  Future<void> _clearRecentRooms(String hotelId) async {
+    if (mounted) setState(() => _recentRooms = const []);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_recentRoomsKey(hotelId));
+  }
+
+  void _applyRoomSearch(String roomNumber) {
+    _searchController.text = roomNumber;
+    setState(() => _searchQuery = roomNumber.trim());
+  }
 
   @override
   void initState() {
@@ -63,6 +115,13 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final hotelsAsync = ref.watch(hotelsProvider);
     final roomProductsAsync = ref.watch(roomProductsProvider);
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
+
+    // Load the recent-rooms list for the active hotel (no-op if unchanged).
+    if (selectedHotelId != null && _recentRoomsHotelId != selectedHotelId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _loadRecentRooms(selectedHotelId);
+      });
+    }
 
     if (widget.autoStartScan && !_scanTriggered && roomProductsAsync.hasValue) {
       _scanTriggered = true;
@@ -268,16 +327,35 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                           ),
                           const SizedBox(height: 16),
                         ],
+                        _buildCollapseExpandBar(sortedFloors, l10n, theme),
+                        const SizedBox(height: 8),
                         for (final floor in sortedFloors) ...[
                           _buildFloorHeader(
                             floor,
                             l10n,
                             theme,
                             primaryColor,
+                            isExpanded: _expandedFloors.contains(floor),
+                            roomCount: roomsByFloor[floor]!.length,
+                            onToggle: () {
+                              HapticFeedback.lightImpact();
+                              setState(() {
+                                if (_expandedFloors.contains(floor)) {
+                                  _expandedFloors.remove(floor);
+                                } else {
+                                  _expandedFloors.add(floor);
+                                }
+                              });
+                            },
+                            onAddRoom: canDeleteRooms
+                                ? () => _showAddRoomDialog(
+                                    context, ref, selectedHotelId, floor)
+                                : null,
                             onDeleteFloor: canDeleteRooms
                                 ? () => _confirmDeleteFloor(context, ref, floor)
                                 : null,
                           ),
+                          if (_expandedFloors.contains(floor)) ...[
                           const SizedBox(height: 12),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
@@ -336,6 +414,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                     ),
                                   ),
                           ),
+                          ],
                         ],
                         const SizedBox(height: 40),
                       ],
@@ -379,16 +458,54 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     return _RoomOverallStatus.allOk;
   }
 
+  Widget _buildCollapseExpandBar(
+    List<int> sortedFloors,
+    AppLocalizations l10n,
+    ThemeData theme,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton.icon(
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            setState(() => _expandedFloors.clear());
+          },
+          icon: const Icon(Icons.unfold_less_rounded, size: 18),
+          label: Text(l10n.t('roomsCollapseAll')),
+        ),
+        const SizedBox(width: 8),
+        TextButton.icon(
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            setState(() => _expandedFloors.addAll(sortedFloors));
+          },
+          icon: const Icon(Icons.unfold_more_rounded, size: 18),
+          label: Text(l10n.t('roomsExpandAll')),
+        ),
+      ],
+    );
+  }
+
   Widget _buildFloorHeader(
     int floor,
     AppLocalizations l10n,
     ThemeData theme,
     Color primaryColor, {
+    required bool isExpanded,
+    required int roomCount,
+    required VoidCallback onToggle,
+    VoidCallback? onAddRoom,
     VoidCallback? onDeleteFloor,
   }) {
     return Padding(
       padding: const EdgeInsets.only(top: 32, bottom: 20),
-      child: Container(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onToggle,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(20),
@@ -407,6 +524,13 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
+            AnimatedRotation(
+              turns: isExpanded ? 0.25 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(Icons.chevron_right_rounded,
+                  color: primaryColor, size: 26),
+            ),
+            const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -434,6 +558,22 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 letterSpacing: -0.5,
               ),
             ),
+            const SizedBox(width: 12),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: primaryColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$roomCount',
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: primaryColor,
+                ),
+              ),
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Container(
@@ -448,8 +588,16 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 ),
               ),
             ),
+            if (onAddRoom != null) ...[
+              const SizedBox(width: 8),
+              IconButton(
+                tooltip: l10n.t('roomsBtnAddRoom'),
+                icon: Icon(Icons.add_circle_outline, color: primaryColor),
+                onPressed: onAddRoom,
+              ),
+            ],
             if (onDeleteFloor != null) ...[
-              const SizedBox(width: 16),
+              const SizedBox(width: 4),
               IconButton(
                 tooltip: l10n.t('delete'),
                 icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
@@ -457,6 +605,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               ),
             ],
           ],
+        ),
+      ),
         ),
       ),
     );
@@ -781,6 +931,58 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
               ],
             ),
           ),
+          // Recent rooms shortcut
+          if (selectedHotelId != null && _recentRooms.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.history_rounded,
+                    size: 16, color: theme.colorScheme.onSurfaceVariant),
+                const SizedBox(width: 6),
+                Text(
+                  l10n.t('roomsRecentTitle'),
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    _clearRecentRooms(selectedHotelId);
+                  },
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  ),
+                  child: Text(l10n.t('roomsRecentClear')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (final roomNumber in _recentRooms)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ActionChip(
+                        avatar: Icon(Icons.meeting_room_outlined,
+                            size: 16, color: primaryColor),
+                        label: Text(roomNumber),
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          _applyRoomSearch(roomNumber);
+                        },
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -805,6 +1007,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         setState(() {
           _searchQuery = roomNumber;
         });
+        _recordRecentRoom(hotelId, roomNumber);
       }
     } else if (trimmed.startsWith('product:')) {
       final sku = trimmed.split(':')[1];
@@ -848,25 +1051,17 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     String roomNumber,
     List<RoomProduct> roomProducts,
   ) {
-    showModalBottomSheet<void>(
+    final hotelId = roomProducts.first.hotelId;
+    _recordRecentRoom(hotelId, roomNumber);
+    showCenteredFormSheet<void>(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.viewInsetsOf(context).bottom + 24,
-            top: 24,
-            left: 16,
-            right: 16,
-          ),
-          child: _RoomCard(
-            roomId: roomProducts.first.roomId,
-            roomProducts: roomProducts,
-            isDialog: true,
-            productSearchQuery: _productSearchQuery,
-          ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: _RoomCard(
+          roomId: roomProducts.first.roomId,
+          roomProducts: roomProducts,
+          isDialog: true,
+          productSearchQuery: _productSearchQuery,
         ),
       ),
     );
@@ -880,12 +1075,34 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final products = await ref.read(productsProvider.future);
     if (!context.mounted) return;
 
-    await showModalBottomSheet<void>(
+    await showCenteredFormSheet<void>(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
       builder: (context) => _RoomTemplateDialog(
         hotels: hotels,
+        products: products,
+      ),
+    );
+
+    ref.invalidate(hotelsProvider);
+    ref.invalidate(roomsProvider);
+    ref.invalidate(roomProductsProvider);
+    ref.invalidate(dashboardProvider);
+  }
+
+  Future<void> _showAddRoomDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String hotelId,
+    int floorNumber,
+  ) async {
+    final products = await ref.read(productsProvider.future);
+    if (!context.mounted) return;
+
+    await showCenteredFormSheet<void>(
+      context: context,
+      builder: (context) => _AddRoomDialog(
+        hotelId: hotelId,
+        floorNumber: floorNumber,
         products: products,
       ),
     );
@@ -1128,10 +1345,8 @@ Future<void> _showRefillHistory(
 
   if (!context.mounted) return;
 
-  await showModalBottomSheet<void>(
+  await showCenteredFormSheet<void>(
     context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
     builder: (context) => _RefillHistoryDialog(
       item: item,
       events: itemEvents,
@@ -1150,10 +1365,8 @@ Future<void> _showRoomEditRequest(
   WidgetRef ref,
   RoomProduct item,
 ) async {
-  await showModalBottomSheet<void>(
+  await showCenteredFormSheet<void>(
     context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
     builder: (context) => _RoomEditRequestDialog(item: item),
   );
 
@@ -1169,10 +1382,8 @@ Future<void> _showBottleEditRequest(
   WidgetRef ref,
   RoomProduct item,
 ) async {
-  await showModalBottomSheet<void>(
+  await showCenteredFormSheet<void>(
     context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
     builder: (context) => _BottleLifecycleEditDialog(item: item),
   );
 
@@ -2628,10 +2839,22 @@ class _RefillHistoryDialog extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final event = events[index];
                         final canUndo = event.canUndo(now, currentUser.id);
+                        // Events are ordered most-recent-first, so the oldest
+                        // event is the last one. A bottle-replaced event that is
+                        // the very first event for this product represents the
+                        // initial placement (a new bottle was put in the room),
+                        // not a replacement of a previous bottle.
+                        final isInitialPlacement =
+                            event.type == RefillEventType.bottleReplaced &&
+                                index == events.length - 1 &&
+                                event.previousRefillCount == 0;
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
-                          leading: Icon(_eventIcon(event.type)),
-                          title: Text(_eventLabel(l10n, event.type)),
+                          leading: Icon(isInitialPlacement
+                              ? Icons.add_circle_outline
+                              : _eventIcon(event.type)),
+                          title: Text(_eventLabel(
+                              l10n, event.type, isInitialPlacement)),
                           subtitle: Text(
                             '${_formatDateTime(event.occurredAt)} | '
                             '${event.previousRefillCount} -> ${event.newRefillCount}',
@@ -2715,9 +2938,14 @@ class _RefillHistoryDialog extends ConsumerWidget {
     );
   }
 
-  String _eventLabel(AppLocalizations l10n, RefillEventType type) {
+  String _eventLabel(
+    AppLocalizations l10n,
+    RefillEventType type,
+    bool isInitialPlacement,
+  ) {
+    if (isInitialPlacement) return l10n.t('roomsHistoryNewBottle');
     return switch (type) {
-      RefillEventType.refill => l10n.t('refill'),
+      RefillEventType.refill => l10n.t('roomsHistoryRefill'),
       RefillEventType.undo => l10n.t('undo'),
       RefillEventType.correctionRequested => l10n.t('metricPendingApprovals'),
       RefillEventType.correctionApproved => l10n.t('refillEventApproved'),
@@ -2751,10 +2979,8 @@ class _RefillHistoryDialog extends ConsumerWidget {
     WidgetRef ref,
     RefillEvent event,
   ) async {
-    await showModalBottomSheet<void>(
+    await showCenteredFormSheet<void>(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
       builder: (context) => _CorrectionRequestDialog(event: event),
     );
     if (context.mounted) Navigator.of(context).pop();
@@ -3063,16 +3289,295 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
       return;
     }
 
+    final messenger = ScaffoldMessenger.of(context);
+    final firstRoomNumber = int.parse(_firstRoomNumber.text);
+    final roomCount = int.parse(_roomCount.text);
+
+    // The template generates sequential room numbers starting at
+    // [firstRoomNumber]. Detect collisions with existing rooms in the selected
+    // hotel before hitting the backend so the user gets an immediate, clear
+    // error instead of a partial/failed bulk create.
+    final generatedNumbers = <String>[
+      for (var i = 0; i < roomCount; i++) '${firstRoomNumber + i}',
+    ];
+
     setState(() => _isSaving = true);
     try {
+      List<RoomInfo> existingRooms;
+      try {
+        existingRooms =
+            await ref.read(repositoryProvider).rooms(hotelId: _hotelId);
+      } catch (_) {
+        // If we cannot load existing rooms (e.g. offline), skip the client-side
+        // duplicate check and let the backend enforce uniqueness.
+        existingRooms = const [];
+      }
+
+      final existingNumbers = existingRooms
+          .where((room) => room.hotelId == _hotelId)
+          .map((room) => room.roomNumber.trim())
+          .toSet();
+      final duplicates = generatedNumbers
+          .where(existingNumbers.contains)
+          .toList(growable: false);
+
+      if (duplicates.isNotEmpty) {
+        if (mounted) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(
+                l10n.tParams('roomsMsgDuplicateRoomNumbers',
+                    {'numbers': duplicates.join(', ')}),
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
       await ref.read(repositoryProvider).createRoomsFromTemplate(
             hotelId: _hotelId,
             floorNumber: int.parse(_floorNumber.text),
-            firstRoomNumber: int.parse(_firstRoomNumber.text),
-            roomCount: int.parse(_roomCount.text),
+            firstRoomNumber: firstRoomNumber,
+            roomCount: roomCount,
             productIds: _selectedProductIds.toList(),
           );
       if (mounted) Navigator.of(context).pop();
+    } catch (error) {
+      // Surface the actual backend reason (e.g. "Room count must be between 1
+      // and 500") instead of letting the failure propagate as an uncaught
+      // error that only shows up as a raw HTTP 400 in the browser console.
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          _roomTemplateErrorMessage(error),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
+  /// Extracts a human-readable message from a failed room-template create.
+  ///
+  /// Postgres RPC validation errors (raised via `raise exception` in
+  /// `create_rooms_from_template`) arrive as a [PostgrestException] whose
+  /// `message` is the exact reason, e.g. "Room count must be between 1 and
+  /// 500". For anything else fall back to the string form.
+  String _roomTemplateErrorMessage(Object error) {
+    if (error is PostgrestException) {
+      return error.message;
+    }
+    return error.toString();
+  }
+}
+
+class _AddRoomDialog extends ConsumerStatefulWidget {
+  const _AddRoomDialog({
+    required this.hotelId,
+    required this.floorNumber,
+    required this.products,
+  });
+
+  final String hotelId;
+  final int floorNumber;
+  final List<Product> products;
+
+  @override
+  ConsumerState<_AddRoomDialog> createState() => _AddRoomDialogState();
+}
+
+class _AddRoomDialogState extends ConsumerState<_AddRoomDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _roomNumber;
+  late final Set<String> _selectedProductIds;
+  var _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _roomNumber = TextEditingController();
+    _selectedProductIds =
+        widget.products.take(4).map((product) => product.id).toSet();
+  }
+
+  @override
+  void dispose() {
+    _roomNumber.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          left: 16,
+          right: 16,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${l10n.t('roomsDialogAddRoomTitle')} ${widget.floorNumber}',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: _roomNumber,
+                        decoration: InputDecoration(
+                            labelText: l10n.t('roomsLabelRoomNumber')),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return l10n.t('requiredField');
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          l10n.t('roomsLabelProductsInRoom'),
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final product in widget.products)
+                            FilterChip(
+                              label: Text(product.label(language)),
+                              selected:
+                                  _selectedProductIds.contains(product.id),
+                              onSelected: (selected) {
+                                setState(() {
+                                  if (selected) {
+                                    _selectedProductIds.add(product.id);
+                                  } else {
+                                    _selectedProductIds.remove(product.id);
+                                  }
+                                });
+                              },
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _save,
+                  icon: const Icon(Icons.add_outlined),
+                  label: Text(l10n.t('roomsBtnAddRoom')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _save() async {
+    final l10n = AppLocalizations.of(context);
+    if (!_formKey.currentState!.validate()) return;
+    if (_selectedProductIds.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.t('roomsMsgSelectOneProduct'))),
+      );
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+    final roomNumber = _roomNumber.text.trim();
+    final parsedRoomNumber = int.tryParse(roomNumber);
+    if (parsedRoomNumber == null) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.t('enterNumberError'))),
+      );
+      return;
+    }
+
+    setState(() => _isSaving = true);
+    try {
+      // Guard against creating a duplicate room number in the same hotel.
+      List<RoomInfo> existingRooms;
+      try {
+        existingRooms =
+            await ref.read(repositoryProvider).rooms(hotelId: widget.hotelId);
+      } catch (_) {
+        existingRooms = const [];
+      }
+      final exists = existingRooms.any((room) =>
+          room.hotelId == widget.hotelId &&
+          room.roomNumber.trim() == roomNumber);
+      if (exists) {
+        if (mounted) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(
+                l10n.tParams(
+                    'roomsMsgDuplicateRoomNumbers', {'numbers': roomNumber}),
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
+      await ref.read(repositoryProvider).createRoomsFromTemplate(
+            hotelId: widget.hotelId,
+            floorNumber: widget.floorNumber,
+            firstRoomNumber: parsedRoomNumber,
+            roomCount: 1,
+            productIds: _selectedProductIds.toList(),
+          );
+      if (mounted) {
+        Navigator.of(context).pop();
+        PremiumSnackbar.showSuccess(context, l10n.t('roomsMsgRoomAdded'));
+      }
+    } catch (error) {
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          error is PostgrestException ? error.message : error.toString(),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

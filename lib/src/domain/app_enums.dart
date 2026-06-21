@@ -15,6 +15,20 @@ enum UserRole {
   }
 }
 
+/// Language-neutral state of the daily refill progress summary so the UI and
+/// the native home widget can each localize it for the active locale instead
+/// of the provider baking in an English sentence.
+enum DailyRefillStatus {
+  /// No rooms exist for the selected hotel yet.
+  noRooms,
+
+  /// Every room has been refilled today.
+  allDone,
+
+  /// There is at least one room left; see [DailyRefillProgress.nextPriorityRoomNumber].
+  hasPriority,
+}
+
 enum ApprovalStatus {
   pending('pending'),
   approved('approved'),

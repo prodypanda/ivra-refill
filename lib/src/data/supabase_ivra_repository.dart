@@ -1,13 +1,17 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/app_enums.dart';
 import '../domain/models.dart';
 import '../services/audit_service.dart';
+import '../utils/app_logger.dart';
+import '../utils/parse_utils.dart';
+import '../version.dart';
 import 'ivra_repository.dart';
+import 'offline/network_error_classifier.dart';
 
 class SupabaseIvraRepository implements IvraRepository {
   SupabaseIvraRepository(this._client) {
@@ -17,39 +21,186 @@ class SupabaseIvraRepository implements IvraRepository {
   final SupabaseClient _client;
   late final AuditService _auditService;
 
-  Future<T> _fetchWithCache<T>(String key, Future<T> Function() fetcher) async {
+  /// Schema version stamped into every cache envelope. Bump this whenever the
+  /// shape of any cached payload changes so entries written by older app
+  /// versions are treated as a miss instead of being misinterpreted.
+  ///
+  /// The effective cache version also incorporates the running [appVersion]
+  /// (see [_effectiveCacheVersion]): any app upgrade automatically invalidates
+  /// previously cached payloads, so a forgotten manual bump can no longer cause
+  /// a new build to misread an old cache shape.
+  static const int _cacheSchemaVersion = 1;
+
+  /// Per-resource schema versions. Each cached resource family carries its own
+  /// version so that changing the shape of ONE payload only invalidates that
+  /// resource's cache, instead of wiping every cached entry. Bump the integer
+  /// for a family whenever the shape of its cached payload changes.
+  ///
+  /// The key is the resource family derived from the cache key by
+  /// [_resourceFamily] (the cache key with any trailing `_<id>` suffix
+  /// stripped). Families not listed here fall back to [_cacheSchemaVersion].
+  static const Map<String, int> _resourceSchemaVersions = <String, int>{
+    // 'hotels': 1,
+    // 'current_user': 1,
+  };
+
+  /// Derives the resource family from a cache [key] by stripping a trailing
+  /// `_<id>` segment (e.g. `current_user_<uuid>` -> `current_user`). Keys with
+  /// no id suffix are returned unchanged. This lets per-resource versioning
+  /// apply across all rows of the same resource.
+  static String _resourceFamily(String key) {
+    final lastUnderscore = key.lastIndexOf('_');
+    if (lastUnderscore <= 0 || lastUnderscore == key.length - 1) return key;
+    // Treat the trailing segment as an id only when it is non-trivial (uuids,
+    // numeric ids, etc.). A short alpha suffix is kept as part of the family.
+    final suffix = key.substring(lastUnderscore + 1);
+    final looksLikeId = suffix.length >= 3 &&
+        RegExp(r'^[0-9a-fA-F-]+$').hasMatch(suffix);
+    return looksLikeId ? key.substring(0, lastUnderscore) : key;
+  }
+
+  /// The effective cache version for a given [key]. Combines the resource's own
+  /// schema version (falling back to [_cacheSchemaVersion]) with the build's
+  /// [appVersion]. Because the app version is still folded in, an app upgrade
+  /// is always safe; per-resource versions let a single payload-shape change be
+  /// invalidated in isolation without bumping the global namespace.
+  static String _effectiveCacheVersionFor(String key) {
+    final family = _resourceFamily(key);
+    final schema = _resourceSchemaVersions[family] ?? _cacheSchemaVersion;
+    return '$schema@$family@$appVersion';
+  }
+
+  /// Back-compat global cache version. Retained for call sites/tests that are
+  /// not scoped to a specific resource (e.g. the cache-envelope unit tests).
+  static String get _cacheVersion => '$_cacheSchemaVersion@$appVersion';
+
+  /// How long a cached offline read remains usable. Past this age the entry is
+  /// treated as a miss so we never serve arbitrarily stale data.
+  static const Duration _cacheMaxAge = Duration(hours: 24);
+  static const Duration _cacheOfflineMaxAge = Duration(days: 30);
+
+  /// Fetches [key] via [fetcher], caching successful results so they can be
+  /// served when the device is offline.
+  ///
+  /// Callers MUST provide a [decode] callback that turns the JSON-decoded cache
+  /// payload back into the expected `T`, and may provide [emptyFallback] to
+  /// return a safe default (e.g. an empty list) when the device is offline and
+  /// nothing has been cached yet. This replaces the previous, fragile approach
+  /// of inspecting `T.toString()`, which broke under minification/obfuscation
+  /// and with nested generics.
+  Future<T> _fetchWithCache<T>(
+    String key,
+    Future<T> Function() fetcher, {
+    required T Function(Object? decoded) decode,
+    T Function()? emptyFallback,
+  }) async {
     try {
       final data = await fetcher();
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('cache_$key', jsonEncode(data));
+      // Wrap the payload in a versioned, timestamped envelope so stale data can
+      // be expired and entries from incompatible schema versions can be
+      // discarded after an app upgrade.
+      final envelope = <String, dynamic>{
+        'v': _effectiveCacheVersionFor(key),
+        'ts': DateTime.now().millisecondsSinceEpoch,
+        'data': data,
+      };
+      await prefs.setString('cache_$key', jsonEncode(envelope));
       return data;
     } catch (e) {
-      if (e is SocketException ||
-          e.toString().contains('Failed host lookup') ||
-          e.toString().contains('ClientException') ||
-          e.toString().contains('XMLHttpRequest')) {
+      if (NetworkErrorClassifier.isOffline(e)) {
         final prefs = await SharedPreferences.getInstance();
         final cached = prefs.getString('cache_$key');
-        if (cached != null) {
-          final decoded = jsonDecode(cached);
-          if (decoded is List) {
-            return List<Map<String, dynamic>>.from(
-                decoded.map((x) => Map<String, dynamic>.from(x as Map))) as T;
-          } else if (decoded is Map) {
-            return Map<String, dynamic>.from(decoded) as T;
-          }
-          return decoded as T;
-        } else {
-          // If the cache is completely empty but we are offline,
-          // gracefully return an empty list if this query expects a list!
-          // This prevents terrifying red crash screens on un-cached pages.
-          if (T.toString().startsWith('List<')) {
-            return <Map<String, dynamic>>[] as T;
-          }
+        final payload = _readCacheEnvelope(
+          cached,
+          expectedVersion: _effectiveCacheVersionFor(key),
+          maxAge: _cacheOfflineMaxAge,
+        );
+        if (payload != null) {
+          return decode(payload);
+        }
+        // The cache is missing/expired/incompatible but we are offline. Return
+        // a safe default when the caller provided one (typically an empty list)
+        // to avoid crash screens on un-cached pages.
+        if (emptyFallback != null) {
+          return emptyFallback();
         }
       }
       rethrow;
     }
+  }
+
+  /// Parses a stored cache string and returns the inner payload only when the
+  /// envelope is present, the schema version matches [expectedVersion]
+  /// (defaulting to the global [_cacheVersion]), and the entry is no older than
+  /// [maxAge] (defaulting to [_cacheMaxAge]). Returns `null` for a cache miss:
+  /// missing entry, legacy format, version mismatch, or expired entry.
+  static Object? _readCacheEnvelope(String? cached,
+      {String? expectedVersion, Duration? maxAge}) {
+    final wantVersion = expectedVersion ?? _cacheVersion;
+    if (cached == null) return null;
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(cached);
+    } catch (_) {
+      return null;
+    }
+    if (decoded is! Map) return null;
+    if (!decoded.containsKey('v') ||
+        !decoded.containsKey('ts') ||
+        !decoded.containsKey('data')) {
+      return null;
+    }
+    final version = decoded['v'];
+    if (version is! String || version != wantVersion) return null;
+    final ts = decoded['ts'];
+    if (ts is! int) return null;
+    final ageMillis = DateTime.now().millisecondsSinceEpoch - ts;
+    final limit = maxAge ?? _cacheMaxAge;
+    if (ageMillis < 0 || ageMillis > limit.inMilliseconds) return null;
+    return decoded['data'];
+  }
+
+  /// Schema version stamped into cache envelopes. Exposed for tests so they can
+  /// construct version-matching (and mismatching) envelopes.
+  @visibleForTesting
+  static String get cacheVersion => _cacheVersion;
+
+  /// Maximum age of a usable cache entry. Exposed for tests.
+  @visibleForTesting
+  static Duration get cacheMaxAge => _cacheMaxAge;
+
+  /// Maximum age of a usable offline cache entry. Exposed for tests.
+  @visibleForTesting
+  static Duration get cacheOfflineMaxAge => _cacheOfflineMaxAge;
+
+  /// Test-only wrapper around [_readCacheEnvelope].
+  @visibleForTesting
+  static Object? readCacheEnvelopeForTest(String? cached,
+          {String? expectedVersion, Duration? maxAge}) =>
+      _readCacheEnvelope(cached, expectedVersion: expectedVersion, maxAge: maxAge);
+
+  /// Test-only accessor for the per-resource effective cache version.
+  @visibleForTesting
+  static String effectiveCacheVersionForTest(String key) =>
+      _effectiveCacheVersionFor(key);
+
+  /// Decodes a cached JSON payload into a `List<Map<String, dynamic>>`.
+  static List<Map<String, dynamic>> _decodeMapList(Object? decoded) {
+    if (decoded is List) {
+      return decoded
+          .map((x) => Map<String, dynamic>.from(x as Map))
+          .toList(growable: false);
+    }
+    throw StateError('Cached JSON payload is not a List (got ${decoded.runtimeType}).');
+  }
+
+  /// Decodes a cached JSON payload into a `Map<String, dynamic>`.
+  static Map<String, dynamic> _decodeMap(Object? decoded) {
+    if (decoded is Map) {
+      return Map<String, dynamic>.from(decoded);
+    }
+    throw StateError('Cached JSON payload is not a Map (got ${decoded.runtimeType}).');
   }
 
   @override
@@ -87,6 +238,7 @@ class SupabaseIvraRepository implements IvraRepository {
     Future<Map<String, dynamic>> fetch() => _fetchWithCache(
           'current_user_$userId',
           () => _client.from('profiles').select().eq('id', userId).single(),
+          decode: _decodeMap,
         );
     try {
       return await fetch();
@@ -104,25 +256,11 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   bool _isRetriableProfileError(Object error) {
-    if (error is AuthException) return true;
-    final raw = error.toString();
-    // A genuine "no profile row" is not retriable.
-    if (raw.contains('PGRST116') ||
-        raw.contains('contains 0 rows') ||
-        raw.contains('multiple (or no) rows')) {
+    // A genuine "no profile row" (PGRST116) is not retriable.
+    if (error is PostgrestException && error.code == 'PGRST116') {
       return false;
     }
-    return raw.contains('JWT') ||
-        raw.contains('PGRST301') ||
-        raw.contains('token is expired') ||
-        raw.contains('SocketException') ||
-        raw.contains('Failed host lookup') ||
-        raw.contains('ClientException') ||
-        raw.contains('XMLHttpRequest') ||
-        raw.contains('Failed to fetch') ||
-        raw.contains('Connection') ||
-        raw.contains('timeout') ||
-        raw.contains('timed out');
+    return NetworkErrorClassifier.isRetriable(error);
   }
 
   @override
@@ -130,7 +268,10 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.rpc('update_current_profile', params: {
       'p_full_name': fullName,
     });
-      _auditService.logAction('Updated current user profile', details: {'full_name': fullName});
+    await _auditService.logAction(
+      'Updated current user profile',
+      details: {'full_name': fullName},
+    );
   }
 
   @override
@@ -141,17 +282,13 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.from('profiles').update({
       'full_name': fullName,
     }).eq('id', userId);
-      _auditService.logAction('Updated user profile', details: {'user_id': userId, 'full_name': fullName});
+      await _auditService.logAction('Updated user profile', details: {'user_id': userId, 'full_name': fullName});
   }
 
   @override
   Future<void> changeCurrentUserPassword({required String password}) async {
     await _client.auth.updateUser(UserAttributes(password: password));
-  }
-
-  @override
-  Future<void> switchDemoUser({required String userId}) {
-    throw UnsupportedError('Demo user switching is not available.');
+    await _auditService.logAction('Changed current user password');
   }
 
   @override
@@ -165,15 +302,16 @@ class SupabaseIvraRepository implements IvraRepository {
       () => _client
           .rpc('dashboard_metrics', params: params.isNotEmpty ? params : null)
           .single(),
+      decode: _decodeMap,
     );
 
     return DashboardMetrics(
-      hotelCount: data['hotel_count'] as int,
-      roomCount: data['room_count'] as int,
-      pendingApprovals: data['pending_approvals'] as int,
-      openAlerts: data['open_alerts'] as int,
-      bottlesToReplace: data['bottles_to_replace'] as int,
-      lowStockProducts: data['low_stock_products'] as int,
+      hotelCount: asInt(data['hotel_count']),
+      roomCount: asInt(data['room_count']),
+      pendingApprovals: asInt(data['pending_approvals']),
+      openAlerts: asInt(data['open_alerts']),
+      bottlesToReplace: asInt(data['bottles_to_replace']),
+      lowStockProducts: asInt(data['low_stock_products']),
     );
   }
 
@@ -182,6 +320,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'hotels',
       () => _client.from('hotel_summaries').select().order('name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<Hotel>((row) => Hotel.fromMap(row)).toList();
   }
@@ -195,6 +335,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'team_members_${hotelId ?? 'all'}',
       () => query.order('full_name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<UserProfile>((row) => UserProfile.fromMap(row)).toList();
   }
@@ -206,6 +348,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'team_invitations_${hotelId ?? 'all'}',
       () => query.eq('status', 'pending').order('created_at', ascending: false),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows
         .map<TeamInvitation>((row) => TeamInvitation.fromMap(row))
@@ -217,6 +361,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'audit_logs',
       () => _client.from('audit_logs').select().order('created_at', ascending: false).limit(200),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<AuditLog>((row) => AuditLog.fromMap(row)).toList();
   }
@@ -232,6 +378,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'products',
       () => _client.from('products').select().order('default_name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<Product>((row) => Product.fromMap(row)).toList();
   }
@@ -243,6 +391,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'rooms_${hotelId ?? 'all'}',
       () => query.order('floor_number').order('room_number'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<RoomInfo>((row) => RoomInfo.fromMap(row)).toList();
   }
@@ -258,6 +408,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'room_products_${hotelId ?? 'all'}_${roomId ?? 'all'}',
       () => query.order('room_number'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<RoomProduct>(_roomProductFromMap).toList();
   }
@@ -269,6 +421,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'inventory_${hotelId ?? 'all'}',
       () => query.order('product_name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<InventoryItem>(_inventoryFromMap).toList();
   }
@@ -280,6 +434,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'suggested_orders_${hotelId ?? 'all'}',
       () => query.order('product_name'),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<SuggestedOrder>(_suggestedOrderFromMap).toList();
   }
@@ -294,6 +450,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'approval_requests_${hotelId ?? 'all'}',
       () => query.order('requested_at', ascending: false),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<ApprovalRequest>(_approvalFromMap).toList();
   }
@@ -305,6 +463,8 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'alerts_${hotelId ?? 'all'}',
       () => query.order('created_at', ascending: false),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<AlertItem>(_alertFromMap).toList();
   }
@@ -316,8 +476,50 @@ class SupabaseIvraRepository implements IvraRepository {
     final rows = await _fetchWithCache(
       'recent_refill_events_${hotelId ?? 'all'}',
       () => query.order('occurred_at', ascending: false).limit(500),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
     );
     return rows.map<RefillEvent>(_refillEventFromMap).toList();
+  }
+
+  @override
+  Future<Set<String>> appliedClientRequestIds({String? hotelId}) async {
+    final ids = <String>{};
+
+    Future<void> collect(String table, String cacheKey) async {
+      try {
+        var query = _client
+            .from(table)
+            .select('client_request_id')
+            .not('client_request_id', 'is', null);
+        if (hotelId != null) query = query.eq('hotel_id', hotelId);
+        final rows = await _fetchWithCache(
+          'applied_request_ids_${cacheKey}_${hotelId ?? 'all'}',
+          () => query,
+          decode: _decodeMapList,
+          emptyFallback: () => const <Map<String, dynamic>>[],
+        );
+        for (final row in rows) {
+          final value = row['client_request_id'];
+          if (value is String && value.isNotEmpty) ids.add(value);
+        }
+      } catch (e, st) {
+        // Reconciliation is best-effort and MUST NOT throw: if we cannot reach
+        // the server (e.g. genuinely offline), we fall back to overlaying
+        // everything so the offline-first UX is preserved. Persistent failures
+        // are still routed to the logging sink so they are observable instead
+        // of silently swallowed.
+        AppLogger.error(
+          e,
+          stackTrace: st,
+          context: 'appliedClientRequestIds reconcile failed for $table',
+        );
+      }
+    }
+
+    await collect('refill_events', 'refill_events');
+    await collect('inventory_events', 'inventory_events');
+    return ids;
   }
 
   @override
@@ -343,43 +545,43 @@ class SupabaseIvraRepository implements IvraRepository {
       'address': address,
       'notes': notes,
     });
-    _auditService.logAction('Created hotel', details: {'name': name});
+    await _auditService.logAction('Created hotel', details: {'name': name});
   }
 
   @override
   Future<void> deleteHotel(String hotelId) async {
     await _client.from('hotels').delete().eq('id', hotelId);
-    _auditService.logAction('Deleted hotel', details: {'hotel_id': hotelId});
+    await _auditService.logAction('Deleted hotel', details: {'hotel_id': hotelId});
   }
 
   @override
   Future<void> deleteRoom(String roomId) async {
     await _client.from('rooms').delete().eq('id', roomId);
-    _auditService.logAction('Deleted room', details: {'room_id': roomId});
+    await _auditService.logAction('Deleted room', details: {'room_id': roomId});
   }
 
   @override
   Future<void> deleteFloor(String floorId) async {
     await _client.from('floors').delete().eq('id', floorId);
-    _auditService.logAction('Deleted floor', details: {'floor_id': floorId});
+    await _auditService.logAction('Deleted floor', details: {'floor_id': floorId});
   }
 
   @override
   Future<void> deleteUser(String userId) async {
     await _client.rpc('delete_user', params: {'target_user_id': userId});
-    _auditService.logAction('Deleted user', details: {'user_id': userId});
+    await _auditService.logAction('Deleted user', details: {'user_id': userId});
   }
 
   @override
   Future<void> deleteAlert(String alertId) async {
     await _client.from('alerts').delete().eq('id', alertId);
-    _auditService.logAction('Deleted alert', details: {'alert_id': alertId});
+    await _auditService.logAction('Deleted alert', details: {'alert_id': alertId});
   }
 
   @override
   Future<void> deleteProduct(String productId) async {
     await _client.from('products').delete().eq('id', productId);
-    _auditService.logAction('Deleted product', details: {'product_id': productId});
+    await _auditService.logAction('Deleted product', details: {'product_id': productId});
   }
 
   @override
@@ -397,7 +599,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_room_count': roomCount,
       'p_product_ids': productIds,
     });
-    _auditService.logAction('Created rooms from template', details: {'hotel_id': hotelId, 'floor_number': floorNumber, 'room_count': roomCount});
+    await _auditService.logAction('Created rooms from template', details: {'hotel_id': hotelId, 'floor_number': floorNumber, 'room_count': roomCount});
   }
 
   @override
@@ -414,7 +616,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_hotel_id': hotelId,
     });
     
-    _auditService.logAction('Invited team member', details: {
+    await _auditService.logAction('Invited team member', details: {
       'email': email,
       'role': role,
       'hotel_id': hotelId,
@@ -442,7 +644,7 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.rpc('accept_team_invitation', params: {
       'p_token': token,
     });
-    _auditService.logAction('Accepted team invitation', details: {});
+    await _auditService.logAction('Accepted team invitation', details: {});
   }
 
   @override
@@ -450,7 +652,7 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.rpc('cancel_team_invitation', params: {
       'p_invitation_id': invitationId,
     });
-    _auditService.logAction('Canceled team invitation', details: {'invitation_id': invitationId});
+    await _auditService.logAction('Canceled team invitation', details: {'invitation_id': invitationId});
   }
 
   @override
@@ -458,7 +660,7 @@ class SupabaseIvraRepository implements IvraRepository {
     await _client.rpc('resend_team_invitation', params: {
       'p_invitation_id': invitationId,
     });
-    _auditService.logAction('Resent team invitation', details: {'invitation_id': invitationId});
+    await _auditService.logAction('Resent team invitation', details: {'invitation_id': invitationId});
   }
 
   @override
@@ -471,7 +673,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_is_active': isActive,
     });
     
-    _auditService.logAction('Set team member active status', details: {
+    await _auditService.logAction('Set team member active status', details: {
       'user_id': userId,
       'is_active': isActive,
     });
@@ -511,7 +713,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'bottle_type': bottleType.value,
       'refill_type': refillType.value,
     });
-    _auditService.logAction('Created product', details: {'sku': sku});
+    await _auditService.logAction('Created product', details: {'sku': sku});
   }
 
   @override
@@ -549,7 +751,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'bottle_type': bottleType.value,
       'refill_type': refillType.value,
     }).eq('id', productId);
-    _auditService.logAction('Updated product', details: {'product_id': productId});
+    await _auditService.logAction('Updated product', details: {'product_id': productId});
   }
 
   @override
@@ -563,7 +765,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_notes': notes,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Recorded refill', details: {'room_product_id': roomProductId});
+    await _auditService.logAction('Recorded refill', details: {'room_product_id': roomProductId});
   }
 
   @override
@@ -575,7 +777,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_refill_event_id': refillEventId,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Undid refill', details: {'refill_event_id': refillEventId});
+    await _auditService.logAction('Undid refill', details: {'refill_event_id': refillEventId});
   }
 
   @override
@@ -589,7 +791,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_reason': reason,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Requested stock correction', details: {'refill_event_id': refillEventId});
+    await _auditService.logAction('Requested stock correction', details: {'refill_event_id': refillEventId});
   }
 
   @override
@@ -603,7 +805,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_notes': notes,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Replaced bottle', details: {'room_product_id': roomProductId});
+    await _auditService.logAction('Replaced bottle', details: {'room_product_id': roomProductId});
   }
 
   @override
@@ -626,7 +828,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_new_data': newData,
       'p_client_request_id': clientRequestId,
     }).then((value) => value?.toString());
-    _auditService.logAction('Submitted change request', details: {
+    await _auditService.logAction('Submitted change request', details: {
       'target_table': targetTable, 
       'target_id': targetId
     });
@@ -656,7 +858,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_reason': reason,
       'p_client_request_id': clientRequestId,
     });
-    _auditService.logAction('Recorded stock adjustment', details: {'hotel_id': hotelId, 'product_id': productId});
+    await _auditService.logAction('Recorded stock adjustment', details: {'hotel_id': hotelId, 'product_id': productId});
   }
 
   @override
@@ -669,7 +871,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_notes': notes,
     });
     
-    _auditService.logAction('Approved change request', details: {
+    await _auditService.logAction('Approved change request', details: {
       'request_id': approvalRequestId,
     });
   }
@@ -683,7 +885,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_request_id': approvalRequestId,
       'p_notes': notes,
     });
-    _auditService.logAction('Rejected change request', details: {'request_id': approvalRequestId});
+    await _auditService.logAction('Rejected change request', details: {'request_id': approvalRequestId});
   }
 
   @override
@@ -691,9 +893,16 @@ class SupabaseIvraRepository implements IvraRepository {
     final result = await _client.rpc('refresh_smart_alerts', params: {
       'p_hotel_id': hotelId,
     });
-    if (result is int) return result;
-    if (result is num) return result.toInt();
-    return int.tryParse('$result') ?? 0;
+    final created = switch (result) {
+      int value => value,
+      num value => value.toInt(),
+      _ => int.tryParse('$result') ?? 0,
+    };
+    await _auditService.logAction('Refreshed smart alerts', details: {
+      'hotel_id': hotelId,
+      'created_count': created,
+    });
+    return created;
   }
 
   @override
@@ -702,7 +911,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_alert_id': alertId,
     });
     
-    _auditService.logAction('Resolved alert', details: {
+    await _auditService.logAction('Resolved alert', details: {
       'alert_id': alertId,
     });
   }
@@ -713,10 +922,27 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_user_id': userId,
     });
     if (rows is! List) return [];
+
+    // The RPC only returns ids/names. Enrich with the full hotel rows the app
+    // already exposes via hotels() (backed by the hotel_summaries view) so
+    // city/country/contact/etc. are populated, while preserving the RPC's
+    // order. If an id isn't present in hotels() (or hotels() fails), fall back
+    // to a minimal Hotel so nothing is dropped.
+    Map<String, Hotel> fullById = const {};
+    try {
+      final all = await hotels();
+      fullById = {for (final hotel in all) hotel.id: hotel};
+    } catch (_) {
+      // Best-effort enrichment: fall back to minimal Hotels below.
+    }
+
     return rows.map<Hotel>((row) {
       final map = Map<String, dynamic>.from(row as Map);
+      final id = map['hotel_id'] as String;
+      final full = fullById[id];
+      if (full != null) return full;
       return Hotel(
-        id: map['hotel_id'] as String,
+        id: id,
         name: (map['hotel_name'] ?? '') as String,
         city: '',
         country: '',
@@ -738,7 +964,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_user_id': userId,
       'p_hotel_id': hotelId,
     });
-    _auditService.logAction('Assigned user to hotel', details: {'user_id': userId, 'hotel_id': hotelId});
+    await _auditService.logAction('Assigned user to hotel', details: {'user_id': userId, 'hotel_id': hotelId});
   }
 
   @override
@@ -750,22 +976,20 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_user_id': userId,
       'p_hotel_id': hotelId,
     });
-    _auditService.logAction('Unassigned user from hotel', details: {'user_id': userId, 'hotel_id': hotelId});
+    await _auditService.logAction('Unassigned user from hotel', details: {'user_id': userId, 'hotel_id': hotelId});
   }
 
   RoomProduct _roomProductFromMap(Map<String, dynamic> map) {
     return RoomProduct(
-      id: map['id'] as String,
-      hotelId: map['hotel_id'] as String,
-      roomId: map['room_id'] as String,
-      roomNumber: (map['room_number'] ?? '') as String,
-      floorNumber: (map['floor_number'] ?? 0) as int,
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
+      roomId: asString(map['room_id']),
+      roomNumber: asString(map['room_number']),
+      floorNumber: asInt(map['floor_number']),
       product: _joinedProductFromMap(map),
-      refillCount: (map['refill_count'] ?? 0) as int,
-      lastRefillAt: map['last_refill_at'] == null
-          ? null
-          : DateTime.parse(map['last_refill_at'] as String),
-      bottleStartedAt: DateTime.parse(map['bottle_started_at'] as String),
+      refillCount: asInt(map['refill_count']),
+      lastRefillAt: asNullableDateTime(map['last_refill_at']),
+      bottleStartedAt: asDateTime(map['bottle_started_at']),
       status: BottleStatus.values.firstWhere(
         (item) => item.value == map['status'],
         orElse: () => BottleStatus.active,
@@ -775,96 +999,97 @@ class SupabaseIvraRepository implements IvraRepository {
 
   InventoryItem _inventoryFromMap(Map<String, dynamic> map) {
     return InventoryItem(
-      id: map['id'] as String,
-      hotelId: map['hotel_id'] as String,
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
       product: _joinedProductFromMap(map),
-      fullBottles: (map['full_bottles'] ?? 0) as int,
-      emptyBottles: (map['empty_bottles'] ?? 0) as int,
-      fullBidons: (map['full_bidons'] ?? 0) as int,
-      openBidons: (map['open_bidons'] ?? 0) as int,
-      emptyBidons: (map['empty_bidons'] ?? 0) as int,
+      fullBottles: asInt(map['full_bottles']),
+      emptyBottles: asInt(map['empty_bottles']),
+      fullBidons: asInt(map['full_bidons']),
+      openBidons: asInt(map['open_bidons']),
+      emptyBidons: asInt(map['empty_bidons']),
     );
   }
 
   SuggestedOrder _suggestedOrderFromMap(Map<String, dynamic> map) {
     return SuggestedOrder(
-      hotelId: map['hotel_id'] as String,
+      hotelId: asString(map['hotel_id']),
       product: _joinedProductFromMap(map),
-      bottlesToOrder: (map['bottles_to_order'] ?? 0) as int,
-      bidonsToOrder: (map['bidons_to_order'] ?? 0) as int,
-      bottlesToRecycle: (map['bottles_to_recycle'] ?? 0) as int,
+      bottlesToOrder: asInt(map['bottles_to_order']),
+      bidonsToOrder: asInt(map['bidons_to_order']),
+      bottlesToRecycle: asInt(map['bottles_to_recycle']),
     );
   }
 
   ApprovalRequest _approvalFromMap(Map<String, dynamic> map) {
     return ApprovalRequest(
-      id: map['id'] as String,
-      hotelId: map['hotel_id'] as String,
-      title: (map['title'] ?? '') as String,
-      targetId: map['target_id'] as String?,
-      targetTable: (map['target_table'] ?? '') as String,
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
+      title: asString(map['title']),
+      targetId: asNullableString(map['target_id']),
+      targetTable: asString(map['target_table']),
       status: ApprovalStatus.values.firstWhere(
         (item) => item.value == map['status'],
         orElse: () => ApprovalStatus.pending,
       ),
-      requestedByName: (map['requested_by_name'] ?? '') as String,
-      requestedAt: DateTime.parse(map['requested_at'] as String),
-      oldValue: (map['old_value'] ?? '') as String,
-      newValue: (map['new_value'] ?? '') as String,
-      oldData: Map<String, dynamic>.from((map['old_data'] ?? const {}) as Map),
-      newData: Map<String, dynamic>.from((map['new_data'] ?? const {}) as Map),
+      requestedByName: asString(map['requested_by_name']),
+      requestedAt: asDateTime(map['requested_at']),
+      oldValue: asString(map['old_value']),
+      newValue: asString(map['new_value']),
+      oldData: asStringMap(map['old_data']),
+      newData: asStringMap(map['new_data']),
     );
   }
 
   AlertItem _alertFromMap(Map<String, dynamic> map) {
     return AlertItem(
-      id: map['id'] as String,
-      hotelId: map['hotel_id'] as String,
-      roomProductId: map['room_product_id'] as String?,
-      productId: map['product_id'] as String?,
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
+      roomProductId: asNullableString(map['room_product_id']),
+      productId: asNullableString(map['product_id']),
       type: AlertType.values.firstWhere(
         (item) => item.value == map['alert_type'],
         orElse: () => AlertType.pendingApproval,
       ),
-      severity: (map['severity'] ?? 1) as int,
-      title: (map['title'] ?? '') as String,
-      body: (map['body'] ?? '') as String,
-      createdAt: DateTime.parse(map['created_at'] as String),
-      isResolved: (map['is_resolved'] ?? false) as bool,
+      severity: asInt(map['severity'], fallback: 1),
+      title: asString(map['title']),
+      body: asString(map['body']),
+      createdAt: asDateTime(map['created_at']),
+      isResolved: asBool(map['is_resolved']),
     );
   }
 
   RefillEvent _refillEventFromMap(Map<String, dynamic> map) {
     return RefillEvent(
-      id: map['id'] as String,
-      roomProductId: map['room_product_id'] as String,
+      id: asString(map['id']),
+      roomProductId: asString(map['room_product_id']),
       type: RefillEventType.values.firstWhere(
         (item) => item.value == map['event_type'],
         orElse: () => RefillEventType.refill,
       ),
-      previousRefillCount: (map['previous_refill_count'] ?? 0) as int,
-      newRefillCount: (map['new_refill_count'] ?? 0) as int,
-      occurredAt: DateTime.parse(map['occurred_at'] as String),
-      performedBy: map['performed_by'] as String,
-      notes: map['notes'] as String?,
+      previousRefillCount: asInt(map['previous_refill_count']),
+      newRefillCount: asInt(map['new_refill_count']),
+      occurredAt: asDateTime(map['occurred_at']),
+      performedBy: asString(map['performed_by']),
+      notes: asNullableString(map['notes']),
+      clientRequestId: asNullableString(map['client_request_id']),
     );
   }
 
   Product _joinedProductFromMap(Map<String, dynamic> map) {
     return Product(
-      id: map['product_id'] as String,
-      sku: (map['sku'] ?? '') as String,
-      nameEn: (map['name_en'] ?? '') as String,
-      nameFr: (map['name_fr'] ?? '') as String,
-      nameAr: (map['name_ar'] ?? '') as String,
-      nameIt: (map['name_it'] ?? map['name_en'] ?? '') as String,
-      bottleVolumeMl: (map['bottle_volume_ml'] ?? 1000) as int,
-      bidonVolumeMl: (map['bidon_volume_ml'] ?? 5000) as int,
-      maxRefillCount: (map['max_refill_count'] ?? 0) as int,
-      maxBottleAgeDays: (map['max_bottle_age_days'] ?? 0) as int,
-      lowBottleThreshold: (map['low_bottle_threshold'] ?? 0) as int,
-      lowBidonThreshold: (map['low_bidon_threshold'] ?? 0) as int,
-      imageUrl: map['image_url'] as String?,
+      id: asString(map['product_id']),
+      sku: asString(map['sku']),
+      nameEn: asString(map['name_en']),
+      nameFr: asString(map['name_fr']),
+      nameAr: asString(map['name_ar']),
+      nameIt: asString(map['name_it'], fallback: asString(map['name_en'])),
+      bottleVolumeMl: asInt(map['bottle_volume_ml'], fallback: 1000),
+      bidonVolumeMl: asInt(map['bidon_volume_ml'], fallback: 5000),
+      maxRefillCount: asInt(map['max_refill_count']),
+      maxBottleAgeDays: asInt(map['max_bottle_age_days']),
+      lowBottleThreshold: asInt(map['low_bottle_threshold']),
+      lowBidonThreshold: asInt(map['low_bidon_threshold']),
+      imageUrl: asNullableString(map['image_url']),
     );
   }
 }

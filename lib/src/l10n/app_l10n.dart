@@ -1,0 +1,3373 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart' as intl;
+
+import 'app_l10n_ar.dart';
+import 'app_l10n_en.dart';
+import 'app_l10n_fr.dart';
+import 'app_l10n_it.dart';
+
+// ignore_for_file: type=lint
+
+/// Callers can lookup localized strings with an instance of AppL10n
+/// returned by `AppL10n.of(context)`.
+///
+/// Applications need to include `AppL10n.delegate()` in their app's
+/// `localizationDelegates` list, and the locales they support in the app's
+/// `supportedLocales` list. For example:
+///
+/// ```dart
+/// import 'l10n/app_l10n.dart';
+///
+/// return MaterialApp(
+///   localizationsDelegates: AppL10n.localizationsDelegates,
+///   supportedLocales: AppL10n.supportedLocales,
+///   home: MyApplicationHome(),
+/// );
+/// ```
+///
+/// ## Update pubspec.yaml
+///
+/// Please make sure to update your pubspec.yaml to include the following
+/// packages:
+///
+/// ```yaml
+/// dependencies:
+///   # Internationalization support.
+///   flutter_localizations:
+///     sdk: flutter
+///   intl: any # Use the pinned version from flutter_localizations
+///
+///   # Rest of dependencies
+/// ```
+///
+/// ## iOS Applications
+///
+/// iOS applications define key application metadata, including supported
+/// locales, in an Info.plist file that is built into the application bundle.
+/// To configure the locales supported by your app, you’ll need to edit this
+/// file.
+///
+/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
+/// Then, in the Project Navigator, open the Info.plist file under the Runner
+/// project’s Runner folder.
+///
+/// Next, select the Information Property List item, select Add Item from the
+/// Editor menu, then select Localizations from the pop-up menu.
+///
+/// Select and expand the newly-created Localizations item then, for each
+/// locale your application supports, add a new item and select the locale
+/// you wish to add from the pop-up menu in the Value field. This list should
+/// be consistent with the languages listed in the AppL10n.supportedLocales
+/// property.
+abstract class AppL10n {
+  AppL10n(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+
+  final String localeName;
+
+  static AppL10n of(BuildContext context) {
+    return Localizations.of<AppL10n>(context, AppL10n)!;
+  }
+
+  static const LocalizationsDelegate<AppL10n> delegate = _AppL10nDelegate();
+
+  /// A list of this localizations delegate along with the default localizations
+  /// delegates.
+  ///
+  /// Returns a list of localizations delegates containing this delegate along with
+  /// GlobalMaterialLocalizations.delegate, GlobalCupertinoLocalizations.delegate,
+  /// and GlobalWidgetsLocalizations.delegate.
+  ///
+  /// Additional delegates can be added by appending to this list in
+  /// MaterialApp. This list does not have to be used at all if a custom list
+  /// of delegates is preferred or required.
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
+
+  /// A list of this localizations delegate's supported locales.
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('fr'),
+    Locale('ar'),
+    Locale('it')
+  ];
+
+  /// No description provided for @markAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Read'**
+  String get markAsRead;
+
+  /// No description provided for @confirmDeleteHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the hotel \'{hotelName}\'? This action is permanent, cannot be undone, and will permanently remove all associated rooms, staff assignments, and records.'**
+  String confirmDeleteHotel(String hotelName);
+
+  /// No description provided for @confirmDeleteRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete room \'{roomNumber}\'? This action is permanent, cannot be undone, and will permanently remove all associated products and history.'**
+  String confirmDeleteRoom(String roomNumber);
+
+  /// No description provided for @confirmDeleteFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete floor \'{floorNumber}\' and all of its rooms? This action is permanent and cannot be undone.'**
+  String confirmDeleteFloor(String floorNumber);
+
+  /// No description provided for @confirmDeleteUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.'**
+  String confirmDeleteUser(String userName);
+
+  /// No description provided for @confirmDeleteProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete product \'{productName}\'? This action is permanent, cannot be undone, and will affect inventory tracking.'**
+  String confirmDeleteProduct(String productName);
+
+  /// No description provided for @confirmDeleteAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this alert? This action is permanent and cannot be undone.'**
+  String get confirmDeleteAlert;
+
+  /// No description provided for @confirmDeleteAllAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all alerts? This action is permanent, cannot be undone, and will clear all current notifications.'**
+  String get confirmDeleteAllAlerts;
+
+  /// No description provided for @clearAuditLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Logs'**
+  String get clearAuditLogs;
+
+  /// No description provided for @confirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Action'**
+  String get confirmAction;
+
+  /// No description provided for @confirmClearLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear all audit logs? This action is permanent and cannot be undone.'**
+  String get confirmClearLogs;
+
+  /// No description provided for @btnConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get btnConfirm;
+
+  /// No description provided for @composeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Compose Message'**
+  String get composeMessage;
+
+  /// No description provided for @notificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Title'**
+  String get notificationTitle;
+
+  /// No description provided for @notificationDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Notification'**
+  String get notificationDefaultTitle;
+
+  /// No description provided for @notificationChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'High Importance Notifications'**
+  String get notificationChannelName;
+
+  /// No description provided for @notificationChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'This channel is used for important notifications.'**
+  String get notificationChannelDescription;
+
+  /// No description provided for @notificationTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. New Feature Alert!'**
+  String get notificationTitleHint;
+
+  /// No description provided for @notificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Body'**
+  String get notificationBody;
+
+  /// No description provided for @notificationBodyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the message here...'**
+  String get notificationBodyHint;
+
+  /// No description provided for @actionButtons.
+  ///
+  /// In en, this message translates to:
+  /// **'Action Buttons'**
+  String get actionButtons;
+
+  /// No description provided for @actionButtonsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Dismiss, Open App'**
+  String get actionButtonsHint;
+
+  /// No description provided for @pageToOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Page to open'**
+  String get pageToOpen;
+
+  /// No description provided for @menuSendPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Push'**
+  String get menuSendPush;
+
+  /// No description provided for @actionAndRouting.
+  ///
+  /// In en, this message translates to:
+  /// **'Action & Routing'**
+  String get actionAndRouting;
+
+  /// No description provided for @openSpecificPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Specific Page (Optional)'**
+  String get openSpecificPage;
+
+  /// No description provided for @defaultNoPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Default (No specific page)'**
+  String get defaultNoPage;
+
+  /// No description provided for @dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
+
+  /// No description provided for @inventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory'**
+  String get inventory;
+
+  /// No description provided for @alerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get alerts;
+
+  /// No description provided for @approvals.
+  ///
+  /// In en, this message translates to:
+  /// **'Approvals'**
+  String get approvals;
+
+  /// No description provided for @actionButtonsAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Action Buttons (Android Only)'**
+  String get actionButtonsAndroid;
+
+  /// No description provided for @dismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get dismiss;
+
+  /// No description provided for @acknowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge'**
+  String get acknowledge;
+
+  /// No description provided for @openApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Open App'**
+  String get openApp;
+
+  /// No description provided for @sendNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Notification'**
+  String get sendNotification;
+
+  /// No description provided for @targetAudience.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Audience'**
+  String get targetAudience;
+
+  /// No description provided for @allUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'All Users'**
+  String get allUsers;
+
+  /// No description provided for @byRole.
+  ///
+  /// In en, this message translates to:
+  /// **'By Role'**
+  String get byRole;
+
+  /// No description provided for @byHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'By Hotel'**
+  String get byHotel;
+
+  /// No description provided for @byUserEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'By User Email'**
+  String get byUserEmail;
+
+  /// No description provided for @selectRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Role'**
+  String get selectRole;
+
+  /// No description provided for @selectHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Hotel'**
+  String get selectHotel;
+
+  /// No description provided for @userEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'User Email'**
+  String get userEmail;
+
+  /// No description provided for @menuAuditLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit Logs'**
+  String get menuAuditLogs;
+
+  /// No description provided for @auditLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit Logs'**
+  String get auditLogs;
+
+  /// No description provided for @auditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get auditAction;
+
+  /// No description provided for @auditDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Device / OS'**
+  String get auditDevice;
+
+  /// No description provided for @auditIpAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'IP Address'**
+  String get auditIpAddress;
+
+  /// No description provided for @auditTimestamp.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get auditTimestamp;
+
+  /// No description provided for @auditUser.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get auditUser;
+
+  /// No description provided for @enterSpecificUserEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter specific user email'**
+  String get enterSpecificUserEmail;
+
+  /// No description provided for @dispatchNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatch Notification'**
+  String get dispatchNotification;
+
+  /// No description provided for @pleaseEnterTitleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title and body'**
+  String get pleaseEnterTitleBody;
+
+  /// No description provided for @pleaseSelectTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a target value'**
+  String get pleaseSelectTarget;
+
+  /// No description provided for @notificationSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent: {successCount} success, {failureCount} failed'**
+  String notificationSent(String successCount, String failureCount);
+
+  /// No description provided for @dashboardShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboardShort;
+
+  /// No description provided for @dashboardHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today at Ivra'**
+  String get dashboardHeroTitle;
+
+  /// No description provided for @dashboardRefillActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Activity (Last 7 Days)'**
+  String get dashboardRefillActivity;
+
+  /// No description provided for @refillActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Activity'**
+  String get refillActivity;
+
+  /// No description provided for @last7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get last7Days;
+
+  /// No description provided for @lastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month'**
+  String get lastMonth;
+
+  /// No description provided for @lastYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Last year'**
+  String get lastYear;
+
+  /// No description provided for @allHotels.
+  ///
+  /// In en, this message translates to:
+  /// **'All Hotels'**
+  String get allHotels;
+
+  /// No description provided for @monthJan.
+  ///
+  /// In en, this message translates to:
+  /// **'Jan'**
+  String get monthJan;
+
+  /// No description provided for @monthFeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Feb'**
+  String get monthFeb;
+
+  /// No description provided for @monthMar.
+  ///
+  /// In en, this message translates to:
+  /// **'Mar'**
+  String get monthMar;
+
+  /// No description provided for @monthApr.
+  ///
+  /// In en, this message translates to:
+  /// **'Apr'**
+  String get monthApr;
+
+  /// No description provided for @monthMay.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get monthMay;
+
+  /// No description provided for @monthJun.
+  ///
+  /// In en, this message translates to:
+  /// **'Jun'**
+  String get monthJun;
+
+  /// No description provided for @monthJul.
+  ///
+  /// In en, this message translates to:
+  /// **'Jul'**
+  String get monthJul;
+
+  /// No description provided for @monthAug.
+  ///
+  /// In en, this message translates to:
+  /// **'Aug'**
+  String get monthAug;
+
+  /// No description provided for @monthSep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sep'**
+  String get monthSep;
+
+  /// No description provided for @monthOct.
+  ///
+  /// In en, this message translates to:
+  /// **'Oct'**
+  String get monthOct;
+
+  /// No description provided for @monthNov.
+  ///
+  /// In en, this message translates to:
+  /// **'Nov'**
+  String get monthNov;
+
+  /// No description provided for @monthDec.
+  ///
+  /// In en, this message translates to:
+  /// **'Dec'**
+  String get monthDec;
+
+  /// No description provided for @dayMon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get dayMon;
+
+  /// No description provided for @dayTue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get dayTue;
+
+  /// No description provided for @dayWed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get dayWed;
+
+  /// No description provided for @dayThu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get dayThu;
+
+  /// No description provided for @dayFri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get dayFri;
+
+  /// No description provided for @daySat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get daySat;
+
+  /// No description provided for @daySun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get daySun;
+
+  /// No description provided for @chartRefills.
+  ///
+  /// In en, this message translates to:
+  /// **'refills'**
+  String get chartRefills;
+
+  /// No description provided for @teamEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get teamEditProfile;
+
+  /// No description provided for @teamEditProfileSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get teamEditProfileSuccess;
+
+  /// No description provided for @hotels.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotels'**
+  String get hotels;
+
+  /// No description provided for @rooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get rooms;
+
+  /// No description provided for @products.
+  ///
+  /// In en, this message translates to:
+  /// **'Products'**
+  String get products;
+
+  /// No description provided for @team.
+  ///
+  /// In en, this message translates to:
+  /// **'Team'**
+  String get team;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @reports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reports;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @more.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get more;
+
+  /// No description provided for @refill.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get refill;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @correction.
+  ///
+  /// In en, this message translates to:
+  /// **'Correction'**
+  String get correction;
+
+  /// No description provided for @pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pending;
+
+  /// No description provided for @suggestedOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested orders'**
+  String get suggestedOrders;
+
+  /// No description provided for @bottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottles'**
+  String get bottles;
+
+  /// No description provided for @bidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Bidons'**
+  String get bidons;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @demoMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo mode'**
+  String get demoMode;
+
+  /// No description provided for @downloadCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Download CSV'**
+  String get downloadCsv;
+
+  /// No description provided for @downloadPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Download PDF'**
+  String get downloadPdf;
+
+  /// No description provided for @reportRefillHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill history'**
+  String get reportRefillHistoryTitle;
+
+  /// No description provided for @reportRefillHistoryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Export recent refill activity by hotel, room, product, user, and time.'**
+  String get reportRefillHistoryBody;
+
+  /// No description provided for @reportSuggestedOrdersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Export bottles, bidons, and recycling recommendations.'**
+  String get reportSuggestedOrdersBody;
+
+  /// No description provided for @reportInventorySnapshotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory snapshot'**
+  String get reportInventorySnapshotTitle;
+
+  /// No description provided for @reportInventorySnapshotBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Export current bottle and bidon stock by hotel and product.'**
+  String get reportInventorySnapshotBody;
+
+  /// No description provided for @reportOpenAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open alerts'**
+  String get reportOpenAlertsTitle;
+
+  /// No description provided for @reportOpenAlertsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Export low stock, replacement, inactivity, and suspicious activity alerts.'**
+  String get reportOpenAlertsBody;
+
+  /// No description provided for @exportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed'**
+  String get exportFailed;
+
+  /// No description provided for @metricHotels.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotels'**
+  String get metricHotels;
+
+  /// No description provided for @metricRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get metricRooms;
+
+  /// No description provided for @metricPendingApprovals.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending approvals'**
+  String get metricPendingApprovals;
+
+  /// No description provided for @metricOpenAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Open alerts'**
+  String get metricOpenAlerts;
+
+  /// No description provided for @metricBottlesToReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottles to replace'**
+  String get metricBottlesToReplace;
+
+  /// No description provided for @metricLowStockProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock products'**
+  String get metricLowStockProducts;
+
+  /// No description provided for @inventoryTableProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get inventoryTableProduct;
+
+  /// No description provided for @inventoryTableFullBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Full bottles'**
+  String get inventoryTableFullBottles;
+
+  /// No description provided for @inventoryTableEmptyBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty bottles'**
+  String get inventoryTableEmptyBottles;
+
+  /// No description provided for @inventoryTableEmptyBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty bidons'**
+  String get inventoryTableEmptyBidons;
+
+  /// No description provided for @inventoryTableFullBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Full bidons'**
+  String get inventoryTableFullBidons;
+
+  /// No description provided for @inventoryTableOpenBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Open bidons'**
+  String get inventoryTableOpenBidons;
+
+  /// No description provided for @inventoryTableStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get inventoryTableStatus;
+
+  /// No description provided for @errorUniqueViolation.
+  ///
+  /// In en, this message translates to:
+  /// **'This record already exists.'**
+  String get errorUniqueViolation;
+
+  /// No description provided for @errorForeignKeyViolation.
+  ///
+  /// In en, this message translates to:
+  /// **'Related record not found.'**
+  String get errorForeignKeyViolation;
+
+  /// No description provided for @errorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to perform this action.'**
+  String get errorPermissionDenied;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again.'**
+  String get errorGeneric;
+
+  /// No description provided for @inventoryStatusHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy'**
+  String get inventoryStatusHealthy;
+
+  /// No description provided for @inventoryStatusLowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock'**
+  String get inventoryStatusLowStock;
+
+  /// No description provided for @auditFilterAllActions.
+  ///
+  /// In en, this message translates to:
+  /// **'All Actions'**
+  String get auditFilterAllActions;
+
+  /// No description provided for @sortNameAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (A-Z)'**
+  String get sortNameAsc;
+
+  /// No description provided for @sortNameDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (Z-A)'**
+  String get sortNameDesc;
+
+  /// No description provided for @sortMostFullBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Full Bottles'**
+  String get sortMostFullBottles;
+
+  /// No description provided for @sortMostEmptyBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Empty Bottles'**
+  String get sortMostEmptyBottles;
+
+  /// No description provided for @bulkAdjustSelectProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Select products'**
+  String get bulkAdjustSelectProducts;
+
+  /// No description provided for @bulkAdjustSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get bulkAdjustSelectAll;
+
+  /// No description provided for @bulkAdjustDeselectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Deselect all'**
+  String get bulkAdjustDeselectAll;
+
+  /// No description provided for @bulkAdjustNoProductsSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one product.'**
+  String get bulkAdjustNoProductsSelected;
+
+  /// No description provided for @orderNewBottlesText.
+  ///
+  /// In en, this message translates to:
+  /// **'Order {count} new 1L bottles'**
+  String orderNewBottlesText(String count);
+
+  /// No description provided for @orderNewBidonsText.
+  ///
+  /// In en, this message translates to:
+  /// **'Order {count} new 5L bidons'**
+  String orderNewBidonsText(String count);
+
+  /// No description provided for @recycleBottlesText.
+  ///
+  /// In en, this message translates to:
+  /// **'Recycle {count} bottles'**
+  String recycleBottlesText(String count);
+
+  /// No description provided for @bottleCannotRefillRecycled.
+  ///
+  /// In en, this message translates to:
+  /// **'This bottle has been recycled and cannot be refilled. Please replace it.'**
+  String get bottleCannotRefillRecycled;
+
+  /// No description provided for @adjustStockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust stock'**
+  String get adjustStockTitle;
+
+  /// No description provided for @hotelRoomsTracked.
+  ///
+  /// In en, this message translates to:
+  /// **'rooms tracked'**
+  String get hotelRoomsTracked;
+
+  /// No description provided for @hotelPendingChip.
+  ///
+  /// In en, this message translates to:
+  /// **'pending'**
+  String get hotelPendingChip;
+
+  /// No description provided for @hotelLabelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel name'**
+  String get hotelLabelName;
+
+  /// No description provided for @hotelLabelLegalName.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal name'**
+  String get hotelLabelLegalName;
+
+  /// No description provided for @hotelLabelState.
+  ///
+  /// In en, this message translates to:
+  /// **'State (Governorate)'**
+  String get hotelLabelState;
+
+  /// No description provided for @hotelLabelCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get hotelLabelCountry;
+
+  /// No description provided for @hotelLabelContactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact name'**
+  String get hotelLabelContactName;
+
+  /// No description provided for @hotelLabelEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get hotelLabelEmail;
+
+  /// No description provided for @hotelLabelPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get hotelLabelPhone;
+
+  /// No description provided for @hotelLabelAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get hotelLabelAddress;
+
+  /// No description provided for @hotelLabelNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get hotelLabelNotes;
+
+  /// No description provided for @btnCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get btnCreate;
+
+  /// No description provided for @btnCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get btnCancel;
+
+  /// No description provided for @btnSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get btnSave;
+
+  /// No description provided for @btnSubmitRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit request'**
+  String get btnSubmitRequest;
+
+  /// No description provided for @demoModeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Local simulations using offline database templates.'**
+  String get demoModeDescription;
+
+  /// No description provided for @offlineModeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Queues actions when disconnected and syncs later.'**
+  String get offlineModeDescription;
+
+  /// No description provided for @syncQueueHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Queue'**
+  String get syncQueueHeader;
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get syncNow;
+
+  /// No description provided for @itemsToSync.
+  ///
+  /// In en, this message translates to:
+  /// **'actions pending sync'**
+  String get itemsToSync;
+
+  /// No description provided for @editRequestQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel edit request queued'**
+  String get editRequestQueued;
+
+  /// No description provided for @editRequestSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel edit request submitted'**
+  String get editRequestSubmitted;
+
+  /// No description provided for @hotelUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel information updated'**
+  String get hotelUpdated;
+
+  /// No description provided for @hotelCreatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel created successfully'**
+  String get hotelCreatedSuccessfully;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get requiredField;
+
+  /// No description provided for @enterNumberError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number'**
+  String get enterNumberError;
+
+  /// No description provided for @createHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Create hotel'**
+  String get createHotel;
+
+  /// No description provided for @requestHotelEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Request hotel edit'**
+  String get requestHotelEdit;
+
+  /// No description provided for @authTitleCannotAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'You need an invitation to access Ivra.'**
+  String get authTitleCannotAccess;
+
+  /// No description provided for @authBtnGoogleSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google'**
+  String get authBtnGoogleSignIn;
+
+  /// No description provided for @authBtnSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get authBtnSignOut;
+
+  /// No description provided for @authLabelEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get authLabelEmail;
+
+  /// No description provided for @authLabelPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get authLabelPassword;
+
+  /// No description provided for @authShowPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get authShowPassword;
+
+  /// No description provided for @authHidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get authHidePassword;
+
+  /// No description provided for @authBtnSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get authBtnSignIn;
+
+  /// No description provided for @authBtnForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get authBtnForgotPassword;
+
+  /// No description provided for @authResetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get authResetPasswordTitle;
+
+  /// No description provided for @setPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your password'**
+  String get setPasswordTitle;
+
+  /// No description provided for @setPasswordBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please set a secure password for your account to complete your registration.'**
+  String get setPasswordBody;
+
+  /// No description provided for @setPasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Password'**
+  String get setPasswordButton;
+
+  /// No description provided for @authBtnSendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get authBtnSendResetLink;
+
+  /// No description provided for @authResetLinkSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset link sent to'**
+  String get authResetLinkSent;
+
+  /// No description provided for @authValidationEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get authValidationEmailRequired;
+
+  /// No description provided for @authValidationEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get authValidationEmailInvalid;
+
+  /// No description provided for @authValidationPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get authValidationPasswordRequired;
+
+  /// No description provided for @authValidationPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get authValidationPasswordTooShort;
+
+  /// No description provided for @authValidationPasswordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get authValidationPasswordsDoNotMatch;
+
+  /// No description provided for @authResetNewPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new password'**
+  String get authResetNewPasswordTitle;
+
+  /// No description provided for @authLabelNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get authLabelNewPassword;
+
+  /// No description provided for @authLabelConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get authLabelConfirmPassword;
+
+  /// No description provided for @authBtnUpdatePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Update password'**
+  String get authBtnUpdatePassword;
+
+  /// No description provided for @authBtnReturnToApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to app'**
+  String get authBtnReturnToApp;
+
+  /// No description provided for @authPasswordUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated successfully.'**
+  String get authPasswordUpdatedSuccess;
+
+  /// No description provided for @authUnexpectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again, or contact support if the problem persists.'**
+  String get authUnexpectedError;
+
+  /// No description provided for @asyncErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this section'**
+  String get asyncErrorTitle;
+
+  /// No description provided for @btnRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get btnRetry;
+
+  /// No description provided for @authProfileLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your profile.'**
+  String get authProfileLoadErrorTitle;
+
+  /// No description provided for @authProfileLoadErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is usually a temporary connection issue. Please retry.'**
+  String get authProfileLoadErrorBody;
+
+  /// No description provided for @authAccountDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been deactivated. Contact your administrator for access.'**
+  String get authAccountDeactivated;
+
+  /// No description provided for @settingsPayloadInvalidJson.
+  ///
+  /// In en, this message translates to:
+  /// **'Payload must be a JSON object.'**
+  String get settingsPayloadInvalidJson;
+
+  /// No description provided for @exportDownloadStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'{fileName} download started'**
+  String exportDownloadStarted(String fileName);
+
+  /// No description provided for @exportSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {fileName} to {path}'**
+  String exportSaved(String fileName, String path);
+
+  /// No description provided for @settingsPendingSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending sync ({count})'**
+  String settingsPendingSync(String count);
+
+  /// No description provided for @splashTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Sustainable Hospitality Solutions'**
+  String get splashTagline;
+
+  /// No description provided for @accountSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save your profile. Please try again.'**
+  String get accountSaveFailed;
+
+  /// No description provided for @accountPasswordChangeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not change your password. Please try again.'**
+  String get accountPasswordChangeFailed;
+
+  /// No description provided for @accountSignOutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not sign out. Check your connection and try again.'**
+  String get accountSignOutFailed;
+
+  /// No description provided for @hotelCreateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create the hotel. Please try again.'**
+  String get hotelCreateFailed;
+
+  /// No description provided for @hotelUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update the hotel. Please try again.'**
+  String get hotelUpdateFailed;
+
+  /// No description provided for @teamInviteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send the invitation. Please try again.'**
+  String get teamInviteFailed;
+
+  /// No description provided for @teamHotelsUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update hotel assignments. Please try again.'**
+  String get teamHotelsUpdateFailed;
+
+  /// No description provided for @roomsTooltipCreateTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create room template'**
+  String get roomsTooltipCreateTemplate;
+
+  /// No description provided for @roomsNoRoomsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No rooms or products found.'**
+  String get roomsNoRoomsFound;
+
+  /// No description provided for @roomsSearchEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search query or filters.'**
+  String get roomsSearchEmptyHint;
+
+  /// No description provided for @roomsEmptyHotelWithTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first room using the template button above.'**
+  String get roomsEmptyHotelWithTemplate;
+
+  /// No description provided for @roomsEmptyHotelNoTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'No rooms have been assigned to this hotel yet.'**
+  String get roomsEmptyHotelNoTemplate;
+
+  /// No description provided for @roomsLabelRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get roomsLabelRoom;
+
+  /// No description provided for @roomsLabelFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Floor'**
+  String get roomsLabelFloor;
+
+  /// No description provided for @roomsLabelRefills.
+  ///
+  /// In en, this message translates to:
+  /// **'Refills'**
+  String get roomsLabelRefills;
+
+  /// No description provided for @roomsLabelAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get roomsLabelAge;
+
+  /// No description provided for @roomsLabelDaysUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'d'**
+  String get roomsLabelDaysUnit;
+
+  /// No description provided for @roomsRefillQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill queued for room'**
+  String get roomsRefillQueued;
+
+  /// No description provided for @roomsRefillRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill recorded for room'**
+  String get roomsRefillRecorded;
+
+  /// No description provided for @roomsBtnBottleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle edit'**
+  String get roomsBtnBottleEdit;
+
+  /// No description provided for @roomsBtnReplaceBottle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace bottle'**
+  String get roomsBtnReplaceBottle;
+
+  /// No description provided for @roomsBtnRoomEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Room edit'**
+  String get roomsBtnRoomEdit;
+
+  /// No description provided for @roomsBtnHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get roomsBtnHistory;
+
+  /// No description provided for @roomsBtnMoreActions.
+  ///
+  /// In en, this message translates to:
+  /// **'More actions'**
+  String get roomsBtnMoreActions;
+
+  /// No description provided for @roomsReplacementQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle replacement queued for room'**
+  String get roomsReplacementQueued;
+
+  /// No description provided for @roomsReplacementRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle replaced for room'**
+  String get roomsReplacementRecorded;
+
+  /// No description provided for @roomsReplacementNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle replaced from room workflow'**
+  String get roomsReplacementNotes;
+
+  /// No description provided for @roomsStatusAllOk.
+  ///
+  /// In en, this message translates to:
+  /// **'All OK'**
+  String get roomsStatusAllOk;
+
+  /// No description provided for @roomsStatusAttentionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention Required'**
+  String get roomsStatusAttentionRequired;
+
+  /// No description provided for @roomsStatusRefillNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Needed'**
+  String get roomsStatusRefillNeeded;
+
+  /// No description provided for @roomsSearchPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search room...'**
+  String get roomsSearchPlaceholder;
+
+  /// No description provided for @roomsRecentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent rooms'**
+  String get roomsRecentTitle;
+
+  /// No description provided for @roomsRecentClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get roomsRecentClear;
+
+  /// No description provided for @roomsSelectHotelFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a hotel...'**
+  String get roomsSelectHotelFirst;
+
+  /// No description provided for @roomsViewDetailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed View'**
+  String get roomsViewDetailed;
+
+  /// No description provided for @roomsViewCompact.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact View'**
+  String get roomsViewCompact;
+
+  /// No description provided for @roomsCollapseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse all'**
+  String get roomsCollapseAll;
+
+  /// No description provided for @roomsExpandAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand all'**
+  String get roomsExpandAll;
+
+  /// No description provided for @roomsBtnAddRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Add room'**
+  String get roomsBtnAddRoom;
+
+  /// No description provided for @roomsDialogAddRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add room to floor'**
+  String get roomsDialogAddRoomTitle;
+
+  /// No description provided for @roomsMsgRoomAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Room added'**
+  String get roomsMsgRoomAdded;
+
+  /// No description provided for @roomsMsgRoomAddQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Room creation queued'**
+  String get roomsMsgRoomAddQueued;
+
+  /// No description provided for @roomsHistoryRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get roomsHistoryRefill;
+
+  /// No description provided for @roomsHistoryNewBottle.
+  ///
+  /// In en, this message translates to:
+  /// **'New bottle placed'**
+  String get roomsHistoryNewBottle;
+
+  /// No description provided for @roomsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get roomsFilterAll;
+
+  /// No description provided for @roomsDialogBottleEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request bottle edit for room'**
+  String get roomsDialogBottleEditTitle;
+
+  /// No description provided for @roomsLabelBottleStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle status'**
+  String get roomsLabelBottleStatus;
+
+  /// No description provided for @roomsLabelBottleStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle start date'**
+  String get roomsLabelBottleStartDate;
+
+  /// No description provided for @roomsValidationEnterValidDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid date'**
+  String get roomsValidationEnterValidDate;
+
+  /// No description provided for @roomsMsgEditRequestQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle edit request queued'**
+  String get roomsMsgEditRequestQueued;
+
+  /// No description provided for @roomsMsgDetailsUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle details updated'**
+  String get roomsMsgDetailsUpdated;
+
+  /// No description provided for @roomsMsgEditRequestSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle edit request submitted'**
+  String get roomsMsgEditRequestSubmitted;
+
+  /// No description provided for @roomsDialogRoomEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request room edit for'**
+  String get roomsDialogRoomEditTitle;
+
+  /// No description provided for @roomsLabelRoomNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Room number'**
+  String get roomsLabelRoomNumber;
+
+  /// No description provided for @roomsLabelFloorNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Floor number'**
+  String get roomsLabelFloorNumber;
+
+  /// No description provided for @roomsMsgRoomEditQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Room edit request queued'**
+  String get roomsMsgRoomEditQueued;
+
+  /// No description provided for @roomsMsgRoomDetailsUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Room details updated'**
+  String get roomsMsgRoomDetailsUpdated;
+
+  /// No description provided for @roomsMsgRoomEditSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Room edit request submitted'**
+  String get roomsMsgRoomEditSubmitted;
+
+  /// No description provided for @roomsMsgRequestRoomEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Update room'**
+  String get roomsMsgRequestRoomEdit;
+
+  /// No description provided for @roomsDialogHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'history'**
+  String get roomsDialogHistoryTitle;
+
+  /// No description provided for @roomsNoHistoryRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'No refill history has been recorded yet.'**
+  String get roomsNoHistoryRecorded;
+
+  /// No description provided for @roomsMsgUndoQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo queued'**
+  String get roomsMsgUndoQueued;
+
+  /// No description provided for @roomsMsgRefillUndone.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill undone'**
+  String get roomsMsgRefillUndone;
+
+  /// No description provided for @roomsBtnClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get roomsBtnClose;
+
+  /// No description provided for @qrScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get qrScanTitle;
+
+  /// No description provided for @qrScanPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter QR code manually...'**
+  String get qrScanPlaceholder;
+
+  /// No description provided for @qrDemoCodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo QR Codes'**
+  String get qrDemoCodes;
+
+  /// No description provided for @qrActionPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Action'**
+  String get qrActionPrompt;
+
+  /// No description provided for @qrActionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to do for {product}?'**
+  String qrActionMessage(String product);
+
+  /// No description provided for @qrActionRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Bottle'**
+  String get qrActionRefill;
+
+  /// No description provided for @qrActionReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace Bottle'**
+  String get qrActionReplace;
+
+  /// No description provided for @roomsSearchProductPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search product by name or SKU...'**
+  String get roomsSearchProductPlaceholder;
+
+  /// No description provided for @adjustStockForProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust Stock for {product}'**
+  String adjustStockForProduct(String product);
+
+  /// No description provided for @roomsBtnRequestCorrection.
+  ///
+  /// In en, this message translates to:
+  /// **'Request correction'**
+  String get roomsBtnRequestCorrection;
+
+  /// No description provided for @roomsLabelReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get roomsLabelReason;
+
+  /// No description provided for @roomsMsgCorrectionQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Correction request queued'**
+  String get roomsMsgCorrectionQueued;
+
+  /// No description provided for @roomsMsgCorrectionSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Correction request submitted'**
+  String get roomsMsgCorrectionSubmitted;
+
+  /// No description provided for @roomsBtnCreateRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Create rooms'**
+  String get roomsBtnCreateRooms;
+
+  /// No description provided for @roomsLabelProductsInRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Products in each room'**
+  String get roomsLabelProductsInRoom;
+
+  /// No description provided for @roomsMsgSelectOneProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one product'**
+  String get roomsMsgSelectOneProduct;
+
+  /// No description provided for @roomsMsgDuplicateRoomNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'These room numbers already exist in this hotel: {numbers}. Choose a different starting number or count.'**
+  String roomsMsgDuplicateRoomNumbers(Object numbers);
+
+  /// No description provided for @productsCatalogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Catalog'**
+  String get productsCatalogTitle;
+
+  /// No description provided for @productsBtnCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create product'**
+  String get productsBtnCreate;
+
+  /// No description provided for @productsNoProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'No products in the catalog yet.'**
+  String get productsNoProducts;
+
+  /// No description provided for @productsLabelBottleVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle volume'**
+  String get productsLabelBottleVolume;
+
+  /// No description provided for @productsLabelBidonVolume.
+  ///
+  /// In en, this message translates to:
+  /// **'Bidon volume'**
+  String get productsLabelBidonVolume;
+
+  /// No description provided for @productsLabelMaxRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Max refill limit'**
+  String get productsLabelMaxRefill;
+
+  /// No description provided for @productsLabelMaxAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Max bottle age'**
+  String get productsLabelMaxAge;
+
+  /// No description provided for @productsLabelLowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock alert'**
+  String get productsLabelLowStock;
+
+  /// No description provided for @productsBtnEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit product'**
+  String get productsBtnEdit;
+
+  /// No description provided for @productsLabelSku.
+  ///
+  /// In en, this message translates to:
+  /// **'SKU'**
+  String get productsLabelSku;
+
+  /// No description provided for @productsLabelNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Name English'**
+  String get productsLabelNameEn;
+
+  /// No description provided for @productsLabelNameFr.
+  ///
+  /// In en, this message translates to:
+  /// **'Name French'**
+  String get productsLabelNameFr;
+
+  /// No description provided for @productsLabelNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Name Arabic'**
+  String get productsLabelNameAr;
+
+  /// No description provided for @productsLabelNameIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Name Italian'**
+  String get productsLabelNameIt;
+
+  /// No description provided for @productsLabelImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Picture'**
+  String get productsLabelImage;
+
+  /// No description provided for @productsLabelImageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an image from your device'**
+  String get productsLabelImageHint;
+
+  /// No description provided for @productsImageSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected: {name}'**
+  String productsImageSelected(String name);
+
+  /// No description provided for @productsImageSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Image is set (tap to change)'**
+  String get productsImageSet;
+
+  /// No description provided for @productsImageNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No image selected'**
+  String get productsImageNone;
+
+  /// No description provided for @productsImageRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove image'**
+  String get productsImageRemove;
+
+  /// No description provided for @productsImageUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Image upload failed. Please try again.'**
+  String get productsImageUploadFailed;
+
+  /// No description provided for @productsImageInvalidType.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a valid image file.'**
+  String get productsImageInvalidType;
+
+  /// No description provided for @productsImageTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Image is too large (max {max} MB).'**
+  String productsImageTooLarge(String max);
+
+  /// No description provided for @productsAddedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Product added successfully'**
+  String get productsAddedSuccess;
+
+  /// No description provided for @productsUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Product updated successfully'**
+  String get productsUpdatedSuccess;
+
+  /// No description provided for @productsLabelBottleMl.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle ml'**
+  String get productsLabelBottleMl;
+
+  /// No description provided for @productsLabelBidonMl.
+  ///
+  /// In en, this message translates to:
+  /// **'Bidon ml'**
+  String get productsLabelBidonMl;
+
+  /// No description provided for @productsLabelMaxRefills.
+  ///
+  /// In en, this message translates to:
+  /// **'Max refills'**
+  String get productsLabelMaxRefills;
+
+  /// No description provided for @productsLabelMaxAgeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Max age days'**
+  String get productsLabelMaxAgeDays;
+
+  /// No description provided for @productsLabelLowBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Low bottles'**
+  String get productsLabelLowBottles;
+
+  /// No description provided for @productsLabelLowBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Low bidons'**
+  String get productsLabelLowBidons;
+
+  /// No description provided for @productsDialogCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create product'**
+  String get productsDialogCreateTitle;
+
+  /// No description provided for @productsDialogEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit product'**
+  String get productsDialogEditTitle;
+
+  /// No description provided for @days.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get days;
+
+  /// No description provided for @refills.
+  ///
+  /// In en, this message translates to:
+  /// **'refills'**
+  String get refills;
+
+  /// No description provided for @inventoryNoHotels.
+  ///
+  /// In en, this message translates to:
+  /// **'No Hotels Found'**
+  String get inventoryNoHotels;
+
+  /// No description provided for @inventoryAddHotelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a hotel to get started.'**
+  String get inventoryAddHotelHint;
+
+  /// No description provided for @inventoryNoItemsToAdjust.
+  ///
+  /// In en, this message translates to:
+  /// **'No inventory items available to adjust.'**
+  String get inventoryNoItemsToAdjust;
+
+  /// No description provided for @inventoryNoInventoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No inventory yet'**
+  String get inventoryNoInventoryYet;
+
+  /// No description provided for @inventoryNoProductsInInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no products in the inventory.'**
+  String get inventoryNoProductsInInventory;
+
+  /// No description provided for @inventoryNoSuggestedOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'No suggested orders'**
+  String get inventoryNoSuggestedOrders;
+
+  /// No description provided for @inventoryLevelsSufficient.
+  ///
+  /// In en, this message translates to:
+  /// **'Your inventory levels are currently sufficient.'**
+  String get inventoryLevelsSufficient;
+
+  /// No description provided for @teamAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Team accounts'**
+  String get teamAccounts;
+
+  /// No description provided for @teamNoMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'No team members found.'**
+  String get teamNoMembers;
+
+  /// No description provided for @teamTableColumnName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get teamTableColumnName;
+
+  /// No description provided for @teamTableColumnEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get teamTableColumnEmail;
+
+  /// No description provided for @teamTableColumnRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get teamTableColumnRole;
+
+  /// No description provided for @teamTableColumnHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get teamTableColumnHotel;
+
+  /// No description provided for @teamTableColumnStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get teamTableColumnStatus;
+
+  /// No description provided for @teamTableColumnActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get teamTableColumnActions;
+
+  /// No description provided for @teamPendingInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending invitations'**
+  String get teamPendingInvitations;
+
+  /// No description provided for @teamNoPendingInvitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending invitations.'**
+  String get teamNoPendingInvitations;
+
+  /// No description provided for @teamInviteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite team member'**
+  String get teamInviteTitle;
+
+  /// No description provided for @teamLabelFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get teamLabelFullName;
+
+  /// No description provided for @settingsOfflineMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline mode'**
+  String get settingsOfflineMode;
+
+  /// No description provided for @settingsOfflineQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue actions'**
+  String get settingsOfflineQueue;
+
+  /// No description provided for @settingsOfflineSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send actions'**
+  String get settingsOfflineSend;
+
+  /// No description provided for @settingsBiometricTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock'**
+  String get settingsBiometricTitle;
+
+  /// No description provided for @settingsBiometricHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your fingerprint or face to sign in.'**
+  String get settingsBiometricHint;
+
+  /// No description provided for @settingsBiometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock is not available on this device.'**
+  String get settingsBiometricUnavailable;
+
+  /// No description provided for @authBtnBiometricLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric login'**
+  String get authBtnBiometricLogin;
+
+  /// No description provided for @authBiometricReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to access Ivra'**
+  String get authBiometricReason;
+
+  /// No description provided for @authBiometricNeedsLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in once to enable biometric login.'**
+  String get authBiometricNeedsLogin;
+
+  /// No description provided for @authBiometricOfflineNoSession.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline. Connect to the internet to sign in.'**
+  String get authBiometricOfflineNoSession;
+
+  /// No description provided for @authBiometricFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication failed.'**
+  String get authBiometricFailed;
+
+  /// No description provided for @settingsBtnClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get settingsBtnClear;
+
+  /// No description provided for @settingsBtnSyncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get settingsBtnSyncNow;
+
+  /// No description provided for @settingsNoPendingActions.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending actions.'**
+  String get settingsNoPendingActions;
+
+  /// No description provided for @teamManageHotels.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage hotels'**
+  String get teamManageHotels;
+
+  /// No description provided for @teamAssignHotelsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign hotels'**
+  String get teamAssignHotelsTitle;
+
+  /// No description provided for @teamNoHotelsAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No hotels assigned'**
+  String get teamNoHotelsAssigned;
+
+  /// No description provided for @teamHotelsUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel assignments updated'**
+  String get teamHotelsUpdated;
+
+  /// No description provided for @teamSelectHotels.
+  ///
+  /// In en, this message translates to:
+  /// **'Select hotels'**
+  String get teamSelectHotels;
+
+  /// No description provided for @teamHotelsAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'hotels assigned'**
+  String get teamHotelsAssigned;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountTitle;
+
+  /// No description provided for @accountProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get accountProfile;
+
+  /// No description provided for @accountProfileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get accountProfileUpdated;
+
+  /// No description provided for @accountPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get accountPassword;
+
+  /// No description provided for @accountPasswordUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated'**
+  String get accountPasswordUpdated;
+
+  /// No description provided for @accountFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get accountFullName;
+
+  /// No description provided for @accountFullNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name is required'**
+  String get accountFullNameRequired;
+
+  /// No description provided for @accountNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get accountNewPassword;
+
+  /// No description provided for @accountConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get accountConfirmPassword;
+
+  /// No description provided for @accountPasswordHintSupabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates your account login password.'**
+  String get accountPasswordHintSupabase;
+
+  /// No description provided for @accountPasswordHintDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo mode accepts the change locally.'**
+  String get accountPasswordHintDemo;
+
+  /// No description provided for @accountSignOutHint.
+  ///
+  /// In en, this message translates to:
+  /// **'End the current session on this device.'**
+  String get accountSignOutHint;
+
+  /// No description provided for @accountSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get accountSignOut;
+
+  /// No description provided for @accountEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get accountEmail;
+
+  /// No description provided for @accountRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get accountRole;
+
+  /// No description provided for @accountScope.
+  ///
+  /// In en, this message translates to:
+  /// **'Scope'**
+  String get accountScope;
+
+  /// No description provided for @accountStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get accountStatus;
+
+  /// No description provided for @accountActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get accountActive;
+
+  /// No description provided for @accountInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get accountInactive;
+
+  /// No description provided for @accountIvraGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Ivra global'**
+  String get accountIvraGlobal;
+
+  /// No description provided for @accountTeamAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Team accounts'**
+  String get accountTeamAccounts;
+
+  /// No description provided for @accountNoOtherAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'No other accounts found.'**
+  String get accountNoOtherAccounts;
+
+  /// No description provided for @accountYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get accountYou;
+
+  /// No description provided for @alertsRefreshSmart.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh smart alerts'**
+  String get alertsRefreshSmart;
+
+  /// No description provided for @alertsResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get alertsResolve;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @approvalsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending approvals'**
+  String get approvalsEmpty;
+
+  /// No description provided for @approvalsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All approval requests have been processed.'**
+  String get approvalsEmptySubtitle;
+
+  /// No description provided for @approvalsApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get approvalsApprove;
+
+  /// No description provided for @approvalsReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get approvalsReject;
+
+  /// No description provided for @approvalsActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The action failed. Please try again.'**
+  String get approvalsActionFailed;
+
+  /// No description provided for @approvalsApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Request approved.'**
+  String get approvalsApproved;
+
+  /// No description provided for @approvalsRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Request rejected.'**
+  String get approvalsRejected;
+
+  /// No description provided for @approvalsApproveQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval queued for sync.'**
+  String get approvalsApproveQueued;
+
+  /// No description provided for @approvalsRejectQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection queued for sync.'**
+  String get approvalsRejectQueued;
+
+  /// No description provided for @approvalsAccessDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Access denied. Only admins can review approvals.'**
+  String get approvalsAccessDenied;
+
+  /// No description provided for @approvalsRequestNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval request not found or already processed.'**
+  String get approvalsRequestNotFound;
+
+  /// No description provided for @inviteAcceptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept invitation'**
+  String get inviteAcceptTitle;
+
+  /// No description provided for @inviteAlreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'I already have an account'**
+  String get inviteAlreadyHaveAccount;
+
+  /// No description provided for @inviteBackToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get inviteBackToSignIn;
+
+  /// No description provided for @inviteEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get inviteEmail;
+
+  /// No description provided for @invitePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get invitePassword;
+
+  /// No description provided for @inviteConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get inviteConfirmPassword;
+
+  /// No description provided for @settingsRetryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry action'**
+  String get settingsRetryAction;
+
+  /// No description provided for @settingsRemoveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove action'**
+  String get settingsRemoveAction;
+
+  /// No description provided for @settingsActionUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Queued action updated'**
+  String get settingsActionUpdated;
+
+  /// No description provided for @settingsActionRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline action removed'**
+  String get settingsActionRemoved;
+
+  /// No description provided for @settingsQueueCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline queue cleared'**
+  String get settingsQueueCleared;
+
+  /// No description provided for @settingsTestAccessAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Test access as'**
+  String get settingsTestAccessAs;
+
+  /// No description provided for @settingsDemoUserChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo user changed'**
+  String get settingsDemoUserChanged;
+
+  /// No description provided for @settingsPayloadJson.
+  ///
+  /// In en, this message translates to:
+  /// **'Queued payload JSON'**
+  String get settingsPayloadJson;
+
+  /// No description provided for @settingsSaveAndRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and retry'**
+  String get settingsSaveAndRetry;
+
+  /// No description provided for @settingsDemoUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo user'**
+  String get settingsDemoUser;
+
+  /// No description provided for @settingsSupabaseConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get settingsSupabaseConnected;
+
+  /// No description provided for @settingsSupabaseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The app is using live data.'**
+  String get settingsSupabaseHint;
+
+  /// No description provided for @settingsNoSupabaseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Server connection is not configured.'**
+  String get settingsNoSupabaseHint;
+
+  /// No description provided for @settingsEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit queued action'**
+  String get settingsEditAction;
+
+  /// No description provided for @settingsResolveConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve sync conflict'**
+  String get settingsResolveConflict;
+
+  /// No description provided for @settingsActionSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Action synced'**
+  String get settingsActionSynced;
+
+  /// No description provided for @offlineBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline'**
+  String get offlineBannerTitle;
+
+  /// No description provided for @offlineBannerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data may not be up to date'**
+  String get offlineBannerSubtitle;
+
+  /// No description provided for @offlineBannerPending.
+  ///
+  /// In en, this message translates to:
+  /// **'pending actions'**
+  String get offlineBannerPending;
+
+  /// No description provided for @offlineBannerSyncBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get offlineBannerSyncBtn;
+
+  /// No description provided for @offlineBannerAutoSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Back online! Synced {count} actions'**
+  String offlineBannerAutoSynced(String count);
+
+  /// No description provided for @offlineBannerSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed for some actions'**
+  String get offlineBannerSyncFailed;
+
+  /// No description provided for @teamInvitationCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation cancelled for {email}'**
+  String teamInvitationCancelled(String email);
+
+  /// No description provided for @teamInvitationResent.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation resent to {email}'**
+  String teamInvitationResent(String email);
+
+  /// No description provided for @teamInvitationCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation link copied for {email}'**
+  String teamInvitationCopied(String email);
+
+  /// No description provided for @approvalsRequestedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested by {name}'**
+  String approvalsRequestedBy(String name);
+
+  /// No description provided for @approvalsOldValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Old: {value}'**
+  String approvalsOldValue(String value);
+
+  /// No description provided for @approvalsNewValue.
+  ///
+  /// In en, this message translates to:
+  /// **'New: {value}'**
+  String approvalsNewValue(String value);
+
+  /// No description provided for @alertsSeverityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Severity {severity}'**
+  String alertsSeverityLabel(String severity);
+
+  /// No description provided for @alertsStatusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get alertsStatusResolved;
+
+  /// No description provided for @alertsStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get alertsStatusOpen;
+
+  /// No description provided for @alertsMetricCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get alertsMetricCritical;
+
+  /// No description provided for @alertsFilterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get alertsFilterTitle;
+
+  /// No description provided for @alertsFilterSeverity.
+  ///
+  /// In en, this message translates to:
+  /// **'Severity'**
+  String get alertsFilterSeverity;
+
+  /// No description provided for @alertsFilterType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get alertsFilterType;
+
+  /// No description provided for @alertsFilterHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get alertsFilterHotel;
+
+  /// No description provided for @alertsFilterProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get alertsFilterProduct;
+
+  /// No description provided for @alertsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get alertsFilterAll;
+
+  /// No description provided for @alertsFilterClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get alertsFilterClear;
+
+  /// No description provided for @alertsFilterNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts match the current filters.'**
+  String get alertsFilterNoMatch;
+
+  /// No description provided for @alertsFilterShowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing {count} of {total}'**
+  String alertsFilterShowing(Object count, Object total);
+
+  /// No description provided for @settingsActionEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit queued action'**
+  String get settingsActionEditTitle;
+
+  /// No description provided for @settingsActionConflictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve sync conflict'**
+  String get settingsActionConflictTitle;
+
+  /// No description provided for @settingsActionAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempts {count}'**
+  String settingsActionAttempts(String count);
+
+  /// No description provided for @settingsActionListAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempts: {count}'**
+  String settingsActionListAttempts(String count);
+
+  /// No description provided for @settingsActionListError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {message}'**
+  String settingsActionListError(String message);
+
+  /// No description provided for @syncActionRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get syncActionRefill;
+
+  /// No description provided for @syncActionUndoRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo refill'**
+  String get syncActionUndoRefill;
+
+  /// No description provided for @syncActionCorrectionRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Correction request'**
+  String get syncActionCorrectionRequest;
+
+  /// No description provided for @syncActionBottleReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle replacement'**
+  String get syncActionBottleReplacement;
+
+  /// No description provided for @syncActionStockAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock adjustment'**
+  String get syncActionStockAdjustment;
+
+  /// No description provided for @syncActionPendingEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending edit'**
+  String get syncActionPendingEdit;
+
+  /// No description provided for @userRoleAppAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'App admin'**
+  String get userRoleAppAdmin;
+
+  /// No description provided for @userRoleAppManager.
+  ///
+  /// In en, this message translates to:
+  /// **'App manager'**
+  String get userRoleAppManager;
+
+  /// No description provided for @userRoleHotelManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel manager'**
+  String get userRoleHotelManager;
+
+  /// No description provided for @userRoleHotelStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel staff'**
+  String get userRoleHotelStaff;
+
+  /// No description provided for @teamStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get teamStatusActive;
+
+  /// No description provided for @teamStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get teamStatusInactive;
+
+  /// No description provided for @teamHotelAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All hotels'**
+  String get teamHotelAll;
+
+  /// No description provided for @teamHotelNone.
+  ///
+  /// In en, this message translates to:
+  /// **'—'**
+  String get teamHotelNone;
+
+  /// No description provided for @invitationStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get invitationStatusPending;
+
+  /// No description provided for @invitationStatusAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get invitationStatusAccepted;
+
+  /// No description provided for @invitationStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get invitationStatusCancelled;
+
+  /// No description provided for @invitationStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get invitationStatusExpired;
+
+  /// No description provided for @alertResolvedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert resolved'**
+  String get alertResolvedToast;
+
+  /// No description provided for @alertDeletedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert deleted'**
+  String get alertDeletedToast;
+
+  /// No description provided for @alertResolveFailedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not resolve the alert. Please try again.'**
+  String get alertResolveFailedToast;
+
+  /// No description provided for @alertDeleteFailedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete the alert. Please try again.'**
+  String get alertDeleteFailedToast;
+
+  /// No description provided for @notificationAcknowledgedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledged'**
+  String get notificationAcknowledgedToast;
+
+  /// No description provided for @notificationMoreInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'More info'**
+  String get notificationMoreInfo;
+
+  /// No description provided for @bulkAdjustStockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk stock adjustment'**
+  String get bulkAdjustStockTitle;
+
+  /// No description provided for @bulkAdjustStockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter quantity adjustments that will apply to ALL products.'**
+  String get bulkAdjustStockHint;
+
+  /// No description provided for @bulkAdjustStockSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk stock adjustment successfully applied'**
+  String get bulkAdjustStockSuccess;
+
+  /// No description provided for @bulkAdjustStockOfflineQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk adjustments queued for offline sync'**
+  String get bulkAdjustStockOfflineQueued;
+
+  /// No description provided for @resolveAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve all'**
+  String get resolveAll;
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all'**
+  String get deleteAll;
+
+  /// No description provided for @alertsRefreshedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} smart alerts created'**
+  String alertsRefreshedToast(String count);
+
+  /// No description provided for @alertsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts yet'**
+  String get alertsEmptyTitle;
+
+  /// No description provided for @alertsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.'**
+  String get alertsEmptyMessage;
+
+  /// No description provided for @alertsEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh alerts'**
+  String get alertsEmptyAction;
+
+  /// No description provided for @alertTypeLowBidonStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Low bidons'**
+  String get alertTypeLowBidonStock;
+
+  /// No description provided for @alertLowBottleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Low {product} bottle stock'**
+  String alertLowBottleTitle(String product);
+
+  /// No description provided for @alertLowBidonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Low {product} bidon stock'**
+  String alertLowBidonTitle(String product);
+
+  /// No description provided for @alertLowBottleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{hotel}: {remain} full bottles remain. Threshold is {threshold}.'**
+  String alertLowBottleBody(String hotel, String remain, String threshold);
+
+  /// No description provided for @alertLowBidonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{hotel}: {remain} full bidons remain. Threshold is {threshold}.'**
+  String alertLowBidonBody(String hotel, String remain, String threshold);
+
+  /// No description provided for @alertTypeLowBottleStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Low bottles'**
+  String get alertTypeLowBottleStock;
+
+  /// No description provided for @alertTypeBottleAgeLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle age'**
+  String get alertTypeBottleAgeLimit;
+
+  /// No description provided for @alertBottleAgeLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Room {room} {product} bottle is too old'**
+  String alertBottleAgeLimitTitle(String room, String product);
+
+  /// No description provided for @alertBottleAgeLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle age is {age} days. Limit is {limit} days.'**
+  String alertBottleAgeLimitBody(String age, String limit);
+
+  /// No description provided for @alertTypeRefillLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill limit'**
+  String get alertTypeRefillLimit;
+
+  /// No description provided for @alertRefillLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Room {room} {product} reached refill limit'**
+  String alertRefillLimitTitle(String room, String product);
+
+  /// No description provided for @alertRefillLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{used}/{max} refills used. Replace and recycle the bottle.'**
+  String alertRefillLimitBody(String used, String max);
+
+  /// No description provided for @alertTypePendingApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval'**
+  String get alertTypePendingApproval;
+
+  /// No description provided for @alertPendingApprovalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending approval: {request}'**
+  String alertPendingApprovalTitle(String request);
+
+  /// No description provided for @alertPendingApprovalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested by {name}.'**
+  String alertPendingApprovalBody(String name);
+
+  /// No description provided for @alertTypeSuspiciousActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspicious activity'**
+  String get alertTypeSuspiciousActivity;
+
+  /// No description provided for @alertTypeInactiveHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive hotel'**
+  String get alertTypeInactiveHotel;
+
+  /// No description provided for @refillEventApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get refillEventApproved;
+
+  /// No description provided for @refillEventRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get refillEventRejected;
+
+  /// No description provided for @teamDeactivateAccountTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate account'**
+  String get teamDeactivateAccountTooltip;
+
+  /// No description provided for @teamReactivateAccountTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate account'**
+  String get teamReactivateAccountTooltip;
+
+  /// No description provided for @settingsSyncedSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced {synced} actions'**
+  String settingsSyncedSummary(String synced);
+
+  /// No description provided for @settingsSyncedSummarySingular.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced {synced} action'**
+  String settingsSyncedSummarySingular(String synced);
+
+  /// No description provided for @settingsSyncedWithFailures.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced {synced}, {failed} failed'**
+  String settingsSyncedWithFailures(String synced, String failed);
+
+  /// No description provided for @inviteAcceptHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept Ivra invitation'**
+  String get inviteAcceptHeading;
+
+  /// No description provided for @inviteSubtitleWithHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was invited as {role} for {hotel}.'**
+  String inviteSubtitleWithHotel(String name, String role, String hotel);
+
+  /// No description provided for @inviteSubtitleNoHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was invited as {role}.'**
+  String inviteSubtitleNoHotel(String name, String role);
+
+  /// No description provided for @inviteEmailMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the email address this invitation was sent to.'**
+  String get inviteEmailMismatch;
+
+  /// No description provided for @inviteAccountCreatedConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created. Confirm your email, then return to this invitation link and enter the same password to finish joining.'**
+  String get inviteAccountCreatedConfirm;
+
+  /// No description provided for @inviteInvalidHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation unavailable'**
+  String get inviteInvalidHeading;
+
+  /// No description provided for @inviteInvalidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This invitation may have expired, been cancelled, or already been accepted.'**
+  String get inviteInvalidBody;
+
+  /// No description provided for @teamMemberReactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} reactivated'**
+  String teamMemberReactivated(String name);
+
+  /// No description provided for @teamMemberDeactivated.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} deactivated'**
+  String teamMemberDeactivated(String name);
+
+  /// No description provided for @settingsActionLastTried.
+  ///
+  /// In en, this message translates to:
+  /// **'Last tried {datetime}'**
+  String settingsActionLastTried(String datetime);
+
+  /// No description provided for @settingsActionNeedsReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Action still needs review'**
+  String get settingsActionNeedsReview;
+
+  /// No description provided for @teamInviteLinkUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation link is unavailable'**
+  String get teamInviteLinkUnavailable;
+
+  /// No description provided for @teamCopyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy invitation link'**
+  String get teamCopyLink;
+
+  /// No description provided for @teamResendInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend invitation'**
+  String get teamResendInvitation;
+
+  /// No description provided for @teamCancelInvitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel invitation'**
+  String get teamCancelInvitation;
+
+  /// No description provided for @teamCannotInviteSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot invite yourself'**
+  String get teamCannotInviteSelf;
+
+  /// No description provided for @btnUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get btnUpdate;
+
+  /// No description provided for @notFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Page Not Found'**
+  String get notFoundTitle;
+
+  /// No description provided for @notFoundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The page you are looking for does not exist or has been moved.'**
+  String get notFoundBody;
+
+  /// No description provided for @notFoundButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Dashboard'**
+  String get notFoundButton;
+
+  /// No description provided for @downloadAppBannerText.
+  ///
+  /// In en, this message translates to:
+  /// **'For the best experience, download our Android App.'**
+  String get downloadAppBannerText;
+
+  /// No description provided for @downloadAppBannerButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Download App'**
+  String get downloadAppBannerButton;
+
+  /// No description provided for @sendPushTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Notification'**
+  String get sendPushTitle;
+
+  /// No description provided for @teamViewAs.
+  ///
+  /// In en, this message translates to:
+  /// **'View as'**
+  String get teamViewAs;
+
+  /// No description provided for @impersonationBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing as {name}'**
+  String impersonationBanner(String name);
+
+  /// No description provided for @impersonationExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get impersonationExit;
+}
+
+class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
+  const _AppL10nDelegate();
+
+  @override
+  Future<AppL10n> load(Locale locale) {
+    return SynchronousFuture<AppL10n>(lookupAppL10n(locale));
+  }
+
+  @override
+  bool isSupported(Locale locale) =>
+      <String>['ar', 'en', 'fr', 'it'].contains(locale.languageCode);
+
+  @override
+  bool shouldReload(_AppL10nDelegate old) => false;
+}
+
+AppL10n lookupAppL10n(Locale locale) {
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'ar':
+      return AppL10nAr();
+    case 'en':
+      return AppL10nEn();
+    case 'fr':
+      return AppL10nFr();
+    case 'it':
+      return AppL10nIt();
+  }
+
+  throw FlutterError(
+      'AppL10n.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
+}

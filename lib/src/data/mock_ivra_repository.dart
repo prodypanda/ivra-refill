@@ -347,7 +347,10 @@ class MockIvraRepository implements IvraRepository {
     }
   }
 
-  @override
+  /// Demo-only: switch the active demo user. This is intentionally NOT part of
+  /// the [IvraRepository] interface — it only exists on the in-memory mock used
+  /// in demo mode and tests. Production code must narrow to [MockIvraRepository]
+  /// before calling it.
   Future<void> switchDemoUser({required String userId}) async {
     final member = _teamMembers.firstWhere((item) => item.id == userId);
     _currentUser = member;
@@ -630,6 +633,13 @@ class MockIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<Set<String>> appliedClientRequestIds({String? hotelId}) async {
+    // The demo repository records every processed idempotency key, mirroring
+    // the server-side `client_request_id` columns on refill/inventory events.
+    return Set<String>.from(_processedClientRequestIds);
+  }
+
+  @override
   Future<void> createHotel({
     required String name,
     String legalName = '',
@@ -722,9 +732,10 @@ class MockIvraRepository implements IvraRepository {
       );
 
       for (final product in products) {
+        final roomProductId = _uuid.v4();
         _roomProducts.add(
           RoomProduct(
-            id: _uuid.v4(),
+            id: roomProductId,
             hotelId: hotelId,
             roomId: roomId,
             roomNumber: roomNumber,
@@ -734,6 +745,24 @@ class MockIvraRepository implements IvraRepository {
             lastRefillAt: null,
             bottleStartedAt: DateTime.now(),
             status: BottleStatus.active,
+          ),
+        );
+
+        // Log the initial bottle placement so a freshly created room shows a
+        // "New bottle placed" entry in its history (the UI treats a
+        // bottleReplaced event with previousRefillCount == 0 as the initial
+        // placement).
+        _events.insert(
+          0,
+          RefillEvent(
+            id: _uuid.v4(),
+            roomProductId: roomProductId,
+            type: RefillEventType.bottleReplaced,
+            previousRefillCount: 0,
+            newRefillCount: 0,
+            occurredAt: DateTime.now(),
+            performedBy: _currentUser.id,
+            notes: 'Initial bottle placement',
           ),
         );
       }
@@ -941,6 +970,7 @@ class MockIvraRepository implements IvraRepository {
       occurredAt: DateTime.now(),
       performedBy: _currentUser.id,
       notes: notes,
+      clientRequestId: clientRequestId,
     );
 
     _events.insert(0, event);
@@ -1044,6 +1074,7 @@ class MockIvraRepository implements IvraRepository {
         occurredAt: now,
         performedBy: _currentUser.id,
         notes: notes,
+        clientRequestId: clientRequestId,
       ),
     );
     _roomProducts[index] = RoomProduct(

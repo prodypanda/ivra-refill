@@ -1,4 +1,5 @@
 import 'app_enums.dart';
+import '../utils/parse_utils.dart';
 
 class UserProfile {
   const UserProfile({
@@ -22,12 +23,12 @@ class UserProfile {
 
   factory UserProfile.fromMap(Map<String, dynamic> map) {
     return UserProfile(
-      id: map['id'] as String,
-      fullName: (map['full_name'] ?? '') as String,
-      email: (map['email'] ?? '') as String,
-      role: UserRole.fromValue((map['role'] ?? 'hotel_staff') as String),
-      isActive: (map['is_active'] ?? true) as bool,
-      hotelId: map['hotel_id'] as String?,
+      id: asString(map['id']),
+      fullName: asString(map['full_name']),
+      email: asString(map['email']),
+      role: UserRole.fromValue(asString(map['role'], fallback: 'hotel_staff')),
+      isActive: asBool(map['is_active'], fallback: true),
+      hotelId: asNullableString(map['hotel_id']),
     );
   }
 
@@ -74,15 +75,15 @@ class TeamInvitation {
 
   factory TeamInvitation.fromMap(Map<String, dynamic> map) {
     return TeamInvitation(
-      id: map['id'] as String,
-      email: (map['email'] ?? '') as String,
-      fullName: (map['full_name'] ?? '') as String,
-      role: UserRole.fromValue((map['role'] ?? 'hotel_staff') as String),
-      status: (map['status'] ?? 'pending') as String,
-      createdAt: DateTime.parse(map['created_at'] as String),
-      inviteToken: map['invite_token'] as String?,
-      hotelId: map['hotel_id'] as String?,
-      hotelName: map['hotel_name'] as String?,
+      id: asString(map['id']),
+      email: asString(map['email']),
+      fullName: asString(map['full_name']),
+      role: UserRole.fromValue(asString(map['role'], fallback: 'hotel_staff')),
+      status: asString(map['status'], fallback: 'pending'),
+      createdAt: asDateTime(map['created_at']),
+      inviteToken: asNullableString(map['invite_token']),
+      hotelId: asNullableString(map['hotel_id']),
+      hotelName: asNullableString(map['hotel_name']),
     );
   }
 
@@ -164,18 +165,18 @@ class Hotel {
 
   factory Hotel.fromMap(Map<String, dynamic> map) {
     return Hotel(
-      id: map['id'] as String,
-      name: (map['name'] ?? '') as String,
-      legalName: (map['legal_name'] ?? '') as String,
-      city: (map['city'] ?? '') as String,
-      country: (map['country'] ?? '') as String,
-      contactName: (map['contact_name'] ?? '') as String,
-      email: (map['email'] ?? '') as String,
-      phone: (map['phone'] ?? '') as String,
-      address: (map['address'] ?? '') as String,
-      notes: (map['notes'] ?? '') as String,
-      roomCount: (map['room_count'] ?? 0) as int,
-      pendingEdits: (map['pending_edits'] ?? 0) as int,
+      id: asString(map['id']),
+      name: asString(map['name']),
+      legalName: asString(map['legal_name']),
+      city: asString(map['city']),
+      country: asString(map['country']),
+      contactName: asString(map['contact_name']),
+      email: asString(map['email']),
+      phone: asString(map['phone']),
+      address: asString(map['address']),
+      notes: asString(map['notes']),
+      roomCount: asInt(map['room_count']),
+      pendingEdits: asInt(map['pending_edits']),
     );
   }
 }
@@ -213,12 +214,12 @@ class RoomInfo {
 
   factory RoomInfo.fromMap(Map<String, dynamic> map) {
     return RoomInfo(
-      id: map['id'] as String,
-      hotelId: map['hotel_id'] as String,
-      floorId: map['floor_id'] as String,
-      roomNumber: (map['room_number'] ?? '') as String,
-      floorNumber: (map['floor_number'] ?? 0) as int,
-      productCount: (map['product_count'] ?? 0) as int,
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
+      floorId: asString(map['floor_id']),
+      roomNumber: asString(map['room_number']),
+      floorNumber: asInt(map['floor_number']),
+      productCount: asInt(map['product_count']),
     );
   }
 }
@@ -277,21 +278,21 @@ class Product {
 
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      id: map['id'] as String,
-      sku: (map['sku'] ?? '') as String,
-      nameEn: (map['name_en'] ?? '') as String,
-      nameFr: (map['name_fr'] ?? '') as String,
-      nameAr: (map['name_ar'] ?? '') as String,
-      nameIt: (map['name_it'] ?? map['name_en'] ?? '') as String,
-      bottleVolumeMl: (map['bottle_volume_ml'] ?? 1000) as int,
-      bidonVolumeMl: (map['bidon_volume_ml'] ?? 5000) as int,
-      maxRefillCount: (map['max_refill_count'] ?? 0) as int,
-      maxBottleAgeDays: (map['max_bottle_age_days'] ?? 0) as int,
-      lowBottleThreshold: (map['low_bottle_threshold'] ?? 0) as int,
-      lowBidonThreshold: (map['low_bidon_threshold'] ?? 0) as int,
-      imageUrl: map['image_url'] as String?,
-      bottleType: BottleType.fromValue((map['bottle_type'] ?? 'with_pump') as String),
-      refillType: RefillType.fromValue((map['refill_type'] ?? 'refillable') as String),
+      id: asString(map['id']),
+      sku: asString(map['sku']),
+      nameEn: asString(map['name_en']),
+      nameFr: asString(map['name_fr']),
+      nameAr: asString(map['name_ar']),
+      nameIt: asString(map['name_it'], fallback: asString(map['name_en'])),
+      bottleVolumeMl: asInt(map['bottle_volume_ml'], fallback: 1000),
+      bidonVolumeMl: asInt(map['bidon_volume_ml'], fallback: 5000),
+      maxRefillCount: asInt(map['max_refill_count']),
+      maxBottleAgeDays: asInt(map['max_bottle_age_days']),
+      lowBottleThreshold: asInt(map['low_bottle_threshold']),
+      lowBidonThreshold: asInt(map['low_bidon_threshold']),
+      imageUrl: asNullableString(map['image_url']),
+      bottleType: BottleType.fromValue(asString(map['bottle_type'], fallback: 'with_pump')),
+      refillType: RefillType.fromValue(asString(map['refill_type'], fallback: 'refillable')),
     );
   }
 
@@ -437,6 +438,7 @@ class RefillEvent {
     required this.occurredAt,
     required this.performedBy,
     this.notes,
+    this.clientRequestId,
   });
 
   final String id;
@@ -447,6 +449,12 @@ class RefillEvent {
   final DateTime occurredAt;
   final String performedBy;
   final String? notes;
+
+  /// The idempotency key supplied by the client when the originating action was
+  /// recorded (== [OfflineAction.id]). Lets the optimistic offline overlay tell
+  /// whether a still-queued action has already been applied on the server, so
+  /// it can avoid double-counting.
+  final String? clientRequestId;
 
   bool canUndo(DateTime now, String currentUserId) {
     return type == RefillEventType.refill &&
@@ -667,13 +675,13 @@ class AuditLog {
 
   factory AuditLog.fromMap(Map<String, dynamic> map) {
     return AuditLog(
-      id: map['id'] as String,
-      createdAt: DateTime.parse(map['created_at'] as String),
-      userId: map['user_id'] as String?,
-      action: map['action'] as String,
-      details: map['details'] as Map<String, dynamic>?,
-      ipAddress: map['ip_address'] as String?,
-      deviceInfo: map['device_info'] as String?,
+      id: asString(map['id']),
+      createdAt: asDateTime(map['created_at']),
+      userId: asNullableString(map['user_id']),
+      action: asString(map['action']),
+      details: asNullableStringMap(map['details']),
+      ipAddress: asNullableString(map['ip_address']),
+      deviceInfo: asNullableString(map['device_info']),
     );
   }
 }
@@ -682,11 +690,21 @@ class DailyRefillProgress {
   const DailyRefillProgress({
     required this.refilledRoomsCount,
     required this.totalRoomsCount,
-    required this.nextPriorityRoom,
+    required this.status,
+    this.nextPriorityRoomNumber,
   });
 
   final int refilledRoomsCount;
   final int totalRoomsCount;
-  final String nextPriorityRoom;
+
+  /// Language-neutral state of the summary. Presentation layers (Flutter UI
+  /// and the native home widget) localize this for the active locale rather
+  /// than the provider hard-coding English text.
+  final DailyRefillStatus status;
+
+  /// Raw room number to refill next (e.g. `201`), or null when there is no
+  /// priority room (everything done, or no rooms). Never a pre-formatted,
+  /// English "Room N" string.
+  final String? nextPriorityRoomNumber;
 }
 

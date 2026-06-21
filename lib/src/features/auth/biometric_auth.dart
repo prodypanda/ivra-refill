@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,18 +36,47 @@ class AuthPrefs {
   static String normalizeEmail(String email) => email.trim().toLowerCase();
 }
 
+/// Secure, hardware-backed store (Android Keystore / iOS Keychain) for the
+/// only sensitive value the biometric flow persists: the replay password.
+const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+
 /// Persist the credentials for a successful login, scoped to [email].
+///
+/// The password is written to [_secureStorage] (encrypted at rest) rather than
+/// to plaintext [SharedPreferences]. Only the non-sensitive `savedEmail` hint
+/// stays in [SharedPreferences]. Any pre-existing plaintext password for this
+/// account is scrubbed so old data cannot be recovered from disk.
 Future<void> saveLoginCredentials(String email, String password) async {
   final prefs = await SharedPreferences.getInstance();
   final trimmed = email.trim();
   await prefs.setString(AuthPrefs.savedEmail, trimmed);
-  await prefs.setString(AuthPrefs.passwordKey(trimmed), password);
+  await _secureStorage.write(
+    key: AuthPrefs.passwordKey(trimmed),
+    value: password,
+  );
+
+  // Scrub any legacy plaintext password for this account.
+  if (prefs.containsKey(AuthPrefs.passwordKey(trimmed))) {
+    await prefs.remove(AuthPrefs.passwordKey(trimmed));
+  }
 }
 
 /// The saved password for [email], if any.
+///
+/// Reads from secure storage first. If nothing is found there but a legacy
+/// plaintext password still lives in [SharedPreferences], it is transparently
+/// migrated into secure storage (and the plaintext copy deleted) before being
+/// returned, so upgrading users keep working without re-entering credentials.
 Future<String?> savedPasswordFor(String email) async {
+  var password = await _secureStorage.read(key: AuthPrefs.passwordKey(email));
+  if (password != null && password.isNotEmpty) return password;
+
   final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(AuthPrefs.passwordKey(email));
+  password = prefs.getString(AuthPrefs.passwordKey(email));
+  if (password != null && password.isNotEmpty) {
+    await saveLoginCredentials(email, password);
+  }
+  return password;
 }
 
 /// Whether biometric unlock is currently enabled for [email].
@@ -146,6 +176,6 @@ Future<bool> hasBiometricCredentials() async {
   final prefs = await SharedPreferences.getInstance();
   final account = prefs.getString(AuthPrefs.biometricAccount);
   if (account == null || account.isEmpty) return false;
-  final password = prefs.getString(AuthPrefs.passwordKey(account));
+  final password = await savedPasswordFor(account);
   return password != null && password.isNotEmpty;
 }

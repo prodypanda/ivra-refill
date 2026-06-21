@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/mock_ivra_repository.dart';
 import '../../data/offline/offline_sync_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
@@ -256,9 +257,11 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
     String actionId,
   ) async {
+    // Manual retry: reset any dead-lettered action and bypass the backoff
+    // window so the user-triggered attempt always runs.
     final didSync = await ref
         .read(offlineSyncServiceProvider)
-        .syncAction(ref.read(repositoryProvider), actionId);
+        .retryDeadLetterAction(ref.read(repositoryProvider), actionId);
 
     ref.invalidate(offlineActionsProvider);
     ref.invalidate(roomProductsProvider);
@@ -598,9 +601,12 @@ class _DemoUserSwitcher extends ConsumerWidget {
                 ],
                 onChanged: (value) async {
                   if (value == null) return;
-                  await ref
-                      .read(repositoryProvider)
-                      .switchDemoUser(userId: value);
+                  // Demo-user switching only exists on the in-memory mock used
+                  // in demo mode; narrow to it before calling.
+                  final repo = ref.read(repositoryProvider);
+                  if (repo is MockIvraRepository) {
+                    await repo.switchDemoUser(userId: value);
+                  }
                   _refreshAppData(ref);
                   if (!context.mounted) return;
                   PremiumSnackbar.showSuccess(

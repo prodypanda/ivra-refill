@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +21,21 @@ final supabaseAuthStateProvider = StreamProvider<AuthState?>((ref) {
   return Supabase.instance.client.auth.onAuthStateChange;
 });
 
-final localeProvider = StateProvider<Locale>((ref) => const Locale('fr'));
+final localeProvider = StateProvider<Locale>((ref) => resolveInitialLocale());
+
+/// Resolves the initial app [Locale] from the device/OS locales, falling back
+/// to French only when none of the device locales is supported. Previously the
+/// app always started in French regardless of the user's device language.
+Locale resolveInitialLocale() {
+  const supported = ['en', 'fr', 'ar', 'it'];
+  const fallback = Locale('fr');
+  for (final deviceLocale in PlatformDispatcher.instance.locales) {
+    if (supported.contains(deviceLocale.languageCode)) {
+      return Locale(deviceLocale.languageCode);
+    }
+  }
+  return fallback;
+}
 
 final offlineModeProvider = StateProvider<bool>((ref) => false);
 
@@ -59,9 +74,53 @@ final offlineActionsProvider = FutureProvider<List<OfflineAction>>((ref) {
 
 final selectedHotelIdProvider = StateProvider<String?>((ref) => null);
 
-final currentUserProvider = FutureProvider<UserProfile>((ref) {
+/// When an app admin chooses "View as" another user, the target's profile is
+/// stored here. While set, [currentUserProvider] returns this profile instead
+/// of the real authenticated user, so navigation, route gating and every
+/// role/hotel-scoped permission check reflect the impersonated user.
+///
+/// This is a client-side view only: it does NOT change the authenticated
+/// session, so any write still executes as the real admin on the backend.
+final impersonatedUserProvider = StateProvider<UserProfile?>((ref) => null);
+
+/// The real authenticated user, ignoring any active "View as" impersonation.
+/// Use this (not [currentUserProvider]) when you need to know who is actually
+/// signed in, e.g. to decide whether the "View as" feature is available.
+final realCurrentUserProvider = FutureProvider<UserProfile>((ref) {
   return ref.watch(repositoryProvider).currentUser();
 });
+
+final currentUserProvider = FutureProvider<UserProfile>((ref) async {
+  final impersonated = ref.watch(impersonatedUserProvider);
+  if (impersonated != null) return impersonated;
+  return ref.watch(realCurrentUserProvider.future);
+});
+
+/// True while an app admin is viewing the app as another user.
+final isImpersonatingProvider = Provider<bool>((ref) {
+  return ref.watch(impersonatedUserProvider) != null;
+});
+
+/// Starts a "View as" session for [target]. Only an app admin may impersonate,
+/// and an admin can never impersonate themselves. Switching the effective user
+/// invalidates all account-scoped data so the impersonated user's hotels,
+/// dashboard, etc. are fetched immediately.
+void startImpersonation(WidgetRef ref, UserProfile target) {
+  final realUser = ref.read(realCurrentUserProvider).valueOrNull;
+  if (realUser == null || realUser.role != UserRole.appAdmin) return;
+  if (realUser.id == target.id) return;
+  ref.read(impersonatedUserProvider.notifier).state = target;
+  ref.read(selectedHotelIdProvider.notifier).state = target.hotelId;
+  invalidateAccountScopedData(ref);
+}
+
+/// Ends the active "View as" session and restores the admin's own view.
+void stopImpersonation(WidgetRef ref) {
+  if (ref.read(impersonatedUserProvider) == null) return;
+  ref.read(impersonatedUserProvider.notifier).state = null;
+  ref.read(selectedHotelIdProvider.notifier).state = null;
+  invalidateAccountScopedData(ref);
+}
 
 final dashboardProvider = FutureProvider<DashboardMetrics>((ref) {
   final hotelId = ref.watch(selectedHotelIdProvider);
@@ -114,12 +173,52 @@ final roomsProvider = FutureProvider<List<RoomInfo>>((ref) {
   return ref.watch(repositoryProvider).rooms(hotelId: hotelId);
 });
 
+/// Reconciles the locally-queued [OfflineAction]s against the idempotency keys
+/// the server has already applied.
+///
+/// Each action's [OfflineAction.id] is passed to the server as the
+/// `client_request_id`, so an action whose id appears in [appliedIds] has
+/// already landed on the server and is reflected in the freshly fetched rows.
+/// Such actions are:
+///   * removed from the returned list so the optimistic overlay does NOT
+///     double-count them, and
+///   * pruned from the offline queue so the UI and queue stay consistent
+///     without waiting for a manual refresh.
+///
+/// Actions that are genuinely not-yet-synced are returned unchanged so the
+/// offline-first overlay keeps working.
+Future<List<OfflineAction>> _reconcilePendingActions(
+  Ref ref,
+  List<OfflineAction> pendingActions,
+  Set<String> appliedIds,
+) async {
+  if (pendingActions.isEmpty || appliedIds.isEmpty) return pendingActions;
+
+  final service = ref.watch(offlineSyncServiceProvider);
+  final stillPending = <OfflineAction>[];
+  for (final action in pendingActions) {
+    if (appliedIds.contains(action.id)) {
+      // Confirmed synced on the server already; drop it from the queue.
+      await service.remove(action.id);
+    } else {
+      stillPending.add(action);
+    }
+  }
+  return stillPending;
+}
+
 final roomProductsProvider = FutureProvider<List<RoomProduct>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
-  final items =
-      await ref.watch(repositoryProvider).roomProducts(hotelId: hotelId);
-  final pendingActions =
+  final repository = ref.watch(repositoryProvider);
+  final items = await repository.roomProducts(hotelId: hotelId);
+  var pendingActions =
       await ref.watch(offlineSyncServiceProvider).pendingActions();
+
+  if (pendingActions.isEmpty) return items;
+
+  final appliedIds = await repository.appliedClientRequestIds(hotelId: hotelId);
+  pendingActions =
+      await _reconcilePendingActions(ref, pendingActions, appliedIds);
 
   if (pendingActions.isEmpty) return items;
 
@@ -151,9 +250,16 @@ final roomProductsProvider = FutureProvider<List<RoomProduct>>((ref) async {
 
 final inventoryProvider = FutureProvider<List<InventoryItem>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
-  final items = await ref.watch(repositoryProvider).inventory(hotelId: hotelId);
-  final pendingActions =
+  final repository = ref.watch(repositoryProvider);
+  final items = await repository.inventory(hotelId: hotelId);
+  var pendingActions =
       await ref.watch(offlineSyncServiceProvider).pendingActions();
+
+  if (pendingActions.isEmpty) return items;
+
+  final appliedIds = await repository.appliedClientRequestIds(hotelId: hotelId);
+  pendingActions =
+      await _reconcilePendingActions(ref, pendingActions, appliedIds);
 
   if (pendingActions.isEmpty) return items;
 
@@ -273,7 +379,8 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
     return const DailyRefillProgress(
       refilledRoomsCount: 0,
       totalRoomsCount: 0,
-      nextPriorityRoom: 'None',
+      status: DailyRefillStatus.noRooms,
+      nextPriorityRoomNumber: null,
     );
   }
 
@@ -313,7 +420,7 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
       .where((entry) => !refilledRoomNumbers.contains(entry.key))
       .toList();
 
-  String nextPriorityRoom = 'All Done! 🎉';
+  String? nextPriorityRoomNumber;
   if (remainingRooms.isNotEmpty) {
     final criticalRooms = <MapEntry<String, List<RoomProduct>>>[];
     final warningRooms = <MapEntry<String, List<RoomProduct>>>[];
@@ -362,18 +469,21 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
     normalRooms.sort(compareRoomNumbers);
 
     if (criticalRooms.isNotEmpty) {
-      nextPriorityRoom = 'Room ${criticalRooms.first.key}';
+      nextPriorityRoomNumber = criticalRooms.first.key;
     } else if (warningRooms.isNotEmpty) {
-      nextPriorityRoom = 'Room ${warningRooms.first.key}';
+      nextPriorityRoomNumber = warningRooms.first.key;
     } else if (normalRooms.isNotEmpty) {
-      nextPriorityRoom = 'Room ${normalRooms.first.key}';
+      nextPriorityRoomNumber = normalRooms.first.key;
     }
   }
 
   return DailyRefillProgress(
     refilledRoomsCount: refilledRoomsCount,
     totalRoomsCount: totalRoomsCount,
-    nextPriorityRoom: nextPriorityRoom,
+    status: nextPriorityRoomNumber == null
+        ? DailyRefillStatus.allDone
+        : DailyRefillStatus.hasPriority,
+    nextPriorityRoomNumber: nextPriorityRoomNumber,
   );
 });
 

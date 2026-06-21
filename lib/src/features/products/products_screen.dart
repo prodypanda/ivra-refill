@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -513,7 +515,128 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
   String? _currentImageUrl;
   var _isSaving = false;
 
+  /// Reject uploads larger than this so a stray huge file can't be pushed to
+  /// storage or saved as a product image.
+  static const _maxImageBytes = 5 * 1024 * 1024; // 5 MB
+  static const _allowedImageExtensions = {
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+    'webp',
+    'bmp',
+    'heic',
+    'heif',
+  };
+
   bool get _isEditing => widget.product != null;
+
+  /// Whether a new pick or an existing URL is currently set.
+  bool get _hasImage =>
+      _selectedImage != null ||
+      (_currentImageUrl != null && _currentImageUrl!.trim().isNotEmpty);
+
+  String _extensionOf(String name) {
+    if (!name.contains('.')) return '';
+    return name.split('.').last.toLowerCase();
+  }
+
+  String _mimeForExtension(String ext) {
+    switch (ext) {
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      case 'bmp':
+        return 'image/bmp';
+      case 'heic':
+        return 'image/heic';
+      case 'heif':
+        return 'image/heif';
+      case 'jpg':
+      case 'jpeg':
+      default:
+        return 'image/jpeg';
+    }
+  }
+
+  bool _isAllowedImageName(String name) {
+    final ext = _extensionOf(name);
+    return ext.isNotEmpty && _allowedImageExtensions.contains(ext);
+  }
+
+  Future<void> _pickImage() async {
+    final l10n = AppLocalizations.of(context);
+    XFile? image;
+    try {
+      final picker = ImagePicker();
+      // On web `ImageSource.gallery` opens the OS file chooser. Some browsers
+      // (Chrome/Edge) intermittently fail or return nothing from
+      // `pickImage`; fall back to `pickMedia` which is the supported web path.
+      try {
+        image = await picker.pickImage(source: ImageSource.gallery);
+      } catch (_) {
+        image = await picker.pickMedia();
+      }
+    } catch (e) {
+      // pickImage can throw on some platforms (permission denied, no gallery
+      // available, plugin not registered, etc.). Surface the real reason so the
+      // failure is diagnosable instead of an invisible no-op.
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          '${l10n.t('productsImageUploadFailed')} ($e)',
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
+      return;
+    }
+    if (image == null) return;
+
+    // Basic type validation (reject non-image files).
+    if (!_isAllowedImageName(image.name)) {
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('productsImageInvalidType'),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
+      return;
+    }
+
+    // Basic size validation (reject overly large files).
+    final length = await image.length();
+    if (length > _maxImageBytes) {
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.tParams('productsImageTooLarge',
+              {'max': '${_maxImageBytes ~/ (1024 * 1024)}'}),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
+      return;
+    }
+
+    setState(() => _selectedImage = image);
+  }
+
+  void _clearImage() {
+    setState(() {
+      _selectedImage = null;
+      _currentImageUrl = null;
+    });
+  }
+
+  /// True when the configured repository is backed by Supabase. In demo/mock
+  /// mode Supabase storage is unavailable, so image uploads are skipped.
+  bool get _supabaseEnabled => ref.read(useSupabaseProvider);
 
   @override
   void initState() {
@@ -572,7 +695,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: BorderRadius.circular(28),
       ),
       padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
       child: SafeArea(
@@ -640,13 +763,14 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                         children: [
                           Expanded(
                             child: Text(
-                              _selectedImage != null
-                                  ? 'Selected: ${_selectedImage!.name}'
-                                  : (_currentImageUrl != null && _currentImageUrl!.isNotEmpty
-                                      ? 'Image is set (tap to change)'
-                                      : 'No image selected'),
+                              _hasImage
+                                  ? (_selectedImage != null
+                                      ? l10n.tParams('productsImageSelected',
+                                          {'name': _selectedImage!.name})
+                                      : l10n.t('productsImageSet'))
+                                  : l10n.t('productsImageNone'),
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: _selectedImage != null || (_currentImageUrl != null && _currentImageUrl!.isNotEmpty)
+                                color: _hasImage
                                   ? Theme.of(context).colorScheme.primary
                                   : Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
@@ -655,18 +779,17 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                             ),
                           ),
                           const SizedBox(width: 12),
+                          if (_hasImage)
+                            IconButton(
+                              tooltip: l10n.t('productsImageRemove'),
+                              icon: Icon(Icons.close,
+                                  color: Theme.of(context).colorScheme.error),
+                              onPressed: _isSaving ? null : _clearImage,
+                            ),
                           OutlinedButton.icon(
                             icon: const Icon(Icons.image_search),
                             label: Text(l10n.t('productsLabelImage')),
-                            onPressed: () async {
-                              final picker = ImagePicker();
-                              final image = await picker.pickImage(source: ImageSource.gallery);
-                              if (image != null) {
-                                setState(() {
-                                  _selectedImage = image;
-                                });
-                              }
-                            },
+                            onPressed: _isSaving ? null : _pickImage,
                           ),
                         ],
                       ),
@@ -819,32 +942,51 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
 
     try {
       final repository = ref.read(repositoryProvider);
+      final l10n = AppLocalizations.of(context);
       final product = widget.product;
       String? finalImageUrl = _currentImageUrl;
       if (_selectedImage != null) {
-        final bytes = await _selectedImage!.readAsBytes();
-        final ext = _selectedImage!.name.contains('.') ? _selectedImage!.name.split('.').last : 'jpg';
-        final fileName = '${DateTime.now().millisecondsSinceEpoch}.$ext';
-        
-        try {
-          await Supabase.instance.client.storage
-              .from('products')
-              .uploadBinary(fileName, bytes,
-                  fileOptions: const FileOptions(upsert: true));
-        } catch (e) {
-          // If bucket doesn't exist or other error, let's try to create it just in case
+        // In demo/mock mode Supabase storage is unavailable. Persist the picked
+        // image inline as a base64 data URI so it still shows in the catalog
+        // instead of silently discarding the upload.
+        if (!_supabaseEnabled) {
+          final bytes = await _selectedImage!.readAsBytes();
+          final ext = _extensionOf(_selectedImage!.name);
+          final mime = _mimeForExtension(ext);
+          finalImageUrl = 'data:$mime;base64,${base64Encode(bytes)}';
+        } else {
+          final bytes = await _selectedImage!.readAsBytes();
+          final ext = _extensionOf(_selectedImage!.name);
+          final fileName =
+              '${DateTime.now().millisecondsSinceEpoch}.${ext.isEmpty ? 'jpg' : ext}';
+
           try {
-            await Supabase.instance.client.storage.createBucket('products', const BucketOptions(public: true));
             await Supabase.instance.client.storage
                 .from('products')
                 .uploadBinary(fileName, bytes,
                     fileOptions: const FileOptions(upsert: true));
-          } catch (_) {}
+            // Only build a public URL once the upload actually succeeded.
+            finalImageUrl = Supabase.instance.client.storage
+                .from('products')
+                .getPublicUrl(fileName);
+          } catch (e) {
+            // Surface the failure, keep the previous image, and abort the save
+            // so we never persist a broken/non-existent image URL. Include the
+            // real backend reason (e.g. an RLS or storage error) so the issue
+            // can actually be diagnosed instead of a generic retry message.
+            if (mounted) {
+              final reason =
+                  e is StorageException ? e.message : e.toString();
+              PremiumSnackbar.show(
+                context,
+                '${l10n.t('productsImageUploadFailed')} ($reason)',
+                icon: Icons.error_outline,
+                isError: true,
+              );
+            }
+            return;
+          }
         }
-        
-        finalImageUrl = Supabase.instance.client.storage
-            .from('products')
-            .getPublicUrl(fileName);
       }
 
       final isRefillable = _refillType == RefillType.refillable;
@@ -888,9 +1030,23 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
       if (mounted) {
         PremiumSnackbar.showSuccess(
           context,
-          widget.product == null ? 'Product added successfully' : 'Product updated successfully',
+          widget.product == null
+              ? l10n.t('productsAddedSuccess')
+              : l10n.t('productsUpdatedSuccess'),
         );
         Navigator.of(context).pop();
+      }
+    } catch (error) {
+      // Surface the real backend reason (e.g. a PostgREST schema/validation
+      // error) instead of letting it propagate as an uncaught error that only
+      // shows up as a raw HTTP 400 in the browser console.
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          error is PostgrestException ? error.message : error.toString(),
+          icon: Icons.error_outline,
+          isError: true,
+        );
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);

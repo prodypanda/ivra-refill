@@ -1,0 +1,860 @@
+{
+  "@@locale": "en",
+  "markAsRead": "Mark as Read",
+  "confirmDeleteHotel": "Are you sure you want to delete the hotel '{hotelName}'? This action is permanent, cannot be undone, and will permanently remove all associated rooms, staff assignments, and records.",
+  "@confirmDeleteHotel": {
+    "placeholders": {
+      "hotelName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteRoom": "Are you sure you want to delete room '{roomNumber}'? This action is permanent, cannot be undone, and will permanently remove all associated products and history.",
+  "@confirmDeleteRoom": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteFloor": "Are you sure you want to delete floor '{floorNumber}' and all of its rooms? This action is permanent and cannot be undone.",
+  "@confirmDeleteFloor": {
+    "placeholders": {
+      "floorNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteUser": "Are you sure you want to delete team member '{userName}'? This action is permanent, cannot be undone, and they will immediately lose access to the application.",
+  "@confirmDeleteUser": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteProduct": "Are you sure you want to delete product '{productName}'? This action is permanent, cannot be undone, and will affect inventory tracking.",
+  "@confirmDeleteProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteAlert": "Are you sure you want to delete this alert? This action is permanent and cannot be undone.",
+  "confirmDeleteAllAlerts": "Are you sure you want to delete all alerts? This action is permanent, cannot be undone, and will clear all current notifications.",
+  "clearAuditLogs": "Clear Logs",
+  "confirmAction": "Confirm Action",
+  "confirmClearLogs": "Are you sure you want to clear all audit logs? This action is permanent and cannot be undone.",
+  "btnConfirm": "Confirm",
+  "composeMessage": "Compose Message",
+  "notificationTitle": "Notification Title",
+  "notificationTitleHint": "e.g. New Feature Alert!",
+  "notificationBody": "Notification Body",
+  "notificationBodyHint": "Enter the message here...",
+  "actionButtons": "Action Buttons",
+  "actionButtonsHint": "e.g. Dismiss, Open App",
+  "pageToOpen": "Page to open",
+  "menuSendPush": "Send Push",
+  "actionAndRouting": "Action & Routing",
+  "openSpecificPage": "Open Specific Page (Optional)",
+  "defaultNoPage": "Default (No specific page)",
+  "dashboard": "Dashboard",
+  "inventory": "Inventory",
+  "alerts": "Alerts",
+  "approvals": "Approvals",
+  "actionButtonsAndroid": "Action Buttons (Android Only)",
+  "dismiss": "Dismiss",
+  "acknowledge": "Acknowledge",
+  "openApp": "Open App",
+  "sendNotification": "Send Notification",
+  "targetAudience": "Target Audience",
+  "allUsers": "All Users",
+  "byRole": "By Role",
+  "byHotel": "By Hotel",
+  "byUserEmail": "By User Email",
+  "selectRole": "Select Role",
+  "selectHotel": "Select Hotel",
+  "userEmail": "User Email",
+  "menuAuditLogs": "Audit Logs",
+  "auditLogs": "Audit Logs",
+  "auditAction": "Action",
+  "auditDevice": "Device / OS",
+  "auditIpAddress": "IP Address",
+  "auditTimestamp": "Time",
+  "auditUser": "User",
+  "enterSpecificUserEmail": "Enter specific user email",
+  "dispatchNotification": "Dispatch Notification",
+  "pleaseEnterTitleBody": "Please enter a title and body",
+  "pleaseSelectTarget": "Please select a target value",
+  "notificationSent": "Sent: {successCount} success, {failureCount} failed",
+  "@notificationSent": {
+    "placeholders": {
+      "successCount": {
+        "type": "String"
+      },
+      "failureCount": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardShort": "Dashboard",
+  "dashboardHeroTitle": "Today at Ivra",
+  "dashboardRefillActivity": "Refill Activity (Last 7 Days)",
+  "refillActivity": "Refill Activity",
+  "last7Days": "Last 7 days",
+  "lastMonth": "Last month",
+  "lastYear": "Last year",
+  "allHotels": "All Hotels",
+  "monthJan": "Jan",
+  "monthFeb": "Feb",
+  "monthMar": "Mar",
+  "monthApr": "Apr",
+  "monthMay": "May",
+  "monthJun": "Jun",
+  "monthJul": "Jul",
+  "monthAug": "Aug",
+  "monthSep": "Sep",
+  "monthOct": "Oct",
+  "monthNov": "Nov",
+  "monthDec": "Dec",
+  "dayMon": "Mon",
+  "dayTue": "Tue",
+  "dayWed": "Wed",
+  "dayThu": "Thu",
+  "dayFri": "Fri",
+  "daySat": "Sat",
+  "daySun": "Sun",
+  "chartRefills": "refills",
+  "teamEditProfile": "Edit Profile",
+  "teamEditProfileSuccess": "Profile updated successfully",
+  "hotels": "Hotels",
+  "rooms": "Rooms",
+  "products": "Products",
+  "team": "Team",
+  "account": "Account",
+  "reports": "Reports",
+  "settings": "Settings",
+  "more": "More",
+  "refill": "Refill",
+  "undo": "Undo",
+  "correction": "Correction",
+  "pending": "Pending",
+  "suggestedOrders": "Suggested orders",
+  "bottles": "Bottles",
+  "bidons": "Refill bottles",
+  "language": "Language",
+  "demoMode": "Demo mode",
+  "downloadCsv": "Download CSV",
+  "downloadPdf": "Download PDF",
+  "reportRefillHistoryTitle": "Refill history",
+  "reportRefillHistoryBody": "Export recent refill activity by hotel, room, product, user, and time.",
+  "reportSuggestedOrdersBody": "Export bottles, refill bottles, and recycling recommendations.",
+  "reportInventorySnapshotTitle": "Inventory snapshot",
+  "reportInventorySnapshotBody": "Export current bottle and refill bottle stock by hotel and product.",
+  "reportOpenAlertsTitle": "Open alerts",
+  "reportOpenAlertsBody": "Export low stock, replacement, inactivity, and suspicious activity alerts.",
+  "exportFailed": "Export failed",
+  "metricHotels": "Hotels",
+  "metricRooms": "Rooms",
+  "metricPendingApprovals": "Pending approvals",
+  "metricOpenAlerts": "Open alerts",
+  "metricBottlesToReplace": "Bottles to replace",
+  "metricLowStockProducts": "Low stock products",
+  "inventoryTableProduct": "Product",
+  "inventoryTableFullBottles": "Full bottles",
+  "inventoryTableEmptyBottles": "Empty bottles",
+  "inventoryTableEmptyBidons": "Empty refill bottles",
+  "inventoryTableFullBidons": "Full refill bottles",
+  "inventoryTableOpenBidons": "Open refill bottles",
+  "inventoryTableStatus": "Status",
+  "errorUniqueViolation": "This record already exists.",
+  "errorForeignKeyViolation": "Related record not found.",
+  "errorPermissionDenied": "You do not have permission to perform this action.",
+  "errorGeneric": "An unexpected error occurred. Please try again.",
+  "inventoryStatusHealthy": "Healthy",
+  "inventoryStatusLowStock": "Low stock",
+  "auditFilterAllActions": "All Actions",
+  "sortNameAsc": "Name (A-Z)",
+  "sortNameDesc": "Name (Z-A)",
+  "sortMostFullBottles": "Most Full Bottles",
+  "sortMostEmptyBottles": "Most Empty Bottles",
+  "bulkAdjustSelectProducts": "Select products",
+  "bulkAdjustSelectAll": "Select all",
+  "bulkAdjustDeselectAll": "Deselect all",
+  "bulkAdjustNoProductsSelected": "Please select at least one product.",
+  "orderNewBottlesText": "Order {count} new 1L bottles",
+  "@orderNewBottlesText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "orderNewBidonsText": "Order {count} new refill bottles",
+  "@orderNewBidonsText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "recycleBottlesText": "Recycle {count} bottles",
+  "@recycleBottlesText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "bottleCannotRefillRecycled": "This bottle has been recycled and cannot be refilled. Please replace it.",
+  "adjustStockTitle": "Adjust stock",
+  "hotelRoomsTracked": "rooms tracked",
+  "hotelPendingChip": "pending",
+  "hotelLabelName": "Hotel name",
+  "hotelLabelLegalName": "Legal name",
+  "hotelLabelState": "State (Governorate)",
+  "hotelLabelCountry": "Country",
+  "hotelLabelContactName": "Contact name",
+  "hotelLabelEmail": "Email",
+  "hotelLabelPhone": "Phone",
+  "hotelLabelAddress": "Address",
+  "hotelLabelNotes": "Notes",
+  "btnCreate": "Create",
+  "btnCancel": "Cancel",
+  "btnSave": "Save",
+  "btnSubmitRequest": "Submit request",
+  "demoModeDescription": "Local simulations using offline database templates.",
+  "offlineModeDescription": "Queues actions when disconnected and syncs later.",
+  "syncQueueHeader": "Sync Queue",
+  "syncNow": "Sync now",
+  "itemsToSync": "actions pending sync",
+  "editRequestQueued": "Hotel edit request queued",
+  "editRequestSubmitted": "Hotel edit request submitted",
+  "hotelUpdated": "Hotel information updated",
+  "hotelCreatedSuccessfully": "Hotel created successfully",
+  "requiredField": "Required",
+  "enterNumberError": "Enter a number",
+  "createHotel": "Create hotel",
+  "requestHotelEdit": "Request hotel edit",
+  "authTitleCannotAccess": "You need an invitation to access Ivra.",
+  "authBtnGoogleSignIn": "Sign in with Google",
+  "authBtnSignOut": "Sign out",
+  "authLabelEmail": "Email",
+  "authLabelPassword": "Password",
+  "authShowPassword": "Show password",
+  "authHidePassword": "Hide password",
+  "authBtnSignIn": "Sign in",
+  "authBtnForgotPassword": "Forgot password?",
+  "authResetPasswordTitle": "Reset password",
+  "setPasswordTitle": "Set your password",
+  "setPasswordBody": "Please set a secure password for your account to complete your registration.",
+  "setPasswordButton": "Set Password",
+  "authBtnSendResetLink": "Send reset link",
+  "authResetLinkSent": "Password reset link sent to",
+  "authValidationEmailRequired": "Email is required",
+  "authValidationEmailInvalid": "Enter a valid email address",
+  "authValidationPasswordRequired": "Password is required",
+  "authValidationPasswordTooShort": "Password must be at least 8 characters",
+  "authValidationPasswordsDoNotMatch": "Passwords do not match",
+  "authResetNewPasswordTitle": "Create new password",
+  "authLabelNewPassword": "New password",
+  "authLabelConfirmPassword": "Confirm password",
+  "authBtnUpdatePassword": "Update password",
+  "authBtnReturnToApp": "Return to app",
+  "authPasswordUpdatedSuccess": "Password updated successfully.",
+  "authUnexpectedError": "Something went wrong. Please try again, or contact support if the problem persists.",
+  "asyncErrorTitle": "Could not load this section",
+  "btnRetry": "Retry",
+  "authProfileLoadErrorTitle": "We couldn't load your profile.",
+  "authProfileLoadErrorBody": "This is usually a temporary connection issue. Please retry.",
+  "authAccountDeactivated": "This account has been deactivated. Contact your administrator for access.",
+  "settingsPayloadInvalidJson": "Payload must be a JSON object.",
+  "exportDownloadStarted": "{fileName} download started",
+  "@exportDownloadStarted": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "exportSaved": "Saved {fileName} to {path}",
+  "@exportSaved": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPendingSync": "Pending sync ({count})",
+  "@settingsPendingSync": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "splashTagline": "Sustainable Hospitality Solutions",
+  "accountSaveFailed": "Could not save your profile. Please try again.",
+  "accountPasswordChangeFailed": "Could not change your password. Please try again.",
+  "accountSignOutFailed": "Could not sign out. Check your connection and try again.",
+  "hotelCreateFailed": "Could not create the hotel. Please try again.",
+  "hotelUpdateFailed": "Could not update the hotel. Please try again.",
+  "teamInviteFailed": "Could not send the invitation. Please try again.",
+  "teamHotelsUpdateFailed": "Could not update hotel assignments. Please try again.",
+  "roomsTooltipCreateTemplate": "Create room template",
+  "roomsNoRoomsFound": "No rooms or products found.",
+  "roomsSearchEmptyHint": "Try adjusting your search query or filters.",
+  "roomsEmptyHotelWithTemplate": "Add your first room using the template button above.",
+  "roomsEmptyHotelNoTemplate": "No rooms have been assigned to this hotel yet.",
+  "roomsLabelRoom": "Room",
+  "roomsLabelFloor": "Floor",
+  "roomsLabelRefills": "Refills",
+  "roomsLabelAge": "Age",
+  "roomsLabelDaysUnit": "d",
+  "roomsRefillQueued": "Refill queued for room",
+  "roomsRefillRecorded": "Refill recorded for room",
+  "roomsBtnBottleEdit": "Bottle edit",
+  "roomsBtnReplaceBottle": "Replace bottle",
+  "roomsBtnRoomEdit": "Room edit",
+  "roomsBtnHistory": "History",
+  "roomsBtnMoreActions": "More actions",
+  "roomsReplacementQueued": "Bottle replacement queued for room",
+  "roomsReplacementRecorded": "Bottle replaced for room",
+  "roomsReplacementNotes": "Bottle replaced from room workflow",
+  "roomsStatusAllOk": "All OK",
+  "roomsStatusAttentionRequired": "Attention Required",
+  "roomsStatusRefillNeeded": "Refill Needed",
+  "roomsSearchPlaceholder": "Search room...",
+  "roomsSelectHotelFirst": "Select a hotel...",
+  "roomsViewDetailed": "Detailed View",
+  "roomsViewCompact": "Compact View",
+  "roomsFilterAll": "All",
+  "roomsDialogBottleEditTitle": "Request bottle edit for room",
+  "roomsLabelBottleStatus": "Bottle status",
+  "roomsLabelBottleStartDate": "Bottle start date",
+  "roomsValidationEnterValidDate": "Enter a valid date",
+  "roomsMsgEditRequestQueued": "Bottle edit request queued",
+  "roomsMsgDetailsUpdated": "Bottle details updated",
+  "roomsMsgEditRequestSubmitted": "Bottle edit request submitted",
+  "roomsDialogRoomEditTitle": "Request room edit for",
+  "roomsLabelRoomNumber": "Room number",
+  "roomsLabelFloorNumber": "Floor number",
+  "roomsMsgRoomEditQueued": "Room edit request queued",
+  "roomsMsgRoomDetailsUpdated": "Room details updated",
+  "roomsMsgRoomEditSubmitted": "Room edit request submitted",
+  "roomsMsgRequestRoomEdit": "Update room",
+  "roomsDialogHistoryTitle": "history",
+  "roomsNoHistoryRecorded": "No refill history has been recorded yet.",
+  "roomsMsgUndoQueued": "Undo queued",
+  "roomsMsgRefillUndone": "Refill undone",
+  "roomsBtnClose": "Close",
+  "qrScanTitle": "Scan QR Code",
+  "qrScanPlaceholder": "Enter QR code manually...",
+  "qrDemoCodes": "Demo QR Codes",
+  "qrActionPrompt": "Select Action",
+  "qrActionMessage": "What would you like to do for {product}?",
+  "@qrActionMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "qrActionRefill": "Refill Bottle",
+  "qrActionReplace": "Replace Bottle",
+  "roomsSearchProductPlaceholder": "Search product by name or SKU...",
+  "adjustStockForProduct": "Adjust Stock for {product}",
+  "@adjustStockForProduct": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "roomsBtnRequestCorrection": "Request correction",
+  "roomsLabelReason": "Reason",
+  "roomsMsgCorrectionQueued": "Correction request queued",
+  "roomsMsgCorrectionSubmitted": "Correction request submitted",
+  "roomsBtnCreateRooms": "Create rooms",
+  "roomsLabelProductsInRoom": "Products in each room",
+  "roomsMsgSelectOneProduct": "Select at least one product",
+  "productsCatalogTitle": "Product Catalog",
+  "productsBtnCreate": "Create product",
+  "productsNoProducts": "No products in the catalog yet.",
+  "productsLabelBottleVolume": "Bottle volume",
+  "productsLabelBidonVolume": "Refill bottle volume",
+  "productsLabelMaxRefill": "Max refill limit",
+  "productsLabelMaxAge": "Max bottle age",
+  "productsLabelLowStock": "Low stock alert",
+  "productsBtnEdit": "Edit product",
+  "productsLabelSku": "SKU",
+  "productsLabelNameEn": "Name English",
+  "productsLabelNameFr": "Name French",
+  "productsLabelNameAr": "Name Arabic",
+  "productsLabelNameIt": "Name Italian",
+  "productsLabelImage": "Upload Picture",
+  "productsLabelImageHint": "Select an image from your device",
+  "productsLabelBottleMl": "Bottle ml",
+  "productsLabelBidonMl": "Refill bottle ml",
+  "productsLabelMaxRefills": "Max refills",
+  "productsLabelMaxAgeDays": "Max age days",
+  "productsLabelLowBottles": "Low bottles",
+  "productsLabelLowBidons": "Low refill bottles",
+  "productsLabelBottleType": "Bottle type",
+  "productsLabelBottleWithPump": "Bottle with pump",
+  "productsLabelBottleWithoutPump": "Bottle without pump",
+  "productsLabelRefillType": "Refill type",
+  "productsLabelRefillable": "Refillable",
+  "productsLabelDirectReplacement": "Direct replacement",
+  "productsDialogCreateTitle": "Create product",
+  "productsDialogEditTitle": "Edit product",
+  "days": "days",
+  "refills": "refills",
+  "inventoryNoHotels": "No Hotels Found",
+  "inventoryAddHotelHint": "Add a hotel to get started.",
+  "inventoryNoItemsToAdjust": "No inventory items available to adjust.",
+  "inventoryNoInventoryYet": "No inventory yet",
+  "inventoryNoProductsInInventory": "There are no products in the inventory.",
+  "inventoryNoSuggestedOrders": "No suggested orders",
+  "inventoryLevelsSufficient": "Your inventory levels are currently sufficient.",
+  "teamAccounts": "Team accounts",
+  "teamNoMembers": "No team members found.",
+  "teamTableColumnName": "Name",
+  "teamTableColumnEmail": "Email",
+  "teamTableColumnRole": "Role",
+  "teamTableColumnHotel": "Hotel",
+  "teamTableColumnStatus": "Status",
+  "teamTableColumnActions": "Actions",
+  "teamPendingInvitations": "Pending invitations",
+  "teamNoPendingInvitations": "No pending invitations.",
+  "teamInviteTitle": "Invite team member",
+  "teamLabelFullName": "Full name",
+  "settingsOfflineMode": "Offline mode",
+  "settingsOfflineQueue": "Queue actions",
+  "settingsOfflineSend": "Send actions",
+  "settingsBiometricTitle": "Biometric unlock",
+  "settingsBiometricHint": "Use your fingerprint or face to sign in.",
+  "settingsBiometricUnavailable": "Biometric unlock is not available on this device.",
+  "authBtnBiometricLogin": "Biometric login",
+  "authBiometricReason": "Authenticate to access Ivra",
+  "authBiometricNeedsLogin": "Please sign in once to enable biometric login.",
+  "authBiometricOfflineNoSession": "You are offline. Connect to the internet to sign in.",
+  "authBiometricFailed": "Biometric authentication failed.",
+  "settingsBtnClear": "Clear",
+  "settingsBtnSyncNow": "Sync now",
+  "settingsNoPendingActions": "No pending actions.",
+  "teamManageHotels": "Manage hotels",
+  "teamAssignHotelsTitle": "Assign hotels",
+  "teamNoHotelsAssigned": "No hotels assigned",
+  "teamHotelsUpdated": "Hotel assignments updated",
+  "teamSelectHotels": "Select hotels",
+  "teamHotelsAssigned": "hotels assigned",
+  "accountTitle": "Account",
+  "accountProfile": "Profile",
+  "accountProfileUpdated": "Profile updated",
+  "accountPassword": "Password",
+  "accountPasswordUpdated": "Password updated",
+  "accountFullName": "Full name",
+  "accountFullNameRequired": "Full name is required",
+  "accountNewPassword": "New password",
+  "accountConfirmPassword": "Confirm new password",
+  "accountPasswordHintSupabase": "Updates your account login password.",
+  "accountPasswordHintDemo": "Demo mode accepts the change locally.",
+  "accountSignOutHint": "End the current session on this device.",
+  "accountSignOut": "Sign out",
+  "accountEmail": "Email",
+  "accountRole": "Role",
+  "accountScope": "Scope",
+  "accountStatus": "Status",
+  "accountActive": "Active",
+  "accountInactive": "Inactive",
+  "accountIvraGlobal": "Ivra global",
+  "accountTeamAccounts": "Team accounts",
+  "accountNoOtherAccounts": "No other accounts found.",
+  "accountYou": "You",
+  "alertsRefreshSmart": "Refresh smart alerts",
+  "alertsResolve": "Resolve",
+  "delete": "Delete",
+  "approvalsEmpty": "No pending approvals",
+  "approvalsEmptySubtitle": "All approval requests have been processed.",
+  "approvalsApprove": "Approve",
+  "approvalsReject": "Reject",
+  "approvalsActionFailed": "The action failed. Please try again.",
+  "approvalsApproved": "Request approved.",
+  "approvalsRejected": "Request rejected.",
+  "approvalsApproveQueued": "Approval queued for sync.",
+  "approvalsRejectQueued": "Rejection queued for sync.",
+  "approvalsAccessDenied": "Access denied. Only admins can review approvals.",
+  "approvalsRequestNotFound": "Approval request not found or already processed.",
+  "inviteAcceptTitle": "Accept invitation",
+  "inviteAlreadyHaveAccount": "I already have an account",
+  "inviteBackToSignIn": "Back to sign in",
+  "inviteEmail": "Email",
+  "invitePassword": "Password",
+  "inviteConfirmPassword": "Confirm password",
+  "settingsRetryAction": "Retry action",
+  "settingsRemoveAction": "Remove action",
+  "settingsActionUpdated": "Queued action updated",
+  "settingsActionRemoved": "Offline action removed",
+  "settingsQueueCleared": "Offline queue cleared",
+  "settingsTestAccessAs": "Test access as",
+  "settingsDemoUserChanged": "Demo user changed",
+  "settingsPayloadJson": "Queued payload JSON",
+  "settingsSaveAndRetry": "Save and retry",
+  "settingsDemoUser": "Demo user",
+  "settingsSupabaseConnected": "Connected",
+  "settingsSupabaseHint": "The app is using live data.",
+  "settingsNoSupabaseHint": "Server connection is not configured.",
+  "settingsEditAction": "Edit queued action",
+  "settingsResolveConflict": "Resolve sync conflict",
+  "settingsActionSynced": "Action synced",
+  "offlineBannerTitle": "You are offline",
+  "offlineBannerSubtitle": "Data may not be up to date",
+  "offlineBannerPending": "pending actions",
+  "offlineBannerSyncBtn": "Sync now",
+  "offlineBannerAutoSynced": "Back online! Synced {count} actions",
+  "@offlineBannerAutoSynced": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "offlineBannerSyncFailed": "Sync failed for some actions",
+  "teamInvitationCancelled": "Invitation cancelled for {email}",
+  "@teamInvitationCancelled": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "teamInvitationResent": "Invitation resent to {email}",
+  "@teamInvitationResent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "teamInvitationCopied": "Invitation link copied for {email}",
+  "@teamInvitationCopied": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "approvalsRequestedBy": "Requested by {name}",
+  "@approvalsRequestedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "approvalsOldValue": "Old: {value}",
+  "@approvalsOldValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "approvalsNewValue": "New: {value}",
+  "@approvalsNewValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "alertsSeverityLabel": "Severity {severity}",
+  "@alertsSeverityLabel": {
+    "placeholders": {
+      "severity": {
+        "type": "String"
+      }
+    }
+  },
+  "alertsStatusResolved": "Resolved",
+  "alertsStatusOpen": "Open",
+  "alertsMetricCritical": "Critical",
+  "settingsActionEditTitle": "Edit queued action",
+  "settingsActionConflictTitle": "Resolve sync conflict",
+  "settingsActionAttempts": "Attempts {count}",
+  "@settingsActionAttempts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsActionListAttempts": "Attempts: {count}",
+  "@settingsActionListAttempts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsActionListError": "Error: {message}",
+  "@settingsActionListError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "syncActionRefill": "Refill",
+  "syncActionUndoRefill": "Undo refill",
+  "syncActionCorrectionRequest": "Correction request",
+  "syncActionBottleReplacement": "Bottle replacement",
+  "syncActionStockAdjustment": "Stock adjustment",
+  "syncActionPendingEdit": "Pending edit",
+  "userRoleAppAdmin": "App admin",
+  "userRoleAppManager": "App manager",
+  "userRoleHotelManager": "Hotel manager",
+  "userRoleHotelStaff": "Hotel staff",
+  "teamStatusActive": "Active",
+  "teamStatusInactive": "Inactive",
+  "teamHotelAll": "All hotels",
+  "teamHotelNone": "—",
+  "invitationStatusPending": "Pending",
+  "invitationStatusAccepted": "Accepted",
+  "invitationStatusCancelled": "Cancelled",
+  "invitationStatusExpired": "Expired",
+  "alertResolvedToast": "Alert resolved",
+  "alertDeletedToast": "Alert deleted",
+  "notificationMoreInfo": "More info",
+  "bulkAdjustStockTitle": "Bulk stock adjustment",
+  "bulkAdjustStockHint": "Enter quantity adjustments that will apply to ALL products.",
+  "bulkAdjustStockSuccess": "Bulk stock adjustment successfully applied",
+  "bulkAdjustStockOfflineQueued": "Bulk adjustments queued for offline sync",
+  "resolveAll": "Resolve all",
+  "deleteAll": "Delete all",
+  "alertsRefreshedToast": "{count} smart alerts created",
+  "@alertsRefreshedToast": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "alertsEmptyTitle": "No alerts yet",
+  "alertsEmptyMessage": "Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.",
+  "alertsEmptyAction": "Refresh alerts",
+  "alertTypeLowBidonStock": "Low refill bottles",
+  "alertLowBottleTitle": "Low {product} bottle stock",
+  "@alertLowBottleTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "alertLowBidonTitle": "Low {product} refill bottle stock",
+  "@alertLowBidonTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "alertLowBottleBody": "{hotel}: {remain} full bottles remain. Threshold is {threshold}.",
+  "@alertLowBottleBody": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      },
+      "remain": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "alertLowBidonBody": "{hotel}: {remain} full refill bottles remain. Threshold is {threshold}.",
+  "@alertLowBidonBody": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      },
+      "remain": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "alertTypeLowBottleStock": "Low bottles",
+  "alertTypeBottleAgeLimit": "Bottle age",
+  "alertBottleAgeLimitTitle": "Room {room} {product} bottle is too old",
+  "@alertBottleAgeLimitTitle": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "alertBottleAgeLimitBody": "Bottle age is {age} days. Limit is {limit} days.",
+  "@alertBottleAgeLimitBody": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "alertTypeRefillLimit": "Refill limit",
+  "alertRefillLimitTitle": "Room {room} {product} reached refill limit",
+  "@alertRefillLimitTitle": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "alertRefillLimitBody": "{used}/{max} refills used. Replace and recycle the bottle.",
+  "@alertRefillLimitBody": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "alertTypePendingApproval": "Approval",
+  "alertPendingApprovalTitle": "Pending approval: {request}",
+  "@alertPendingApprovalTitle": {
+    "placeholders": {
+      "request": {
+        "type": "String"
+      }
+    }
+  },
+  "alertPendingApprovalBody": "Requested by {name}.",
+  "@alertPendingApprovalBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "alertTypeSuspiciousActivity": "Suspicious activity",
+  "alertTypeInactiveHotel": "Inactive hotel",
+  "refillEventApproved": "Approved",
+  "refillEventRejected": "Rejected",
+  "teamDeactivateAccountTooltip": "Deactivate account",
+  "teamReactivateAccountTooltip": "Reactivate account",
+  "settingsSyncedSummary": "Synced {synced} actions",
+  "@settingsSyncedSummary": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSyncedSummarySingular": "Synced {synced} action",
+  "@settingsSyncedSummarySingular": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSyncedWithFailures": "Synced {synced}, {failed} failed",
+  "@settingsSyncedWithFailures": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      },
+      "failed": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteAcceptHeading": "Accept Ivra invitation",
+  "inviteSubtitleWithHotel": "{name} was invited as {role} for {hotel}.",
+  "@inviteSubtitleWithHotel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      },
+      "hotel": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteSubtitleNoHotel": "{name} was invited as {role}.",
+  "@inviteSubtitleNoHotel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteEmailMismatch": "Use the email address this invitation was sent to.",
+  "inviteAccountCreatedConfirm": "Account created. Confirm your email, then return to this invitation link and enter the same password to finish joining.",
+  "inviteInvalidHeading": "Invitation unavailable",
+  "inviteInvalidBody": "This invitation may have expired, been cancelled, or already been accepted.",
+  "teamMemberReactivated": "{name} reactivated",
+  "@teamMemberReactivated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "teamMemberDeactivated": "{name} deactivated",
+  "@teamMemberDeactivated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsActionLastTried": "Last tried {datetime}",
+  "@settingsActionLastTried": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsActionNeedsReview": "Action still needs review",
+  "teamInviteLinkUnavailable": "Invitation link is unavailable",
+  "teamCopyLink": "Copy invitation link",
+  "teamResendInvitation": "Resend invitation",
+  "teamCancelInvitation": "Cancel invitation",
+  "teamCannotInviteSelf": "You cannot invite yourself",
+  "btnUpdate": "Update",
+  "notFoundTitle": "Page Not Found",
+  "notFoundBody": "The page you are looking for does not exist or has been moved.",
+  "notFoundButton": "Back to Dashboard",
+  "downloadAppBannerText": "For the best experience, download our Android App.",
+  "downloadAppBannerButton": "Download App",
+  "sendPushTitle": "Send Notification"
+}

@@ -43,7 +43,10 @@ void main() {
       expect(find.byType(PremiumQrScannerDialog), findsOneWidget);
 
       // Find room 205 demo chip and tap it
-      final room205Chip = find.text('205');
+      final room205Chip = find.descendant(
+        of: find.byType(PremiumQrScannerDialog),
+        matching: find.text('205'),
+      );
       expect(room205Chip, findsOneWidget);
       await tester.tap(room205Chip, warnIfMissed: false);
       
@@ -166,7 +169,10 @@ void main() {
       expect(find.byType(PremiumQrScannerDialog), findsOneWidget);
 
       // Find room 205 demo chip and tap it
-      final room205Chip = find.text('205');
+      final room205Chip = find.descendant(
+        of: find.byType(PremiumQrScannerDialog),
+        matching: find.text('205'),
+      );
       expect(room205Chip, findsOneWidget);
       await tester.tap(room205Chip, warnIfMissed: false);
 

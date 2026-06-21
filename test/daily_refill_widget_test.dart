@@ -139,7 +139,8 @@ void main() {
       // - 102 is warning (needsRefill).
       // - 101 is normal (active).
       // So 201 must be the next priority room.
-      expect(progress.nextPriorityRoom, equals('Room 201'));
+      expect(progress.status, equals(DailyRefillStatus.hasPriority));
+      expect(progress.nextPriorityRoomNumber, equals('201'));
     });
 
     test('picks warning room if no critical rooms are left', () {
@@ -204,7 +205,8 @@ void main() {
       // - 102 is warning.
       // - 101 is normal.
       // So 102 is the priority.
-      expect(progress.nextPriorityRoom, equals('Room 102'));
+      expect(progress.status, equals(DailyRefillStatus.hasPriority));
+      expect(progress.nextPriorityRoomNumber, equals('102'));
     });
 
     test('sorts by floor and room number within priority groups', () {
@@ -281,7 +283,8 @@ void main() {
       // Floor 1, Room 102
       // Floor 2, Room 201
       // So Room 101 should be next.
-      expect(progress!.nextPriorityRoom, equals('Room 101'));
+      expect(progress!.status, equals(DailyRefillStatus.hasPriority));
+      expect(progress.nextPriorityRoomNumber, equals('101'));
     });
   });
 }

@@ -1,5 +1,32 @@
 # Changelog
 
+## Unreleased
+
+- Fixed an offline sync data-loss race: the workmanager background isolate and
+  the UI isolate each cached their own `SharedPreferences` copy, so queued
+  refill/undo/correction/stock actions could be silently dropped. The offline
+  queue now reloads `SharedPreferences` before every read/write and re-derives
+  the list from the reloaded instance.
+- Fixed `NotificationService` crashing widget tests and demo/offline mode:
+  `notificationServiceProvider` now passes a `null` Supabase client when
+  `useSupabaseProvider` is false instead of eagerly reading the uninitialized
+  `Supabase.instance.client`.
+- Confirmed the previously English-fallback alert toasts
+  (`alertResolveFailedToast`, `alertDeleteFailedToast`,
+  `notificationAcknowledgedToast`) are translated for French, Arabic, and
+  Italian.
+
+- Migrated the hand-maintained localization map to the standard Flutter ARB +
+  `gen_l10n` workflow (`lib/src/l10n/app_{en,fr,ar,it}.arb`, `l10n.yaml`,
+  `flutter: generate: true`).
+- Kept a backwards-compatible `AppLocalizations` shim (`t`, `tParams`,
+  `userRoleLabel`, `invitationStatusLabel`, `syncActionTypeLabel`,
+  `alertTypeLabel`) so existing call sites are unchanged.
+- Backfilled three keys that were missing from the French and Arabic maps
+  (`alertResolveFailedToast`, `alertDeleteFailedToast`,
+  `notificationAcknowledgedToast`) using the English source string (flagged for
+  translation).
+
 ## 0.1.0
 
 Initial Ivra pilot foundation.

@@ -16,16 +16,21 @@ class ShimmerLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-    return Shimmer.fromColors(
-      baseColor: isLight ? Colors.grey.shade200 : Colors.grey.shade800,
-      highlightColor: isLight ? Colors.grey.shade50 : Colors.grey.shade700,
-      period: const Duration(milliseconds: 1500),
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          color: isLight ? Colors.white : Colors.black,
-          borderRadius: BorderRadius.circular(borderRadius),
+    // Shimmer placeholders are purely decorative loading affordances. Hide them
+    // from assistive technologies so screen-reader users are not read a stream
+    // of meaningless empty boxes while content loads.
+    return ExcludeSemantics(
+      child: Shimmer.fromColors(
+        baseColor: isLight ? Colors.grey.shade200 : Colors.grey.shade800,
+        highlightColor: isLight ? Colors.grey.shade50 : Colors.grey.shade700,
+        period: const Duration(milliseconds: 1500),
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: isLight ? Colors.white : Colors.black,
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
         ),
       ),
     );

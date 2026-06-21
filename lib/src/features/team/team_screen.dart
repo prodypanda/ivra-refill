@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../state/app_state.dart';
 import '../../l10n/app_localizations.dart';
+import '../dashboard/dashboard_screen.dart';
 import '../auth/accept_invitation_screen.dart';
 import '../auth/auth_validation.dart';
 import '../shared/async_value_view.dart';
@@ -64,6 +66,7 @@ class TeamScreen extends ConsumerWidget {
                 builder: (context) => _EditProfileDialog(member: member),
               ),
               onDelete: (member) => _confirmDeleteUser(context, ref, member),
+              onViewAs: (member) => _viewAsMember(context, ref, member),
             ),
           ),
           const SizedBox(height: 28),
@@ -89,6 +92,19 @@ class TeamScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// Starts a client-side "View as" session for [member] (app admin only) and
+  /// navigates to the dashboard so the admin immediately sees the app scoped to
+  /// the impersonated user. The persistent banner in the app shell offers the
+  /// exit back to the admin's own view.
+  void _viewAsMember(
+    BuildContext context,
+    WidgetRef ref,
+    UserProfile member,
+  ) {
+    startImpersonation(ref, member);
+    context.go(DashboardScreen.route);
   }
 
   Future<void> _showManageHotelsDialog(
@@ -255,6 +271,7 @@ class _MembersTable extends ConsumerWidget {
     required this.onManageHotels,
     required this.onEditProfile,
     required this.onDelete,
+    required this.onViewAs,
   });
 
   final UserProfile? currentUser;
@@ -263,6 +280,7 @@ class _MembersTable extends ConsumerWidget {
   final void Function(UserProfile member) onManageHotels;
   final void Function(UserProfile member) onEditProfile;
   final void Function(UserProfile member) onDelete;
+  final void Function(UserProfile member) onViewAs;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -300,6 +318,7 @@ class _MembersTable extends ConsumerWidget {
             onManageHotels: onManageHotels,
             onEditProfile: onEditProfile,
             onDelete: onDelete,
+            onViewAs: onViewAs,
           ),
       ],
     );
@@ -572,6 +591,7 @@ class _MemberActions extends StatelessWidget {
     this.onManageHotels,
     required this.onEditProfile,
     required this.onDelete,
+    required this.onViewAs,
   });
 
   final UserProfile? currentUser;
@@ -580,15 +600,23 @@ class _MemberActions extends StatelessWidget {
   final VoidCallback? onManageHotels;
   final void Function(UserProfile member) onEditProfile;
   final void Function(UserProfile member) onDelete;
+  final void Function(UserProfile member) onViewAs;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final nextState = !member.isActive;
     final canManage = _canManageMember(currentUser, member);
+    final canViewAs = _canViewAsMember(currentUser, member);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        if (canViewAs)
+          IconButton(
+            tooltip: l10n.t('teamViewAs'),
+            icon: const Icon(Icons.visibility_outlined),
+            onPressed: () => onViewAs(member),
+          ),
         if (canManage)
           IconButton(
             tooltip: l10n.t('teamEditProfile'),
@@ -830,6 +858,7 @@ class _PremiumMemberCard extends StatefulWidget {
     required this.onManageHotels,
     required this.onEditProfile,
     required this.onDelete,
+    required this.onViewAs,
   });
 
   final UserProfile? currentUser;
@@ -840,6 +869,7 @@ class _PremiumMemberCard extends StatefulWidget {
   final void Function(UserProfile member) onManageHotels;
   final void Function(UserProfile member) onEditProfile;
   final void Function(UserProfile member) onDelete;
+  final void Function(UserProfile member) onViewAs;
 
   @override
   State<_PremiumMemberCard> createState() => _PremiumMemberCardState();
@@ -997,6 +1027,7 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                         : null,
                     onEditProfile: widget.onEditProfile,
                     onDelete: widget.onDelete,
+                    onViewAs: widget.onViewAs,
                   ),
                 ),
               ],
@@ -1295,6 +1326,12 @@ bool _canManageMember(UserProfile? currentUser, UserProfile member) {
         member.hotelId == currentUser.hotelId,
     UserRole.hotelStaff => false,
   };
+}
+
+/// Only an app admin may "View as" another user, and never themselves.
+bool _canViewAsMember(UserProfile? currentUser, UserProfile member) {
+  if (currentUser == null || currentUser.id == member.id) return false;
+  return currentUser.role == UserRole.appAdmin;
 }
 
 bool _canManageInvitation(

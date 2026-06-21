@@ -35,6 +35,12 @@ class HotelsScreen extends ConsumerWidget {
             icon: const Icon(Icons.add_business_outlined),
             onPressed: () => _showCreateHotelDialog(context, ref),
           ),
+        if (canCreateHotel)
+          IconButton(
+            tooltip: l10n.t('hotelOnboardingWizard'),
+            icon: const Icon(Icons.assistant_direction_outlined),
+            onPressed: () => _showHotelOnboardingWizard(context, ref),
+          ),
       ],
       child: AsyncValueView(
         value: ref.watch(hotelsProvider),
@@ -80,6 +86,22 @@ class HotelsScreen extends ConsumerWidget {
         }
       }
     }
+  }
+
+  Future<void> _showHotelOnboardingWizard(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => const _HotelOnboardingWizard(),
+    );
+    ref.invalidate(hotelsProvider);
+    ref.invalidate(roomsProvider);
+    ref.invalidate(roomProductsProvider);
+    ref.invalidate(dashboardProvider);
   }
 
   Future<void> _showCreateHotelDialog(
@@ -383,6 +405,213 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
         ),
       ),
     );
+  }
+}
+
+class _HotelOnboardingWizard extends ConsumerStatefulWidget {
+  const _HotelOnboardingWizard();
+
+  @override
+  ConsumerState<_HotelOnboardingWizard> createState() => _HotelOnboardingWizardState();
+}
+
+class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> {
+  int _step = 0;
+  final _hotelKey = GlobalKey<FormState>();
+  final _roomsKey = GlobalKey<FormState>();
+  final _name = TextEditingController();
+  final _legalName = TextEditingController();
+  TunisianState _selectedState = TunisianState.tunis;
+  final _country = TextEditingController(text: 'Tunisia');
+  final _contactName = TextEditingController();
+  final _email = TextEditingController();
+  final _phone = TextEditingController();
+  final _address = TextEditingController();
+  final _notes = TextEditingController();
+  final _floorNumber = TextEditingController(text: '1');
+  final _firstRoomNumber = TextEditingController(text: '101');
+  final _roomCount = TextEditingController(text: '10');
+  final Set<String> _selectedProductIds = {};
+  var _isSaving = false;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _legalName.dispose();
+    _country.dispose();
+    _contactName.dispose();
+    _email.dispose();
+    _phone.dispose();
+    _address.dispose();
+    _notes.dispose();
+    _floorNumber.dispose();
+    _firstRoomNumber.dispose();
+    _roomCount.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final products = ref.watch(productsProvider).valueOrNull ?? const <Product>[];
+    if (_selectedProductIds.isEmpty && products.isNotEmpty) {
+      _selectedProductIds.addAll(products.take(3).map((p) => p.id));
+    }
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(maxHeight: 760),
+      padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + MediaQuery.viewInsetsOf(context).bottom),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.t('hotelOnboardingWizard'), style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            Stepper(
+              currentStep: _step,
+              onStepTapped: (step) => setState(() => _step = step),
+              controlsBuilder: (context, details) => const SizedBox.shrink(),
+              steps: [
+                Step(
+                  title: Text(l10n.t('hotelOnboardingStepHotel')),
+                  isActive: _step == 0,
+                  content: Form(
+                    key: _hotelKey,
+                    child: Column(
+                      children: [
+                        _RequiredTextField(controller: _name, label: l10n.t('hotelLabelName')),
+                        const SizedBox(height: 12),
+                        TextFormField(controller: _legalName, decoration: InputDecoration(labelText: l10n.t('hotelLabelLegalName'))),
+                        const SizedBox(height: 12),
+                        Row(children: [
+                          Expanded(child: DropdownButtonFormField<TunisianState>(value: _selectedState, isExpanded: true, decoration: InputDecoration(labelText: l10n.t('hotelLabelState')), items: [for (final state in TunisianState.values) DropdownMenuItem(value: state, child: Text(state.displayName, overflow: TextOverflow.ellipsis))], onChanged: (value) { if (value != null) setState(() => _selectedState = value); })),
+                          const SizedBox(width: 12),
+                          Expanded(child: _RequiredTextField(controller: _country, label: l10n.t('hotelLabelCountry'))),
+                        ]),
+                        const SizedBox(height: 12),
+                        _RequiredTextField(controller: _contactName, label: l10n.t('hotelLabelContactName')),
+                        const SizedBox(height: 12),
+                        _RequiredTextField(controller: _email, label: l10n.t('hotelLabelEmail')),
+                        const SizedBox(height: 12),
+                        _RequiredTextField(controller: _phone, label: l10n.t('hotelLabelPhone')),
+                        const SizedBox(height: 12),
+                        TextFormField(controller: _address, decoration: InputDecoration(labelText: l10n.t('hotelLabelAddress'))),
+                        const SizedBox(height: 12),
+                        TextFormField(controller: _notes, minLines: 2, maxLines: 3, decoration: InputDecoration(labelText: l10n.t('hotelLabelNotes'))),
+                      ],
+                    ),
+                  ),
+                ),
+                Step(
+                  title: Text(l10n.t('hotelOnboardingStepRooms')),
+                  isActive: _step == 1,
+                  content: Form(
+                    key: _roomsKey,
+                    child: Column(
+                      children: [
+                        _NumberField(controller: _floorNumber, label: l10n.t('roomsLabelFloorNumber')),
+                        const SizedBox(height: 12),
+                        _NumberField(controller: _firstRoomNumber, label: l10n.t('hotelOnboardingFirstRoom')),
+                        const SizedBox(height: 12),
+                        _NumberField(controller: _roomCount, label: l10n.t('hotelOnboardingRoomCount')),
+                        const SizedBox(height: 12),
+                        Align(alignment: Alignment.centerLeft, child: Text(l10n.t('hotelOnboardingProducts'))),
+                        Wrap(spacing: 8, children: [
+                          for (final product in products)
+                            FilterChip(
+                              label: Text(product.label(Localizations.localeOf(context).languageCode)),
+                              selected: _selectedProductIds.contains(product.id),
+                              onSelected: (selected) => setState(() {
+                                if (selected) {
+                                  _selectedProductIds.add(product.id);
+                                } else {
+                                  _selectedProductIds.remove(product.id);
+                                }
+                              }),
+                            ),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+                Step(
+                  title: Text(l10n.t('hotelOnboardingStepReview')),
+                  isActive: _step == 2,
+                  content: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(l10n.t('hotelOnboardingReviewHint')),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              TextButton(onPressed: _isSaving ? null : () => Navigator.of(context).pop(), child: Text(l10n.t('btnCancel'))),
+              const SizedBox(width: 8),
+              if (_step > 0) TextButton(onPressed: _isSaving ? null : () => setState(() => _step--), child: Text(l10n.t('back'))),
+              const SizedBox(width: 8),
+              FilledButton.icon(
+                onPressed: _isSaving ? null : (_step < 2 ? _next : _finish),
+                icon: Icon(_step < 2 ? Icons.arrow_forward_outlined : Icons.check_circle_outline),
+                label: Text(_step < 2 ? l10n.t('next') : l10n.t('hotelOnboardingFinish')),
+              ),
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _next() {
+    if (_step == 0 && !(_hotelKey.currentState?.validate() ?? false)) return;
+    if (_step == 1 && !(_roomsKey.currentState?.validate() ?? false)) return;
+    setState(() => _step++);
+  }
+
+  Future<void> _finish() async {
+    if (_selectedProductIds.isEmpty) {
+      PremiumSnackbar.showError(context, AppLocalizations.of(context).t('bulkAdjustNoProductsSelected'));
+      return;
+    }
+    setState(() => _isSaving = true);
+    final l10n = AppLocalizations.of(context);
+    try {
+      await ref.read(repositoryProvider).createHotel(
+            name: _name.text.trim(),
+            legalName: _legalName.text.trim(),
+            city: _selectedState.displayName,
+            country: _country.text.trim(),
+            contactName: _contactName.text.trim(),
+            email: _email.text.trim(),
+            phone: _phone.text.trim(),
+            address: _address.text.trim(),
+            notes: _notes.text.trim(),
+          );
+      ref.invalidate(hotelsProvider);
+      final hotels = await ref.read(hotelsProvider.future);
+      final created = hotels.where((hotel) => hotel.name == _name.text.trim()).lastOrNull;
+      if (created != null) {
+        await ref.read(repositoryProvider).createRoomsFromTemplate(
+              hotelId: created.id,
+              floorNumber: int.parse(_floorNumber.text),
+              firstRoomNumber: int.parse(_firstRoomNumber.text),
+              roomCount: int.parse(_roomCount.text),
+              productIds: _selectedProductIds.toList(),
+            );
+      }
+      if (mounted) {
+        Navigator.of(context).pop();
+        PremiumSnackbar.showSuccess(context, l10n.t('hotelOnboardingComplete'));
+      }
+    } catch (error) {
+      if (mounted) PremiumSnackbar.showError(context, error);
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 }
 
@@ -865,6 +1094,33 @@ class _RequiredTextField extends StatelessWidget {
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return l10n.t('requiredField');
+        }
+        return null;
+      },
+    );
+  }
+}
+
+class _NumberField extends StatelessWidget {
+  const _NumberField({
+    required this.controller,
+    required this.label,
+  });
+
+  final TextEditingController controller;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(labelText: label),
+      validator: (value) {
+        final parsed = int.tryParse(value ?? '');
+        if (parsed == null || parsed <= 0) {
+          return l10n.t('enterNumberError');
         }
         return null;
       },

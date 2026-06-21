@@ -20,6 +20,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
   go_router: ^14.6.2
+  http: ^1.2.0
   intl: ^0.20.2
   pdf: ^3.11.1
   printing: ^5.13.4
@@ -41,6 +42,7 @@ dependencies:
   cached_network_image: ^3.4.1
   mobile_scanner: ^7.2.0
   home_widget: ^0.9.1
+  flutter_secure_storage: ^9.2.4
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -55,11 +57,17 @@ dev_dependencies:
 # classpath, so clean builds fail with "cannot find symbol JniPlugin". Pinning
 # to the last 2.2.x release keeps the platform-channel implementation and avoids
 # pulling in jni entirely. (path_provider is a transitive dep via supabase_flutter.)
+#
+# TRACKING: this is a workaround, not a fix. Remove this override once a clean
+# `flutter build apk` succeeds with the unpinned transitive version (re-test
+# after each supabase_flutter / path_provider_android upgrade). Keep the pin
+# until then to avoid breaking Android builds.
 dependency_overrides:
   path_provider_android: 2.2.17
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/fonts/DejaVuSans.ttf
     - assets/fonts/DejaVuSans-Bold.ttf
