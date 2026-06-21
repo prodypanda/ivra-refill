@@ -1583,6 +1583,54 @@ abstract class AppL10n {
   /// **'Compact View'**
   String get roomsViewCompact;
 
+  /// No description provided for @roomsCollapseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse all'**
+  String get roomsCollapseAll;
+
+  /// No description provided for @roomsExpandAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand all'**
+  String get roomsExpandAll;
+
+  /// No description provided for @roomsBtnAddRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Add room'**
+  String get roomsBtnAddRoom;
+
+  /// No description provided for @roomsDialogAddRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add room to floor'**
+  String get roomsDialogAddRoomTitle;
+
+  /// No description provided for @roomsMsgRoomAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Room added'**
+  String get roomsMsgRoomAdded;
+
+  /// No description provided for @roomsMsgRoomAddQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Room creation queued'**
+  String get roomsMsgRoomAddQueued;
+
+  /// No description provided for @roomsHistoryRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill'**
+  String get roomsHistoryRefill;
+
+  /// No description provided for @roomsHistoryNewBottle.
+  ///
+  /// In en, this message translates to:
+  /// **'New bottle placed'**
+  String get roomsHistoryNewBottle;
+
   /// No description provided for @roomsFilterAll.
   ///
   /// In en, this message translates to:
@@ -3268,6 +3316,24 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Send Notification'**
   String get sendPushTitle;
+
+  /// No description provided for @teamViewAs.
+  ///
+  /// In en, this message translates to:
+  /// **'View as'**
+  String get teamViewAs;
+
+  /// No description provided for @impersonationBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing as {name}'**
+  String impersonationBanner(String name);
+
+  /// No description provided for @impersonationExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get impersonationExit;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

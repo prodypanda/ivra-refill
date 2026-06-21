@@ -802,6 +802,30 @@ class AppL10nEn extends AppL10n {
   String get roomsViewCompact => 'Compact View';
 
   @override
+  String get roomsCollapseAll => 'Collapse all';
+
+  @override
+  String get roomsExpandAll => 'Expand all';
+
+  @override
+  String get roomsBtnAddRoom => 'Add room';
+
+  @override
+  String get roomsDialogAddRoomTitle => 'Add room to floor';
+
+  @override
+  String get roomsMsgRoomAdded => 'Room added';
+
+  @override
+  String get roomsMsgRoomAddQueued => 'Room creation queued';
+
+  @override
+  String get roomsHistoryRefill => 'Refill';
+
+  @override
+  String get roomsHistoryNewBottle => 'New bottle placed';
+
+  @override
   String get roomsFilterAll => 'All';
 
   @override
@@ -1740,4 +1764,15 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get sendPushTitle => 'Send Notification';
+
+  @override
+  String get teamViewAs => 'View as';
+
+  @override
+  String impersonationBanner(String name) {
+    return 'Viewing as $name';
+  }
+
+  @override
+  String get impersonationExit => 'Exit';
 }

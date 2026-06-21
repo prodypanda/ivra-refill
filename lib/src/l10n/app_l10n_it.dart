@@ -804,6 +804,30 @@ class AppL10nIt extends AppL10n {
   String get roomsViewCompact => 'Vista compatta';
 
   @override
+  String get roomsCollapseAll => 'Comprimi tutto';
+
+  @override
+  String get roomsExpandAll => 'Espandi tutto';
+
+  @override
+  String get roomsBtnAddRoom => 'Aggiungi camera';
+
+  @override
+  String get roomsDialogAddRoomTitle => 'Aggiungi camera al piano';
+
+  @override
+  String get roomsMsgRoomAdded => 'Camera aggiunta';
+
+  @override
+  String get roomsMsgRoomAddQueued => 'Creazione camera in coda';
+
+  @override
+  String get roomsHistoryRefill => 'Ricaricato';
+
+  @override
+  String get roomsHistoryNewBottle => 'Nuova bottiglia posizionata';
+
+  @override
   String get roomsFilterAll => 'Tutti';
 
   @override
@@ -1755,4 +1779,15 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get sendPushTitle => 'Invia notifica';
+
+  @override
+  String get teamViewAs => 'Visualizza come';
+
+  @override
+  String impersonationBanner(String name) {
+    return 'Visualizzazione come $name';
+  }
+
+  @override
+  String get impersonationExit => 'Esci';
 }

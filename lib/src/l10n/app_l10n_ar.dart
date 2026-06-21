@@ -796,6 +796,30 @@ class AppL10nAr extends AppL10n {
   String get roomsViewCompact => 'عرض مبسط';
 
   @override
+  String get roomsCollapseAll => 'طي الكل';
+
+  @override
+  String get roomsExpandAll => 'توسيع الكل';
+
+  @override
+  String get roomsBtnAddRoom => 'إضافة غرفة';
+
+  @override
+  String get roomsDialogAddRoomTitle => 'إضافة غرفة إلى الطابق';
+
+  @override
+  String get roomsMsgRoomAdded => 'تمت إضافة الغرفة';
+
+  @override
+  String get roomsMsgRoomAddQueued => 'تمت جدولة إنشاء الغرفة';
+
+  @override
+  String get roomsHistoryRefill => 'إعادة تعبئة';
+
+  @override
+  String get roomsHistoryNewBottle => 'تم وضع عبوة جديدة';
+
+  @override
   String get roomsFilterAll => 'الكل';
 
   @override
@@ -1725,4 +1749,15 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get sendPushTitle => 'إرسال إشعار';
+
+  @override
+  String get teamViewAs => 'العرض بصفة';
+
+  @override
+  String impersonationBanner(String name) {
+    return 'العرض بصفة $name';
+  }
+
+  @override
+  String get impersonationExit => 'خروج';
 }
