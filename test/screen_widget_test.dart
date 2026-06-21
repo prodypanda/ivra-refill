@@ -261,7 +261,7 @@ void main() {
 
       expect(find.text('Inventory'), findsWidgets);
       expect(find.text('Full bottles'), findsWidgets);
-      expect(find.text('Full bidons'), findsWidgets);
+      expect(find.text('Full refill bottles'), findsWidgets);
       expect(find.text('Empty bottles'), findsWidgets);
     });
 
