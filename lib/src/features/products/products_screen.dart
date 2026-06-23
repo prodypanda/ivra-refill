@@ -347,12 +347,12 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _RuleRow(
-                        Icons.pin_drop_outlined,
+                        IvraIcons.bottleVolume,
                         l10n.t('productsLabelBottleVolume'),
                         '${widget.product.bottleVolumeMl} ml'),
                     if (widget.product.isRefillable) ...[
                       _RuleRow(
-                          Icons.propane_tank_outlined,
+                          IvraIcons.refillBottleVolume,
                           l10n.t('productsLabelBidonVolume'),
                           '${widget.product.bidonVolumeMl} ml'),
                       _RuleRow(

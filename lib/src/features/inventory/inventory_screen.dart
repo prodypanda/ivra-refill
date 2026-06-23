@@ -864,7 +864,9 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                       child: _MiniStat(
                         label: l10n.t('inventoryTableEmptyBottles'),
                         value: widget.item.emptyBottles,
-                        icon: IvraIcons.emptyBottleWithPump,
+                        icon: widget.item.product.bottleType == BottleType.withPump
+                            ? IvraIcons.emptyBottleWithPump
+                            : IvraIcons.emptyBottleWithoutPump,
                         color: theme.colorScheme.tertiary,
                       ),
                     ),
@@ -1546,7 +1548,9 @@ class _SuggestedOrders extends StatelessWidget {
                 const Divider(height: 24),
                 if (order.bottlesToOrder > 0) ...[
                   _SuggestedOrderRow(
-                    IvraIcons.fullBottleWithPump,
+                    order.product.bottleType == BottleType.withPump
+                        ? IvraIcons.fullBottleWithPump
+                        : IvraIcons.fullBottleWithoutPump,
                     l10n.tParams(
                       'orderNewBottlesText',
                       {'count': '${order.bottlesToOrder}'},
