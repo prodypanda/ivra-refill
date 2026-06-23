@@ -367,7 +367,7 @@ void main() {
       // Switch to detailed view and expand floors
       await tester.tap(find.text('عرض تفصيلي'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Expand all'));
+      await tester.tap(find.text('توسيع الكل'));
       await tester.pumpAndSettle();
 
       final roomsContext = tester.element(find.text('الغرف').first);

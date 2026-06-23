@@ -789,10 +789,10 @@ class AppL10nIt extends AppL10n {
   String get roomsSearchPlaceholder => 'Cerca camera...';
 
   @override
-  String get roomsRecentTitle => 'Recent rooms';
+  String get roomsRecentTitle => 'Camere recenti';
 
   @override
-  String get roomsRecentClear => 'Clear';
+  String get roomsRecentClear => 'Cancella';
 
   @override
   String get roomsSelectHotelFirst => 'Seleziona hotel...';
@@ -946,7 +946,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String roomsMsgDuplicateRoomNumbers(String numbers) {
-    return 'These room numbers already exist in this hotel: $numbers. Choose a different starting number or count.';
+    return 'Questi numeri di camera esistono già in questo hotel: $numbers. Scegli un numero iniziale o un conteggio diverso.';
   }
 
   @override
@@ -1454,32 +1454,33 @@ class AppL10nIt extends AppL10n {
   String get alertsMetricCritical => 'Critico';
 
   @override
-  String get alertsFilterTitle => 'Filters';
+  String get alertsFilterTitle => 'Filtri';
 
   @override
-  String get alertsFilterSeverity => 'Severity';
+  String get alertsFilterSeverity => 'Gravità';
 
   @override
-  String get alertsFilterType => 'Type';
+  String get alertsFilterType => 'Tipo';
 
   @override
   String get alertsFilterHotel => 'Hotel';
 
   @override
-  String get alertsFilterProduct => 'Product';
+  String get alertsFilterProduct => 'Prodotto';
 
   @override
-  String get alertsFilterAll => 'All';
+  String get alertsFilterAll => 'Tutti';
 
   @override
-  String get alertsFilterClear => 'Clear filters';
+  String get alertsFilterClear => 'Cancella filtri';
 
   @override
-  String get alertsFilterNoMatch => 'No alerts match the current filters.';
+  String get alertsFilterNoMatch =>
+      'Nessun avviso corrisponde ai filtri correnti.';
 
   @override
   String alertsFilterShowing(String count, String total) {
-    return 'Showing $count of $total';
+    return 'Mostrando $count di $total';
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -51,6 +52,7 @@ void callbackDispatcher() {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
   setUrlStrategy(PathUrlStrategy());
 
   // Route uncaught framework errors through the central logging sink so they
@@ -121,6 +123,7 @@ Future<void> main() async {
     ProviderScope(
       overrides: [
         useSupabaseProvider.overrideWithValue(useSupabase),
+        sharedPreferencesProvider.overrideWithValue(prefs),
       ],
       child: const IvraApp(),
     ),

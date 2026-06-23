@@ -781,10 +781,10 @@ class AppL10nAr extends AppL10n {
   String get roomsSearchPlaceholder => 'البحث عن غرفة...';
 
   @override
-  String get roomsRecentTitle => 'Recent rooms';
+  String get roomsRecentTitle => 'الغرف الأخيرة';
 
   @override
-  String get roomsRecentClear => 'Clear';
+  String get roomsRecentClear => 'مسح';
 
   @override
   String get roomsSelectHotelFirst => 'اختر فندقاً...';
@@ -796,28 +796,28 @@ class AppL10nAr extends AppL10n {
   String get roomsViewCompact => 'عرض مبسط';
 
   @override
-  String get roomsCollapseAll => 'Collapse all';
+  String get roomsCollapseAll => 'طوي الكل';
 
   @override
-  String get roomsExpandAll => 'Expand all';
+  String get roomsExpandAll => 'توسيع الكل';
 
   @override
-  String get roomsBtnAddRoom => 'Add room';
+  String get roomsBtnAddRoom => 'إضافة غرفة';
 
   @override
-  String get roomsDialogAddRoomTitle => 'Add room to floor';
+  String get roomsDialogAddRoomTitle => 'إضافة غرفة للطابق';
 
   @override
-  String get roomsMsgRoomAdded => 'Room added';
+  String get roomsMsgRoomAdded => 'تمت إضافة الغرفة';
 
   @override
-  String get roomsMsgRoomAddQueued => 'Room creation queued';
+  String get roomsMsgRoomAddQueued => 'تم وضع إنشاء الغرفة في قائمة الانتظار';
 
   @override
-  String get roomsHistoryRefill => 'Refill';
+  String get roomsHistoryRefill => 'إعادة تعبئة';
 
   @override
-  String get roomsHistoryNewBottle => 'New bottle placed';
+  String get roomsHistoryNewBottle => 'تم وضع زجاجة جديدة';
 
   @override
   String get roomsFilterAll => 'الكل';
@@ -933,7 +933,7 @@ class AppL10nAr extends AppL10n {
 
   @override
   String roomsMsgDuplicateRoomNumbers(String numbers) {
-    return 'These room numbers already exist in this hotel: $numbers. Choose a different starting number or count.';
+    return 'أرقام الغرف هذه موجودة بالفعل في هذا الفندق: $numbers. اختر رقم بدء أو عدداً مختلفاً.';
   }
 
   @override
@@ -964,7 +964,7 @@ class AppL10nAr extends AppL10n {
   String get productsBtnEdit => 'تعديل المنتج';
 
   @override
-  String get productsLabelSku => 'SKU';
+  String get productsLabelSku => 'وحدة حفظ المخزون (SKU)';
 
   @override
   String get productsLabelNameEn => 'الاسم بالإنجليزية';
@@ -1428,32 +1428,32 @@ class AppL10nAr extends AppL10n {
   String get alertsMetricCritical => 'حرج';
 
   @override
-  String get alertsFilterTitle => 'Filters';
+  String get alertsFilterTitle => 'الفلاتر';
 
   @override
-  String get alertsFilterSeverity => 'Severity';
+  String get alertsFilterSeverity => 'الخطورة';
 
   @override
-  String get alertsFilterType => 'Type';
+  String get alertsFilterType => 'النوع';
 
   @override
-  String get alertsFilterHotel => 'Hotel';
+  String get alertsFilterHotel => 'الفندق';
 
   @override
-  String get alertsFilterProduct => 'Product';
+  String get alertsFilterProduct => 'المنتج';
 
   @override
-  String get alertsFilterAll => 'All';
+  String get alertsFilterAll => 'الكل';
 
   @override
-  String get alertsFilterClear => 'Clear filters';
+  String get alertsFilterClear => 'مسح الفلاتر';
 
   @override
-  String get alertsFilterNoMatch => 'No alerts match the current filters.';
+  String get alertsFilterNoMatch => 'لا توجد تنبيهات تطابق الفلاتر الحالية.';
 
   @override
   String alertsFilterShowing(String count, String total) {
-    return 'Showing $count of $total';
+    return 'عرض $count من أصل $total';
   }
 
   @override

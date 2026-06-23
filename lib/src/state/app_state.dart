@@ -21,20 +21,35 @@ final supabaseAuthStateProvider = StreamProvider<AuthState?>((ref) {
   return Supabase.instance.client.auth.onAuthStateChange;
 });
 
-final localeProvider = StateProvider<Locale>((ref) => resolveInitialLocale());
+final sharedPreferencesProvider = Provider<SharedPreferences?>((ref) => null);
+
+final localeProvider = StateProvider<Locale>((ref) {
+  ref.listenSelf((previous, next) async {
+    if (previous != null && previous != next) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('app_language', next.languageCode);
+      } catch (e) {
+        debugPrint('Error saving language selection: $e');
+      }
+    }
+  });
+
+  final prefs = ref.watch(sharedPreferencesProvider);
+  if (prefs != null) {
+    final savedLang = prefs.getString('app_language');
+    if (savedLang != null) {
+      return Locale(savedLang);
+    }
+  }
+  return resolveInitialLocale();
+});
 
 /// Resolves the initial app [Locale] from the device/OS locales, falling back
 /// to French only when none of the device locales is supported. Previously the
 /// app always started in French regardless of the user's device language.
 Locale resolveInitialLocale() {
-  const supported = ['en', 'fr', 'ar', 'it'];
-  const fallback = Locale('fr');
-  for (final deviceLocale in PlatformDispatcher.instance.locales) {
-    if (supported.contains(deviceLocale.languageCode)) {
-      return Locale(deviceLocale.languageCode);
-    }
-  }
-  return fallback;
+  return const Locale('fr');
 }
 
 final offlineModeProvider = StateProvider<bool>((ref) => false);

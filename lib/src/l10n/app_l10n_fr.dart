@@ -326,7 +326,7 @@ class AppL10nFr extends AppL10n {
   String get bottles => 'Bouteilles';
 
   @override
-  String get bidons => 'Refill bottles';
+  String get bidons => 'Bouteilles de recharge';
 
   @override
   String get language => 'Langue';
@@ -794,10 +794,10 @@ class AppL10nFr extends AppL10n {
   String get roomsSearchPlaceholder => 'Rechercher une chambre...';
 
   @override
-  String get roomsRecentTitle => 'Recent rooms';
+  String get roomsRecentTitle => 'Chambres récentes';
 
   @override
-  String get roomsRecentClear => 'Clear';
+  String get roomsRecentClear => 'Effacer';
 
   @override
   String get roomsSelectHotelFirst => 'Sélectionner un hôtel...';
@@ -809,28 +809,29 @@ class AppL10nFr extends AppL10n {
   String get roomsViewCompact => 'Vue compacte';
 
   @override
-  String get roomsCollapseAll => 'Collapse all';
+  String get roomsCollapseAll => 'Tout réduire';
 
   @override
-  String get roomsExpandAll => 'Expand all';
+  String get roomsExpandAll => 'Tout développer';
 
   @override
-  String get roomsBtnAddRoom => 'Add room';
+  String get roomsBtnAddRoom => 'Ajouter une chambre';
 
   @override
-  String get roomsDialogAddRoomTitle => 'Add room to floor';
+  String get roomsDialogAddRoomTitle => 'Ajouter une chambre à l\'étage';
 
   @override
-  String get roomsMsgRoomAdded => 'Room added';
+  String get roomsMsgRoomAdded => 'Chambre ajoutée';
 
   @override
-  String get roomsMsgRoomAddQueued => 'Room creation queued';
+  String get roomsMsgRoomAddQueued =>
+      'Création de la chambre mise en file d\'attente';
 
   @override
-  String get roomsHistoryRefill => 'Refill';
+  String get roomsHistoryRefill => 'Recharge';
 
   @override
-  String get roomsHistoryNewBottle => 'New bottle placed';
+  String get roomsHistoryNewBottle => 'Nouvelle bouteille placée';
 
   @override
   String get roomsFilterAll => 'Tout';
@@ -955,7 +956,7 @@ class AppL10nFr extends AppL10n {
 
   @override
   String roomsMsgDuplicateRoomNumbers(String numbers) {
-    return 'These room numbers already exist in this hotel: $numbers. Choose a different starting number or count.';
+    return 'Ces numéros de chambre existent déjà dans cet hôtel : $numbers. Choisissez un numéro de départ ou un nombre différent.';
   }
 
   @override
@@ -1044,7 +1045,7 @@ class AppL10nFr extends AppL10n {
   String get productsLabelBottleMl => 'Bouteille ml';
 
   @override
-  String get productsLabelBidonMl => 'Refill bottle ml';
+  String get productsLabelBidonMl => 'Vol. bouteille de recharge (ml)';
 
   @override
   String get productsLabelMaxRefills => 'Recharges max';
@@ -1461,32 +1462,33 @@ class AppL10nFr extends AppL10n {
   String get alertsMetricCritical => 'Critique';
 
   @override
-  String get alertsFilterTitle => 'Filters';
+  String get alertsFilterTitle => 'Filtres';
 
   @override
-  String get alertsFilterSeverity => 'Severity';
+  String get alertsFilterSeverity => 'Gravité';
 
   @override
   String get alertsFilterType => 'Type';
 
   @override
-  String get alertsFilterHotel => 'Hotel';
+  String get alertsFilterHotel => 'Hôtel';
 
   @override
-  String get alertsFilterProduct => 'Product';
+  String get alertsFilterProduct => 'Produit';
 
   @override
-  String get alertsFilterAll => 'All';
+  String get alertsFilterAll => 'Tous';
 
   @override
-  String get alertsFilterClear => 'Clear filters';
+  String get alertsFilterClear => 'Effacer les filtres';
 
   @override
-  String get alertsFilterNoMatch => 'No alerts match the current filters.';
+  String get alertsFilterNoMatch =>
+      'Aucune alerte ne correspond aux filtres actuels.';
 
   @override
   String alertsFilterShowing(String count, String total) {
-    return 'Showing $count of $total';
+    return 'Affichage de $count sur $total';
   }
 
   @override
