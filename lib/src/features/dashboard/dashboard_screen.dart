@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../ui/ivra_icons.dart';
 import '../../domain/models.dart';
 import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
@@ -196,7 +197,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             visibleCards.add(_MetricCard(
               label: l10n.t('metricBottlesToReplace'),
               value: data.bottlesToReplace,
-              icon: Icons.recycling_outlined,
+              icon: IvraIcons.replaceAction,
               iconColor: Colors.orange.shade700,
               onTap: () => context.go('/rooms'),
             ));

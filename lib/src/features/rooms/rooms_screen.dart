@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../ui/ivra_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -1451,7 +1453,7 @@ Future<void> _replaceBottle(
     isOffline
         ? '${l10n.t('roomsReplacementQueued')} ${item.roomNumber}'
         : '${l10n.t('roomsReplacementRecorded')} ${item.roomNumber}',
-    icon: Icons.recycling_outlined,
+    icon: IvraIcons.replaceAction,
   );
 }
 
@@ -2097,7 +2099,7 @@ class _RoomCardProductRow extends ConsumerWidget {
           isOffline
               ? '${l10n.t('roomsRefillQueued')} ${item.roomNumber}'
               : '${l10n.t('roomsRefillRecorded')} ${item.roomNumber}',
-          icon: Icons.water_drop_outlined,
+          icon: IvraIcons.refillAction,
         );
       }
     }
@@ -2220,7 +2222,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                   minimumSize: const Size(80, 36),
                 ),
                 onPressed: item.canRefill ? performRefill : null,
-                icon: const Icon(Icons.water_drop_outlined, size: 14),
+                icon: const Icon(IvraIcons.refillAction, size: 14),
                 label:
                     Text(l10n.t('refill'), style: const TextStyle(fontSize: 12)),
               ),
@@ -2228,7 +2230,7 @@ class _RoomCardProductRow extends ConsumerWidget {
               IconButton(
                 visualDensity: VisualDensity.compact,
                 tooltip: l10n.t('roomsBtnReplaceBottle'),
-                icon: const Icon(Icons.recycling_outlined, size: 20),
+                icon: const Icon(IvraIcons.replaceAction, size: 20),
                 onPressed: item.status == BottleStatus.recycled
                     ? null
                     : () => _replaceBottle(context, ref, item),
@@ -2245,7 +2247,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                 onPressed: item.status == BottleStatus.recycled
                     ? null
                     : () => _replaceBottle(context, ref, item),
-                icon: const Icon(Icons.recycling_outlined, size: 14),
+                icon: const Icon(IvraIcons.replaceAction, size: 14),
                 label:
                     Text(l10n.t('roomsBtnReplaceBottle'), style: const TextStyle(fontSize: 12)),
               ),
@@ -2350,7 +2352,7 @@ class _RoomCardProductRow extends ConsumerWidget {
           padding: const EdgeInsets.only(left: 24),
           child: Row(
             children: [
-              const Icon(Icons.water_drop_outlined, color: Colors.white),
+              const Icon(IvraIcons.refillAction, color: Colors.white),
               const SizedBox(width: 8),
               Text(l10n.t('refill'),
                   style: const TextStyle(
@@ -2962,12 +2964,12 @@ class _RefillHistoryDialog extends ConsumerWidget {
 
   IconData _eventIcon(RefillEventType type) {
     return switch (type) {
-      RefillEventType.refill => Icons.water_drop_outlined,
+      RefillEventType.refill => IvraIcons.refillAction,
       RefillEventType.undo => Icons.undo_outlined,
       RefillEventType.correctionRequested => Icons.assignment_late_outlined,
       RefillEventType.correctionApproved => Icons.task_alt_outlined,
       RefillEventType.correctionRejected => Icons.block_outlined,
-      RefillEventType.bottleReplaced => Icons.recycling_outlined,
+      RefillEventType.bottleReplaced => IvraIcons.replaceAction,
     };
   }
 

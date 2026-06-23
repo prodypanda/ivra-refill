@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
+import '../../ui/ivra_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -268,8 +270,8 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                               children: [
                                 Icon(
                                   widget.product.bottleType == BottleType.withPump
-                                      ? Icons.sanitizer
-                                      : Icons.local_drink_outlined,
+                                      ? IvraIcons.fullBottleWithPump
+                                      : IvraIcons.fullBottleWithoutPump,
                                   size: 12,
                                   color: theme.colorScheme.onPrimaryContainer,
                                 ),

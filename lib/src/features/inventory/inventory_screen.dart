@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../ui/ivra_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -832,8 +834,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                 value: widget.item.fullBottles,
                 threshold: widget.item.product.lowBottleThreshold,
                 icon: widget.item.product.bottleType == BottleType.withPump
-                    ? Icons.sanitizer
-                    : Icons.local_drink_outlined,
+                    ? IvraIcons.fullBottleWithPump
+                    : IvraIcons.fullBottleWithoutPump,
                 color: Colors.orange,
               ),
               if (widget.item.product.isRefillable) ...[
@@ -842,7 +844,7 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                   label: l10n.t('inventoryTableFullBidons'),
                   value: widget.item.fullBidons,
                   threshold: widget.item.product.lowBidonThreshold,
-                  icon: Icons.local_drink_outlined,
+                  icon: IvraIcons.fullRefillBottle,
                   color: theme.colorScheme.primary,
                 ),
               ],
@@ -862,7 +864,7 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                       child: _MiniStat(
                         label: l10n.t('inventoryTableEmptyBottles'),
                         value: widget.item.emptyBottles,
-                        icon: Icons.recycling_outlined,
+                        icon: IvraIcons.emptyBottleWithPump,
                         color: theme.colorScheme.tertiary,
                       ),
                     ),
@@ -872,7 +874,7 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                         child: _MiniStat(
                           label: l10n.t('inventoryTableOpenBidons'),
                           value: widget.item.openBidons,
-                          icon: Icons.oil_barrel_outlined,
+                          icon: IvraIcons.emptyRefillBottle,
                           color: Colors.indigo,
                         ),
                       ),
@@ -1544,7 +1546,7 @@ class _SuggestedOrders extends StatelessWidget {
                 const Divider(height: 24),
                 if (order.bottlesToOrder > 0) ...[
                   _SuggestedOrderRow(
-                    Icons.water_drop_outlined,
+                    IvraIcons.fullBottleWithPump,
                     l10n.tParams(
                       'orderNewBottlesText',
                       {'count': '${order.bottlesToOrder}'},
@@ -1555,7 +1557,7 @@ class _SuggestedOrders extends StatelessWidget {
                 ],
                 if (order.product.isRefillable && order.bidonsToOrder > 0) ...[
                   _SuggestedOrderRow(
-                    Icons.local_drink_outlined,
+                    IvraIcons.fullRefillBottle,
                     l10n.tParams(
                       'orderNewBidonsText',
                       {'count': '${order.bidonsToOrder}'},
@@ -1566,7 +1568,7 @@ class _SuggestedOrders extends StatelessWidget {
                 ],
                 if (order.bottlesToRecycle > 0) ...[
                   _SuggestedOrderRow(
-                    Icons.recycling_outlined,
+                    IvraIcons.replaceAction,
                     l10n.tParams(
                       'recycleBottlesText',
                       {'count': '${order.bottlesToRecycle}'},

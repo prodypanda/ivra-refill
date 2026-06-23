@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models.dart';
 import '../../domain/app_enums.dart';
 
+import '../../ui/ivra_icons.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../auth/auth_validation.dart';
@@ -625,9 +626,9 @@ class _ReportAnalytics extends StatelessWidget {
             spacing: 12,
             runSpacing: 12,
             children: [
-              _KpiTile(label: l10n.t('reportKpiRefills'), value: refills.length.toString(), icon: Icons.water_drop_outlined),
+              _KpiTile(label: l10n.t('reportKpiRefills'), value: refills.length.toString(), icon: IvraIcons.refillAction),
               _KpiTile(label: l10n.t('reportKpiCorrections'), value: corrections.toString(), icon: Icons.assignment_late_outlined),
-              _KpiTile(label: l10n.t('reportKpiReplacements'), value: replacements.toString(), icon: Icons.recycling_outlined),
+              _KpiTile(label: l10n.t('reportKpiReplacements'), value: replacements.toString(), icon: IvraIcons.replaceAction),
               _KpiTile(label: l10n.t('reportKpiActiveRooms'), value: usageByRoom.length.toString(), icon: Icons.meeting_room_outlined),
             ],
           ),
