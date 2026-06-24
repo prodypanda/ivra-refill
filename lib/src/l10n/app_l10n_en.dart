@@ -107,6 +107,69 @@ class AppL10nEn extends AppL10n {
   String get dashboard => 'Dashboard';
 
   @override
+  String get dashboardOpsAnalytics => 'Operations analytics';
+
+  @override
+  String get dashboardExport => 'Export';
+
+  @override
+  String get dashboardDaily => 'Daily';
+
+  @override
+  String get dashboardWeekly => 'Weekly';
+
+  @override
+  String get dashboardMonthly => 'Monthly';
+
+  @override
+  String get dashboardRoomsAttention => 'Rooms needing attention';
+
+  @override
+  String get dashboardProductUsage => 'Product usage';
+
+  @override
+  String get dashboardUsageByFloor => 'Usage by floor';
+
+  @override
+  String get dashboardStockForecast => 'Stock depletion forecast';
+
+  @override
+  String get dashboardUnusualPatterns => 'Unusual patterns';
+
+  @override
+  String get dashboardNoStockData => 'No stock data';
+
+  @override
+  String dashboardRoomsRequireReview(String count) {
+    return '$count rooms require review';
+  }
+
+  @override
+  String get dashboardNoUnusualPatterns => 'No unusual patterns detected';
+
+  @override
+  String get dashboardHighPriority => 'High';
+
+  @override
+  String get dashboardStable => 'Stable';
+
+  @override
+  String get errorLoadingHotels => 'Error loading hotels';
+
+  @override
+  String get sending => 'Sending...';
+
+  @override
+  String roomsEditRoomTitle(String roomNumber) {
+    return 'Update room $roomNumber';
+  }
+
+  @override
+  String roomsEditProductTitle(String productName, String roomNumber) {
+    return 'Update $productName bottle in room $roomNumber';
+  }
+
+  @override
   String get inventory => 'Inventory';
 
   @override

@@ -32,25 +32,28 @@ class PageScaffold extends ConsumerWidget {
 
     final accountButton = Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: GestureDetector(
-        onTap: () => context.go(AccountScreen.route),
-        child: CircleAvatar(
-          radius: 17,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          child: user != null
-              ? Text(
-                  initials,
-                  style: TextStyle(
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => context.go(AccountScreen.route),
+          child: CircleAvatar(
+            radius: 17,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: user != null
+                ? Text(
+                    initials,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )
+                : Icon(
+                    Icons.person,
+                    size: 18,
                     color: Theme.of(context).colorScheme.onPrimary,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
                   ),
-                )
-              : Icon(
-                  Icons.person,
-                  size: 18,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+          ),
         ),
       ),
     );

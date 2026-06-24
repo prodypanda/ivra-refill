@@ -269,6 +269,120 @@ abstract class AppL10n {
   /// **'Dashboard'**
   String get dashboard;
 
+  /// No description provided for @dashboardOpsAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Operations analytics'**
+  String get dashboardOpsAnalytics;
+
+  /// No description provided for @dashboardExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get dashboardExport;
+
+  /// No description provided for @dashboardDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get dashboardDaily;
+
+  /// No description provided for @dashboardWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get dashboardWeekly;
+
+  /// No description provided for @dashboardMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get dashboardMonthly;
+
+  /// No description provided for @dashboardRoomsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms needing attention'**
+  String get dashboardRoomsAttention;
+
+  /// No description provided for @dashboardProductUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Product usage'**
+  String get dashboardProductUsage;
+
+  /// No description provided for @dashboardUsageByFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage by floor'**
+  String get dashboardUsageByFloor;
+
+  /// No description provided for @dashboardStockForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock depletion forecast'**
+  String get dashboardStockForecast;
+
+  /// No description provided for @dashboardUnusualPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Unusual patterns'**
+  String get dashboardUnusualPatterns;
+
+  /// No description provided for @dashboardNoStockData.
+  ///
+  /// In en, this message translates to:
+  /// **'No stock data'**
+  String get dashboardNoStockData;
+
+  /// No description provided for @dashboardRoomsRequireReview.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} rooms require review'**
+  String dashboardRoomsRequireReview(String count);
+
+  /// No description provided for @dashboardNoUnusualPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'No unusual patterns detected'**
+  String get dashboardNoUnusualPatterns;
+
+  /// No description provided for @dashboardHighPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get dashboardHighPriority;
+
+  /// No description provided for @dashboardStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Stable'**
+  String get dashboardStable;
+
+  /// No description provided for @errorLoadingHotels.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading hotels'**
+  String get errorLoadingHotels;
+
+  /// No description provided for @sending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get sending;
+
+  /// No description provided for @roomsEditRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update room {roomNumber}'**
+  String roomsEditRoomTitle(String roomNumber);
+
+  /// No description provided for @roomsEditProductTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update {productName} bottle in room {roomNumber}'**
+  String roomsEditProductTitle(String productName, String roomNumber);
+
   /// No description provided for @inventory.
   ///
   /// In en, this message translates to:

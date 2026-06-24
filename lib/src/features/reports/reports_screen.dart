@@ -692,7 +692,7 @@ class _KpiTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: theme.colorScheme.primary),
+          Icon(icon, size: 28, color: theme.colorScheme.primary),
           const SizedBox(width: 10),
           Expanded(child: Text(label, maxLines: 2, overflow: TextOverflow.ellipsis)),
           Text(value, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900)),

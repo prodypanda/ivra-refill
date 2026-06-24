@@ -2222,7 +2222,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                   minimumSize: const Size(80, 36),
                 ),
                 onPressed: item.canRefill ? performRefill : null,
-                icon: const Icon(IvraIcons.refillAction, size: 14),
+                icon: const Icon(IvraIcons.refillAction, size: 18),
                 label:
                     Text(l10n.t('refill'), style: const TextStyle(fontSize: 12)),
               ),
@@ -2230,7 +2230,7 @@ class _RoomCardProductRow extends ConsumerWidget {
               IconButton(
                 visualDensity: VisualDensity.compact,
                 tooltip: l10n.t('roomsBtnReplaceBottle'),
-                icon: const Icon(IvraIcons.replaceAction, size: 20),
+                icon: const Icon(IvraIcons.replaceAction, size: 24),
                 onPressed: item.status == BottleStatus.recycled
                     ? null
                     : () => _replaceBottle(context, ref, item),
@@ -2247,7 +2247,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                 onPressed: item.status == BottleStatus.recycled
                     ? null
                     : () => _replaceBottle(context, ref, item),
-                icon: const Icon(IvraIcons.replaceAction, size: 14),
+                icon: const Icon(IvraIcons.replaceAction, size: 18),
                 label:
                     Text(l10n.t('roomsBtnReplaceBottle'), style: const TextStyle(fontSize: 12)),
               ),
@@ -2255,7 +2255,7 @@ class _RoomCardProductRow extends ConsumerWidget {
             IconButton(
               visualDensity: VisualDensity.compact,
               tooltip: l10n.t('roomsBtnHistory'),
-              icon: const Icon(Icons.history_outlined, size: 20),
+              icon: const Icon(Icons.history_outlined, size: 24),
               onPressed: () => _showRefillHistory(context, ref, item),
             ),
             PopupMenuButton<String>(
@@ -2352,7 +2352,7 @@ class _RoomCardProductRow extends ConsumerWidget {
           padding: const EdgeInsets.only(left: 24),
           child: Row(
             children: [
-              const Icon(IvraIcons.refillAction, color: Colors.white),
+              const Icon(IvraIcons.refillAction, size: 28, color: Colors.white),
               const SizedBox(width: 8),
               Text(l10n.t('refill'),
                   style: const TextStyle(
@@ -2495,8 +2495,10 @@ class _BottleLifecycleEditDialogState
     final l10n = AppLocalizations.of(context);
     try {
       final language = Localizations.localeOf(context).languageCode;
-      final title =
-          'Update ${widget.item.product.label(language)} bottle in room ${widget.item.roomNumber}';
+      final title = l10n.tParams('roomsEditProductTitle', {
+        'productName': widget.item.product.label(language),
+        'roomNumber': widget.item.roomNumber,
+      });
       final oldData = {
         'status': widget.item.status.value,
         'bottle_started_at': _formatDate(widget.item.bottleStartedAt),
@@ -2651,7 +2653,9 @@ class _RoomEditRequestDialogState
       final appliedImmediately = await _submitPendingEditRequest(
         ref: ref,
         hotelId: widget.item.hotelId,
-        title: 'Update room ${widget.item.roomNumber}',
+        title: l10n.tParams('roomsEditRoomTitle', {
+          'roomNumber': widget.item.roomNumber,
+        }),
         targetTable: 'rooms',
         targetId: widget.item.roomId,
         oldData: oldData,

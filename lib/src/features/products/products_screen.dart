@@ -268,13 +268,13 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
-                                  widget.product.bottleType == BottleType.withPump
-                                      ? IvraIcons.fullBottleWithPump
-                                      : IvraIcons.fullBottleWithoutPump,
-                                  size: 12,
-                                  color: theme.colorScheme.onPrimaryContainer,
-                                ),
+                                  Icon(
+                                    widget.product.bottleType == BottleType.withPump
+                                        ? IvraIcons.fullBottleWithPump
+                                        : IvraIcons.fullBottleWithoutPump,
+                                    size: 16,
+                                    color: theme.colorScheme.onPrimaryContainer,
+                                  ),
                                 const SizedBox(width: 4),
                                 Text(
                                   widget.product.bottleType == BottleType.withPump
@@ -469,7 +469,7 @@ class _RuleRow extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 2),
             child: Icon(icon,
-                size: 16,
+                size: 20,
                 color: Theme.of(context)
                     .colorScheme
                     .primary

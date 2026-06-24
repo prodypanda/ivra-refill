@@ -923,7 +923,7 @@ class _VisualStockBar extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 16, color: displayColor),
+            Icon(icon, size: 20, color: displayColor),
             const SizedBox(width: 6),
             Expanded(
               child: Text(
@@ -1017,7 +1017,7 @@ class _MiniStat extends StatelessWidget {
     final theme = Theme.of(context);
     return Row(
       children: [
-        Icon(icon, size: 16, color: color),
+        Icon(icon, size: 20, color: color),
         const SizedBox(width: 6),
         Expanded(
           child: Column(
@@ -1624,7 +1624,7 @@ class _SuggestedOrderRow extends StatelessWidget {
             color: color.withValues(alpha: 0.08),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, size: 16, color: color),
+          child: Icon(icon, size: 20, color: color),
         ),
         const SizedBox(width: 12),
         Expanded(

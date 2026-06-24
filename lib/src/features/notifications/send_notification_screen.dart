@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/models.dart';
+import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/premium_snackbar.dart';
@@ -226,11 +227,11 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                           labelText: loc.t('selectRole'),
                           border: const OutlineInputBorder(),
                         ),
-                        items: const [
-                          DropdownMenuItem(value: 'app_admin', child: Text('App Admin')),
-                          DropdownMenuItem(value: 'app_manager', child: Text('App Manager')),
-                          DropdownMenuItem(value: 'hotel_manager', child: Text('Hotel Manager')),
-                          DropdownMenuItem(value: 'hotel_staff', child: Text('Hotel Staff')),
+                        items: [
+                          DropdownMenuItem(value: 'app_admin', child: Text(loc.userRoleLabel(UserRole.appAdmin))),
+                          DropdownMenuItem(value: 'app_manager', child: Text(loc.userRoleLabel(UserRole.appManager))),
+                          DropdownMenuItem(value: 'hotel_manager', child: Text(loc.userRoleLabel(UserRole.hotelManager))),
+                          DropdownMenuItem(value: 'hotel_staff', child: Text(loc.userRoleLabel(UserRole.hotelStaff))),
                         ],
                         onChanged: (val) => setState(() => _targetValue = val),
                       ),
@@ -251,7 +252,7 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                           );
                         },
                         loading: () => const CircularProgressIndicator(),
-                        error: (err, stack) => Text('Error loading hotels: $err'),
+                        error: (err, stack) => Text('${loc.t('errorLoadingHotels')}: $err'),
                       ),
                     ] else if (_targetType == 'user') ...[
                       TextField(
@@ -344,7 +345,7 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                             )
                           : const Icon(Icons.send_rounded),
                       label: Text(
-                        _isSending ? 'Sending...' : loc.t('dispatchNotification'),
+                        _isSending ? loc.t('sending') : loc.t('dispatchNotification'),
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       style: FilledButton.styleFrom(

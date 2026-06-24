@@ -107,6 +107,69 @@ class AppL10nAr extends AppL10n {
   String get dashboard => 'لوحة القيادة';
 
   @override
+  String get dashboardOpsAnalytics => 'تحليلات العمليات';
+
+  @override
+  String get dashboardExport => 'تصدير';
+
+  @override
+  String get dashboardDaily => 'يومي';
+
+  @override
+  String get dashboardWeekly => 'أسبوعي';
+
+  @override
+  String get dashboardMonthly => 'شهري';
+
+  @override
+  String get dashboardRoomsAttention => 'الغرف التي تحتاج إلى اهتمام';
+
+  @override
+  String get dashboardProductUsage => 'استخدام المنتج';
+
+  @override
+  String get dashboardUsageByFloor => 'الاستخدام حسب الطابق';
+
+  @override
+  String get dashboardStockForecast => 'توقعات نفاد المخزون';
+
+  @override
+  String get dashboardUnusualPatterns => 'أنماط غير عادية';
+
+  @override
+  String get dashboardNoStockData => 'لا توجد بيانات مخزون';
+
+  @override
+  String dashboardRoomsRequireReview(String count) {
+    return '$count غرف تحتاج إلى مراجعة';
+  }
+
+  @override
+  String get dashboardNoUnusualPatterns => 'لم يتم اكتشاف أنماط غير عادية';
+
+  @override
+  String get dashboardHighPriority => 'عالي';
+
+  @override
+  String get dashboardStable => 'مستقر';
+
+  @override
+  String get errorLoadingHotels => 'خطأ في تحميل الفنادق';
+
+  @override
+  String get sending => 'جاري الإرسال...';
+
+  @override
+  String roomsEditRoomTitle(String roomNumber) {
+    return 'تحديث الغرفة $roomNumber';
+  }
+
+  @override
+  String roomsEditProductTitle(String productName, String roomNumber) {
+    return 'تحديث زجاجة $productName في الغرفة $roomNumber';
+  }
+
+  @override
   String get inventory => 'المخزون';
 
   @override

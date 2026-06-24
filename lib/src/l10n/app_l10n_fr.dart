@@ -107,6 +107,69 @@ class AppL10nFr extends AppL10n {
   String get dashboard => 'Tableau de bord';
 
   @override
+  String get dashboardOpsAnalytics => 'Analyses des opérations';
+
+  @override
+  String get dashboardExport => 'Exporter';
+
+  @override
+  String get dashboardDaily => 'Quotidien';
+
+  @override
+  String get dashboardWeekly => 'Hebdomadaire';
+
+  @override
+  String get dashboardMonthly => 'Mensuel';
+
+  @override
+  String get dashboardRoomsAttention => 'Chambres nécessitant de l\'attention';
+
+  @override
+  String get dashboardProductUsage => 'Utilisation du produit';
+
+  @override
+  String get dashboardUsageByFloor => 'Utilisation par étage';
+
+  @override
+  String get dashboardStockForecast => 'Prévision d\'épuisement des stocks';
+
+  @override
+  String get dashboardUnusualPatterns => 'Modèles inhabituels';
+
+  @override
+  String get dashboardNoStockData => 'Aucune donnée de stock';
+
+  @override
+  String dashboardRoomsRequireReview(String count) {
+    return '$count chambres nécessitent une révision';
+  }
+
+  @override
+  String get dashboardNoUnusualPatterns => 'Aucun modèle inhabituel détecté';
+
+  @override
+  String get dashboardHighPriority => 'Élevée';
+
+  @override
+  String get dashboardStable => 'Stable';
+
+  @override
+  String get errorLoadingHotels => 'Erreur lors du chargement des hôtels';
+
+  @override
+  String get sending => 'Envoi en cours...';
+
+  @override
+  String roomsEditRoomTitle(String roomNumber) {
+    return 'Mettre à jour la chambre $roomNumber';
+  }
+
+  @override
+  String roomsEditProductTitle(String productName, String roomNumber) {
+    return 'Mettre à jour la bouteille de $productName dans la chambre $roomNumber';
+  }
+
+  @override
   String get inventory => 'Inventaire';
 
   @override

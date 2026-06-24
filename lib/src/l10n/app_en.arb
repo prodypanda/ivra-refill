@@ -63,6 +63,49 @@
   "openSpecificPage": "Open Specific Page (Optional)",
   "defaultNoPage": "Default (No specific page)",
   "dashboard": "Dashboard",
+  "dashboardOpsAnalytics": "Operations analytics",
+  "dashboardExport": "Export",
+  "dashboardDaily": "Daily",
+  "dashboardWeekly": "Weekly",
+  "dashboardMonthly": "Monthly",
+  "dashboardRoomsAttention": "Rooms needing attention",
+  "dashboardProductUsage": "Product usage",
+  "dashboardUsageByFloor": "Usage by floor",
+  "dashboardStockForecast": "Stock depletion forecast",
+  "dashboardUnusualPatterns": "Unusual patterns",
+  "dashboardNoStockData": "No stock data",
+  "dashboardRoomsRequireReview": "{count} rooms require review",
+  "@dashboardRoomsRequireReview": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardNoUnusualPatterns": "No unusual patterns detected",
+  "dashboardHighPriority": "High",
+  "dashboardStable": "Stable",
+  "errorLoadingHotels": "Error loading hotels",
+  "sending": "Sending...",
+  "roomsEditRoomTitle": "Update room {roomNumber}",
+  "@roomsEditRoomTitle": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "roomsEditProductTitle": "Update {productName} bottle in room {roomNumber}",
+  "@roomsEditProductTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "inventory": "Inventory",
   "alerts": "Alerts",
   "approvals": "Approvals",
