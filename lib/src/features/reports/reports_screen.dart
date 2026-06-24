@@ -719,27 +719,167 @@ class _TrendChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final days = List.generate(14, (index) {
       final now = DateTime.now();
       return DateTime(now.year, now.month, now.day).subtract(Duration(days: 13 - index));
     });
     final maxValue = days.fold<int>(1, (max, day) => values[day] != null && values[day]! > max ? values[day]! : max);
+
+    final double maxY;
+    if (maxValue < 5) {
+      maxY = 5.0;
+    } else {
+      final rawMaxY = (maxValue * 1.25).ceilToDouble();
+      maxY = ((rawMaxY / 5).ceil() * 5).toDouble();
+    }
+
+    double leftInterval = 5;
+    if (maxY <= 5) {
+      leftInterval = 1;
+    } else if (maxY <= 15) {
+      leftInterval = 3;
+    } else if (maxY <= 30) {
+      leftInterval = 5;
+    } else if (maxY <= 100) {
+      leftInterval = 20;
+    } else {
+      leftInterval = 50;
+    }
+
     return Card(
+      elevation: 0,
+      color: theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
-            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${days.length} ${l10n.t('days')}',
+                    style: TextStyle(
+                      color: theme.colorScheme.primary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
             SizedBox(
-              height: 180,
+              height: 200,
               child: BarChart(
                 BarChartData(
-                  maxY: maxValue.toDouble() + 1,
-                  titlesData: const FlTitlesData(show: false),
+                  maxY: maxY,
+                  minY: 0,
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: leftInterval,
+                    getDrawingHorizontalLine: (value) => FlLine(
+                      color: theme.dividerColor.withValues(alpha: 0.15),
+                      strokeWidth: 1,
+                      dashArray: [4, 4],
+                    ),
+                  ),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 32,
+                        getTitlesWidget: (value, meta) {
+                          final index = value.toInt();
+                          if (index >= 0 && index < days.length) {
+                            final day = days[index];
+                            if (index % 2 != 0) {
+                              return const SizedBox.shrink();
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                '${day.day}/${day.month}',
+                                style: TextStyle(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 32,
+                        interval: leftInterval,
+                        getTitlesWidget: (value, meta) => Center(
+                          child: Text(
+                            value.toInt().toString(),
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   borderData: FlBorderData(show: false),
-                  gridData: const FlGridData(show: false),
+                  barTouchData: BarTouchData(
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipColor: (group) => theme.colorScheme.primaryContainer,
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        final day = days[group.x.toInt()];
+                        final dateStr = '${day.day}/${day.month}';
+                        return BarTooltipItem(
+                          '$dateStr\n${rod.toY.toInt()} ${l10n.t('chartRefills')}',
+                          TextStyle(
+                            color: theme.colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                   barGroups: [
                     for (var i = 0; i < days.length; i++)
                       BarChartGroupData(
@@ -747,8 +887,24 @@ class _TrendChart extends StatelessWidget {
                         barRods: [
                           BarChartRodData(
                             toY: (values[days[i]] ?? 0).toDouble(),
-                            color: theme.colorScheme.primary,
-                            borderRadius: BorderRadius.circular(6),
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary,
+                                theme.colorScheme.primary.withValues(alpha: 0.7),
+                              ],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                            ),
+                            width: 14,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(6),
+                              topRight: Radius.circular(6),
+                            ),
+                            backDrawRodData: BackgroundBarChartRodData(
+                              show: true,
+                              toY: maxY,
+                              color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                            ),
                           ),
                         ],
                       ),
