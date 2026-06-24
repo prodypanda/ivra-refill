@@ -1602,12 +1602,57 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     }
   }
 
+  Future<void> _showEditRoomLocal(BuildContext context) async {
+    await showCenteredFormSheet<void>(
+      context: context,
+      builder: (context) => _RoomEditRequestDialog(item: widget.roomProducts.first),
+    );
+    ref.invalidate(approvalsProvider);
+    ref.invalidate(hotelsProvider);
+    ref.invalidate(roomsProvider);
+    ref.invalidate(roomProductsProvider);
+    ref.invalidate(dashboardProvider);
+    if (widget.isDialog && context.mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _confirmDeleteRoomLocal(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await PremiumConfirmDialog.show(
+      context,
+      title: l10n.t('delete'),
+      message: l10n.tParams('confirmDeleteRoom', {'roomNumber': widget.roomProducts.first.roomNumber}),
+    );
+
+    if (confirmed && context.mounted) {
+      try {
+        await ref.read(repositoryProvider).deleteRoom(widget.roomId);
+        ref.invalidate(roomsProvider);
+        ref.invalidate(roomProductsProvider);
+        ref.invalidate(dashboardProvider);
+        if (widget.isDialog) {
+          Navigator.of(context).pop();
+        }
+      } catch (e) {
+        if (context.mounted) {
+          PremiumSnackbar.showError(context, e);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final firstItem = widget.roomProducts.first;
     final isMobile = MediaQuery.sizeOf(context).width < 720 && !widget.isDialog;
+    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final selectedHotelId = ref.watch(selectedHotelIdProvider);
+    final canManageRooms = currentUser?.isIvraUser == true ||
+        (currentUser?.hotelId == selectedHotelId &&
+            currentUser?.role == UserRole.hotelManager);
 
     var overallStatus = l10n.t('roomsStatusAllOk');
     var overallColor = Colors.orange.shade700;
@@ -1690,6 +1735,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                           statusColor: overallColor,
                           statusIcon: overallIcon,
                           onScanPressed: () => _scanCardProductQr(context),
+                          onEdit: canManageRooms ? () => _showEditRoomLocal(context) : null,
+                          onDelete: canManageRooms ? () => _confirmDeleteRoomLocal(context) : null,
                         )
                       : Row(
                           children: [
@@ -1762,12 +1809,19 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                 ),
                               ),
                             ),
-                            if (widget.onDeleteRoom != null) ...[
+                            if (canManageRooms) ...[
+                              const SizedBox(width: 8),
+                              IconButton(
+                                tooltip: l10n.t('roomsDialogRoomEditTitle'),
+                                icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.primary),
+                                onPressed: () => _showEditRoomLocal(context),
+                                visualDensity: VisualDensity.compact,
+                              ),
                               const SizedBox(width: 8),
                               IconButton(
                                 tooltip: l10n.t('delete'),
-                                icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
-                                onPressed: widget.onDeleteRoom,
+                                icon: Icon(Icons.delete_outline, size: 20, color: theme.colorScheme.error),
+                                onPressed: () => _confirmDeleteRoomLocal(context),
                                 visualDensity: VisualDensity.compact,
                               ),
                             ],
@@ -1811,6 +1865,8 @@ class _MobileRoomHeader extends StatelessWidget {
     required this.statusColor,
     required this.statusIcon,
     required this.onScanPressed,
+    this.onEdit,
+    this.onDelete,
   });
 
   final String roomNumber;
@@ -1819,6 +1875,8 @@ class _MobileRoomHeader extends StatelessWidget {
   final Color statusColor;
   final IconData statusIcon;
   final VoidCallback onScanPressed;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -1858,6 +1916,24 @@ class _MobileRoomHeader extends StatelessWidget {
               onPressed: onScanPressed,
               visualDensity: VisualDensity.compact,
             ),
+            if (onEdit != null) ...[
+              const SizedBox(width: 4),
+              IconButton(
+                tooltip: l10n.t('roomsDialogRoomEditTitle'),
+                icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.primary),
+                onPressed: onEdit,
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
+            if (onDelete != null) ...[
+              const SizedBox(width: 4),
+              IconButton(
+                tooltip: l10n.t('delete'),
+                icon: Icon(Icons.delete_outline, size: 20, color: theme.colorScheme.error),
+                onPressed: onDelete,
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
           ],
         ),
         const SizedBox(height: 12),
