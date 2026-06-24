@@ -2623,6 +2623,7 @@ class _RoomEditRequestDialogState
   late final TextEditingController _roomNumber;
   late final TextEditingController _floorNumber;
   var _isSaving = false;
+  List<String>? _selectedProductIds;
 
   @override
   void initState() {
@@ -2643,6 +2644,22 @@ class _RoomEditRequestDialogState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+
+    final productsAsync = ref.watch(productsProvider);
+    final roomProductsAsync = ref.watch(roomProductsProvider);
+
+    final products = productsAsync.valueOrNull ?? [];
+    final roomProducts = roomProductsAsync.valueOrNull ?? [];
+
+    if (_selectedProductIds == null && roomProductsAsync.hasValue) {
+      _selectedProductIds = roomProducts
+          .where((rp) => rp.roomId == widget.item.roomId)
+          .map((rp) => rp.product.id)
+          .toList();
+    }
+
+    final isLoading = productsAsync.isLoading || roomProductsAsync.isLoading;
 
     return SafeArea(
       child: Padding(
@@ -2685,6 +2702,61 @@ class _RoomEditRequestDialogState
                     controller: _floorNumber,
                     label: l10n.t('roomsLabelFloorNumber'),
                   ),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      l10n.t('roomsLabelManageProducts'),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (isLoading || _selectedProductIds == null)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    )
+                  else if (products.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Text(
+                        'No products found',
+                        style: TextStyle(color: Colors.grey.shade500),
+                      ),
+                    )
+                  else
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: products.map((product) {
+                          final isSelected =
+                              _selectedProductIds!.contains(product.id);
+                          return FilterChip(
+                            label: Text(product.label(language)),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              setState(() {
+                                if (selected) {
+                                  _selectedProductIds!.add(product.id);
+                                } else {
+                                  _selectedProductIds!.remove(product.id);
+                                }
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -2717,13 +2789,21 @@ class _RoomEditRequestDialogState
     setState(() => _isSaving = true);
     final l10n = AppLocalizations.of(context);
     try {
+      final roomProducts = ref.read(roomProductsProvider).valueOrNull ?? [];
+      final oldProductIds = roomProducts
+          .where((rp) => rp.roomId == widget.item.roomId)
+          .map((rp) => rp.product.id)
+          .toList();
+
       final oldData = {
         'room_number': widget.item.roomNumber,
         'floor_number': widget.item.floorNumber,
+        'product_ids': oldProductIds,
       };
       final newData = {
         'room_number': _roomNumber.text.trim(),
         'floor_number': int.parse(_floorNumber.text),
+        'product_ids': _selectedProductIds ?? oldProductIds,
       };
       final offline = ref.read(offlineModeProvider);
       final appliedImmediately = await _submitPendingEditRequest(
@@ -2739,11 +2819,14 @@ class _RoomEditRequestDialogState
       );
       if (mounted) {
         Navigator.of(context).pop();
-        PremiumSnackbar.showSuccess(context, offline
-                  ? l10n.t('roomsMsgRoomEditQueued')
-                  : appliedImmediately
-                      ? l10n.t('roomsMsgRoomDetailsUpdated')
-                      : l10n.t('roomsMsgRoomEditSubmitted'),);
+        PremiumSnackbar.showSuccess(
+          context,
+          offline
+              ? l10n.t('roomsMsgRoomEditQueued')
+              : appliedImmediately
+                  ? l10n.t('roomsMsgRoomDetailsUpdated')
+                  : l10n.t('roomsMsgRoomEditSubmitted'),
+        );
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);

@@ -1310,6 +1310,38 @@ class MockIvraRepository implements IvraRepository {
             );
           }
         }
+        final productIds = request.newData['product_ids'] as List<dynamic>?;
+        if (productIds != null) {
+          final stringProductIds = productIds.cast<String>();
+          // Remove products that are not in the new list
+          _roomProducts.removeWhere((rp) =>
+              rp.roomId == request.targetId! &&
+              !stringProductIds.contains(rp.product.id));
+
+          // Find products that need to be added
+          for (final pid in stringProductIds) {
+            final exists = _roomProducts.any((rp) =>
+                rp.roomId == request.targetId! && rp.product.id == pid);
+            if (!exists) {
+              final productIndex = _products.indexWhere((p) => p.id == pid);
+              if (productIndex != -1) {
+                final product = _products[productIndex];
+                _roomProducts.add(RoomProduct(
+                  id: 'rp_${DateTime.now().millisecondsSinceEpoch}_$pid',
+                  hotelId: request.hotelId,
+                  roomId: request.targetId!,
+                  roomNumber: roomNumber ?? (roomIndex != -1 ? _rooms[roomIndex].roomNumber : ''),
+                  floorNumber: floorNumber ?? (roomIndex != -1 ? _rooms[roomIndex].floorNumber : 0),
+                  product: product,
+                  refillCount: 0,
+                  lastRefillAt: null,
+                  bottleStartedAt: DateTime.now(),
+                  status: BottleStatus.active,
+                ));
+              }
+            }
+          }
+        }
         _decrementHotelPendingEdits(request.hotelId);
         return;
       case 'room_products':

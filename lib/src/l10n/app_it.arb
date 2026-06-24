@@ -305,6 +305,7 @@
   "roomsDialogRoomEditTitle": "Richiesta modifica camera per",
   "roomsLabelRoomNumber": "Numero camera",
   "roomsLabelFloorNumber": "Numero piano",
+  "roomsLabelManageProducts": "Gestisci i prodotti della camera",
   "roomsMsgRoomEditQueued": "Richiesta modifica camera in coda",
   "roomsMsgRoomDetailsUpdated": "Dettagli camera aggiornati",
   "roomsMsgRoomEditSubmitted": "Richiesta modifica camera inviata",

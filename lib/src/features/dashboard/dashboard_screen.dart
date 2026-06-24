@@ -348,7 +348,12 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
                 _AnalyticsChip(label: l10n.t('dashboardDaily'), value: daily.toString(), icon: Icons.today_outlined),
                 _AnalyticsChip(label: l10n.t('dashboardWeekly'), value: weekly.toString(), icon: Icons.date_range_outlined),
                 _AnalyticsChip(label: l10n.t('dashboardMonthly'), value: monthly.toString(), icon: Icons.calendar_month_outlined),
-                _AnalyticsChip(label: l10n.t('dashboardRoomsAttention'), value: attentionRooms.length.toString(), icon: Icons.room_preferences_outlined),
+                _AnalyticsChip(
+                  label: l10n.t('dashboardRoomsAttention'),
+                  value: attentionRooms.length.toString(),
+                  icon: Icons.room_preferences_outlined,
+                  width: 290,
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -398,16 +403,22 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
 }
 
 class _AnalyticsChip extends StatelessWidget {
-  const _AnalyticsChip({required this.label, required this.value, required this.icon});
+  const _AnalyticsChip({
+    required this.label,
+    required this.value,
+    required this.icon,
+    this.width = 210,
+  });
   final String label;
   final String value;
   final IconData icon;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      width: 210,
+      width: width,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),

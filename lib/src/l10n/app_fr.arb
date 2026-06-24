@@ -305,6 +305,7 @@
   "roomsDialogRoomEditTitle": "Demander la modification pour la chambre",
   "roomsLabelRoomNumber": "Numéro de chambre",
   "roomsLabelFloorNumber": "Numéro d'étage",
+  "roomsLabelManageProducts": "Gérer les produits de la chambre",
   "roomsMsgRoomEditQueued": "Demande de modification de chambre mise en attente",
   "roomsMsgRoomDetailsUpdated": "Détails de la chambre mis à jour",
   "roomsMsgRoomEditSubmitted": "Demande de modification de chambre soumise",

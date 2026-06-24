@@ -980,6 +980,9 @@ class AppL10nAr extends AppL10n {
   String get roomsLabelFloorNumber => 'رقم الطابق';
 
   @override
+  String get roomsLabelManageProducts => 'إدارة منتجات الغرفة';
+
+  @override
   String get roomsMsgRoomEditQueued => 'تمت جدولة طلب تعديل الغرفة';
 
   @override

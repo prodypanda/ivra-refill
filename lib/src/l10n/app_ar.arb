@@ -305,6 +305,7 @@
   "roomsDialogRoomEditTitle": "طلب تعديل الغرفة لـ",
   "roomsLabelRoomNumber": "رقم الغرفة",
   "roomsLabelFloorNumber": "رقم الطابق",
+  "roomsLabelManageProducts": "إدارة منتجات الغرفة",
   "roomsMsgRoomEditQueued": "تمت جدولة طلب تعديل الغرفة",
   "roomsMsgRoomDetailsUpdated": "تم تحديث تفاصيل الغرفة",
   "roomsMsgRoomEditSubmitted": "تم تقديم طلب تعديل الغرفة",

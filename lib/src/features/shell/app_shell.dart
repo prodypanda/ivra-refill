@@ -95,7 +95,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                           destinations: [
                             for (final item in navItems)
                               NavigationRailDestination(
-                                icon: Icon(item.icon),
+                                icon: _buildNavItemIcon(ref, item),
                                 label: Text(item.label),
                               ),
                           ],
@@ -268,7 +268,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   }
 }
 
-class _MobileShell extends StatelessWidget {
+class _MobileShell extends ConsumerWidget {
   const _MobileShell({
     required this.selectedIndex,
     required this.navItems,
@@ -282,7 +282,7 @@ class _MobileShell extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     const maxPrimary = 3;
     final hasMore = navItems.length > maxPrimary;
@@ -343,7 +343,7 @@ class _MobileShell extends StatelessWidget {
                 selectedIndex: primaryIndex,
                 onDestinationSelected: (index) {
                   if (hasMore && index == primaryItems.length) {
-                    _showMoreDestinations(context, moreItems);
+                    _showMoreDestinations(context, ref, moreItems);
                     return;
                   }
                   context.go(primaryItems[index].route);
@@ -351,7 +351,7 @@ class _MobileShell extends StatelessWidget {
                 destinations: [
                   for (var index = 0; index < primaryItems.length; index++)
                     NavigationDestination(
-                      icon: Icon(primaryItems[index].icon),
+                      icon: _buildNavItemIcon(ref, primaryItems[index]),
                       label: primaryItems[index].mobileLabel,
                     ),
                   if (hasMore)
@@ -368,7 +368,7 @@ class _MobileShell extends StatelessWidget {
     );
   }
 
-  void _showMoreDestinations(BuildContext context, List<_NavItem> moreItems) {
+  void _showMoreDestinations(BuildContext context, WidgetRef ref, List<_NavItem> moreItems) {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -385,7 +385,7 @@ class _MobileShell extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
                     child: ListTile(
-                      leading: Icon(item.icon),
+                      leading: _buildNavItemIcon(ref, item),
                       title: Text(item.label),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
@@ -525,4 +525,25 @@ class _DrawerFooter extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildNavItemIcon(WidgetRef ref, _NavItem item) {
+  if (item.route == AlertsScreen.route) {
+    final alertsAsync = ref.watch(alertsProvider);
+    return alertsAsync.maybeWhen(
+      data: (alerts) {
+        final openCount = alerts.where((a) => !a.isResolved).length;
+        if (openCount > 0) {
+          return Badge(
+            backgroundColor: Colors.orange,
+            label: Text('$openCount'),
+            child: Icon(item.icon),
+          );
+        }
+        return Icon(item.icon);
+      },
+      orElse: () => Icon(item.icon),
+    );
+  }
+  return Icon(item.icon);
 }

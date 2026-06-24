@@ -986,6 +986,9 @@ class AppL10nEn extends AppL10n {
   String get roomsLabelFloorNumber => 'Floor number';
 
   @override
+  String get roomsLabelManageProducts => 'Manage Room Products';
+
+  @override
   String get roomsMsgRoomEditQueued => 'Room edit request queued';
 
   @override

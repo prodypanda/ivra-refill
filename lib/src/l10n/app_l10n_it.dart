@@ -994,6 +994,9 @@ class AppL10nIt extends AppL10n {
   String get roomsLabelFloorNumber => 'Numero piano';
 
   @override
+  String get roomsLabelManageProducts => 'Gestisci i prodotti della camera';
+
+  @override
   String get roomsMsgRoomEditQueued => 'Richiesta modifica camera in coda';
 
   @override

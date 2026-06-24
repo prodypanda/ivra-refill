@@ -1931,6 +1931,12 @@ abstract class AppL10n {
   /// **'Floor number'**
   String get roomsLabelFloorNumber;
 
+  /// No description provided for @roomsLabelManageProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Room Products'**
+  String get roomsLabelManageProducts;
+
   /// No description provided for @roomsMsgRoomEditQueued.
   ///
   /// In en, this message translates to:

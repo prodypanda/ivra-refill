@@ -419,6 +419,7 @@
   "roomsDialogRoomEditTitle": "Request room edit for",
   "roomsLabelRoomNumber": "Room number",
   "roomsLabelFloorNumber": "Floor number",
+  "roomsLabelManageProducts": "Manage Room Products",
   "roomsMsgRoomEditQueued": "Room edit request queued",
   "roomsMsgRoomDetailsUpdated": "Room details updated",
   "roomsMsgRoomEditSubmitted": "Room edit request submitted",

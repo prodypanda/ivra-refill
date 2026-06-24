@@ -1001,6 +1001,9 @@ class AppL10nFr extends AppL10n {
   String get roomsLabelFloorNumber => 'Numéro d\'étage';
 
   @override
+  String get roomsLabelManageProducts => 'Gérer les produits de la chambre';
+
+  @override
   String get roomsMsgRoomEditQueued =>
       'Demande de modification de chambre mise en attente';
 
