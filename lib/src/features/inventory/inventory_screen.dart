@@ -236,6 +236,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                       final matchHotel = order.hotelId == selectedHotelId;
                       if (!matchHotel) return false;
 
+                      final hasQuantities = order.bottlesToOrder > 0 ||
+                          order.bidonsToOrder > 0 ||
+                          order.bottlesToRecycle > 0;
+                      if (!hasQuantities) return false;
+
                       if (_searchQuery.isEmpty) return true;
                       final name = order.product
                           .label(Localizations.localeOf(context).languageCode)
@@ -673,6 +678,7 @@ class _PremiumInventoryCard extends ConsumerStatefulWidget {
 
 class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
   bool _isHovered = false;
+  bool _showAdvancedStats = false;
 
   Future<void> _adjustStock(BuildContext context) async {
     try {
@@ -830,7 +836,9 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
               const Spacer(),
               // Visual Stock Indicators
               _VisualStockBar(
-                label: l10n.t('inventoryTableFullBottles'),
+                label: widget.item.product.bottleType == BottleType.withPump
+                    ? l10n.t('inventoryTableFullBottlesWithPump')
+                    : l10n.t('inventoryTableFullBottlesWithoutPump'),
                 value: widget.item.fullBottles,
                 threshold: widget.item.product.lowBottleThreshold,
                 icon: widget.item.product.bottleType == BottleType.withPump
@@ -849,40 +857,77 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                 ),
               ],
               const SizedBox(height: 16),
-              // Smaller stats for empties/open
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest
-                      .withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      child: _MiniStat(
-                        label: l10n.t('inventoryTableEmptyBottles'),
-                        value: widget.item.emptyBottles,
-                        icon: widget.item.product.bottleType == BottleType.withPump
-                            ? IvraIcons.emptyBottleWithPump
-                            : IvraIcons.emptyBottleWithoutPump,
-                        color: theme.colorScheme.tertiary,
-                      ),
-                    ),
-                    if (widget.item.product.isRefillable) ...[
-                      Container(width: 1, height: 24, color: theme.dividerColor),
-                      Expanded(
-                        child: _MiniStat(
-                          label: l10n.t('inventoryTableOpenBidons'),
-                          value: widget.item.openBidons,
-                          icon: IvraIcons.emptyRefillBottle,
-                          color: Colors.indigo,
+              InkWell(
+                onTap: () => setState(() => _showAdvancedStats = !_showAdvancedStats),
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        l10n.t('inventoryCollapseHeader'),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                      Icon(
+                        _showAdvancedStats
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        size: 18,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ],
+                  ),
+                ),
+              ),
+              AnimatedCrossFade(
+                firstChild: const SizedBox.shrink(),
+                secondChild: Column(
+                  children: [
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceContainerHighest
+                            .withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                            child: _MiniStat(
+                              label: l10n.t('inventoryTableEmptyBottles'),
+                              value: widget.item.emptyBottles,
+                              icon: widget.item.product.bottleType == BottleType.withPump
+                                  ? IvraIcons.emptyBottleWithPump
+                                  : IvraIcons.emptyBottleWithoutPump,
+                              color: theme.colorScheme.tertiary,
+                            ),
+                          ),
+                          if (widget.item.product.isRefillable) ...[
+                            Container(width: 1, height: 24, color: theme.dividerColor),
+                            Expanded(
+                              child: _MiniStat(
+                                label: l10n.t('inventoryTableOpenBidons'),
+                                value: widget.item.openBidons,
+                                icon: IvraIcons.emptyRefillBottle,
+                                color: Colors.indigo,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
                   ],
                 ),
+                crossFadeState: _showAdvancedStats
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                duration: const Duration(milliseconds: 200),
               ),
             ],
           ),
@@ -899,6 +944,7 @@ class _VisualStockBar extends StatelessWidget {
     required this.threshold,
     required this.icon,
     required this.color,
+    this.iconSize = 24,
   });
 
   final String label;
@@ -906,6 +952,7 @@ class _VisualStockBar extends StatelessWidget {
   final int threshold;
   final IconData icon;
   final Color color;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -923,7 +970,7 @@ class _VisualStockBar extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 20, color: displayColor),
+            Icon(icon, size: iconSize, color: displayColor),
             const SizedBox(width: 6),
             Expanded(
               child: Text(
@@ -1196,7 +1243,9 @@ class _StockAdjustmentDialogState
                   children: [
                     _DeltaField(
                       controller: _fullBottles,
-                      label: l10n.t('inventoryTableFullBottles'),
+                      label: selectedItem.product.bottleType == BottleType.withPump
+                          ? l10n.t('inventoryTableFullBottlesWithPump')
+                          : l10n.t('inventoryTableFullBottlesWithoutPump'),
                     ),
                     const SizedBox(height: 12),
                     _DeltaField(

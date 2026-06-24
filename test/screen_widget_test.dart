@@ -260,9 +260,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Inventory'), findsWidgets);
-      expect(find.text('Full bottles'), findsWidgets);
+      expect(find.text('Full bottles with pump'), findsWidgets);
       expect(find.text('Full refill bottles'), findsWidgets);
-      expect(find.text('Empty bottles'), findsWidgets);
+      expect(find.text('Empty & Open Bottles'), findsWidgets);
     });
 
     testWidgets('shows stock status for inventory items', (tester) async {
