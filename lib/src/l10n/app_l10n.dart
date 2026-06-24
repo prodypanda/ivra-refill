@@ -887,6 +887,108 @@ abstract class AppL10n {
   /// **'Export low stock, replacement, inactivity, and suspicious activity alerts.'**
   String get reportOpenAlertsBody;
 
+  /// No description provided for @scheduleReportEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule report email'**
+  String get scheduleReportEmail;
+
+  /// No description provided for @scheduleReportEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'We will send a summary of this report to this address every Monday.'**
+  String get scheduleReportEmailHint;
+
+  /// No description provided for @scheduledReportEmailDrafted.
+  ///
+  /// In en, this message translates to:
+  /// **'Email report scheduled successfully'**
+  String get scheduledReportEmailDrafted;
+
+  /// No description provided for @reportFilterDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Date Range'**
+  String get reportFilterDateRange;
+
+  /// No description provided for @reportAllProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'All products'**
+  String get reportAllProducts;
+
+  /// No description provided for @reportAllRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'All rooms'**
+  String get reportAllRooms;
+
+  /// No description provided for @reportClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filters'**
+  String get reportClearFilters;
+
+  /// No description provided for @reportFiltersApplyExports.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: Filters apply to both screen metrics and downloaded exports.'**
+  String get reportFiltersApplyExports;
+
+  /// No description provided for @reportAnalyticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics Overview'**
+  String get reportAnalyticsTitle;
+
+  /// No description provided for @reportKpiRefills.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Refills'**
+  String get reportKpiRefills;
+
+  /// No description provided for @reportKpiCorrections.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Corrections'**
+  String get reportKpiCorrections;
+
+  /// No description provided for @reportKpiReplacements.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacements'**
+  String get reportKpiReplacements;
+
+  /// No description provided for @reportKpiActiveRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Rooms'**
+  String get reportKpiActiveRooms;
+
+  /// No description provided for @reportTrendChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Activity Trend (Last 14 Days)'**
+  String get reportTrendChart;
+
+  /// No description provided for @reportUsageByProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Refills by Product'**
+  String get reportUsageByProduct;
+
+  /// No description provided for @reportUsageByRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Refills by Room'**
+  String get reportUsageByRoom;
+
+  /// No description provided for @reportNoAnalyticsData.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity recorded for this period.'**
+  String get reportNoAnalyticsData;
+
   /// No description provided for @exportFailed.
   ///
   /// In en, this message translates to:
@@ -940,6 +1042,24 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Full bottles'**
   String get inventoryTableFullBottles;
+
+  /// No description provided for @inventoryTableFullBottlesWithPump.
+  ///
+  /// In en, this message translates to:
+  /// **'Full bottles with pump'**
+  String get inventoryTableFullBottlesWithPump;
+
+  /// No description provided for @inventoryTableFullBottlesWithoutPump.
+  ///
+  /// In en, this message translates to:
+  /// **'Full bottles without pump'**
+  String get inventoryTableFullBottlesWithoutPump;
+
+  /// No description provided for @inventoryCollapseHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty & Open Bottles'**
+  String get inventoryCollapseHeader;
 
   /// No description provided for @inventoryTableEmptyBottles.
   ///

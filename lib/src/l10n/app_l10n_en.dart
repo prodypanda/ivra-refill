@@ -428,6 +428,60 @@ class AppL10nEn extends AppL10n {
       'Export low stock, replacement, inactivity, and suspicious activity alerts.';
 
   @override
+  String get scheduleReportEmail => 'Schedule report email';
+
+  @override
+  String get scheduleReportEmailHint =>
+      'We will send a summary of this report to this address every Monday.';
+
+  @override
+  String get scheduledReportEmailDrafted =>
+      'Email report scheduled successfully';
+
+  @override
+  String get reportFilterDateRange => 'Filter by Date Range';
+
+  @override
+  String get reportAllProducts => 'All products';
+
+  @override
+  String get reportAllRooms => 'All rooms';
+
+  @override
+  String get reportClearFilters => 'Clear Filters';
+
+  @override
+  String get reportFiltersApplyExports =>
+      'Note: Filters apply to both screen metrics and downloaded exports.';
+
+  @override
+  String get reportAnalyticsTitle => 'Analytics Overview';
+
+  @override
+  String get reportKpiRefills => 'Total Refills';
+
+  @override
+  String get reportKpiCorrections => 'Stock Corrections';
+
+  @override
+  String get reportKpiReplacements => 'Replacements';
+
+  @override
+  String get reportKpiActiveRooms => 'Active Rooms';
+
+  @override
+  String get reportTrendChart => 'Refill Activity Trend (Last 14 Days)';
+
+  @override
+  String get reportUsageByProduct => 'Refills by Product';
+
+  @override
+  String get reportUsageByRoom => 'Refills by Room';
+
+  @override
+  String get reportNoAnalyticsData => 'No activity recorded for this period.';
+
+  @override
   String get exportFailed => 'Export failed';
 
   @override
@@ -453,6 +507,16 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get inventoryTableFullBottles => 'Full bottles';
+
+  @override
+  String get inventoryTableFullBottlesWithPump => 'Full bottles with pump';
+
+  @override
+  String get inventoryTableFullBottlesWithoutPump =>
+      'Full bottles without pump';
+
+  @override
+  String get inventoryCollapseHeader => 'Empty & Open Bottles';
 
   @override
   String get inventoryTableEmptyBottles => 'Empty bottles';

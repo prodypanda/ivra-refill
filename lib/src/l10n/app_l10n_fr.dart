@@ -429,6 +429,62 @@ class AppL10nFr extends AppL10n {
       'Exporter les alertes de stock bas, remplacement, inactivité et activité suspecte.';
 
   @override
+  String get scheduleReportEmail => 'Planifier le rapport par e-mail';
+
+  @override
+  String get scheduleReportEmailHint =>
+      'Nous enverrons un résumé de ce rapport à cette adresse chaque lundi.';
+
+  @override
+  String get scheduledReportEmailDrafted =>
+      'Rapport par e-mail planifié avec succès';
+
+  @override
+  String get reportFilterDateRange => 'Filtrer par plage de dates';
+
+  @override
+  String get reportAllProducts => 'Tous les produits';
+
+  @override
+  String get reportAllRooms => 'Toutes les chambres';
+
+  @override
+  String get reportClearFilters => 'Effacer les filtres';
+
+  @override
+  String get reportFiltersApplyExports =>
+      'Remarque : Les filtres s\'appliquent à la fois aux indicateurs de l\'écran et aux exports téléchargés.';
+
+  @override
+  String get reportAnalyticsTitle => 'Aperçu analytique';
+
+  @override
+  String get reportKpiRefills => 'Recharges totales';
+
+  @override
+  String get reportKpiCorrections => 'Corrections de stock';
+
+  @override
+  String get reportKpiReplacements => 'Remplacements';
+
+  @override
+  String get reportKpiActiveRooms => 'Chambres actives';
+
+  @override
+  String get reportTrendChart =>
+      'Tendance de l\'activité de recharge (14 derniers jours)';
+
+  @override
+  String get reportUsageByProduct => 'Recharges par produit';
+
+  @override
+  String get reportUsageByRoom => 'Recharges par chambre';
+
+  @override
+  String get reportNoAnalyticsData =>
+      'Aucune activité enregistrée pour cette période.';
+
+  @override
   String get exportFailed => 'Échec de l\'exportation';
 
   @override
@@ -454,6 +510,17 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get inventoryTableFullBottles => 'Bouteilles pleines';
+
+  @override
+  String get inventoryTableFullBottlesWithPump =>
+      'Bouteilles pleines avec pompe';
+
+  @override
+  String get inventoryTableFullBottlesWithoutPump =>
+      'Bouteilles pleines sans pompe';
+
+  @override
+  String get inventoryCollapseHeader => 'Bouteilles vides & ouvertes';
 
   @override
   String get inventoryTableEmptyBottles => 'Bouteilles vides';

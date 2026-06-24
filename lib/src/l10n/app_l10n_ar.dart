@@ -428,6 +428,60 @@ class AppL10nAr extends AppL10n {
       'تصدير تنبيهات انخفاض المخزون والاستبدال والخمول والنشاط المشبوه.';
 
   @override
+  String get scheduleReportEmail => 'جدولة تقرير البريد الإلكتروني';
+
+  @override
+  String get scheduleReportEmailHint =>
+      'سنرسل ملخصًا لهذا التقرير إلى هذا العنوان كل يوم اثنين.';
+
+  @override
+  String get scheduledReportEmailDrafted =>
+      'تم جدولة تقرير البريد الإلكتروني بنجاح';
+
+  @override
+  String get reportFilterDateRange => 'تصفية حسب النطاق الزمني';
+
+  @override
+  String get reportAllProducts => 'جميع المنتجات';
+
+  @override
+  String get reportAllRooms => 'جميع الغرف';
+
+  @override
+  String get reportClearFilters => 'مسح الفلاتر';
+
+  @override
+  String get reportFiltersApplyExports =>
+      'ملاحظة: تنطبق الفلاتر على كل من مقاييس الشاشة والصادرات التي تم تنزيلها.';
+
+  @override
+  String get reportAnalyticsTitle => 'نظرة عامة على التحليلات';
+
+  @override
+  String get reportKpiRefills => 'إجمالي عمليات إعادة التعبئة';
+
+  @override
+  String get reportKpiCorrections => 'تصحيحات المخزون';
+
+  @override
+  String get reportKpiReplacements => 'الاستبدالات';
+
+  @override
+  String get reportKpiActiveRooms => 'الغرف النشطة';
+
+  @override
+  String get reportTrendChart => 'اتجاه نشاط إعادة التعبئة (آخر 14 يومًا)';
+
+  @override
+  String get reportUsageByProduct => 'إعادة التعبئة حسب المنتج';
+
+  @override
+  String get reportUsageByRoom => 'إعادة التعبئة حسب الغرفة';
+
+  @override
+  String get reportNoAnalyticsData => 'لم يتم تسجيل أي نشاط خلال هذه الفترة.';
+
+  @override
   String get exportFailed => 'فشل التصدير';
 
   @override
@@ -453,6 +507,16 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get inventoryTableFullBottles => 'العبوات الممتلئة';
+
+  @override
+  String get inventoryTableFullBottlesWithPump => 'العبوات الممتلئة بمضخة';
+
+  @override
+  String get inventoryTableFullBottlesWithoutPump =>
+      'العبوات الممتلئة بدون مضخة';
+
+  @override
+  String get inventoryCollapseHeader => 'العبوات الفارغة والمفتوحة';
 
   @override
   String get inventoryTableEmptyBottles => 'العبوات الفارغة';
