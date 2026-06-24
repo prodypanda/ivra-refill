@@ -1840,4 +1840,79 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get impersonationExit => 'خروج';
+
+  @override
+  String get pdfHeaderType => 'النوع';
+
+  @override
+  String get pdfHeaderPrevious => 'السابق';
+
+  @override
+  String get pdfHeaderNew => 'الجديد';
+
+  @override
+  String get pdfHeaderOccurredAt => 'تاريخ الحدوث';
+
+  @override
+  String get pdfHeaderNotes => 'ملاحظات';
+
+  @override
+  String get pdfHeaderProduct => 'المنتج';
+
+  @override
+  String get pdfHeader1LBottles => 'زجاجات 1 لتر';
+
+  @override
+  String get pdfHeader5LBidons => 'عبوات 5 لتر';
+
+  @override
+  String get pdfHeaderRecycle => 'إعادة تدوير';
+
+  @override
+  String get pdfHeaderFullBottles => 'زجاجات مملوءة';
+
+  @override
+  String get pdfHeaderEmptyBottles => 'زجاجات فارغة';
+
+  @override
+  String get pdfHeaderFullBidons => 'عبوات مملوءة';
+
+  @override
+  String get pdfHeaderOpenBidons => 'عبوات مفتوحة';
+
+  @override
+  String get pdfHeaderEmptyBidons => 'عبوات فارغة';
+
+  @override
+  String get pdfHeaderSeverity => 'الخطورة';
+
+  @override
+  String get pdfHeaderTitle => 'العنوان';
+
+  @override
+  String get pdfHeaderCreatedAt => 'تاريخ الإنشاء';
+
+  @override
+  String get approvalStatusApproved => 'تمت الموافقة';
+
+  @override
+  String get approvalStatusRejected => 'مرفوض';
+
+  @override
+  String get approvalStatusCancelled => 'ملغى';
+
+  @override
+  String get approvalStatusPending => 'قيد الانتظار';
+
+  @override
+  String get pdfTitleSuggestedOrders => 'طلبات Ivra المقترحة';
+
+  @override
+  String get pdfTitleInventorySnapshot => 'مخزون Ivra';
+
+  @override
+  String get pdfTitleRefillHistory => 'سجل تعبئة Ivra';
+
+  @override
+  String get pdfTitleOpenAlerts => 'تنبيهات Ivra المفتوحة';
 }

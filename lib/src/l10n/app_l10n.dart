@@ -3484,6 +3484,156 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Exit'**
   String get impersonationExit;
+
+  /// No description provided for @pdfHeaderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get pdfHeaderType;
+
+  /// No description provided for @pdfHeaderPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get pdfHeaderPrevious;
+
+  /// No description provided for @pdfHeaderNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get pdfHeaderNew;
+
+  /// No description provided for @pdfHeaderOccurredAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Occurred at'**
+  String get pdfHeaderOccurredAt;
+
+  /// No description provided for @pdfHeaderNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get pdfHeaderNotes;
+
+  /// No description provided for @pdfHeaderProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get pdfHeaderProduct;
+
+  /// No description provided for @pdfHeader1LBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'1L bottles'**
+  String get pdfHeader1LBottles;
+
+  /// No description provided for @pdfHeader5LBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'5L refill bottles'**
+  String get pdfHeader5LBidons;
+
+  /// No description provided for @pdfHeaderRecycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recycle'**
+  String get pdfHeaderRecycle;
+
+  /// No description provided for @pdfHeaderFullBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Full bottles'**
+  String get pdfHeaderFullBottles;
+
+  /// No description provided for @pdfHeaderEmptyBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty bottles'**
+  String get pdfHeaderEmptyBottles;
+
+  /// No description provided for @pdfHeaderFullBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Full refill bottles'**
+  String get pdfHeaderFullBidons;
+
+  /// No description provided for @pdfHeaderOpenBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened refill bottles'**
+  String get pdfHeaderOpenBidons;
+
+  /// No description provided for @pdfHeaderEmptyBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty refill bottles'**
+  String get pdfHeaderEmptyBidons;
+
+  /// No description provided for @pdfHeaderSeverity.
+  ///
+  /// In en, this message translates to:
+  /// **'Severity'**
+  String get pdfHeaderSeverity;
+
+  /// No description provided for @pdfHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get pdfHeaderTitle;
+
+  /// No description provided for @pdfHeaderCreatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created at'**
+  String get pdfHeaderCreatedAt;
+
+  /// No description provided for @approvalStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get approvalStatusApproved;
+
+  /// No description provided for @approvalStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get approvalStatusRejected;
+
+  /// No description provided for @approvalStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get approvalStatusCancelled;
+
+  /// No description provided for @approvalStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get approvalStatusPending;
+
+  /// No description provided for @pdfTitleSuggestedOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Ivra Suggested Orders'**
+  String get pdfTitleSuggestedOrders;
+
+  /// No description provided for @pdfTitleInventorySnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Ivra Inventory Snapshot'**
+  String get pdfTitleInventorySnapshot;
+
+  /// No description provided for @pdfTitleRefillHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Ivra Refill History'**
+  String get pdfTitleRefillHistory;
+
+  /// No description provided for @pdfTitleOpenAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Ivra Open Alerts'**
+  String get pdfTitleOpenAlerts;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

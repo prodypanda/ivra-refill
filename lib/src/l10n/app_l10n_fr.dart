@@ -1881,4 +1881,79 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get impersonationExit => 'Quitter';
+
+  @override
+  String get pdfHeaderType => 'Type';
+
+  @override
+  String get pdfHeaderPrevious => 'Précédent';
+
+  @override
+  String get pdfHeaderNew => 'Nouveau';
+
+  @override
+  String get pdfHeaderOccurredAt => 'Survenu à';
+
+  @override
+  String get pdfHeaderNotes => 'Notes';
+
+  @override
+  String get pdfHeaderProduct => 'Produit';
+
+  @override
+  String get pdfHeader1LBottles => 'Bouteilles 1L';
+
+  @override
+  String get pdfHeader5LBidons => 'Bidons 5L';
+
+  @override
+  String get pdfHeaderRecycle => 'Recycler';
+
+  @override
+  String get pdfHeaderFullBottles => 'Bouteilles pleines';
+
+  @override
+  String get pdfHeaderEmptyBottles => 'Bouteilles vides';
+
+  @override
+  String get pdfHeaderFullBidons => 'Bidons pleins';
+
+  @override
+  String get pdfHeaderOpenBidons => 'Bidons ouverts';
+
+  @override
+  String get pdfHeaderEmptyBidons => 'Bidons vides';
+
+  @override
+  String get pdfHeaderSeverity => 'Sévérité';
+
+  @override
+  String get pdfHeaderTitle => 'Titre';
+
+  @override
+  String get pdfHeaderCreatedAt => 'Créé le';
+
+  @override
+  String get approvalStatusApproved => 'Approuvé';
+
+  @override
+  String get approvalStatusRejected => 'Rejeté';
+
+  @override
+  String get approvalStatusCancelled => 'Annulé';
+
+  @override
+  String get approvalStatusPending => 'En attente';
+
+  @override
+  String get pdfTitleSuggestedOrders => 'Commandes suggérées Ivra';
+
+  @override
+  String get pdfTitleInventorySnapshot => 'Inventaire Ivra';
+
+  @override
+  String get pdfTitleRefillHistory => 'Historique de recharge Ivra';
+
+  @override
+  String get pdfTitleOpenAlerts => 'Alertes ouvertes Ivra';
 }

@@ -155,7 +155,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   final orders = await ref.read(suggestedOrdersProvider.future);
                   final csv = ref
                       .read(reportExportServiceProvider)
-                      .suggestedOrdersCsv(orders);
+                      .suggestedOrdersCsv(
+                        orders,
+                        languageCode: Localizations.localeOf(context).languageCode,
+                      );
                   if (!context.mounted) return;
                   await _saveTextExport(
                     context,
@@ -203,7 +206,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   final inventory = await ref.read(inventoryProvider.future);
                   final csv = ref
                       .read(reportExportServiceProvider)
-                      .inventoryCsv(inventory);
+                      .inventoryCsv(
+                        inventory,
+                        languageCode: Localizations.localeOf(context).languageCode,
+                      );
                   if (!context.mounted) return;
                   await _saveTextExport(
                     context,
@@ -276,6 +282,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                       await ref.read(reportExportServiceProvider).alertsPdf(
                             openAlerts,
                             languageCode: languageCode,
+                            products: products,
+                            roomProducts: roomProducts,
                           );
                   if (!context.mounted) return;
                   await _saveBinaryExport(

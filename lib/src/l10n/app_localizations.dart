@@ -209,7 +209,42 @@ class AppLocalizations {
         return 'Room $roomNumber';
     }
   }
+
+  /// Localized label for a `RefillEventType` so refill logs and exports display
+  /// translated event names instead of raw DB values.
+  String refillEventTypeLabel(RefillEventType type) {
+    switch (type) {
+      case RefillEventType.refill:
+        return t('syncActionRefill');
+      case RefillEventType.undo:
+        return t('syncActionUndoRefill');
+      case RefillEventType.correctionRequested:
+        return t('syncActionCorrectionRequest');
+      case RefillEventType.correctionApproved:
+        return t('refillEventApproved');
+      case RefillEventType.correctionRejected:
+        return t('refillEventRejected');
+      case RefillEventType.bottleReplaced:
+        return t('syncActionBottleReplacement');
+    }
+  }
+
+  /// Localized label for an `ApprovalStatus` so approval logs and UI display
+  /// translated status names instead of hardcoded English strings.
+  String approvalStatusLabel(ApprovalStatus status) {
+    switch (status) {
+      case ApprovalStatus.approved:
+        return t('approvalStatusApproved');
+      case ApprovalStatus.rejected:
+        return t('approvalStatusRejected');
+      case ApprovalStatus.cancelled:
+        return t('approvalStatusCancelled');
+      case ApprovalStatus.pending:
+        return t('approvalStatusPending');
+    }
+  }
 }
+
 
 class _AppLocalizationsDelegate
     extends LocalizationsDelegate<AppLocalizations> {

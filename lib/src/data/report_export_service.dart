@@ -1,10 +1,13 @@
 import 'dart:typed_data';
+import 'dart:ui' show Locale;
 
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/widgets.dart' as pw;
 
+import '../domain/app_enums.dart';
 import '../domain/models.dart';
+import '../l10n/app_localizations.dart';
 
 class ReportExportService {
   Future<_PdfFonts>? _pdfFonts;
@@ -36,7 +39,7 @@ class ReportExportService {
     return const ListToCsvConverter().convert(rows);
   }
 
-  String suggestedOrdersCsv(List<SuggestedOrder> orders) {
+  String suggestedOrdersCsv(List<SuggestedOrder> orders, {String languageCode = 'en'}) {
     final rows = [
       [
         'hotel_id',
@@ -50,7 +53,7 @@ class ReportExportService {
         [
           order.hotelId,
           order.product.sku,
-          order.product.nameEn,
+          order.product.label(languageCode),
           order.bottlesToOrder,
           order.bidonsToOrder,
           order.bottlesToRecycle,
@@ -59,7 +62,7 @@ class ReportExportService {
     return const ListToCsvConverter().convert(rows);
   }
 
-  String inventoryCsv(List<InventoryItem> items) {
+  String inventoryCsv(List<InventoryItem> items, {String languageCode = 'en'}) {
     final rows = [
       [
         'hotel_id',
@@ -77,7 +80,7 @@ class ReportExportService {
         [
           item.hotelId,
           item.product.sku,
-          item.product.nameEn,
+          item.product.label(languageCode),
           item.fullBottles,
           item.emptyBottles,
           item.fullBidons,
@@ -121,20 +124,21 @@ class ReportExportService {
     List<RefillEvent> events, {
     String languageCode = 'en',
   }) {
+    final l10n = AppLocalizations(Locale(languageCode));
     return _buildPdf(
       languageCode: languageCode,
       title: _refillHistoryTitle(languageCode),
-      headers: const [
-        'Type',
-        'Previous',
-        'New',
-        'Occurred at',
-        'Notes',
+      headers: [
+        l10n.t('pdfHeaderType'),
+        l10n.t('pdfHeaderPrevious'),
+        l10n.t('pdfHeaderNew'),
+        l10n.t('pdfHeaderOccurredAt'),
+        l10n.t('pdfHeaderNotes'),
       ],
       data: [
         for (final event in events)
           [
-            event.type.value,
+            l10n.refillEventTypeLabel(event.type),
             '${event.previousRefillCount}',
             '${event.newRefillCount}',
             _formatDateTime(event.occurredAt),
@@ -148,14 +152,15 @@ class ReportExportService {
     List<SuggestedOrder> orders, {
     String languageCode = 'en',
   }) {
+    final l10n = AppLocalizations(Locale(languageCode));
     return _buildPdf(
       languageCode: languageCode,
       title: _suggestedOrdersTitle(languageCode),
-      headers: const [
-        'Product',
-        '1L bottles',
-        '5L bidons',
-        'Recycle',
+      headers: [
+        l10n.t('pdfHeaderProduct'),
+        l10n.t('pdfHeader1LBottles'),
+        l10n.t('pdfHeader5LBidons'),
+        l10n.t('pdfHeaderRecycle'),
       ],
       data: [
         for (final order in orders)
@@ -173,16 +178,17 @@ class ReportExportService {
     List<InventoryItem> items, {
     String languageCode = 'en',
   }) {
+    final l10n = AppLocalizations(Locale(languageCode));
     return _buildPdf(
       languageCode: languageCode,
       title: _inventoryTitle(languageCode),
-      headers: const [
-        'Product',
-        'Full bottles',
-        'Empty bottles',
-        'Full bidons',
-        'Open bidons',
-        'Empty bidons',
+      headers: [
+        l10n.t('pdfHeaderProduct'),
+        l10n.t('pdfHeaderFullBottles'),
+        l10n.t('pdfHeaderEmptyBottles'),
+        l10n.t('pdfHeaderFullBidons'),
+        l10n.t('pdfHeaderOpenBidons'),
+        l10n.t('pdfHeaderEmptyBidons'),
       ],
       data: [
         for (final item in items)
@@ -201,24 +207,43 @@ class ReportExportService {
   Future<Uint8List> alertsPdf(
     List<AlertItem> alerts, {
     String languageCode = 'en',
+    List<Product> products = const [],
+    List<RoomProduct> roomProducts = const [],
   }) {
+    final l10n = AppLocalizations(Locale(languageCode));
+    final productById = {for (final p in products) p.id: p};
+    final roomProductById = {for (final rp in roomProducts) rp.id: rp};
+
     return _buildPdf(
       languageCode: languageCode,
       title: _openAlertsTitle(languageCode),
-      headers: const [
-        'Severity',
-        'Type',
-        'Title',
-        'Created at',
+      headers: [
+        l10n.t('pdfHeaderSeverity'),
+        l10n.t('pdfHeaderType'),
+        l10n.t('pdfHeaderTitle'),
+        l10n.t('pdfHeaderCreatedAt'),
       ],
       data: [
         for (final alert in alerts)
-          [
-            '${alert.severity}',
-            alert.type.value,
-            alert.title,
-            _formatDateTime(alert.createdAt),
-          ],
+          (() {
+            Product? alertProduct;
+            if (alert.productId != null) {
+              alertProduct = productById[alert.productId];
+            } else if (alert.roomProductId != null) {
+              alertProduct = roomProductById[alert.roomProductId]?.product;
+            }
+            final (localizedTitle, _) = alert.localizedStrings(
+              l10n,
+              languageCode,
+              alertProduct,
+            );
+            return [
+              l10n.tParams('alertsSeverityLabel', {'severity': '${alert.severity}'}),
+              l10n.alertTypeLabel(alert.type),
+              localizedTitle,
+              _formatDateTime(alert.createdAt),
+            ];
+          })(),
       ],
     );
   }
@@ -270,35 +295,23 @@ class ReportExportService {
   }
 
   String _suggestedOrdersTitle(String languageCode) {
-    return switch (languageCode) {
-      'fr' => 'Commandes suggerees Ivra',
-      'ar' => 'طلبات Ivra المقترحة',
-      _ => 'Ivra Suggested Orders',
-    };
+    final l10n = AppLocalizations(Locale(languageCode));
+    return l10n.t('pdfTitleSuggestedOrders');
   }
 
   String _inventoryTitle(String languageCode) {
-    return switch (languageCode) {
-      'fr' => 'Inventaire Ivra',
-      'ar' => 'مخزون Ivra',
-      _ => 'Ivra Inventory Snapshot',
-    };
+    final l10n = AppLocalizations(Locale(languageCode));
+    return l10n.t('pdfTitleInventorySnapshot');
   }
 
   String _refillHistoryTitle(String languageCode) {
-    return switch (languageCode) {
-      'fr' => 'Historique de recharge Ivra',
-      'ar' => 'سجل تعبئة Ivra',
-      _ => 'Ivra Refill History',
-    };
+    final l10n = AppLocalizations(Locale(languageCode));
+    return l10n.t('pdfTitleRefillHistory');
   }
 
   String _openAlertsTitle(String languageCode) {
-    return switch (languageCode) {
-      'fr' => 'Alertes ouvertes Ivra',
-      'ar' => 'تنبيهات Ivra المفتوحة',
-      _ => 'Ivra Open Alerts',
-    };
+    final l10n = AppLocalizations(Locale(languageCode));
+    return l10n.t('pdfTitleOpenAlerts');
   }
 
   String _formatDateTime(DateTime value) {

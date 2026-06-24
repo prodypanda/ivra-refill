@@ -975,5 +975,30 @@
       }
     }
   },
-  "impersonationExit": "Exit"
+  "impersonationExit": "Exit",
+  "pdfHeaderType": "Type",
+  "pdfHeaderPrevious": "Previous",
+  "pdfHeaderNew": "New",
+  "pdfHeaderOccurredAt": "Occurred at",
+  "pdfHeaderNotes": "Notes",
+  "pdfHeaderProduct": "Product",
+  "pdfHeader1LBottles": "1L bottles",
+  "pdfHeader5LBidons": "5L refill bottles",
+  "pdfHeaderRecycle": "Recycle",
+  "pdfHeaderFullBottles": "Full bottles",
+  "pdfHeaderEmptyBottles": "Empty bottles",
+  "pdfHeaderFullBidons": "Full refill bottles",
+  "pdfHeaderOpenBidons": "Opened refill bottles",
+  "pdfHeaderEmptyBidons": "Empty refill bottles",
+  "pdfHeaderSeverity": "Severity",
+  "pdfHeaderTitle": "Title",
+  "pdfHeaderCreatedAt": "Created at",
+  "approvalStatusApproved": "Approved",
+  "approvalStatusRejected": "Rejected",
+  "approvalStatusCancelled": "Cancelled",
+  "approvalStatusPending": "Pending",
+  "pdfTitleSuggestedOrders": "Ivra Suggested Orders",
+  "pdfTitleInventorySnapshot": "Ivra Inventory Snapshot",
+  "pdfTitleRefillHistory": "Ivra Refill History",
+  "pdfTitleOpenAlerts": "Ivra Open Alerts"
 }

@@ -1856,4 +1856,79 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get impersonationExit => 'Exit';
+
+  @override
+  String get pdfHeaderType => 'Type';
+
+  @override
+  String get pdfHeaderPrevious => 'Previous';
+
+  @override
+  String get pdfHeaderNew => 'New';
+
+  @override
+  String get pdfHeaderOccurredAt => 'Occurred at';
+
+  @override
+  String get pdfHeaderNotes => 'Notes';
+
+  @override
+  String get pdfHeaderProduct => 'Product';
+
+  @override
+  String get pdfHeader1LBottles => '1L bottles';
+
+  @override
+  String get pdfHeader5LBidons => '5L refill bottles';
+
+  @override
+  String get pdfHeaderRecycle => 'Recycle';
+
+  @override
+  String get pdfHeaderFullBottles => 'Full bottles';
+
+  @override
+  String get pdfHeaderEmptyBottles => 'Empty bottles';
+
+  @override
+  String get pdfHeaderFullBidons => 'Full refill bottles';
+
+  @override
+  String get pdfHeaderOpenBidons => 'Opened refill bottles';
+
+  @override
+  String get pdfHeaderEmptyBidons => 'Empty refill bottles';
+
+  @override
+  String get pdfHeaderSeverity => 'Severity';
+
+  @override
+  String get pdfHeaderTitle => 'Title';
+
+  @override
+  String get pdfHeaderCreatedAt => 'Created at';
+
+  @override
+  String get approvalStatusApproved => 'Approved';
+
+  @override
+  String get approvalStatusRejected => 'Rejected';
+
+  @override
+  String get approvalStatusCancelled => 'Cancelled';
+
+  @override
+  String get approvalStatusPending => 'Pending';
+
+  @override
+  String get pdfTitleSuggestedOrders => 'Ivra Suggested Orders';
+
+  @override
+  String get pdfTitleInventorySnapshot => 'Ivra Inventory Snapshot';
+
+  @override
+  String get pdfTitleRefillHistory => 'Ivra Refill History';
+
+  @override
+  String get pdfTitleOpenAlerts => 'Ivra Open Alerts';
 }

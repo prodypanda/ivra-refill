@@ -148,12 +148,14 @@ class _ApprovalStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final (label, color) = switch (status) {
-      ApprovalStatus.approved => ('Approved', Colors.green),
-      ApprovalStatus.rejected => ('Rejected', theme.colorScheme.error),
-      ApprovalStatus.cancelled => ('Cancelled', Colors.orange),
-      ApprovalStatus.pending => ('Pending', Colors.blue),
+    final l10n = AppLocalizations.of(context);
+    final color = switch (status) {
+      ApprovalStatus.approved => Colors.green,
+      ApprovalStatus.rejected => theme.colorScheme.error,
+      ApprovalStatus.cancelled => Colors.orange,
+      ApprovalStatus.pending => Colors.blue,
     };
+    final label = l10n.approvalStatusLabel(status);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
