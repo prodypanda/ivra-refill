@@ -2023,4 +2023,27 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get productHistoryDeltaEmptyBidons => 'زجاجات إعادة تعبئة فارغة';
+
+  @override
+  String productHistoryNewBottle(String roomNumber) {
+    return 'تم وضع زجاجة جديدة في الغرفة $roomNumber';
+  }
+
+  @override
+  String get productHistoryFilterAll => 'الكل';
+
+  @override
+  String get productHistoryFilterRoom => 'عمليات الغرف';
+
+  @override
+  String get productHistoryFilterManual => 'التعديلات';
+
+  @override
+  String get productHistoryStatRefills => 'إعادات التعبئة';
+
+  @override
+  String get productHistoryStatReplacements => 'الاستبدالات';
+
+  @override
+  String get productHistoryStatAdjustments => 'التعديلات';
 }

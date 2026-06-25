@@ -2039,4 +2039,27 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get productHistoryDeltaEmptyBidons => 'Empty refill bottles';
+
+  @override
+  String productHistoryNewBottle(String roomNumber) {
+    return 'New bottle placed in Room $roomNumber';
+  }
+
+  @override
+  String get productHistoryFilterAll => 'All';
+
+  @override
+  String get productHistoryFilterRoom => 'Room Events';
+
+  @override
+  String get productHistoryFilterManual => 'Adjustments';
+
+  @override
+  String get productHistoryStatRefills => 'Refills';
+
+  @override
+  String get productHistoryStatReplacements => 'Replacements';
+
+  @override
+  String get productHistoryStatAdjustments => 'Adjustments';
 }

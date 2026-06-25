@@ -1060,5 +1060,19 @@
   "productHistoryDeltaUsedBottles": "Used bottles",
   "productHistoryDeltaFullBidons": "Full refill bottles",
   "productHistoryDeltaOpenBidons": "Opened refill bottles",
-  "productHistoryDeltaEmptyBidons": "Empty refill bottles"
+  "productHistoryDeltaEmptyBidons": "Empty refill bottles",
+  "productHistoryNewBottle": "New bottle placed in Room {roomNumber}",
+  "@productHistoryNewBottle": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "productHistoryFilterAll": "All",
+  "productHistoryFilterRoom": "Room Events",
+  "productHistoryFilterManual": "Adjustments",
+  "productHistoryStatRefills": "Refills",
+  "productHistoryStatReplacements": "Replacements",
+  "productHistoryStatAdjustments": "Adjustments"
 }

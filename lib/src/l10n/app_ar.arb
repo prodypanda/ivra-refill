@@ -620,5 +620,12 @@
   "productHistoryDeltaUsedBottles": "زجاجات مستعملة",
   "productHistoryDeltaFullBidons": "زجاجات إعادة تعبئة ممتلئة",
   "productHistoryDeltaOpenBidons": "زجاجات إعادة تعبئة مفتوحة",
-  "productHistoryDeltaEmptyBidons": "زجاجات إعادة تعبئة فارغة"
+  "productHistoryDeltaEmptyBidons": "زجاجات إعادة تعبئة فارغة",
+  "productHistoryNewBottle": "تم وضع زجاجة جديدة في الغرفة {roomNumber}",
+  "productHistoryFilterAll": "الكل",
+  "productHistoryFilterRoom": "عمليات الغرف",
+  "productHistoryFilterManual": "التعديلات",
+  "productHistoryStatRefills": "إعادات التعبئة",
+  "productHistoryStatReplacements": "الاستبدالات",
+  "productHistoryStatAdjustments": "التعديلات"
 }

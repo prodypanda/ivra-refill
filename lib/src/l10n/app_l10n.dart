@@ -3826,6 +3826,48 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Empty refill bottles'**
   String get productHistoryDeltaEmptyBidons;
+
+  /// No description provided for @productHistoryNewBottle.
+  ///
+  /// In en, this message translates to:
+  /// **'New bottle placed in Room {roomNumber}'**
+  String productHistoryNewBottle(String roomNumber);
+
+  /// No description provided for @productHistoryFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get productHistoryFilterAll;
+
+  /// No description provided for @productHistoryFilterRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Events'**
+  String get productHistoryFilterRoom;
+
+  /// No description provided for @productHistoryFilterManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustments'**
+  String get productHistoryFilterManual;
+
+  /// No description provided for @productHistoryStatRefills.
+  ///
+  /// In en, this message translates to:
+  /// **'Refills'**
+  String get productHistoryStatRefills;
+
+  /// No description provided for @productHistoryStatReplacements.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacements'**
+  String get productHistoryStatReplacements;
+
+  /// No description provided for @productHistoryStatAdjustments.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustments'**
+  String get productHistoryStatAdjustments;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

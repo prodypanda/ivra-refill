@@ -620,5 +620,12 @@
   "productHistoryDeltaUsedBottles": "Bottiglie usate",
   "productHistoryDeltaFullBidons": "Bottiglie di ricarica piene",
   "productHistoryDeltaOpenBidons": "Bottiglie usate e aperte",
-  "productHistoryDeltaEmptyBidons": "Bottiglie usate e vuote"
+  "productHistoryDeltaEmptyBidons": "Bottiglie usate e vuote",
+  "productHistoryNewBottle": "Nuova bottiglia posizionata nella camera {roomNumber}",
+  "productHistoryFilterAll": "Tutti",
+  "productHistoryFilterRoom": "Eventi camera",
+  "productHistoryFilterManual": "Regolazioni",
+  "productHistoryStatRefills": "Ricariche",
+  "productHistoryStatReplacements": "Sostituzioni",
+  "productHistoryStatAdjustments": "Regolazioni"
 }

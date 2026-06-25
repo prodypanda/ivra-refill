@@ -2058,4 +2058,27 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get productHistoryDeltaEmptyBidons => 'Bottiglie usate e vuote';
+
+  @override
+  String productHistoryNewBottle(String roomNumber) {
+    return 'Nuova bottiglia posizionata nella camera $roomNumber';
+  }
+
+  @override
+  String get productHistoryFilterAll => 'Tutti';
+
+  @override
+  String get productHistoryFilterRoom => 'Eventi camera';
+
+  @override
+  String get productHistoryFilterManual => 'Regolazioni';
+
+  @override
+  String get productHistoryStatRefills => 'Ricariche';
+
+  @override
+  String get productHistoryStatReplacements => 'Sostituzioni';
+
+  @override
+  String get productHistoryStatAdjustments => 'Regolazioni';
 }

@@ -620,5 +620,12 @@
   "productHistoryDeltaUsedBottles": "Bouteilles utilisées",
   "productHistoryDeltaFullBidons": "Bouteilles de recharge pleines",
   "productHistoryDeltaOpenBidons": "Bouteilles utilisées et ouvertes",
-  "productHistoryDeltaEmptyBidons": "Bouteilles utilisées et vides"
+  "productHistoryDeltaEmptyBidons": "Bouteilles utilisées et vides",
+  "productHistoryNewBottle": "Nouvelle bouteille placée dans la chambre {roomNumber}",
+  "productHistoryFilterAll": "Tout",
+  "productHistoryFilterRoom": "Événements de chambre",
+  "productHistoryFilterManual": "Ajustements",
+  "productHistoryStatRefills": "Recharges",
+  "productHistoryStatReplacements": "Remplacements",
+  "productHistoryStatAdjustments": "Ajustements"
 }

@@ -2043,7 +2043,7 @@ class _BulkStockAdjustmentDialogState
   }
 }
 
-class _ProductHistoryDialog extends ConsumerWidget {
+class _ProductHistoryDialog extends ConsumerStatefulWidget {
   const _ProductHistoryDialog({
     required this.item,
     required this.teamMembers,
@@ -2053,7 +2053,14 @@ class _ProductHistoryDialog extends ConsumerWidget {
   final List<UserProfile> teamMembers;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_ProductHistoryDialog> createState() => _ProductHistoryDialogState();
+}
+
+class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
+  String _selectedFilter = 'all'; // 'all', 'room', 'manual'
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
@@ -2072,7 +2079,7 @@ class _ProductHistoryDialog extends ConsumerWidget {
               value: roomProductsAsync,
               builder: (roomProducts) {
                 final productRoomProducts = roomProducts
-                    .where((rp) => rp.product.id == item.product.id)
+                    .where((rp) => rp.product.id == widget.item.product.id)
                     .toList();
                 final productRoomProductIds = productRoomProducts.map((rp) => rp.id).toSet();
                 
@@ -2085,8 +2092,13 @@ class _ProductHistoryDialog extends ConsumerWidget {
                     .toList();
 
                 final filteredAdjustments = inventoryEvents
-                    .where((e) => e.productId == item.product.id)
+                    .where((e) => e.productId == widget.item.product.id)
                     .toList();
+
+                // Stats calculation (from unfiltered lists)
+                final refillsCount = filteredRefills.where((e) => e.type == RefillEventType.refill).length;
+                final replacementsCount = filteredRefills.where((e) => e.type == RefillEventType.bottleReplaced).length;
+                final adjustmentsCount = filteredAdjustments.length;
 
                 final allEvents = <_UnifiedHistoryItem>[];
 
@@ -2096,27 +2108,47 @@ class _ProductHistoryDialog extends ConsumerWidget {
                       e.previousRefillCount == 0;
                   
                   final title = isInitial
-                      ? l10n.tParams('productHistoryReplacement', {'roomNumber': roomNumber})
+                      ? l10n.tParams('productHistoryNewBottle', {'roomNumber': roomNumber})
                       : e.type == RefillEventType.bottleReplaced
                           ? l10n.tParams('productHistoryReplacement', {'roomNumber': roomNumber})
                           : l10n.tParams('productHistoryRefill', {'roomNumber': roomNumber});
 
                   final subtitle = '${e.previousRefillCount} -> ${e.newRefillCount}';
-                  final userName = teamMembers
+                  final userName = widget.teamMembers
                       .where((u) => u.id == e.performedBy)
                       .firstOrNull
                       ?.fullName ?? e.performedBy;
+
+                  final color = isInitial
+                      ? Colors.blueAccent
+                      : e.type == RefillEventType.bottleReplaced
+                          ? Colors.indigoAccent
+                          : theme.colorScheme.primary;
+
+                  final icon = isInitial
+                      ? Icons.add_circle_outline
+                      : e.type == RefillEventType.bottleReplaced
+                          ? IvraIcons.replaceAction
+                          : IvraIcons.refillAction;
 
                   allEvents.add(_UnifiedHistoryItem(
                     id: e.id,
                     occurredAt: e.occurredAt,
                     title: title,
                     subtitle: subtitle,
+                    subtitleSpans: [
+                      TextSpan(
+                        text: subtitle,
+                        style: TextStyle(
+                          color: color,
+                        ),
+                      ),
+                    ],
                     performedBy: userName,
                     notes: e.notes,
-                    icon: e.type == RefillEventType.bottleReplaced
-                        ? IvraIcons.replaceAction
-                        : IvraIcons.refillAction,
+                    icon: icon,
+                    color: color,
+                    isRoomEvent: true,
                   ));
                 }
 
@@ -2124,40 +2156,64 @@ class _ProductHistoryDialog extends ConsumerWidget {
                   final title = l10n.t('productHistoryAdjustment');
                   
                   final changes = <String>[];
-                  if (e.fullBottlesDelta != 0) {
-                    changes.add('${e.fullBottlesDelta > 0 ? "+" : ""}${e.fullBottlesDelta} ${l10n.t('productHistoryDeltaFullBottles')}');
-                  }
-                  if (e.emptyBottlesDelta != 0) {
-                    changes.add('${e.emptyBottlesDelta > 0 ? "+" : ""}${e.emptyBottlesDelta} ${l10n.t('productHistoryDeltaUsedBottles')}');
-                  }
-                  if (e.fullBidonsDelta != 0) {
-                    changes.add('${e.fullBidonsDelta > 0 ? "+" : ""}${e.fullBidonsDelta} ${l10n.t('productHistoryDeltaFullBidons')}');
-                  }
-                  if (e.openBidonsDelta != 0) {
-                    changes.add('${e.openBidonsDelta > 0 ? "+" : ""}${e.openBidonsDelta} ${l10n.t('productHistoryDeltaOpenBidons')}');
-                  }
-                  if (e.emptyBidonsDelta != 0) {
-                    changes.add('${e.emptyBidonsDelta > 0 ? "+" : ""}${e.emptyBidonsDelta} ${l10n.t('productHistoryDeltaEmptyBidons')}');
+                  final spans = <TextSpan>[];
+
+                  void addDeltaSpan(int delta, String label) {
+                    if (delta == 0) return;
+                    if (spans.isNotEmpty) {
+                      spans.add(const TextSpan(text: ', ', style: TextStyle(color: Colors.grey)));
+                    }
+                    final sign = delta > 0 ? "+" : "";
+                    spans.add(TextSpan(
+                      text: '$sign$delta ',
+                      style: TextStyle(
+                        color: delta > 0 ? Colors.green : Colors.redAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ));
+                    spans.add(TextSpan(
+                      text: label,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ));
                   }
 
+                  addDeltaSpan(e.fullBottlesDelta, l10n.t('productHistoryDeltaFullBottles'));
+                  addDeltaSpan(e.emptyBottlesDelta, l10n.t('productHistoryDeltaUsedBottles'));
+                  addDeltaSpan(e.fullBidonsDelta, l10n.t('productHistoryDeltaFullBidons'));
+                  addDeltaSpan(e.openBidonsDelta, l10n.t('productHistoryDeltaOpenBidons'));
+                  addDeltaSpan(e.emptyBidonsDelta, l10n.t('productHistoryDeltaEmptyBidons'));
+
                   final subtitle = changes.isEmpty ? 'No changes' : changes.join(', ');
-                  final userName = teamMembers
+                  final userName = widget.teamMembers
                       .where((u) => u.id == e.performedBy)
                       .firstOrNull
                       ?.fullName ?? e.performedBy;
+
+                  final color = Colors.orangeAccent;
 
                   allEvents.add(_UnifiedHistoryItem(
                     id: e.id,
                     occurredAt: e.occurredAt,
                     title: title,
                     subtitle: subtitle,
+                    subtitleSpans: spans.isEmpty ? [const TextSpan(text: 'No changes')] : spans,
                     performedBy: userName,
                     notes: e.reason,
                     icon: Icons.inventory_2_outlined,
+                    color: color,
+                    isRoomEvent: false,
                   ));
                 }
 
-                allEvents.sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
+                // Filter final list
+                final displayEvents = allEvents.where((e) {
+                  if (_selectedFilter == 'room') return e.isRoomEvent;
+                  if (_selectedFilter == 'manual') return !e.isRoomEvent;
+                  return true;
+                }).toList()
+                  ..sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
 
                 return SafeArea(
                   child: Padding(
@@ -2216,7 +2272,7 @@ class _ProductHistoryDialog extends ConsumerWidget {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      item.product.label(language),
+                                      widget.item.product.label(language),
                                       style: theme.textTheme.titleLarge?.copyWith(
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: -0.5,
@@ -2228,9 +2284,65 @@ class _ProductHistoryDialog extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
+                        // Stats row
+                        Row(
+                          children: [
+                            _buildStatCard(
+                              theme,
+                              title: l10n.t('productHistoryStatRefills'),
+                              value: refillsCount.toString(),
+                              icon: IvraIcons.refillAction,
+                              color: theme.colorScheme.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            _buildStatCard(
+                              theme,
+                              title: l10n.t('productHistoryStatReplacements'),
+                              value: replacementsCount.toString(),
+                              icon: IvraIcons.replaceAction,
+                              color: Colors.blueAccent,
+                            ),
+                            const SizedBox(width: 8),
+                            _buildStatCard(
+                              theme,
+                              title: l10n.t('productHistoryStatAdjustments'),
+                              value: adjustmentsCount.toString(),
+                              icon: Icons.inventory_2_outlined,
+                              color: Colors.orangeAccent,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        // Filters row
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              ChoiceChip(
+                                label: Text(l10n.t('productHistoryFilterAll')),
+                                selected: _selectedFilter == 'all',
+                                onSelected: (val) => setState(() => _selectedFilter = 'all'),
+                              ),
+                              const SizedBox(width: 8),
+                              ChoiceChip(
+                                label: Text(l10n.t('productHistoryFilterRoom')),
+                                selected: _selectedFilter == 'room',
+                                onSelected: (val) => setState(() => _selectedFilter = 'room'),
+                              ),
+                              const SizedBox(width: 8),
+                              ChoiceChip(
+                                label: Text(l10n.t('productHistoryFilterManual')),
+                                selected: _selectedFilter == 'manual',
+                                onSelected: (val) => setState(() => _selectedFilter = 'manual'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // Timeline Events
                         Flexible(
-                          child: allEvents.isEmpty
+                          child: displayEvents.isEmpty
                               ? Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 24),
                                   child: Center(
@@ -2242,52 +2354,101 @@ class _ProductHistoryDialog extends ConsumerWidget {
                                     ),
                                   ),
                                 )
-                              : ListView.separated(
+                              : ListView.builder(
                                   shrinkWrap: true,
-                                  itemCount: allEvents.length,
-                                  separatorBuilder: (context, index) => const Divider(height: 1),
+                                  itemCount: displayEvents.length,
                                   itemBuilder: (context, index) {
-                                    final event = allEvents[index];
-                                    return ListTile(
-                                      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                                      leading: CircleAvatar(
-                                        backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                                        child: Icon(event.icon, color: theme.colorScheme.onSurfaceVariant, size: 20),
-                                      ),
-                                      title: Text(
-                                        event.title,
-                                        style: theme.textTheme.bodyLarge?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      subtitle: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                    final event = displayEvents[index];
+                                    final isLastItem = index == displayEvents.length - 1;
+                                    
+                                    return IntrinsicHeight(
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
                                         children: [
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            event.subtitle,
-                                            style: theme.textTheme.bodyMedium?.copyWith(
-                                              color: theme.colorScheme.primary,
-                                              fontWeight: FontWeight.w600,
+                                          // Timeline indicator
+                                          SizedBox(
+                                            width: 40,
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  width: 32,
+                                                  height: 32,
+                                                  decoration: BoxDecoration(
+                                                    color: event.color.withValues(alpha: 0.12),
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: event.color.withValues(alpha: 0.3),
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  child: Icon(event.icon, size: 16, color: event.color),
+                                                ),
+                                                Expanded(
+                                                  child: Container(
+                                                    width: 2,
+                                                    color: isLastItem
+                                                        ? Colors.transparent
+                                                        : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            '${_formatDateTime(event.occurredAt)} | ${l10n.tParams('productHistoryActionBy', {'user': event.performedBy})}',
-                                            style: theme.textTheme.bodySmall?.copyWith(
-                                              color: theme.colorScheme.onSurfaceVariant,
-                                            ),
-                                          ),
-                                          if (event.notes != null && event.notes!.trim().isNotEmpty) ...[
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              l10n.tParams('productHistoryReason', {'reason': event.notes!.trim()}),
-                                              style: theme.textTheme.bodyMedium?.copyWith(
-                                                fontStyle: FontStyle.italic,
-                                                color: theme.colorScheme.onSurfaceVariant,
+                                          const SizedBox(width: 12),
+                                          // Content
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(bottom: 16),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    event.title,
+                                                    style: theme.textTheme.bodyLarge?.copyWith(
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text.rich(
+                                                    TextSpan(
+                                                      children: event.subtitleSpans,
+                                                    ),
+                                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 2),
+                                                  Text(
+                                                    '${_formatDateTime(event.occurredAt)} | ${l10n.tParams('productHistoryActionBy', {'user': event.performedBy})}',
+                                                    style: theme.textTheme.bodySmall?.copyWith(
+                                                      color: theme.colorScheme.onSurfaceVariant,
+                                                    ),
+                                                  ),
+                                                  if (event.notes != null && event.notes!.trim().isNotEmpty) ...[
+                                                    const SizedBox(height: 6),
+                                                    Container(
+                                                      width: double.infinity,
+                                                      padding: const EdgeInsets.all(8),
+                                                      decoration: BoxDecoration(
+                                                        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                                                        borderRadius: BorderRadius.circular(8),
+                                                        border: Border.all(
+                                                          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2),
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        l10n.tParams('productHistoryReason', {'reason': event.notes!.trim()}),
+                                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                                          fontStyle: FontStyle.italic,
+                                                          color: theme.colorScheme.onSurfaceVariant,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ],
                                               ),
                                             ),
-                                          ],
+                                          ),
                                         ],
                                       ),
                                     );
@@ -2314,6 +2475,51 @@ class _ProductHistoryDialog extends ConsumerWidget {
     );
   }
 
+  Widget _buildStatCard(
+    ThemeData theme, {
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withValues(alpha: 0.15),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(height: 6),
+            Text(
+              value,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   String _formatDateTime(DateTime value) {
     final local = value.toLocal();
     final month = local.month.toString().padLeft(2, '0');
@@ -2330,17 +2536,24 @@ class _UnifiedHistoryItem {
     required this.occurredAt,
     required this.title,
     required this.subtitle,
+    required this.subtitleSpans,
     required this.performedBy,
     required this.notes,
     required this.icon,
+    required this.color,
+    required this.isRoomEvent,
   });
 
   final String id;
   final DateTime occurredAt;
   final String title;
   final String subtitle;
+  final List<TextSpan> subtitleSpans;
   final String performedBy;
   final String? notes;
   final IconData icon;
+  final Color color;
+  final bool isRoomEvent;
 }
+
 
