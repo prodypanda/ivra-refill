@@ -466,6 +466,37 @@ class RefillEvent {
   }
 }
 
+class InventoryEvent {
+  const InventoryEvent({
+    required this.id,
+    required this.hotelId,
+    required this.productId,
+    required this.fullBottlesDelta,
+    required this.emptyBottlesDelta,
+    required this.fullBidonsDelta,
+    required this.openBidonsDelta,
+    required this.emptyBidonsDelta,
+    required this.reason,
+    required this.performedBy,
+    required this.occurredAt,
+    this.clientRequestId,
+  });
+
+  final String id;
+  final String hotelId;
+  final String productId;
+  final int fullBottlesDelta;
+  final int emptyBottlesDelta;
+  final int fullBidonsDelta;
+  final int openBidonsDelta;
+  final int emptyBidonsDelta;
+  final String reason;
+  final String performedBy;
+  final DateTime occurredAt;
+  final String? clientRequestId;
+}
+
+
 class ApprovalRequest {
   const ApprovalRequest({
     required this.id,

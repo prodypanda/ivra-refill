@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'dart:io' show Platform;
 import 'package:uuid/uuid.dart';
+
 
 import '../domain/app_enums.dart';
 import '../domain/models.dart';
@@ -207,7 +209,68 @@ class MockIvraRepository implements IvraRepository {
         hotelName: 'Palms Residence',
       ),
     ];
+
+    bool isTest = false;
+    try {
+      isTest = Platform.environment.containsKey('FLUTTER_TEST');
+    } catch (_) {}
+
+    if (!isTest) {
+      _events.addAll([
+        RefillEvent(
+          id: 'refill-evt-1',
+          roomProductId: 'rp-101-shampoo',
+          type: RefillEventType.refill,
+          previousRefillCount: 6,
+          newRefillCount: 7,
+          occurredAt: DateTime.now().subtract(const Duration(days: 3)),
+          performedBy: 'hotel-staff-seaside',
+          notes: 'Refilled to max',
+        ),
+        RefillEvent(
+          id: 'refill-evt-2',
+          roomProductId: 'rp-101-wash',
+          type: RefillEventType.bottleReplaced,
+          previousRefillCount: 10,
+          newRefillCount: 0,
+          occurredAt: DateTime.now().subtract(const Duration(hours: 4)),
+          performedBy: 'hotel-staff-seaside',
+          notes: 'Replaced old bottle',
+        ),
+      ]);
+
+      _inventoryEvents.addAll([
+        InventoryEvent(
+          id: 'inv-evt-1',
+          hotelId: 'hotel-seaside',
+          productId: 'prod-shampoo',
+          fullBottlesDelta: 5,
+          emptyBottlesDelta: -5,
+          fullBidonsDelta: 0,
+          openBidonsDelta: 0,
+          emptyBidonsDelta: 0,
+          reason: 'Monthly delivery received',
+          performedBy: 'hotel-manager-seaside',
+          occurredAt: DateTime.now().subtract(const Duration(days: 5)),
+        ),
+        InventoryEvent(
+          id: 'inv-evt-2',
+          hotelId: 'hotel-seaside',
+          productId: 'prod-shampoo',
+          fullBottlesDelta: 0,
+          emptyBottlesDelta: 0,
+          fullBidonsDelta: 2,
+          openBidonsDelta: 0,
+          emptyBidonsDelta: -2,
+          reason: 'Stock correction',
+          performedBy: 'demo-admin',
+          occurredAt: DateTime.now().subtract(const Duration(days: 1)),
+        ),
+      ]);
+    }
   }
+
+
 
   final _uuid = const Uuid();
 
@@ -290,7 +353,9 @@ class MockIvraRepository implements IvraRepository {
   late final List<UserProfile> _teamMembers;
   late final List<TeamInvitation> _teamInvitations;
   final List<RefillEvent> _events = [];
+  final List<InventoryEvent> _inventoryEvents = [];
   final Set<String> _processedClientRequestIds = {};
+
 
   @override
   Future<void> clearCachedData() async {}
@@ -631,6 +696,13 @@ class MockIvraRepository implements IvraRepository {
         .where((event) => roomProductIds.contains(event.roomProductId))
         .toList();
   }
+
+  @override
+  Future<List<InventoryEvent>> recentInventoryEvents({String? hotelId}) async {
+    if (hotelId == null) return _inventoryEvents;
+    return _inventoryEvents.where((event) => event.hotelId == hotelId).toList();
+  }
+
 
   @override
   Future<Set<String>> appliedClientRequestIds({String? hotelId}) async {
@@ -1193,8 +1265,26 @@ class MockIvraRepository implements IvraRepository {
       openBidons: max(item.openBidons + openBidonsDelta, 0),
       emptyBidons: max(item.emptyBidons + emptyBidonsDelta, 0),
     );
+
+    final event = InventoryEvent(
+      id: 'inv-evt-${DateTime.now().microsecondsSinceEpoch}',
+      hotelId: hotelId,
+      productId: productId,
+      fullBottlesDelta: fullBottlesDelta,
+      emptyBottlesDelta: emptyBottlesDelta,
+      fullBidonsDelta: fullBidonsDelta,
+      openBidonsDelta: openBidonsDelta,
+      emptyBidonsDelta: emptyBidonsDelta,
+      reason: reason,
+      performedBy: _currentUser.id,
+      occurredAt: DateTime.now(),
+      clientRequestId: clientRequestId,
+    );
+    _inventoryEvents.insert(0, event);
+
     _markClientRequestProcessed(clientRequestId);
   }
+
 
   bool _hasProcessedClientRequest(String? clientRequestId) {
     if (clientRequestId == null || clientRequestId.trim().isEmpty) {

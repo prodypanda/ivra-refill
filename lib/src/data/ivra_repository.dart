@@ -30,6 +30,8 @@ abstract class IvraRepository {
   Future<List<ApprovalRequest>> approvalRequests({String? hotelId});
   Future<List<AlertItem>> alerts({String? hotelId});
   Future<List<RefillEvent>> recentRefillEvents({String? hotelId});
+  Future<List<InventoryEvent>> recentInventoryEvents({String? hotelId});
+
 
   /// Returns the set of `client_request_id`s the server has already applied for
   /// the given hotel (refill/replace events plus stock-adjustment events).

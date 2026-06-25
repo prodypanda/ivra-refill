@@ -516,10 +516,10 @@ class AppL10nAr extends AppL10n {
       'العبوات الممتلئة بدون مضخة';
 
   @override
-  String get inventoryCollapseHeader => 'العبوات المستخدمة والمفتوحة';
+  String get inventoryCollapseHeader => 'العبوات الفارغة والمفتوحة';
 
   @override
-  String get inventoryTableEmptyBottles => 'العبوات المستخدمة';
+  String get inventoryTableEmptyBottles => 'العبوات الفارغة';
 
   @override
   String get inventoryTableEmptyBidons => 'قوارير إعادة التعبئة الفارغة';
@@ -564,7 +564,7 @@ class AppL10nAr extends AppL10n {
   String get sortMostFullBottles => 'أكثر الزجاجات الممتلئة';
 
   @override
-  String get sortMostEmptyBottles => 'أكثر الزجاجات المستخدمة';
+  String get sortMostEmptyBottles => 'أكثر الزجاجات الفارغة';
 
   @override
   String get bulkAdjustSelectProducts => 'حدد المنتجات';
@@ -978,9 +978,6 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get roomsLabelFloorNumber => 'رقم الطابق';
-
-  @override
-  String get roomsLabelManageProducts => 'إدارة منتجات الغرفة';
 
   @override
   String get roomsMsgRoomEditQueued => 'تمت جدولة طلب تعديل الغرفة';
@@ -1939,7 +1936,7 @@ class AppL10nAr extends AppL10n {
   String get pdfHeaderFullBottles => 'زجاجات مملوءة';
 
   @override
-  String get pdfHeaderEmptyBottles => 'زجاجات مستخدمة';
+  String get pdfHeaderEmptyBottles => 'زجاجات فارغة';
 
   @override
   String get pdfHeaderFullBidons => 'عبوات مملوءة';
@@ -1982,4 +1979,48 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get pdfTitleOpenAlerts => 'تنبيهات Ivra المفتوحة';
+
+  @override
+  String get productHistoryTitle => 'سجل المنتج';
+
+  @override
+  String get productHistoryNoHistory => 'لا يوجد سجل مسجل لهذا المنتج.';
+
+  @override
+  String productHistoryRefill(String roomNumber) {
+    return 'تمت إعادة التعبئة في الغرفة $roomNumber';
+  }
+
+  @override
+  String productHistoryReplacement(String roomNumber) {
+    return 'تم استبدال الزجاجة في الغرفة $roomNumber';
+  }
+
+  @override
+  String get productHistoryAdjustment => 'تعديل المخزون يدويًا';
+
+  @override
+  String productHistoryActionBy(String user) {
+    return 'بواسطة $user';
+  }
+
+  @override
+  String productHistoryReason(String reason) {
+    return 'السبب: $reason';
+  }
+
+  @override
+  String get productHistoryDeltaFullBottles => 'زجاجات ممتلئة';
+
+  @override
+  String get productHistoryDeltaUsedBottles => 'زجاجات مستعملة';
+
+  @override
+  String get productHistoryDeltaFullBidons => 'زجاجات إعادة تعبئة ممتلئة';
+
+  @override
+  String get productHistoryDeltaOpenBidons => 'زجاجات إعادة تعبئة مفتوحة';
+
+  @override
+  String get productHistoryDeltaEmptyBidons => 'زجاجات إعادة تعبئة فارغة';
 }

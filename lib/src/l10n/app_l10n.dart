@@ -1058,13 +1058,13 @@ abstract class AppL10n {
   /// No description provided for @inventoryCollapseHeader.
   ///
   /// In en, this message translates to:
-  /// **'Used & Open Bottles'**
+  /// **'Empty & Open Bottles'**
   String get inventoryCollapseHeader;
 
   /// No description provided for @inventoryTableEmptyBottles.
   ///
   /// In en, this message translates to:
-  /// **'Used bottles'**
+  /// **'Empty bottles'**
   String get inventoryTableEmptyBottles;
 
   /// No description provided for @inventoryTableEmptyBidons.
@@ -1154,7 +1154,7 @@ abstract class AppL10n {
   /// No description provided for @sortMostEmptyBottles.
   ///
   /// In en, this message translates to:
-  /// **'Most Used Bottles'**
+  /// **'Most Empty Bottles'**
   String get sortMostEmptyBottles;
 
   /// No description provided for @bulkAdjustSelectProducts.
@@ -1930,12 +1930,6 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Floor number'**
   String get roomsLabelFloorNumber;
-
-  /// No description provided for @roomsLabelManageProducts.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage Room Products'**
-  String get roomsLabelManageProducts;
 
   /// No description provided for @roomsMsgRoomEditQueued.
   ///
@@ -3674,7 +3668,7 @@ abstract class AppL10n {
   /// No description provided for @pdfHeaderEmptyBottles.
   ///
   /// In en, this message translates to:
-  /// **'Used bottles'**
+  /// **'Empty bottles'**
   String get pdfHeaderEmptyBottles;
 
   /// No description provided for @pdfHeaderFullBidons.
@@ -3760,6 +3754,78 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Ivra Open Alerts'**
   String get pdfTitleOpenAlerts;
+
+  /// No description provided for @productHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Product History'**
+  String get productHistoryTitle;
+
+  /// No description provided for @productHistoryNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No history recorded for this product.'**
+  String get productHistoryNoHistory;
+
+  /// No description provided for @productHistoryRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Refilled in Room {roomNumber}'**
+  String productHistoryRefill(String roomNumber);
+
+  /// No description provided for @productHistoryReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaced bottle in Room {roomNumber}'**
+  String productHistoryReplacement(String roomNumber);
+
+  /// No description provided for @productHistoryAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Stock Adjustment'**
+  String get productHistoryAdjustment;
+
+  /// No description provided for @productHistoryActionBy.
+  ///
+  /// In en, this message translates to:
+  /// **'By {user}'**
+  String productHistoryActionBy(String user);
+
+  /// No description provided for @productHistoryReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason: {reason}'**
+  String productHistoryReason(String reason);
+
+  /// No description provided for @productHistoryDeltaFullBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Full bottles'**
+  String get productHistoryDeltaFullBottles;
+
+  /// No description provided for @productHistoryDeltaUsedBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Used bottles'**
+  String get productHistoryDeltaUsedBottles;
+
+  /// No description provided for @productHistoryDeltaFullBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Full refill bottles'**
+  String get productHistoryDeltaFullBidons;
+
+  /// No description provided for @productHistoryDeltaOpenBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened refill bottles'**
+  String get productHistoryDeltaOpenBidons;
+
+  /// No description provided for @productHistoryDeltaEmptyBidons.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty refill bottles'**
+  String get productHistoryDeltaEmptyBidons;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

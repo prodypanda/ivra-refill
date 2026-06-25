@@ -336,6 +336,7 @@ void invalidateAccountScopedData(WidgetRef ref) {
   ref.invalidate(approvalsProvider);
   ref.invalidate(alertsProvider);
   ref.invalidate(refillEventsProvider);
+  ref.invalidate(inventoryEventsProvider);
   ref.invalidate(offlineActionsProvider);
 }
 
@@ -343,6 +344,12 @@ final refillEventsProvider = FutureProvider<List<RefillEvent>>((ref) {
   final hotelId = ref.watch(selectedHotelIdProvider);
   return ref.watch(repositoryProvider).recentRefillEvents(hotelId: hotelId);
 });
+
+final inventoryEventsProvider = FutureProvider<List<InventoryEvent>>((ref) {
+  final hotelId = ref.watch(selectedHotelIdProvider);
+  return ref.watch(repositoryProvider).recentInventoryEvents(hotelId: hotelId);
+});
+
 
 class DownloadBannerNotifier extends StateNotifier<bool> {
   DownloadBannerNotifier() : super(false) {

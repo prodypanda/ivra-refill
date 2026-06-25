@@ -516,10 +516,10 @@ class AppL10nEn extends AppL10n {
       'Full bottles without pump';
 
   @override
-  String get inventoryCollapseHeader => 'Used & Open Bottles';
+  String get inventoryCollapseHeader => 'Empty & Open Bottles';
 
   @override
-  String get inventoryTableEmptyBottles => 'Used bottles';
+  String get inventoryTableEmptyBottles => 'Empty bottles';
 
   @override
   String get inventoryTableEmptyBidons => 'Empty refill bottles';
@@ -565,7 +565,7 @@ class AppL10nEn extends AppL10n {
   String get sortMostFullBottles => 'Most Full Bottles';
 
   @override
-  String get sortMostEmptyBottles => 'Most Used Bottles';
+  String get sortMostEmptyBottles => 'Most Empty Bottles';
 
   @override
   String get bulkAdjustSelectProducts => 'Select products';
@@ -984,9 +984,6 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get roomsLabelFloorNumber => 'Floor number';
-
-  @override
-  String get roomsLabelManageProducts => 'Manage Room Products';
 
   @override
   String get roomsMsgRoomEditQueued => 'Room edit request queued';
@@ -1955,7 +1952,7 @@ class AppL10nEn extends AppL10n {
   String get pdfHeaderFullBottles => 'Full bottles';
 
   @override
-  String get pdfHeaderEmptyBottles => 'Used bottles';
+  String get pdfHeaderEmptyBottles => 'Empty bottles';
 
   @override
   String get pdfHeaderFullBidons => 'Full refill bottles';
@@ -1998,4 +1995,48 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get pdfTitleOpenAlerts => 'Ivra Open Alerts';
+
+  @override
+  String get productHistoryTitle => 'Product History';
+
+  @override
+  String get productHistoryNoHistory => 'No history recorded for this product.';
+
+  @override
+  String productHistoryRefill(String roomNumber) {
+    return 'Refilled in Room $roomNumber';
+  }
+
+  @override
+  String productHistoryReplacement(String roomNumber) {
+    return 'Replaced bottle in Room $roomNumber';
+  }
+
+  @override
+  String get productHistoryAdjustment => 'Manual Stock Adjustment';
+
+  @override
+  String productHistoryActionBy(String user) {
+    return 'By $user';
+  }
+
+  @override
+  String productHistoryReason(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String get productHistoryDeltaFullBottles => 'Full bottles';
+
+  @override
+  String get productHistoryDeltaUsedBottles => 'Used bottles';
+
+  @override
+  String get productHistoryDeltaFullBidons => 'Full refill bottles';
+
+  @override
+  String get productHistoryDeltaOpenBidons => 'Opened refill bottles';
+
+  @override
+  String get productHistoryDeltaEmptyBidons => 'Empty refill bottles';
 }

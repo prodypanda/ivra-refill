@@ -520,10 +520,10 @@ class AppL10nFr extends AppL10n {
       'Bouteilles pleines sans pompe';
 
   @override
-  String get inventoryCollapseHeader => 'Bouteilles utilisées & ouvertes';
+  String get inventoryCollapseHeader => 'Bouteilles vides & ouvertes';
 
   @override
-  String get inventoryTableEmptyBottles => 'Bouteilles utilisées';
+  String get inventoryTableEmptyBottles => 'Bouteilles vides';
 
   @override
   String get inventoryTableEmptyBidons => 'Bouteilles de recharge vides';
@@ -570,7 +570,7 @@ class AppL10nFr extends AppL10n {
   String get sortMostFullBottles => 'Plus de bouteilles pleines';
 
   @override
-  String get sortMostEmptyBottles => 'Plus de bouteilles utilisées';
+  String get sortMostEmptyBottles => 'Plus de bouteilles vides';
 
   @override
   String get bulkAdjustSelectProducts => 'Sélectionner les produits';
@@ -999,9 +999,6 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get roomsLabelFloorNumber => 'Numéro d\'étage';
-
-  @override
-  String get roomsLabelManageProducts => 'Gérer les produits de la chambre';
 
   @override
   String get roomsMsgRoomEditQueued =>
@@ -1983,7 +1980,7 @@ class AppL10nFr extends AppL10n {
   String get pdfHeaderFullBottles => 'Bouteilles pleines';
 
   @override
-  String get pdfHeaderEmptyBottles => 'Bouteilles utilisées';
+  String get pdfHeaderEmptyBottles => 'Bouteilles vides';
 
   @override
   String get pdfHeaderFullBidons => 'Bidons pleins';
@@ -2026,4 +2023,50 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get pdfTitleOpenAlerts => 'Alertes ouvertes Ivra';
+
+  @override
+  String get productHistoryTitle => 'Historique du produit';
+
+  @override
+  String get productHistoryNoHistory =>
+      'Aucun historique enregistré pour ce produit.';
+
+  @override
+  String productHistoryRefill(String roomNumber) {
+    return 'Rempli dans la chambre $roomNumber';
+  }
+
+  @override
+  String productHistoryReplacement(String roomNumber) {
+    return 'Bouteille remplacée dans la chambre $roomNumber';
+  }
+
+  @override
+  String get productHistoryAdjustment => 'Ajustement manuel du stock';
+
+  @override
+  String productHistoryActionBy(String user) {
+    return 'Par $user';
+  }
+
+  @override
+  String productHistoryReason(String reason) {
+    return 'Raison: $reason';
+  }
+
+  @override
+  String get productHistoryDeltaFullBottles => 'Bouteilles pleines';
+
+  @override
+  String get productHistoryDeltaUsedBottles => 'Bouteilles utilisées';
+
+  @override
+  String get productHistoryDeltaFullBidons => 'Bouteilles de recharge pleines';
+
+  @override
+  String get productHistoryDeltaOpenBidons =>
+      'Bouteilles utilisées et ouvertes';
+
+  @override
+  String get productHistoryDeltaEmptyBidons => 'Bouteilles utilisées et vides';
 }

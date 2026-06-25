@@ -15,6 +15,8 @@ import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
+import '../shared/centered_sheet.dart';
+
 
 class InventoryScreen extends ConsumerStatefulWidget {
   final String? hotelId;
@@ -720,12 +722,33 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
       ref.invalidate(inventoryProvider);
       ref.invalidate(suggestedOrdersProvider);
       ref.invalidate(dashboardProvider);
+      ref.invalidate(inventoryEventsProvider);
     } catch (e) {
       if (context.mounted) {
         PremiumSnackbar.showError(context, e);
       }
     }
   }
+
+  Future<void> _showProductHistory(BuildContext context) async {
+    try {
+      final teamMembers = await ref.read(teamMembersProvider.future);
+      if (!context.mounted) return;
+
+      await showCenteredFormSheet<void>(
+        context: context,
+        builder: (context) => _ProductHistoryDialog(
+          item: widget.item,
+          teamMembers: teamMembers,
+        ),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        PremiumSnackbar.showError(context, e);
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -818,19 +841,37 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                     children: [
                       _InventoryStatusPill(lowStock: lowStock),
                       const SizedBox(height: 8),
-                      IconButton(
-                        icon: const Icon(Icons.edit_outlined, size: 20),
-                        tooltip: l10n.t('adjustStockTitle'),
-                        onPressed: () => _adjustStock(context),
-                        style: IconButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.08),
-                          foregroundColor: theme.colorScheme.primary,
-                          padding: const EdgeInsets.all(8),
-                          minimumSize: const Size(36, 36),
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.history_outlined, size: 20),
+                            tooltip: l10n.t('productHistoryTitle'),
+                            onPressed: () => _showProductHistory(context),
+                            style: IconButton.styleFrom(
+                              backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.08),
+                              foregroundColor: theme.colorScheme.secondary,
+                              padding: const EdgeInsets.all(8),
+                              minimumSize: const Size(36, 36),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.edit_outlined, size: 20),
+                            tooltip: l10n.t('adjustStockTitle'),
+                            onPressed: () => _adjustStock(context),
+                            style: IconButton.styleFrom(
+                              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.08),
+                              foregroundColor: theme.colorScheme.primary,
+                              padding: const EdgeInsets.all(8),
+                              minimumSize: const Size(36, 36),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
+
                 ],
               ),
               const Spacer(),
@@ -2001,3 +2042,305 @@ class _BulkStockAdjustmentDialogState
     }
   }
 }
+
+class _ProductHistoryDialog extends ConsumerWidget {
+  const _ProductHistoryDialog({
+    required this.item,
+    required this.teamMembers,
+  });
+
+  final InventoryItem item;
+  final List<UserProfile> teamMembers;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+    final theme = Theme.of(context);
+
+    final refillEventsAsync = ref.watch(refillEventsProvider);
+    final inventoryEventsAsync = ref.watch(inventoryEventsProvider);
+    final roomProductsAsync = ref.watch(roomProductsProvider);
+
+    return AsyncValueView(
+      value: refillEventsAsync,
+      builder: (refillEvents) {
+        return AsyncValueView(
+          value: inventoryEventsAsync,
+          builder: (inventoryEvents) {
+            return AsyncValueView(
+              value: roomProductsAsync,
+              builder: (roomProducts) {
+                final productRoomProducts = roomProducts
+                    .where((rp) => rp.product.id == item.product.id)
+                    .toList();
+                final productRoomProductIds = productRoomProducts.map((rp) => rp.id).toSet();
+                
+                final roomNumbers = {
+                  for (var rp in productRoomProducts) rp.id: rp.roomNumber
+                };
+
+                final filteredRefills = refillEvents
+                    .where((e) => productRoomProductIds.contains(e.roomProductId))
+                    .toList();
+
+                final filteredAdjustments = inventoryEvents
+                    .where((e) => e.productId == item.product.id)
+                    .toList();
+
+                final allEvents = <_UnifiedHistoryItem>[];
+
+                for (final e in filteredRefills) {
+                  final roomNumber = roomNumbers[e.roomProductId] ?? '';
+                  final isInitial = e.type == RefillEventType.bottleReplaced &&
+                      e.previousRefillCount == 0;
+                  
+                  final title = isInitial
+                      ? l10n.tParams('productHistoryReplacement', {'roomNumber': roomNumber})
+                      : e.type == RefillEventType.bottleReplaced
+                          ? l10n.tParams('productHistoryReplacement', {'roomNumber': roomNumber})
+                          : l10n.tParams('productHistoryRefill', {'roomNumber': roomNumber});
+
+                  final subtitle = '${e.previousRefillCount} -> ${e.newRefillCount}';
+                  final userName = teamMembers
+                      .where((u) => u.id == e.performedBy)
+                      .firstOrNull
+                      ?.fullName ?? e.performedBy;
+
+                  allEvents.add(_UnifiedHistoryItem(
+                    id: e.id,
+                    occurredAt: e.occurredAt,
+                    title: title,
+                    subtitle: subtitle,
+                    performedBy: userName,
+                    notes: e.notes,
+                    icon: e.type == RefillEventType.bottleReplaced
+                        ? IvraIcons.replaceAction
+                        : IvraIcons.refillAction,
+                  ));
+                }
+
+                for (final e in filteredAdjustments) {
+                  final title = l10n.t('productHistoryAdjustment');
+                  
+                  final changes = <String>[];
+                  if (e.fullBottlesDelta != 0) {
+                    changes.add('${e.fullBottlesDelta > 0 ? "+" : ""}${e.fullBottlesDelta} ${l10n.t('productHistoryDeltaFullBottles')}');
+                  }
+                  if (e.emptyBottlesDelta != 0) {
+                    changes.add('${e.emptyBottlesDelta > 0 ? "+" : ""}${e.emptyBottlesDelta} ${l10n.t('productHistoryDeltaUsedBottles')}');
+                  }
+                  if (e.fullBidonsDelta != 0) {
+                    changes.add('${e.fullBidonsDelta > 0 ? "+" : ""}${e.fullBidonsDelta} ${l10n.t('productHistoryDeltaFullBidons')}');
+                  }
+                  if (e.openBidonsDelta != 0) {
+                    changes.add('${e.openBidonsDelta > 0 ? "+" : ""}${e.openBidonsDelta} ${l10n.t('productHistoryDeltaOpenBidons')}');
+                  }
+                  if (e.emptyBidonsDelta != 0) {
+                    changes.add('${e.emptyBidonsDelta > 0 ? "+" : ""}${e.emptyBidonsDelta} ${l10n.t('productHistoryDeltaEmptyBidons')}');
+                  }
+
+                  final subtitle = changes.isEmpty ? 'No changes' : changes.join(', ');
+                  final userName = teamMembers
+                      .where((u) => u.id == e.performedBy)
+                      .firstOrNull
+                      ?.fullName ?? e.performedBy;
+
+                  allEvents.add(_UnifiedHistoryItem(
+                    id: e.id,
+                    occurredAt: e.occurredAt,
+                    title: title,
+                    subtitle: subtitle,
+                    performedBy: userName,
+                    notes: e.reason,
+                    icon: Icons.inventory_2_outlined,
+                  ));
+                }
+
+                allEvents.sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
+
+                return SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 24,
+                      bottom: 16,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.colorScheme.secondary.withValues(alpha: 0.15),
+                                theme.colorScheme.secondary.withValues(alpha: 0.05),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: theme.colorScheme.secondary.withValues(alpha: 0.2),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  Icons.history_rounded,
+                                  color: theme.colorScheme.secondary,
+                                  size: 28,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.t('productHistoryTitle'),
+                                      style: theme.textTheme.titleSmall?.copyWith(
+                                        color: theme.colorScheme.secondary,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      item.product.label(language),
+                                      style: theme.textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: -0.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Flexible(
+                          child: allEvents.isEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 24),
+                                  child: Center(
+                                    child: Text(
+                                      l10n.t('productHistoryNoHistory'),
+                                      style: theme.textTheme.bodyLarge?.copyWith(
+                                        color: theme.colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : ListView.separated(
+                                  shrinkWrap: true,
+                                  itemCount: allEvents.length,
+                                  separatorBuilder: (context, index) => const Divider(height: 1),
+                                  itemBuilder: (context, index) {
+                                    final event = allEvents[index];
+                                    return ListTile(
+                                      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                                      leading: CircleAvatar(
+                                        backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                                        child: Icon(event.icon, color: theme.colorScheme.onSurfaceVariant, size: 20),
+                                      ),
+                                      title: Text(
+                                        event.title,
+                                        style: theme.textTheme.bodyLarge?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      subtitle: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            event.subtitle,
+                                            style: theme.textTheme.bodyMedium?.copyWith(
+                                              color: theme.colorScheme.primary,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            '${_formatDateTime(event.occurredAt)} | ${l10n.tParams('productHistoryActionBy', {'user': event.performedBy})}',
+                                            style: theme.textTheme.bodySmall?.copyWith(
+                                              color: theme.colorScheme.onSurfaceVariant,
+                                            ),
+                                          ),
+                                          if (event.notes != null && event.notes!.trim().isNotEmpty) ...[
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              l10n.tParams('productHistoryReason', {'reason': event.notes!.trim()}),
+                                              style: theme.textTheme.bodyMedium?.copyWith(
+                                                fontStyle: FontStyle.italic,
+                                                color: theme.colorScheme.onSurfaceVariant,
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                        ),
+                        const SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text(l10n.t('roomsBtnClose')),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _formatDateTime(DateTime value) {
+    final local = value.toLocal();
+    final month = local.month.toString().padLeft(2, '0');
+    final day = local.day.toString().padLeft(2, '0');
+    final hour = local.hour.toString().padLeft(2, '0');
+    final minute = local.minute.toString().padLeft(2, '0');
+    return '${local.year}-$month-$day $hour:$minute';
+  }
+}
+
+class _UnifiedHistoryItem {
+  _UnifiedHistoryItem({
+    required this.id,
+    required this.occurredAt,
+    required this.title,
+    required this.subtitle,
+    required this.performedBy,
+    required this.notes,
+    required this.icon,
+  });
+
+  final String id;
+  final DateTime occurredAt;
+  final String title;
+  final String subtitle;
+  final String performedBy;
+  final String? notes;
+  final IconData icon;
+}
+

@@ -483,6 +483,20 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<List<InventoryEvent>> recentInventoryEvents({String? hotelId}) async {
+    var query = _client.from('inventory_events').select();
+    if (hotelId != null) query = query.eq('hotel_id', hotelId);
+    final rows = await _fetchWithCache(
+      'recent_inventory_events_${hotelId ?? 'all'}',
+      () => query.order('occurred_at', ascending: false).limit(500),
+      decode: _decodeMapList,
+      emptyFallback: () => const <Map<String, dynamic>>[],
+    );
+    return rows.map<InventoryEvent>(_inventoryEventFromMap).toList();
+  }
+
+
+  @override
   Future<Set<String>> appliedClientRequestIds({String? hotelId}) async {
     final ids = <String>{};
 
@@ -1074,6 +1088,24 @@ class SupabaseIvraRepository implements IvraRepository {
       clientRequestId: asNullableString(map['client_request_id']),
     );
   }
+
+  InventoryEvent _inventoryEventFromMap(Map<String, dynamic> map) {
+    return InventoryEvent(
+      id: asString(map['id']),
+      hotelId: asString(map['hotel_id']),
+      productId: asString(map['product_id']),
+      fullBottlesDelta: asInt(map['full_bottles_delta']),
+      emptyBottlesDelta: asInt(map['empty_bottles_delta']),
+      fullBidonsDelta: asInt(map['full_bidons_delta']),
+      openBidonsDelta: asInt(map['open_bidons_delta']),
+      emptyBidonsDelta: asInt(map['empty_bidons_delta']),
+      reason: asString(map['reason']),
+      performedBy: asString(map['performed_by']),
+      occurredAt: asDateTime(map['occurred_at']),
+      clientRequestId: asNullableString(map['client_request_id']),
+    );
+  }
+
 
   Product _joinedProductFromMap(Map<String, dynamic> map) {
     return Product(

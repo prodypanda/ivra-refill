@@ -228,8 +228,8 @@
   "inventoryTableFullBottles": "Full bottles",
   "inventoryTableFullBottlesWithPump": "Full bottles with pump",
   "inventoryTableFullBottlesWithoutPump": "Full bottles without pump",
-  "inventoryCollapseHeader": "Used & Open Bottles",
-  "inventoryTableEmptyBottles": "Used bottles",
+  "inventoryCollapseHeader": "Empty & Open Bottles",
+  "inventoryTableEmptyBottles": "Empty bottles",
   "inventoryTableEmptyBidons": "Empty refill bottles",
   "inventoryTableFullBidons": "Full refill bottles",
   "inventoryTableOpenBidons": "Opened refill bottles",
@@ -244,7 +244,7 @@
   "sortNameAsc": "Name (A-Z)",
   "sortNameDesc": "Name (Z-A)",
   "sortMostFullBottles": "Most Full Bottles",
-  "sortMostEmptyBottles": "Most Used Bottles",
+  "sortMostEmptyBottles": "Most Empty Bottles",
   "bulkAdjustSelectProducts": "Select products",
   "bulkAdjustSelectAll": "Select all",
   "bulkAdjustDeselectAll": "Deselect all",
@@ -419,7 +419,6 @@
   "roomsDialogRoomEditTitle": "Request room edit for",
   "roomsLabelRoomNumber": "Room number",
   "roomsLabelFloorNumber": "Floor number",
-  "roomsLabelManageProducts": "Manage Room Products",
   "roomsMsgRoomEditQueued": "Room edit request queued",
   "roomsMsgRoomDetailsUpdated": "Room details updated",
   "roomsMsgRoomEditSubmitted": "Room edit request submitted",
@@ -1007,7 +1006,7 @@
   "pdfHeader5LBidons": "5L refill bottles",
   "pdfHeaderRecycle": "Recycle",
   "pdfHeaderFullBottles": "Full bottles",
-  "pdfHeaderEmptyBottles": "Used bottles",
+  "pdfHeaderEmptyBottles": "Empty bottles",
   "pdfHeaderFullBidons": "Full refill bottles",
   "pdfHeaderOpenBidons": "Opened refill bottles",
   "pdfHeaderEmptyBidons": "Empty refill bottles",
@@ -1021,5 +1020,45 @@
   "pdfTitleSuggestedOrders": "Ivra Suggested Orders",
   "pdfTitleInventorySnapshot": "Ivra Inventory Snapshot",
   "pdfTitleRefillHistory": "Ivra Refill History",
-  "pdfTitleOpenAlerts": "Ivra Open Alerts"
+  "pdfTitleOpenAlerts": "Ivra Open Alerts",
+  "productHistoryTitle": "Product History",
+  "productHistoryNoHistory": "No history recorded for this product.",
+  "productHistoryRefill": "Refilled in Room {roomNumber}",
+  "@productHistoryRefill": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "productHistoryReplacement": "Replaced bottle in Room {roomNumber}",
+  "@productHistoryReplacement": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "productHistoryAdjustment": "Manual Stock Adjustment",
+  "productHistoryActionBy": "By {user}",
+  "@productHistoryActionBy": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "productHistoryReason": "Reason: {reason}",
+  "@productHistoryReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "productHistoryDeltaFullBottles": "Full bottles",
+  "productHistoryDeltaUsedBottles": "Used bottles",
+  "productHistoryDeltaFullBidons": "Full refill bottles",
+  "productHistoryDeltaOpenBidons": "Opened refill bottles",
+  "productHistoryDeltaEmptyBidons": "Empty refill bottles"
 }
