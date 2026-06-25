@@ -519,10 +519,10 @@ class AppL10nIt extends AppL10n {
       'Bottiglie piene senza pompa';
 
   @override
-  String get inventoryCollapseHeader => 'Bottiglie vuote e aperte';
+  String get inventoryCollapseHeader => 'Bottiglie usate e aperte';
 
   @override
-  String get inventoryTableEmptyBottles => 'Bottiglie vuote';
+  String get inventoryTableEmptyBottles => 'Bottiglie usate';
 
   @override
   String get inventoryTableEmptyBidons => 'Bottiglie di ricarica vuote';
@@ -568,7 +568,7 @@ class AppL10nIt extends AppL10n {
   String get sortMostFullBottles => 'Più bottiglie piene';
 
   @override
-  String get sortMostEmptyBottles => 'Più bottiglie vuote';
+  String get sortMostEmptyBottles => 'Più bottiglie usate';
 
   @override
   String get bulkAdjustSelectProducts => 'Seleziona prodotti';
@@ -1973,7 +1973,7 @@ class AppL10nIt extends AppL10n {
   String get pdfHeaderFullBottles => 'Bottiglie piene';
 
   @override
-  String get pdfHeaderEmptyBottles => 'Bottiglie vuote';
+  String get pdfHeaderEmptyBottles => 'Bottiglie usate';
 
   @override
   String get pdfHeaderFullBidons => 'Bidoni pieni';

@@ -516,10 +516,10 @@ class AppL10nAr extends AppL10n {
       'العبوات الممتلئة بدون مضخة';
 
   @override
-  String get inventoryCollapseHeader => 'العبوات الفارغة والمفتوحة';
+  String get inventoryCollapseHeader => 'العبوات المستخدمة والمفتوحة';
 
   @override
-  String get inventoryTableEmptyBottles => 'العبوات الفارغة';
+  String get inventoryTableEmptyBottles => 'العبوات المستخدمة';
 
   @override
   String get inventoryTableEmptyBidons => 'قوارير إعادة التعبئة الفارغة';
@@ -564,7 +564,7 @@ class AppL10nAr extends AppL10n {
   String get sortMostFullBottles => 'أكثر الزجاجات الممتلئة';
 
   @override
-  String get sortMostEmptyBottles => 'أكثر الزجاجات الفارغة';
+  String get sortMostEmptyBottles => 'أكثر الزجاجات المستخدمة';
 
   @override
   String get bulkAdjustSelectProducts => 'حدد المنتجات';
@@ -1939,7 +1939,7 @@ class AppL10nAr extends AppL10n {
   String get pdfHeaderFullBottles => 'زجاجات مملوءة';
 
   @override
-  String get pdfHeaderEmptyBottles => 'زجاجات فارغة';
+  String get pdfHeaderEmptyBottles => 'زجاجات مستخدمة';
 
   @override
   String get pdfHeaderFullBidons => 'عبوات مملوءة';

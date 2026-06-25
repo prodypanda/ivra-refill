@@ -516,10 +516,10 @@ class AppL10nEn extends AppL10n {
       'Full bottles without pump';
 
   @override
-  String get inventoryCollapseHeader => 'Empty & Open Bottles';
+  String get inventoryCollapseHeader => 'Used & Open Bottles';
 
   @override
-  String get inventoryTableEmptyBottles => 'Empty bottles';
+  String get inventoryTableEmptyBottles => 'Used bottles';
 
   @override
   String get inventoryTableEmptyBidons => 'Empty refill bottles';
@@ -565,7 +565,7 @@ class AppL10nEn extends AppL10n {
   String get sortMostFullBottles => 'Most Full Bottles';
 
   @override
-  String get sortMostEmptyBottles => 'Most Empty Bottles';
+  String get sortMostEmptyBottles => 'Most Used Bottles';
 
   @override
   String get bulkAdjustSelectProducts => 'Select products';
@@ -1955,7 +1955,7 @@ class AppL10nEn extends AppL10n {
   String get pdfHeaderFullBottles => 'Full bottles';
 
   @override
-  String get pdfHeaderEmptyBottles => 'Empty bottles';
+  String get pdfHeaderEmptyBottles => 'Used bottles';
 
   @override
   String get pdfHeaderFullBidons => 'Full refill bottles';

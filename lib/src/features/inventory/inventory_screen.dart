@@ -463,7 +463,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 ),
                 const SizedBox(width: 8),
                 ChoiceChip(
-                  label: Text(l10n.t('sortMostEmptyBottles') ?? 'Most Empty Bottles'),
+                  label: Text(l10n.t('sortMostEmptyBottles') ?? 'Most Used Bottles'),
                   selected: _sortOption == InventorySortOption.emptyBottlesDesc,
                   onSelected: (selected) {
                     if (selected) setState(() => _sortOption = InventorySortOption.emptyBottlesDesc);

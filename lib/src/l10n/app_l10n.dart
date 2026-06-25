@@ -1058,13 +1058,13 @@ abstract class AppL10n {
   /// No description provided for @inventoryCollapseHeader.
   ///
   /// In en, this message translates to:
-  /// **'Empty & Open Bottles'**
+  /// **'Used & Open Bottles'**
   String get inventoryCollapseHeader;
 
   /// No description provided for @inventoryTableEmptyBottles.
   ///
   /// In en, this message translates to:
-  /// **'Empty bottles'**
+  /// **'Used bottles'**
   String get inventoryTableEmptyBottles;
 
   /// No description provided for @inventoryTableEmptyBidons.
@@ -1154,7 +1154,7 @@ abstract class AppL10n {
   /// No description provided for @sortMostEmptyBottles.
   ///
   /// In en, this message translates to:
-  /// **'Most Empty Bottles'**
+  /// **'Most Used Bottles'**
   String get sortMostEmptyBottles;
 
   /// No description provided for @bulkAdjustSelectProducts.
@@ -3674,7 +3674,7 @@ abstract class AppL10n {
   /// No description provided for @pdfHeaderEmptyBottles.
   ///
   /// In en, this message translates to:
-  /// **'Empty bottles'**
+  /// **'Used bottles'**
   String get pdfHeaderEmptyBottles;
 
   /// No description provided for @pdfHeaderFullBidons.
