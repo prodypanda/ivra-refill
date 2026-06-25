@@ -2046,4 +2046,36 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get productHistoryStatAdjustments => 'التعديلات';
+
+  @override
+  String get inventoryEnforceTitle => 'مخزون غير كافٍ';
+
+  @override
+  String inventoryEnforceTemplateContent(
+      String total, String product, String current, String needed) {
+    return 'وضع $total زجاجة (زجاجات) من $product يتطلب مخزونًا. يحتوي المخزون فقط على $current. هل ترغب في إضافة $needed زجاجة (زجاجات) تلقائيًا إلى المخزون والمتابعة؟';
+  }
+
+  @override
+  String inventoryEnforceReplaceContent(String product, String room) {
+    return 'استبدال زجاجة $product في الغرفة $room يتطلب زجاجة ممتلئة واحدة. المخزون يحتوي على 0. هل ترغب في إضافة زجاجة واحدة تلقائيًا إلى المخزون والمتابعة؟';
+  }
+
+  @override
+  String get inventoryEnforceBtnProceed => 'التعديل التلقائي والمتابعة';
+
+  @override
+  String get inventoryEnforceReasonTemplate =>
+      'تعديل تلقائي لنموذج إنشاء الغرف';
+
+  @override
+  String get inventoryEnforceReasonReplace => 'تعديل تلقائي للاستبدال';
+
+  @override
+  String get inventoryEnforceOnboardingTitle => 'تهيئة المخزون';
+
+  @override
+  String inventoryEnforceOnboardingContent(String total) {
+    return 'بما أن هذا فندق جديد، فلا توجد منتجات في المخزون. هل ترغب في تهيئة المخزون تلقائيًا بـ $total زجاجة لوضعها في الغرف؟';
+  }
 }

@@ -292,6 +292,7 @@ void main() {
       firstRoomNumber: 401,
       roomCount: 3,
       productIds: products.take(3).map((product) => product.id).toList(),
+      autoAdjustInventory: true,
     );
 
     final rooms = await repository.rooms(hotelId: hotels.last.id);

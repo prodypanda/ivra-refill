@@ -368,6 +368,7 @@ class OfflineSyncService {
           roomProductId: payload['roomProductId'] as String,
           notes: payload['notes'] as String?,
           clientRequestId: action.id,
+          autoAdjustInventory: payload['autoAdjustInventory'] == true,
         );
       case SyncActionType.stockAdjustment:
         await repository.recordStockAdjustment(

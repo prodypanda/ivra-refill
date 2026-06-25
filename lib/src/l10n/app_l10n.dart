@@ -3868,6 +3868,55 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Adjustments'**
   String get productHistoryStatAdjustments;
+
+  /// No description provided for @inventoryEnforceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient Stock'**
+  String get inventoryEnforceTitle;
+
+  /// No description provided for @inventoryEnforceTemplateContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Placing {total} bottle(s) of {product} requires stock. Inventory only has {current}. Would you like to automatically add {needed} bottle(s) to the inventory and proceed?'**
+  String inventoryEnforceTemplateContent(
+      String total, String product, String current, String needed);
+
+  /// No description provided for @inventoryEnforceReplaceContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacing the bottle of {product} in Room {room} requires 1 full bottle. Inventory has 0. Would you like to automatically add 1 bottle to the inventory and proceed?'**
+  String inventoryEnforceReplaceContent(String product, String room);
+
+  /// No description provided for @inventoryEnforceBtnProceed.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Adjust & Proceed'**
+  String get inventoryEnforceBtnProceed;
+
+  /// No description provided for @inventoryEnforceReasonTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-adjusted for room creation template'**
+  String get inventoryEnforceReasonTemplate;
+
+  /// No description provided for @inventoryEnforceReasonReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-adjusted for replacement'**
+  String get inventoryEnforceReasonReplace;
+
+  /// No description provided for @inventoryEnforceOnboardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Initialize Inventory'**
+  String get inventoryEnforceOnboardingTitle;
+
+  /// No description provided for @inventoryEnforceOnboardingContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Since this is a new hotel, there are no products in the inventory. Would you like to automatically initialize the inventory with {total} bottles to place in the rooms?'**
+  String inventoryEnforceOnboardingContent(String total);
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

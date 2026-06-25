@@ -783,11 +783,61 @@ class MockIvraRepository implements IvraRepository {
     required int firstRoomNumber,
     required int roomCount,
     required List<String> productIds,
+    bool autoAdjustInventory = false,
   }) async {
     final floorId = 'floor-$hotelId-$floorNumber';
     final products = _products
         .where((product) => productIds.contains(product.id))
         .toList(growable: false);
+
+    // Enforce inventory check first
+    for (final product in products) {
+      final inventoryIndex = _inventory.indexWhere(
+        (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
+      );
+      final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
+      if (currentStock < roomCount) {
+        if (!autoAdjustInventory) {
+          throw StateError('Insufficient inventory for product ${product.nameEn}. Needed: $roomCount, Available: $currentStock');
+        } else {
+          final needed = roomCount - currentStock;
+          if (inventoryIndex != -1) {
+            final stock = _inventory[inventoryIndex];
+            _inventory[inventoryIndex] = stock.copyWith(
+              fullBottles: stock.fullBottles + needed,
+            );
+          } else {
+            _inventory.add(InventoryItem(
+              id: _uuid.v4(),
+              hotelId: hotelId,
+              product: product,
+              fullBottles: needed,
+              emptyBottles: 0,
+              fullBidons: 0,
+              openBidons: 0,
+              emptyBidons: 0,
+            ));
+          }
+          // Log adjustment
+          _inventoryEvents.insert(
+            0,
+            InventoryEvent(
+              id: _uuid.v4(),
+              hotelId: hotelId,
+              productId: product.id,
+              fullBottlesDelta: needed,
+              emptyBottlesDelta: 0,
+              fullBidonsDelta: 0,
+              openBidonsDelta: 0,
+              emptyBidonsDelta: 0,
+              reason: 'Auto-adjusted for room creation template',
+              performedBy: _currentUser.id,
+              occurredAt: DateTime.now(),
+            ),
+          );
+        }
+      }
+    }
 
     for (var index = 0; index < roomCount; index += 1) {
       final roomNumber = '${firstRoomNumber + index}';
@@ -819,6 +869,17 @@ class MockIvraRepository implements IvraRepository {
             status: BottleStatus.active,
           ),
         );
+
+        // Decrement stock
+        final inventoryIndex = _inventory.indexWhere(
+          (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
+        );
+        if (inventoryIndex != -1) {
+          final stock = _inventory[inventoryIndex];
+          _inventory[inventoryIndex] = stock.copyWith(
+            fullBottles: max(stock.fullBottles - 1, 0),
+          );
+        }
 
         // Log the initial bottle placement so a freshly created room shows a
         // "New bottle placed" entry in its history (the UI treats a
@@ -1125,6 +1186,7 @@ class MockIvraRepository implements IvraRepository {
     required String roomProductId,
     String? notes,
     String? clientRequestId,
+    bool autoAdjustInventory = false,
   }) async {
     if (_hasProcessedClientRequest(clientRequestId)) return;
 
@@ -1134,6 +1196,54 @@ class MockIvraRepository implements IvraRepository {
     }
 
     final item = _roomProducts[index];
+
+    // Enforce inventory check first
+    final inventoryIndex = _inventory.indexWhere(
+      (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+    );
+    final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
+    if (currentStock == 0) {
+      if (!autoAdjustInventory) {
+        throw StateError('Insufficient inventory for replacement.');
+      } else {
+        // Auto adjust: add 1 full bottle
+        if (inventoryIndex != -1) {
+          final stock = _inventory[inventoryIndex];
+          _inventory[inventoryIndex] = stock.copyWith(
+            fullBottles: stock.fullBottles + 1,
+          );
+        } else {
+          _inventory.add(InventoryItem(
+            id: _uuid.v4(),
+            hotelId: item.hotelId,
+            product: item.product,
+            fullBottles: 1,
+            emptyBottles: 0,
+            fullBidons: 0,
+            openBidons: 0,
+            emptyBidons: 0,
+          ));
+        }
+        // Log event
+        _inventoryEvents.insert(
+          0,
+          InventoryEvent(
+            id: _uuid.v4(),
+            hotelId: item.hotelId,
+            productId: item.product.id,
+            fullBottlesDelta: 1,
+            emptyBottlesDelta: 0,
+            fullBidonsDelta: 0,
+            openBidonsDelta: 0,
+            emptyBidonsDelta: 0,
+            reason: 'Auto-adjusted for replacement',
+            performedBy: _currentUser.id,
+            occurredAt: DateTime.now(),
+          ),
+        );
+      }
+    }
+
     final now = DateTime.now();
     _events.insert(
       0,
@@ -1162,13 +1272,13 @@ class MockIvraRepository implements IvraRepository {
       status: BottleStatus.active,
     );
 
-    final inventoryIndex = _inventory.indexWhere(
-      (stock) =>
-          stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+    // Re-fetch index in case it was added
+    final finalInventoryIndex = _inventory.indexWhere(
+      (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
     );
-    if (inventoryIndex != -1) {
-      final stock = _inventory[inventoryIndex];
-      _inventory[inventoryIndex] = stock.copyWith(
+    if (finalInventoryIndex != -1) {
+      final stock = _inventory[finalInventoryIndex];
+      _inventory[finalInventoryIndex] = stock.copyWith(
         fullBottles: max(stock.fullBottles - 1, 0),
         emptyBottles: stock.emptyBottles + 1,
       );
@@ -1408,6 +1518,8 @@ class MockIvraRepository implements IvraRepository {
               rp.roomId == request.targetId! &&
               !stringProductIds.contains(rp.product.id));
 
+          final autoAdjust = request.newData['auto_adjust_inventory'] == true;
+
           // Find products that need to be added
           for (final pid in stringProductIds) {
             final exists = _roomProducts.any((rp) =>
@@ -1416,8 +1528,68 @@ class MockIvraRepository implements IvraRepository {
               final productIndex = _products.indexWhere((p) => p.id == pid);
               if (productIndex != -1) {
                 final product = _products[productIndex];
+
+                // Check inventory
+                final inventoryIndex = _inventory.indexWhere(
+                  (stock) => stock.hotelId == request.hotelId && stock.product.id == pid,
+                );
+                final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
+                if (currentStock == 0) {
+                  if (!autoAdjust) {
+                    throw StateError('Insufficient inventory for product ${product.nameEn}. Stock is 0.');
+                  } else {
+                    // Auto-adjust: add 1 full bottle
+                    if (inventoryIndex != -1) {
+                      final stock = _inventory[inventoryIndex];
+                      _inventory[inventoryIndex] = stock.copyWith(
+                        fullBottles: stock.fullBottles + 1,
+                      );
+                    } else {
+                      _inventory.add(InventoryItem(
+                        id: _uuid.v4(),
+                        hotelId: request.hotelId,
+                        product: product,
+                        fullBottles: 1,
+                        emptyBottles: 0,
+                        fullBidons: 0,
+                        openBidons: 0,
+                        emptyBidons: 0,
+                      ));
+                    }
+                    // Log adjustment
+                    _inventoryEvents.insert(
+                      0,
+                      InventoryEvent(
+                        id: _uuid.v4(),
+                        hotelId: request.hotelId,
+                        productId: product.id,
+                        fullBottlesDelta: 1,
+                        emptyBottlesDelta: 0,
+                        fullBidonsDelta: 0,
+                        openBidonsDelta: 0,
+                        emptyBidonsDelta: 0,
+                        reason: 'Auto-adjusted for room product addition',
+                        performedBy: _currentUser.id,
+                        occurredAt: DateTime.now(),
+                      ),
+                    );
+                  }
+                }
+
+                // Decrement inventory by 1
+                final finalInventoryIndex = _inventory.indexWhere(
+                  (stock) => stock.hotelId == request.hotelId && stock.product.id == pid,
+                );
+                if (finalInventoryIndex != -1) {
+                  final stock = _inventory[finalInventoryIndex];
+                  _inventory[finalInventoryIndex] = stock.copyWith(
+                    fullBottles: max(stock.fullBottles - 1, 0),
+                  );
+                }
+
+                final roomProductId = 'rp_${DateTime.now().millisecondsSinceEpoch}_$pid';
                 _roomProducts.add(RoomProduct(
-                  id: 'rp_${DateTime.now().millisecondsSinceEpoch}_$pid',
+                  id: roomProductId,
                   hotelId: request.hotelId,
                   roomId: request.targetId!,
                   roomNumber: roomNumber ?? (roomIndex != -1 ? _rooms[roomIndex].roomNumber : ''),
@@ -1428,6 +1600,21 @@ class MockIvraRepository implements IvraRepository {
                   bottleStartedAt: DateTime.now(),
                   status: BottleStatus.active,
                 ));
+
+                // Insert initial placement refill event
+                _events.insert(
+                  0,
+                  RefillEvent(
+                    id: _uuid.v4(),
+                    roomProductId: roomProductId,
+                    type: RefillEventType.bottleReplaced,
+                    previousRefillCount: 0,
+                    newRefillCount: 0,
+                    occurredAt: DateTime.now(),
+                    performedBy: _currentUser.id,
+                    notes: 'Initial bottle placement',
+                  ),
+                );
               }
             }
           }

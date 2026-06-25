@@ -70,6 +70,7 @@ abstract class IvraRepository {
     required int firstRoomNumber,
     required int roomCount,
     required List<String> productIds,
+    bool autoAdjustInventory = false,
   });
 
   Future<void> inviteTeamMember({
@@ -148,6 +149,7 @@ abstract class IvraRepository {
     required String roomProductId,
     String? notes,
     String? clientRequestId,
+    bool autoAdjustInventory = false,
   });
 
   Future<String?> submitChangeRequest({

@@ -2081,4 +2081,37 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get productHistoryStatAdjustments => 'Regolazioni';
+
+  @override
+  String get inventoryEnforceTitle => 'Scorte insufficienti';
+
+  @override
+  String inventoryEnforceTemplateContent(
+      String total, String product, String current, String needed) {
+    return 'Posizionare $total bottiglia/e di $product richiede scorte. L\'inventario ha solo $current. Vuoi aggiungere automaticamente $needed bottiglia/e all\'inventario e procedere?';
+  }
+
+  @override
+  String inventoryEnforceReplaceContent(String product, String room) {
+    return 'Sostituire la bottiglia di $product in Camera $room richiede 1 bottiglia piena. L\'inventario ha 0. Vuoi aggiungere automaticamente 1 bottiglia all\'inventario e procedere?';
+  }
+
+  @override
+  String get inventoryEnforceBtnProceed => 'Regola e procedi';
+
+  @override
+  String get inventoryEnforceReasonTemplate =>
+      'Regolazione automatica per modello creazione camera';
+
+  @override
+  String get inventoryEnforceReasonReplace =>
+      'Regolazione automatica per sostituzione';
+
+  @override
+  String get inventoryEnforceOnboardingTitle => 'Inizializza inventario';
+
+  @override
+  String inventoryEnforceOnboardingContent(String total) {
+    return 'Trattandosi di un nuovo hotel, non ci sono prodotti in inventario. Vuoi inizializzare automaticamente l\'inventario con $total bottiglie da posizionare nelle camere?';
+  }
 }

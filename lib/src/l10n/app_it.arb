@@ -627,5 +627,13 @@
   "productHistoryFilterManual": "Regolazioni",
   "productHistoryStatRefills": "Ricariche",
   "productHistoryStatReplacements": "Sostituzioni",
-  "productHistoryStatAdjustments": "Regolazioni"
+  "productHistoryStatAdjustments": "Regolazioni",
+  "inventoryEnforceTitle": "Scorte insufficienti",
+  "inventoryEnforceTemplateContent": "Posizionare {total} bottiglia/e di {product} richiede scorte. L'inventario ha solo {current}. Vuoi aggiungere automaticamente {needed} bottiglia/e all'inventario e procedere?",
+  "inventoryEnforceReplaceContent": "Sostituire la bottiglia di {product} in Camera {room} richiede 1 bottiglia piena. L'inventario ha 0. Vuoi aggiungere automaticamente 1 bottiglia all'inventario e procedere?",
+  "inventoryEnforceBtnProceed": "Regola e procedi",
+  "inventoryEnforceReasonTemplate": "Regolazione automatica per modello creazione camera",
+  "inventoryEnforceReasonReplace": "Regolazione automatica per sostituzione",
+  "inventoryEnforceOnboardingTitle": "Inizializza inventario",
+  "inventoryEnforceOnboardingContent": "Trattandosi di un nuovo hotel, non ci sono prodotti in inventario. Vuoi inizializzare automaticamente l'inventario con {total} bottiglie da posizionare nelle camere?"
 }

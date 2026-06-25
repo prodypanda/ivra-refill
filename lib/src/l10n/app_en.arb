@@ -1074,5 +1074,46 @@
   "productHistoryFilterManual": "Adjustments",
   "productHistoryStatRefills": "Refills",
   "productHistoryStatReplacements": "Replacements",
-  "productHistoryStatAdjustments": "Adjustments"
+  "productHistoryStatAdjustments": "Adjustments",
+  "inventoryEnforceTitle": "Insufficient Stock",
+  "inventoryEnforceTemplateContent": "Placing {total} bottle(s) of {product} requires stock. Inventory only has {current}. Would you like to automatically add {needed} bottle(s) to the inventory and proceed?",
+  "@inventoryEnforceTemplateContent": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      },
+      "current": {
+        "type": "String"
+      },
+      "needed": {
+        "type": "String"
+      }
+    }
+  },
+  "inventoryEnforceReplaceContent": "Replacing the bottle of {product} in Room {room} requires 1 full bottle. Inventory has 0. Would you like to automatically add 1 bottle to the inventory and proceed?",
+  "@inventoryEnforceReplaceContent": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "inventoryEnforceBtnProceed": "Auto-Adjust & Proceed",
+  "inventoryEnforceReasonTemplate": "Auto-adjusted for room creation template",
+  "inventoryEnforceReasonReplace": "Auto-adjusted for replacement",
+  "inventoryEnforceOnboardingTitle": "Initialize Inventory",
+  "inventoryEnforceOnboardingContent": "Since this is a new hotel, there are no products in the inventory. Would you like to automatically initialize the inventory with {total} bottles to place in the rooms?",
+  "@inventoryEnforceOnboardingContent": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  }
 }

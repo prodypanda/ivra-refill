@@ -572,13 +572,49 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
     setState(() => _step++);
   }
 
+  Future<bool?> _showOnboardingInventoryDialog(BuildContext context, int total) {
+    final l10n = AppLocalizations.of(context);
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.info_outline, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 8),
+            Text(l10n.t('inventoryEnforceOnboardingTitle')),
+          ],
+        ),
+        content: Text(l10n.tParams('inventoryEnforceOnboardingContent', {
+          'total': total.toString(),
+        })),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnCancel')),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.t('inventoryEnforceBtnProceed')),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _finish() async {
     if (_selectedProductIds.isEmpty) {
       PremiumSnackbar.showError(context, AppLocalizations.of(context).t('bulkAdjustNoProductsSelected'));
       return;
     }
-    setState(() => _isSaving = true);
+
     final l10n = AppLocalizations.of(context);
+    final roomCount = int.tryParse(_roomCount.text) ?? 0;
+    final totalBottles = roomCount * _selectedProductIds.length;
+
+    final proceed = await _showOnboardingInventoryDialog(context, totalBottles);
+    if (proceed != true) return;
+
+    setState(() => _isSaving = true);
     try {
       await ref.read(repositoryProvider).createHotel(
             name: _name.text.trim(),
@@ -599,8 +635,9 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
               hotelId: created.id,
               floorNumber: int.parse(_floorNumber.text),
               firstRoomNumber: int.parse(_firstRoomNumber.text),
-              roomCount: int.parse(_roomCount.text),
+              roomCount: roomCount,
               productIds: _selectedProductIds.toList(),
+              autoAdjustInventory: true,
             );
       }
       if (mounted) {

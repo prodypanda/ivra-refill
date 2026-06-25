@@ -1405,6 +1405,37 @@ Future<void> _showBottleEditRequest(
   ref.invalidate(dashboardProvider);
 }
 
+Future<bool?> _showInsufficientStockDialog({
+  required BuildContext context,
+  required String productName,
+  required String message,
+}) {
+  final l10n = AppLocalizations.of(context);
+  return showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.error),
+          const SizedBox(width: 8),
+          Text(l10n.t('inventoryEnforceTitle')),
+        ],
+      ),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(l10n.t('btnCancel')),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(l10n.t('inventoryEnforceBtnProceed')),
+        ),
+      ],
+    ),
+  );
+}
+
 Future<void> _replaceBottle(
   BuildContext context,
   WidgetRef ref,
@@ -1412,11 +1443,44 @@ Future<void> _replaceBottle(
 ) async {
   final l10n = AppLocalizations.of(context);
   var isOffline = ref.read(offlineModeProvider);
+
+  // Check inventory stock
+  final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+  final stockItem = inventory.firstWhere(
+    (stock) => stock.product.id == item.product.id,
+    orElse: () => InventoryItem(
+      id: '',
+      hotelId: item.hotelId,
+      product: item.product,
+      fullBottles: 0,
+      emptyBottles: 0,
+      fullBidons: 0,
+      openBidons: 0,
+      emptyBidons: 0,
+    ),
+  );
+
+  var autoAdjust = false;
+  if (stockItem.fullBottles == 0) {
+    final language = Localizations.localeOf(context).languageCode;
+    final proceed = await _showInsufficientStockDialog(
+      context: context,
+      productName: item.product.label(language),
+      message: l10n.tParams('inventoryEnforceReplaceContent', {
+        'product': item.product.label(language),
+        'room': item.roomNumber,
+      }),
+    );
+    if (proceed != true) return;
+    autoAdjust = true;
+  }
+
   if (!isOffline) {
     try {
       await ref.read(repositoryProvider).replaceBottle(
             roomProductId: item.id,
             notes: l10n.t('roomsReplacementNotes'),
+            autoAdjustInventory: autoAdjust,
           );
     } catch (e) {
       if (e.toString().contains('SocketException') ||
@@ -1435,6 +1499,7 @@ Future<void> _replaceBottle(
       payload: {
         'roomProductId': item.id,
         'notes': l10n.t('roomsReplacementNotes'),
+        'autoAdjustInventory': autoAdjust,
       },
     );
     ref.invalidate(offlineActionsProvider);
@@ -2795,6 +2860,48 @@ class _RoomEditRequestDialogState
           .map((rp) => rp.product.id)
           .toList();
 
+      final newProductIds = _selectedProductIds ?? oldProductIds;
+      final addedProductIds = newProductIds.where((pid) => !oldProductIds.contains(pid)).toList();
+
+      final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+      final products = ref.read(productsProvider).valueOrNull ?? [];
+      var needsAutoAdjust = false;
+
+      for (final pid in addedProductIds) {
+        final product = products.firstWhere((p) => p.id == pid);
+        final stockItem = inventory.firstWhere(
+          (stock) => stock.product.id == pid,
+          orElse: () => InventoryItem(
+            id: '',
+            hotelId: widget.item.hotelId,
+            product: product,
+            fullBottles: 0,
+            emptyBottles: 0,
+            fullBidons: 0,
+            openBidons: 0,
+            emptyBidons: 0,
+          ),
+        );
+        if (stockItem.fullBottles == 0) {
+          final language = Localizations.localeOf(context).languageCode;
+          final proceed = await _showInsufficientStockDialog(
+            context: context,
+            productName: product.label(language),
+            message: l10n.tParams('inventoryEnforceTemplateContent', {
+              'total': '1',
+              'product': product.label(language),
+              'current': '0',
+              'needed': '1',
+            }),
+          );
+          if (proceed != true) {
+            setState(() => _isSaving = false);
+            return;
+          }
+          needsAutoAdjust = true;
+        }
+      }
+
       final oldData = {
         'room_number': widget.item.roomNumber,
         'floor_number': widget.item.floorNumber,
@@ -2803,7 +2910,8 @@ class _RoomEditRequestDialogState
       final newData = {
         'room_number': _roomNumber.text.trim(),
         'floor_number': int.parse(_floorNumber.text),
-        'product_ids': _selectedProductIds ?? oldProductIds,
+        'product_ids': newProductIds,
+        'auto_adjust_inventory': needsAutoAdjust,
       };
       final offline = ref.read(offlineModeProvider);
       final appliedImmediately = await _submitPendingEditRequest(
@@ -3503,7 +3611,47 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
             ),
           );
         }
+        setState(() => _isSaving = false);
         return;
+      }
+
+      final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+      final products = ref.read(productsProvider).valueOrNull ?? [];
+      var needsAutoAdjust = false;
+      
+      for (final pid in _selectedProductIds) {
+        final product = products.firstWhere((p) => p.id == pid);
+        final stockItem = inventory.firstWhere(
+          (stock) => stock.product.id == pid,
+          orElse: () => InventoryItem(
+            id: '',
+            hotelId: _hotelId,
+            product: product,
+            fullBottles: 0,
+            emptyBottles: 0,
+            fullBidons: 0,
+            openBidons: 0,
+            emptyBidons: 0,
+          ),
+        );
+        if (stockItem.fullBottles < roomCount) {
+          final language = Localizations.localeOf(context).languageCode;
+          final proceed = await _showInsufficientStockDialog(
+            context: context,
+            productName: product.label(language),
+            message: l10n.tParams('inventoryEnforceTemplateContent', {
+              'total': roomCount.toString(),
+              'product': product.label(language),
+              'current': stockItem.fullBottles.toString(),
+              'needed': (roomCount - stockItem.fullBottles).toString(),
+            }),
+          );
+          if (proceed != true) {
+            setState(() => _isSaving = false);
+            return;
+          }
+          needsAutoAdjust = true;
+        }
       }
 
       await ref.read(repositoryProvider).createRoomsFromTemplate(
@@ -3512,6 +3660,7 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
             firstRoomNumber: firstRoomNumber,
             roomCount: roomCount,
             productIds: _selectedProductIds.toList(),
+            autoAdjustInventory: needsAutoAdjust,
           );
       if (mounted) Navigator.of(context).pop();
     } catch (error) {
@@ -3726,7 +3875,46 @@ class _AddRoomDialogState extends ConsumerState<_AddRoomDialog> {
             ),
           );
         }
+        setState(() => _isSaving = false);
         return;
+      }
+
+      final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+      var needsAutoAdjust = false;
+      
+      for (final pid in _selectedProductIds) {
+        final product = widget.products.firstWhere((p) => p.id == pid);
+        final stockItem = inventory.firstWhere(
+          (stock) => stock.product.id == pid,
+          orElse: () => InventoryItem(
+            id: '',
+            hotelId: widget.hotelId,
+            product: product,
+            fullBottles: 0,
+            emptyBottles: 0,
+            fullBidons: 0,
+            openBidons: 0,
+            emptyBidons: 0,
+          ),
+        );
+        if (stockItem.fullBottles == 0) {
+          final language = Localizations.localeOf(context).languageCode;
+          final proceed = await _showInsufficientStockDialog(
+            context: context,
+            productName: product.label(language),
+            message: l10n.tParams('inventoryEnforceTemplateContent', {
+              'total': '1',
+              'product': product.label(language),
+              'current': '0',
+              'needed': '1',
+            }),
+          );
+          if (proceed != true) {
+            setState(() => _isSaving = false);
+            return;
+          }
+          needsAutoAdjust = true;
+        }
       }
 
       await ref.read(repositoryProvider).createRoomsFromTemplate(
@@ -3735,6 +3923,7 @@ class _AddRoomDialogState extends ConsumerState<_AddRoomDialog> {
             firstRoomNumber: parsedRoomNumber,
             roomCount: 1,
             productIds: _selectedProductIds.toList(),
+            autoAdjustInventory: needsAutoAdjust,
           );
       if (mounted) {
         Navigator.of(context).pop();

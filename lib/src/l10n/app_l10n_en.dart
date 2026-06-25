@@ -2062,4 +2062,36 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get productHistoryStatAdjustments => 'Adjustments';
+
+  @override
+  String get inventoryEnforceTitle => 'Insufficient Stock';
+
+  @override
+  String inventoryEnforceTemplateContent(
+      String total, String product, String current, String needed) {
+    return 'Placing $total bottle(s) of $product requires stock. Inventory only has $current. Would you like to automatically add $needed bottle(s) to the inventory and proceed?';
+  }
+
+  @override
+  String inventoryEnforceReplaceContent(String product, String room) {
+    return 'Replacing the bottle of $product in Room $room requires 1 full bottle. Inventory has 0. Would you like to automatically add 1 bottle to the inventory and proceed?';
+  }
+
+  @override
+  String get inventoryEnforceBtnProceed => 'Auto-Adjust & Proceed';
+
+  @override
+  String get inventoryEnforceReasonTemplate =>
+      'Auto-adjusted for room creation template';
+
+  @override
+  String get inventoryEnforceReasonReplace => 'Auto-adjusted for replacement';
+
+  @override
+  String get inventoryEnforceOnboardingTitle => 'Initialize Inventory';
+
+  @override
+  String inventoryEnforceOnboardingContent(String total) {
+    return 'Since this is a new hotel, there are no products in the inventory. Would you like to automatically initialize the inventory with $total bottles to place in the rooms?';
+  }
 }

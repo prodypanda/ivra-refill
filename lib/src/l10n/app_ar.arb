@@ -627,5 +627,13 @@
   "productHistoryFilterManual": "التعديلات",
   "productHistoryStatRefills": "إعادات التعبئة",
   "productHistoryStatReplacements": "الاستبدالات",
-  "productHistoryStatAdjustments": "التعديلات"
+  "productHistoryStatAdjustments": "التعديلات",
+  "inventoryEnforceTitle": "مخزون غير كافٍ",
+  "inventoryEnforceTemplateContent": "وضع {total} زجاجة (زجاجات) من {product} يتطلب مخزونًا. يحتوي المخزون فقط على {current}. هل ترغب في إضافة {needed} زجاجة (زجاجات) تلقائيًا إلى المخزون والمتابعة؟",
+  "inventoryEnforceReplaceContent": "استبدال زجاجة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة. المخزون يحتوي على 0. هل ترغب في إضافة زجاجة واحدة تلقائيًا إلى المخزون والمتابعة؟",
+  "inventoryEnforceBtnProceed": "التعديل التلقائي والمتابعة",
+  "inventoryEnforceReasonTemplate": "تعديل تلقائي لنموذج إنشاء الغرف",
+  "inventoryEnforceReasonReplace": "تعديل تلقائي للاستبدال",
+  "inventoryEnforceOnboardingTitle": "تهيئة المخزون",
+  "inventoryEnforceOnboardingContent": "بما أن هذا فندق جديد، فلا توجد منتجات في المخزون. هل ترغب في تهيئة المخزون تلقائيًا بـ {total} زجاجة لوضعها في الغرف؟"
 }

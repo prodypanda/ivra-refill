@@ -605,6 +605,7 @@ class SupabaseIvraRepository implements IvraRepository {
     required int firstRoomNumber,
     required int roomCount,
     required List<String> productIds,
+    bool autoAdjustInventory = false,
   }) async {
     await _client.rpc('create_rooms_from_template', params: {
       'p_hotel_id': hotelId,
@@ -612,6 +613,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_first_room_number': firstRoomNumber,
       'p_room_count': roomCount,
       'p_product_ids': productIds,
+      'p_auto_adjust_inventory': autoAdjustInventory,
     });
     await _auditService.logAction('Created rooms from template', details: {'hotel_id': hotelId, 'floor_number': floorNumber, 'room_count': roomCount});
   }
@@ -813,11 +815,13 @@ class SupabaseIvraRepository implements IvraRepository {
     required String roomProductId,
     String? notes,
     String? clientRequestId,
+    bool autoAdjustInventory = false,
   }) async {
     await _client.rpc('replace_bottle', params: {
       'p_room_product_id': roomProductId,
       'p_notes': notes,
       'p_client_request_id': clientRequestId,
+      'p_auto_adjust_inventory': autoAdjustInventory,
     });
     await _auditService.logAction('Replaced bottle', details: {'room_product_id': roomProductId});
   }
