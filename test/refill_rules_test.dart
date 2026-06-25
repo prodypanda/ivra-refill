@@ -607,6 +607,70 @@ void main() {
     expect(updated.maxBottleAgeDays, 90);
   });
 
+  test('direct replacement products do not generate refill limit alerts', () async {
+    final repository = MockIvraRepository();
+
+    // 1. Create a direct replacement product
+    await repository.createProduct(
+      sku: 'IVR-REP-XYZ',
+      nameEn: 'Direct Replace Body Wash',
+      nameFr: 'Savon direct XYZ',
+      nameAr: 'استبدال مباشر',
+      bottleVolumeMl: 1000,
+      bidonVolumeMl: 0,
+      maxRefillCount: 0,
+      maxBottleAgeDays: 120,
+      lowBottleThreshold: 5,
+      lowBidonThreshold: 0,
+      refillType: RefillType.directReplacement,
+    );
+
+    final products = await repository.products();
+    final repProduct = products.last;
+
+    // 2. Put this product in a room
+    final rooms = await repository.rooms();
+    final firstRoom = rooms.first;
+    final hotelId = firstRoom.hotelId;
+    
+    // Now template/place rooms (with autoAdjustInventory: true to initialize inventory item)
+    await repository.createRoomsFromTemplate(
+      hotelId: hotelId,
+      floorNumber: 5,
+      firstRoomNumber: 501,
+      roomCount: 1,
+      productIds: [repProduct.id],
+      autoAdjustInventory: true,
+    );
+
+    // Adjust stock to have 10 bottles of this new product (now that the item exists in inventory)
+    await repository.recordStockAdjustment(
+      hotelId: hotelId,
+      productId: repProduct.id,
+      fullBottlesDelta: 9, // we already have 1 from the room creation
+      emptyBottlesDelta: 0,
+      fullBidonsDelta: 0,
+      openBidonsDelta: 0,
+      emptyBidonsDelta: 0,
+      reason: 'test stock',
+    );
+
+    // 3. Clear all existing alerts for this hotel to test cleanly
+    final alertsBefore = await repository.alerts(hotelId: hotelId);
+    for (final alert in alertsBefore) {
+      await repository.resolveAlert(alertId: alert.id);
+    }
+
+    // 4. Trigger alert generation
+    await repository.refreshSmartAlerts(hotelId: hotelId);
+
+    // 5. Verify no alerts of type refillLimit are generated for this hotel/product
+    final alertsAfter = await repository.alerts(hotelId: hotelId);
+    final refillLimitAlerts = alertsAfter.where((a) => !a.isResolved && a.type == AlertType.refillLimit && a.productId == repProduct.id).toList();
+    expect(refillLimitAlerts.isEmpty, true);
+  });
+
+
 
   test('offline queue syncs refill actions', () async {
     SharedPreferences.setMockInitialValues({});

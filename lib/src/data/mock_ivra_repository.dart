@@ -581,9 +581,10 @@ class MockIvraRepository implements IvraRepository {
     }
 
     for (final roomProduct in await roomProducts(hotelId: hotelId)) {
-      if (roomProduct.refillCount >= roomProduct.product.maxRefillCount ||
-          roomProduct.status == BottleStatus.refillLimitReached ||
-          roomProduct.status == BottleStatus.needsReplacement) {
+      if (roomProduct.product.isRefillable &&
+          (roomProduct.refillCount >= roomProduct.product.maxRefillCount ||
+           roomProduct.status == BottleStatus.refillLimitReached ||
+           roomProduct.status == BottleStatus.needsReplacement)) {
         created += _insertAlertIfMissing(
           AlertItem(
             id: _uuid.v4(),
