@@ -634,8 +634,8 @@ class _MobileHeroState extends State<_MobileHero> {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: -20,
+          PositionedDirectional(
+            end: -20,
             top: -20,
             child: Icon(
               Icons.spa,
@@ -889,9 +889,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
           refillEventsAsync.when(
             loading: () => const SizedBox(
               height: 220,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: CardShimmer(),
             ),
             error: (err, stack) => SizedBox(
               height: 220,
@@ -1097,12 +1095,13 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
                     maxY: maxY,
                     lineTouchData: LineTouchData(
                       touchTooltipData: LineTouchTooltipData(
+                        getTooltipColor: (touchedSpot) => theme.colorScheme.primaryContainer,
                         getTooltipItems: (touchedSpots) {
                           return touchedSpots
                               .map((spot) => LineTooltipItem(
                                     '${spot.y.toInt()} ${l10n.t('chartRefills')}',
-                                    const TextStyle(
-                                      color: Colors.white,
+                                    TextStyle(
+                                      color: theme.colorScheme.onPrimaryContainer,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ))
@@ -1134,7 +1133,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
                           gradient: LinearGradient(
                             colors: [
                               theme.colorScheme.primary.withValues(alpha: 0.3),
-                              theme.colorScheme.primary.withValues(alpha: 0.0),
+                              theme.colorScheme.primary.withValues(alpha: 0.1),
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
