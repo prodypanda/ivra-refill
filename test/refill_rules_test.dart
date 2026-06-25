@@ -564,6 +564,50 @@ void main() {
     expect(updated.maxRefillCount, 9);
   });
 
+  test('direct replacement product can be created and updated with custom maxBottleAgeDays', () async {
+    final repository = MockIvraRepository();
+    final before = await repository.products();
+
+    await repository.createProduct(
+      sku: 'IVR-REP-1L',
+      nameEn: 'Direct Replace Wash',
+      nameFr: 'Savon direct',
+      nameAr: 'منتج استبدال مباشر',
+      bottleVolumeMl: 1000,
+      bidonVolumeMl: 0,
+      maxRefillCount: 0,
+      maxBottleAgeDays: 120,
+      lowBottleThreshold: 5,
+      lowBidonThreshold: 0,
+      refillType: RefillType.directReplacement,
+    );
+
+    final created = (await repository.products()).last;
+    expect((await repository.products()).length, before.length + 1);
+    expect(created.refillType, RefillType.directReplacement);
+    expect(created.maxBottleAgeDays, 120);
+
+    await repository.updateProduct(
+      productId: created.id,
+      sku: created.sku,
+      nameEn: 'Updated Direct Replace Wash',
+      nameFr: created.nameFr,
+      nameAr: created.nameAr,
+      bottleVolumeMl: 1000,
+      bidonVolumeMl: 0,
+      maxRefillCount: 0,
+      maxBottleAgeDays: 90,
+      lowBottleThreshold: 5,
+      lowBidonThreshold: 0,
+      refillType: RefillType.directReplacement,
+    );
+
+    final updated = (await repository.products()).last;
+    expect(updated.nameEn, 'Updated Direct Replace Wash');
+    expect(updated.maxBottleAgeDays, 90);
+  });
+
+
   test('offline queue syncs refill actions', () async {
     SharedPreferences.setMockInitialValues({});
     final repository = MockIvraRepository();

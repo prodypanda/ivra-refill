@@ -359,11 +359,11 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                           Icons.loop_outlined,
                           l10n.t('productsLabelMaxRefill'),
                           '${widget.product.maxRefillCount} ${l10n.t('refills')}'),
-                      _RuleRow(
-                          Icons.calendar_today_outlined,
-                          l10n.t('productsLabelMaxAge'),
-                          '${widget.product.maxBottleAgeDays} ${l10n.t('days')}'),
                     ],
+                    _RuleRow(
+                        Icons.calendar_today_outlined,
+                        l10n.t('productsLabelMaxAge'),
+                        '${widget.product.maxBottleAgeDays} ${l10n.t('days')}'),
                     _RuleRow(
                       Icons.warning_amber_outlined,
                       l10n.t('productsLabelLowStock'),
@@ -909,11 +909,11 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                               controller: _maxRefillCount,
                               label: l10n.t('productsLabelMaxRefills'),
                             ),
-                            _PositiveIntField(
-                              controller: _maxBottleAgeDays,
-                              label: l10n.t('productsLabelMaxAgeDays'),
-                            ),
                           ],
+                          _PositiveIntField(
+                            controller: _maxBottleAgeDays,
+                            label: l10n.t('productsLabelMaxAgeDays'),
+                          ),
                           _PositiveIntField(
                             controller: _lowBottleThreshold,
                             label: l10n.t('productsLabelLowBottles'),
@@ -1014,9 +1014,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
       final maxRefillCount = _selectedRefillType == RefillType.directReplacement
           ? 0
           : int.parse(_maxRefillCount.text);
-      final maxBottleAgeDays = _selectedRefillType == RefillType.directReplacement
-          ? 0
-          : int.parse(_maxBottleAgeDays.text);
+      final maxBottleAgeDays = int.parse(_maxBottleAgeDays.text);
       final lowBidonThreshold = _selectedRefillType == RefillType.directReplacement
           ? 0
           : int.parse(_lowBidonThreshold.text);
