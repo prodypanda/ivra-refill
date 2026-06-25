@@ -150,6 +150,10 @@ class BiometricAccountNotifier extends StateNotifier<String?> {
     if (prefs.containsKey(AuthPrefs.legacyBiometricEnabled)) {
       await prefs.remove(AuthPrefs.legacyBiometricEnabled);
     }
+    // Purge the legacy global plaintext password from disk.
+    if (prefs.containsKey(AuthPrefs.legacyPassword)) {
+      await prefs.remove(AuthPrefs.legacyPassword);
+    }
     if (!mounted) return;
     final account = prefs.getString(AuthPrefs.biometricAccount);
     state = (account != null && account.isNotEmpty) ? account : null;
