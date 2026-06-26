@@ -860,6 +860,9 @@ class AppL10nFr extends AppL10n {
   String get roomsNoProducts => 'Aucun produit attribué à cette chambre.';
 
   @override
+  String get roomsStatusNoProducts => 'Aucun produit';
+
+  @override
   String get roomsSearchEmptyHint =>
       'Essayez de modifier votre recherche ou vos filtres.';
 
@@ -926,9 +929,6 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get roomsStatusRefillNeeded => 'Recharge requise';
-
-  @override
-  String get roomsStatusNoProducts => 'Aucun produit';
 
   @override
   String get roomsSearchPlaceholder => 'Rechercher une chambre...';

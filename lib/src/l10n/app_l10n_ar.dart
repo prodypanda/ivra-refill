@@ -846,6 +846,9 @@ class AppL10nAr extends AppL10n {
   String get roomsNoProducts => 'لا توجد منتجات مخصصة لهذه الغرفة.';
 
   @override
+  String get roomsStatusNoProducts => 'لا توجد منتجات';
+
+  @override
   String get roomsSearchEmptyHint =>
       'جرّب تعديل استفسار البحث أو العوامل التصفية.';
 
@@ -910,9 +913,6 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get roomsStatusRefillNeeded => 'تعبئة مطلوبة';
-
-  @override
-  String get roomsStatusNoProducts => 'لا توجد منتجات';
 
   @override
   String get roomsSearchPlaceholder => 'البحث عن غرفة...';

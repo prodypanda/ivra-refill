@@ -1667,6 +1667,12 @@ abstract class AppL10n {
   /// **'No products assigned to this room.'**
   String get roomsNoProducts;
 
+  /// No description provided for @roomsStatusNoProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'No products'**
+  String get roomsStatusNoProducts;
+
   /// No description provided for @roomsSearchEmptyHint.
   ///
   /// In en, this message translates to:
@@ -1792,12 +1798,6 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Refill Needed'**
   String get roomsStatusRefillNeeded;
-
-  /// No description provided for @roomsStatusNoProducts.
-  ///
-  /// In en, this message translates to:
-  /// **'No products'**
-  String get roomsStatusNoProducts;
 
   /// No description provided for @roomsSearchPlaceholder.
   ///
