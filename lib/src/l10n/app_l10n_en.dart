@@ -909,6 +909,9 @@ class AppL10nEn extends AppL10n {
   String get roomsBtnReplaceBottle => 'Replace bottle';
 
   @override
+  String get roomsBtnRefillBottle => 'Refill bottle';
+
+  @override
   String get roomsBtnRoomEdit => 'Room edit';
 
   @override

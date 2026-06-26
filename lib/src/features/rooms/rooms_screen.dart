@@ -2363,7 +2363,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  '${l10n.t('roomsLabelRefills')}: ${item.refillCount}',
+                  '${l10n.t('roomsLabelRefills')}: ${item.refillCount}/${item.product.maxRefillCount}',
                   style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
                 ),
               ),
@@ -2374,7 +2374,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                '${l10n.t('roomsLabelAge')}: ${item.bottleAgeDays(DateTime.now())}${l10n.t('roomsLabelDaysUnit')}',
+                '${l10n.t('roomsLabelAge')}: ${item.bottleAgeDays(DateTime.now())}${l10n.t('roomsLabelDaysUnit')}/${item.product.maxBottleAgeDays}${l10n.t('roomsLabelDaysUnit')}',
                 style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
               ),
             ),
@@ -2397,8 +2397,10 @@ class _RoomCardProductRow extends ConsumerWidget {
           ],
         );
 
-        final actions = Row(
-          mainAxisSize: MainAxisSize.min,
+        final actions = Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             if (item.product.isRefillable) ...[
               FilledButton.icon(
@@ -2412,9 +2414,8 @@ class _RoomCardProductRow extends ConsumerWidget {
                 onPressed: item.canRefill ? performRefill : null,
                 icon: const Icon(IvraIcons.refillAction, size: 18),
                 label:
-                    Text(l10n.t('refill'), style: const TextStyle(fontSize: 12)),
+                    Text(l10n.t('roomsBtnRefillBottle'), style: const TextStyle(fontSize: 12)),
               ),
-              const SizedBox(width: 4),
               IconButton(
                 visualDensity: VisualDensity.compact,
                 tooltip: l10n.t('roomsBtnReplaceBottle'),

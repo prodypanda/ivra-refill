@@ -914,6 +914,9 @@ class AppL10nIt extends AppL10n {
   String get roomsBtnReplaceBottle => 'Sostituisci bottiglia';
 
   @override
+  String get roomsBtnRefillBottle => 'Ricarica bottiglia';
+
+  @override
   String get roomsBtnRoomEdit => 'Modifica camera';
 
   @override

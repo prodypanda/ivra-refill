@@ -986,7 +986,7 @@ class _VisualStockBar extends StatelessWidget {
     required this.threshold,
     required this.icon,
     required this.color,
-    this.iconSize = 24,
+    this.iconSize = 31,
   });
 
   final String label;
@@ -1106,7 +1106,7 @@ class _MiniStat extends StatelessWidget {
     final theme = Theme.of(context);
     return Row(
       children: [
-        Icon(icon, size: 20, color: color),
+        Icon(icon, size: 26, color: color),
         const SizedBox(width: 6),
         Expanded(
           child: Column(

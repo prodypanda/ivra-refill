@@ -1763,6 +1763,12 @@ abstract class AppL10n {
   /// **'Replace bottle'**
   String get roomsBtnReplaceBottle;
 
+  /// No description provided for @roomsBtnRefillBottle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill bottle'**
+  String get roomsBtnRefillBottle;
+
   /// No description provided for @roomsBtnRoomEdit.
   ///
   /// In en, this message translates to:

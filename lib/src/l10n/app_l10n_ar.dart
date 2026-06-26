@@ -904,6 +904,9 @@ class AppL10nAr extends AppL10n {
   String get roomsBtnReplaceBottle => 'استبدال العبوة';
 
   @override
+  String get roomsBtnRefillBottle => 'إعادة تعبئة العبوة';
+
+  @override
   String get roomsBtnRoomEdit => 'تعديل الغرفة';
 
   @override

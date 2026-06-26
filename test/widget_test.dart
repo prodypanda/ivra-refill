@@ -104,7 +104,7 @@ void main() {
     expect(find.byTooltip('Create room template'), findsNothing);
     expect(find.text('Bottle edit'), findsNothing);
     expect(find.text('Room edit'), findsNothing);
-    expect(find.text('Refill'), findsWidgets);
+    expect(find.text('Refill bottle'), findsWidgets);
   });
 
   testWidgets('hotel manager cannot create hotels or approve requests',
