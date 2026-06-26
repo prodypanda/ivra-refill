@@ -374,6 +374,7 @@
   "teamHotelsUpdateFailed": "Could not update hotel assignments. Please try again.",
   "roomsTooltipCreateTemplate": "Create room template",
   "roomsNoRoomsFound": "No rooms or products found.",
+  "roomsNoProducts": "No products assigned to this room.",
   "roomsSearchEmptyHint": "Try adjusting your search query or filters.",
   "roomsEmptyHotelWithTemplate": "Add your first room using the template button above.",
   "roomsEmptyHotelNoTemplate": "No rooms have been assigned to this hotel yet.",

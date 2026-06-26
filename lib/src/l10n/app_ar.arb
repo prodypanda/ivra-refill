@@ -260,6 +260,7 @@
   "teamHotelsUpdateFailed": "تعذّر تحديث تعيينات الفنادق. حاول مرّة أخرى.",
   "roomsTooltipCreateTemplate": "إنشاء نموذج غرفة",
   "roomsNoRoomsFound": "لم يتم العثور على غرف أو منتجات.",
+  "roomsNoProducts": "لا توجد منتجات مخصصة لهذه الغرفة.",
   "roomsSearchEmptyHint": "جرّب تعديل استفسار البحث أو العوامل التصفية.",
   "roomsEmptyHotelWithTemplate": "أضف غرفتك الأولى باستخدام زر القالب في الأعلى.",
   "roomsEmptyHotelNoTemplate": "لم يتمّ تعيين أي غرفة لهذا الفندق بعد.",

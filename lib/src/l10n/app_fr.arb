@@ -260,6 +260,7 @@
   "teamHotelsUpdateFailed": "Impossible de mettre à jour les affectations d'hôtels. Réessayez.",
   "roomsTooltipCreateTemplate": "Créer un modèle de chambre",
   "roomsNoRoomsFound": "Aucune chambre ni produit trouvé.",
+  "roomsNoProducts": "Aucun produit attribué à cette chambre.",
   "roomsSearchEmptyHint": "Essayez de modifier votre recherche ou vos filtres.",
   "roomsEmptyHotelWithTemplate": "Ajoutez votre première chambre via le bouton de modèle ci-dessus.",
   "roomsEmptyHotelNoTemplate": "Aucune chambre n'a encore été attribuée à cet hôtel.",

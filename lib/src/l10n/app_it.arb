@@ -260,6 +260,7 @@
   "teamHotelsUpdateFailed": "Impossibile aggiornare le assegnazioni hotel. Riprova.",
   "roomsTooltipCreateTemplate": "Crea modello camera",
   "roomsNoRoomsFound": "Nessuna camera o prodotto trovato.",
+  "roomsNoProducts": "Nessun prodotto assegnato a questa camera.",
   "roomsSearchEmptyHint": "Prova a modificare la ricerca o i filtri.",
   "roomsEmptyHotelWithTemplate": "Aggiungi la tua prima camera con il pulsante modello in alto.",
   "roomsEmptyHotelNoTemplate": "Nessuna camera è ancora stata assegnata a questo hotel.",

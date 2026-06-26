@@ -853,6 +853,9 @@ class AppL10nIt extends AppL10n {
   String get roomsNoRoomsFound => 'Nessuna camera o prodotto trovato.';
 
   @override
+  String get roomsNoProducts => 'Nessun prodotto assegnato a questa camera.';
+
+  @override
   String get roomsSearchEmptyHint =>
       'Prova a modificare la ricerca o i filtri.';
 

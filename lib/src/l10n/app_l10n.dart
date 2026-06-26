@@ -1661,6 +1661,12 @@ abstract class AppL10n {
   /// **'No rooms or products found.'**
   String get roomsNoRoomsFound;
 
+  /// No description provided for @roomsNoProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'No products assigned to this room.'**
+  String get roomsNoProducts;
+
   /// No description provided for @roomsSearchEmptyHint.
   ///
   /// In en, this message translates to:

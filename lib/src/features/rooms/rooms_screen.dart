@@ -115,8 +115,27 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final canCreateRoomsFromTemplate = currentUser?.isIvraUser ?? false;
 
     final hotelsAsync = ref.watch(hotelsProvider);
+    final roomsAsync = ref.watch(roomsProvider);
     final roomProductsAsync = ref.watch(roomProductsProvider);
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
+
+    final combinedAsync = roomsAsync.when<AsyncValue<List<_RoomGroup>>>(
+      data: (rooms) {
+        return roomProductsAsync.when<AsyncValue<List<_RoomGroup>>>(
+          data: (products) {
+            final groups = rooms.map((room) {
+              final roomProducts = products.where((p) => p.roomId == room.id).toList();
+              return _RoomGroup(roomInfo: room, products: roomProducts);
+            }).toList();
+            return AsyncValue.data(groups);
+          },
+          error: (err, stack) => AsyncValue.error(err, stack),
+          loading: () => const AsyncValue.loading(),
+        );
+      },
+      error: (err, stack) => AsyncValue.error(err, stack),
+      loading: () => const AsyncValue.loading(),
+    );
 
     // Load the recent-rooms list for the active hotel (no-op if unchanged).
     if (selectedHotelId != null && _recentRoomsHotelId != selectedHotelId) {
@@ -146,9 +165,11 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
       title: l10n.t('rooms'),
       onRefresh: () async {
         ref.invalidate(hotelsProvider);
+        ref.invalidate(roomsProvider);
         ref.invalidate(roomProductsProvider);
         await Future.wait([
           ref.read(hotelsProvider.future),
+          ref.read(roomsProvider.future),
           ref.read(roomProductsProvider.future),
         ]);
       },
@@ -212,8 +233,11 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 )
               else
                 AsyncValueView(
-                  value: roomProductsAsync,
-                  onRetry: () => ref.invalidate(roomProductsProvider),
+                  value: combinedAsync,
+                  onRetry: () {
+                    ref.invalidate(roomsProvider);
+                    ref.invalidate(roomProductsProvider);
+                  },
                   loadingWidget: ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -224,15 +248,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       child: CardShimmer(),
                     ),
                   ),
-                  builder: (items) {
-                    // 1. Filter by selected hotel
-                    final hotelItems = items
-                        .where((item) => item.hotelId == selectedHotelId)
-                        .toList();
-
-
-
-                    if (hotelItems.isEmpty) {
+                  builder: (groups) {
+                    if (groups.isEmpty) {
                       return EmptyState(
                         icon: Icons.meeting_room_outlined,
                         title: l10n.t('roomsNoRoomsFound'),
@@ -242,20 +259,11 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       );
                     }
 
-                    // Group items by roomId first to calculate overall status & filter by search
-                    final Map<String, List<RoomProduct>> groupedRooms = {};
-                    for (final item in hotelItems) {
-                      groupedRooms.putIfAbsent(item.roomId, () => []).add(item);
-                    }
-
                     // Apply search query and status filter at room level
-                    final filteredRoomEntries =
-                        groupedRooms.entries.where((entry) {
-                      final firstItem = entry.value.first;
-
+                    final filteredGroups = groups.where((group) {
                       // Search filter
                       if (_searchQuery.isNotEmpty) {
-                        if (!firstItem.roomNumber
+                        if (!group.roomNumber
                             .toLowerCase()
                             .contains(_searchQuery.toLowerCase())) {
                           return false;
@@ -265,7 +273,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       // Product search filter
                       if (_productSearchQuery.isNotEmpty) {
                         final query = _productSearchQuery.toLowerCase();
-                        final matches = entry.value.any((item) {
+                        final matches = group.products.any((item) {
                           final name = item.product.label(Localizations.localeOf(context).languageCode).toLowerCase();
                           final sku = item.product.sku.toLowerCase();
                           return name.contains(query) || sku.contains(query);
@@ -278,7 +286,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       // Status filter
                       if (_statusFilter != 'all') {
                         final overallStatus =
-                            _getRoomOverallStatus(entry.value);
+                            _getRoomOverallStatus(group.products);
                         if (_statusFilter == 'ok' &&
                             overallStatus != _RoomOverallStatus.allOk) {
                           return false;
@@ -297,7 +305,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       return true;
                     }).toList();
 
-                    if (filteredRoomEntries.isEmpty) {
+                    if (filteredGroups.isEmpty) {
                       return EmptyState(
                         icon: Icons.search_off_outlined,
                         title: l10n.t('roomsNoRoomsFound'),
@@ -306,11 +314,9 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     }
 
                     // Group rooms by floor
-                    final Map<int, List<MapEntry<String, List<RoomProduct>>>>
-                        roomsByFloor = {};
-                    for (final entry in filteredRoomEntries) {
-                      final floor = entry.value.first.floorNumber;
-                      roomsByFloor.putIfAbsent(floor, () => []).add(entry);
+                    final Map<int, List<_RoomGroup>> roomsByFloor = {};
+                    for (final group in filteredGroups) {
+                      roomsByFloor.putIfAbsent(group.floorNumber, () => []).add(group);
                     }
 
                     final sortedFloors = roomsByFloor.keys.toList()..sort();
@@ -324,7 +330,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       children: [
                         if (isMobile) ...[
                           _RoomsMobileSummary(
-                            rooms: filteredRoomEntries,
+                            rooms: filteredGroups,
                             getStatus: _getRoomOverallStatus,
                           ),
                           const SizedBox(height: 16),
@@ -380,17 +386,20 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                 ? Column(
                                     key: const ValueKey('detailed_view'),
                                     children: [
-                                      for (final entry in _sortRoomsInFloor(
+                                      for (final group in _sortRoomsInFloor(
                                           roomsByFloor[floor]!))
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(bottom: 16),
                                             child: _RoomCard(
-                                              roomId: entry.key,
-                                              roomProducts: entry.value,
+                                              roomId: group.roomId,
+                                              roomProducts: group.products,
+                                              roomNumber: group.roomNumber,
+                                              floorNumber: group.floorNumber,
+                                              hotelId: group.hotelId,
                                               onDeleteRoom: canDeleteRooms
                                                   ? () => _confirmDeleteRoom(
-                                                      context, ref, entry.key, entry.value.first.roomNumber)
+                                                      context, ref, group.roomId, group.roomNumber)
                                                   : null,
                                               productSearchQuery: _productSearchQuery,
                                             ),),
@@ -404,16 +413,14 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                       spacing: 12,
                                       runSpacing: 12,
                                       children: [
-                                        for (final entry in _sortRoomsInFloor(
+                                        for (final group in _sortRoomsInFloor(
                                             roomsByFloor[floor]!))
                                           _CompactRoomTile(
-                                            roomNumber:
-                                                entry.value.first.roomNumber,
-                                            roomProducts: entry.value,
+                                            roomNumber: group.roomNumber,
+                                            roomProducts: group.products,
                                             onTap: () => _showRoomDetailsDialog(
                                               context,
-                                              entry.value.first.roomNumber,
-                                              entry.value,
+                                              group,
                                             ),
                                           ),
                                       ],
@@ -434,17 +441,17 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     );
   }
 
-  List<MapEntry<String, List<RoomProduct>>> _sortRoomsInFloor(
-    List<MapEntry<String, List<RoomProduct>>> floorRooms,
+  List<_RoomGroup> _sortRoomsInFloor(
+    List<_RoomGroup> floorRooms,
   ) {
     return floorRooms.toList()
       ..sort((a, b) {
-        final aNum = int.tryParse(a.value.first.roomNumber) ?? 0;
-        final bNum = int.tryParse(b.value.first.roomNumber) ?? 0;
+        final aNum = int.tryParse(a.roomNumber) ?? 0;
+        final bNum = int.tryParse(b.roomNumber) ?? 0;
         if (aNum != 0 && bNum != 0) {
           return aNum.compareTo(bNum);
         }
-        return a.value.first.roomNumber.compareTo(b.value.first.roomNumber);
+        return a.roomNumber.compareTo(b.roomNumber);
       });
   }
 
@@ -1059,18 +1066,19 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
 
   void _showRoomDetailsDialog(
     BuildContext context,
-    String roomNumber,
-    List<RoomProduct> roomProducts,
+    _RoomGroup group,
   ) {
-    final hotelId = roomProducts.first.hotelId;
-    _recordRecentRoom(hotelId, roomNumber);
+    _recordRecentRoom(group.hotelId, group.roomNumber);
     showCenteredFormSheet<void>(
       context: context,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(16),
         child: _RoomCard(
-          roomId: roomProducts.first.roomId,
-          roomProducts: roomProducts,
+          roomId: group.roomId,
+          roomProducts: group.products,
+          roomNumber: group.roomNumber,
+          floorNumber: group.floorNumber,
+          hotelId: group.hotelId,
           isDialog: true,
           productSearchQuery: _productSearchQuery,
         ),
@@ -1378,7 +1386,12 @@ Future<void> _showRoomEditRequest(
 ) async {
   await showCenteredFormSheet<void>(
     context: context,
-    builder: (context) => _RoomEditRequestDialog(item: item),
+    builder: (context) => _RoomEditRequestDialog(
+      roomId: item.roomId,
+      roomNumber: item.roomNumber,
+      floorNumber: item.floorNumber,
+      hotelId: item.hotelId,
+    ),
   );
 
   ref.invalidate(approvalsProvider);
@@ -1527,6 +1540,9 @@ class _RoomCard extends ConsumerStatefulWidget {
   const _RoomCard({
     required this.roomId,
     required this.roomProducts,
+    required this.roomNumber,
+    required this.floorNumber,
+    required this.hotelId,
     this.isDialog = false,
     this.onDeleteRoom,
     this.productSearchQuery = '',
@@ -1535,6 +1551,9 @@ class _RoomCard extends ConsumerStatefulWidget {
 
   final String roomId;
   final List<RoomProduct> roomProducts;
+  final String roomNumber;
+  final int floorNumber;
+  final String hotelId;
   final bool isDialog;
   final VoidCallback? onDeleteRoom;
   final String productSearchQuery;
@@ -1670,7 +1689,12 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
   Future<void> _showEditRoomLocal(BuildContext context) async {
     await showCenteredFormSheet<void>(
       context: context,
-      builder: (context) => _RoomEditRequestDialog(item: widget.roomProducts.first),
+      builder: (context) => _RoomEditRequestDialog(
+        roomId: widget.roomId,
+        roomNumber: widget.roomNumber,
+        floorNumber: widget.floorNumber,
+        hotelId: widget.hotelId,
+      ),
     );
     ref.invalidate(approvalsProvider);
     ref.invalidate(hotelsProvider);
@@ -1687,7 +1711,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     final confirmed = await PremiumConfirmDialog.show(
       context,
       title: l10n.t('delete'),
-      message: l10n.tParams('confirmDeleteRoom', {'roomNumber': widget.roomProducts.first.roomNumber}),
+      message: l10n.tParams('confirmDeleteRoom', {'roomNumber': widget.roomNumber}),
     );
 
     if (confirmed && context.mounted) {
@@ -1711,7 +1735,6 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final firstItem = widget.roomProducts.first;
     final isMobile = MediaQuery.sizeOf(context).width < 720 && !widget.isDialog;
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
@@ -1794,8 +1817,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                   ),
                   child: isMobile
                       ? _MobileRoomHeader(
-                          roomNumber: firstItem.roomNumber,
-                          floorNumber: firstItem.floorNumber,
+                          roomNumber: widget.roomNumber,
+                          floorNumber: widget.floorNumber,
                           status: overallStatus,
                           statusColor: overallColor,
                           statusIcon: overallIcon,
@@ -1810,7 +1833,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                '${l10n.t('roomsLabelRoom')} ${firstItem.roomNumber}',
+                                '${l10n.t('roomsLabelRoom')} ${widget.roomNumber}',
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1835,7 +1858,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                '${l10n.t('roomsLabelFloor')} ${firstItem.floorNumber}',
+                                '${l10n.t('roomsLabelFloor')} ${widget.floorNumber}',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1906,10 +1929,24 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                   padding: EdgeInsets.all(isMobile ? 14 : 16),
                   child: Column(
                     children: [
-                      for (int i = 0; i < displayedProducts.length; i++) ...[
-                        if (i > 0) Divider(height: isMobile ? 18 : 24),
-                        _RoomCardProductRow(item: displayedProducts[i]),
-                      ],
+                      if (displayedProducts.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 24),
+                          child: Center(
+                            child: Text(
+                              l10n.t('roomsNoProducts'),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                      else
+                        for (int i = 0; i < displayedProducts.length; i++) ...[
+                          if (i > 0) Divider(height: isMobile ? 18 : 24),
+                          _RoomCardProductRow(item: displayedProducts[i]),
+                        ],
                     ],
                   ),
                 ),
@@ -2075,7 +2112,7 @@ class _RoomsMobileSummary extends StatelessWidget {
     required this.getStatus,
   });
 
-  final List<MapEntry<String, List<RoomProduct>>> rooms;
+  final List<_RoomGroup> rooms;
   final _RoomOverallStatus Function(List<RoomProduct> products) getStatus;
 
   @override
@@ -2087,7 +2124,7 @@ class _RoomsMobileSummary extends StatelessWidget {
     var ok = 0;
 
     for (final room in rooms) {
-      switch (getStatus(room.value)) {
+      switch (getStatus(room.products)) {
         case _RoomOverallStatus.attentionRequired:
           attention++;
         case _RoomOverallStatus.refillNeeded:
@@ -2673,9 +2710,17 @@ class _BottleLifecycleEditDialogState
 }
 
 class _RoomEditRequestDialog extends ConsumerStatefulWidget {
-  const _RoomEditRequestDialog({required this.item});
+  const _RoomEditRequestDialog({
+    required this.roomId,
+    required this.roomNumber,
+    required this.floorNumber,
+    required this.hotelId,
+  });
 
-  final RoomProduct item;
+  final String roomId;
+  final String roomNumber;
+  final int floorNumber;
+  final String hotelId;
 
   @override
   ConsumerState<_RoomEditRequestDialog> createState() =>
@@ -2693,9 +2738,9 @@ class _RoomEditRequestDialogState
   @override
   void initState() {
     super.initState();
-    _roomNumber = TextEditingController(text: widget.item.roomNumber);
+    _roomNumber = TextEditingController(text: widget.roomNumber);
     _floorNumber = TextEditingController(
-      text: widget.item.floorNumber.toString(),
+      text: widget.floorNumber.toString(),
     );
   }
 
@@ -2719,7 +2764,7 @@ class _RoomEditRequestDialogState
 
     if (_selectedProductIds == null && roomProductsAsync.hasValue) {
       _selectedProductIds = roomProducts
-          .where((rp) => rp.roomId == widget.item.roomId)
+          .where((rp) => rp.roomId == widget.roomId)
           .map((rp) => rp.product.id)
           .toList();
     }
@@ -2739,7 +2784,7 @@ class _RoomEditRequestDialogState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              '${l10n.t('roomsDialogRoomEditTitle')} ${widget.item.roomNumber}',
+              '${l10n.t('roomsDialogRoomEditTitle')} ${widget.roomNumber}',
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
@@ -2856,7 +2901,7 @@ class _RoomEditRequestDialogState
     try {
       final roomProducts = ref.read(roomProductsProvider).valueOrNull ?? [];
       final oldProductIds = roomProducts
-          .where((rp) => rp.roomId == widget.item.roomId)
+          .where((rp) => rp.roomId == widget.roomId)
           .map((rp) => rp.product.id)
           .toList();
 
@@ -2873,7 +2918,7 @@ class _RoomEditRequestDialogState
           (stock) => stock.product.id == pid,
           orElse: () => InventoryItem(
             id: '',
-            hotelId: widget.item.hotelId,
+            hotelId: widget.hotelId,
             product: product,
             fullBottles: 0,
             emptyBottles: 0,
@@ -2903,8 +2948,8 @@ class _RoomEditRequestDialogState
       }
 
       final oldData = {
-        'room_number': widget.item.roomNumber,
-        'floor_number': widget.item.floorNumber,
+        'room_number': widget.roomNumber,
+        'floor_number': widget.floorNumber,
         'product_ids': oldProductIds,
       };
       final newData = {
@@ -2916,12 +2961,12 @@ class _RoomEditRequestDialogState
       final offline = ref.read(offlineModeProvider);
       final appliedImmediately = await _submitPendingEditRequest(
         ref: ref,
-        hotelId: widget.item.hotelId,
+        hotelId: widget.hotelId,
         title: l10n.tParams('roomsEditRoomTitle', {
-          'roomNumber': widget.item.roomNumber,
+          'roomNumber': widget.roomNumber,
         }),
         targetTable: 'rooms',
-        targetId: widget.item.roomId,
+        targetId: widget.roomId,
         oldData: oldData,
         newData: newData,
       );
@@ -3964,4 +4009,19 @@ String _formatDate(DateTime value) {
   final month = local.month.toString().padLeft(2, '0');
   final day = local.day.toString().padLeft(2, '0');
   return '${local.year}-$month-$day';
+}
+
+class _RoomGroup {
+  const _RoomGroup({
+    required this.roomInfo,
+    required this.products,
+  });
+
+  final RoomInfo roomInfo;
+  final List<RoomProduct> products;
+
+  String get roomId => roomInfo.id;
+  String get roomNumber => roomInfo.roomNumber;
+  int get floorNumber => roomInfo.floorNumber;
+  String get hotelId => roomInfo.hotelId;
 }
