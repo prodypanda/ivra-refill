@@ -170,7 +170,7 @@ class AppL10nFr extends AppL10n {
   }
 
   @override
-  String get inventory => 'Inventaire';
+  String get inventory => 'Stock magasin';
 
   @override
   String get alerts => 'Alertes';
@@ -267,6 +267,10 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get refillActivity => 'Activité de recharge';
+
+  @override
+  String get myCompletedTasksThisWeek =>
+      'Mes recharges terminées cette semaine';
 
   @override
   String get last7Days => '7 derniers jours';
@@ -2016,7 +2020,7 @@ class AppL10nFr extends AppL10n {
   String get pdfTitleSuggestedOrders => 'Commandes suggérées Ivra';
 
   @override
-  String get pdfTitleInventorySnapshot => 'Inventaire Ivra';
+  String get pdfTitleInventorySnapshot => 'Stock magasin Ivra';
 
   @override
   String get pdfTitleRefillHistory => 'Historique de recharge Ivra';
@@ -2099,12 +2103,12 @@ class AppL10nFr extends AppL10n {
   @override
   String inventoryEnforceTemplateContent(
       String total, String product, String current, String needed) {
-    return 'Placer $total bouteille(s) de $product nécessite du stock. L\'inventaire n\'en a que $current. Souhaitez-vous ajouter automatiquement $needed bouteille(s) à l\'inventaire et continuer?';
+    return 'Placer $total bouteille(s) de $product nécessite du stock. L\'stock magasin n\'en a que $current. Souhaitez-vous ajouter automatiquement $needed bouteille(s) à l\'stock magasin et continuer?';
   }
 
   @override
   String inventoryEnforceReplaceContent(String product, String room) {
-    return 'Remplacer la bouteille de $product dans la chambre $room nécessite 1 bouteille pleine. L\'inventaire en a 0. Souhaitez-vous ajouter automatiquement 1 bouteille à l\'inventaire et continuer?';
+    return 'Remplacer la bouteille de $product dans la chambre $room nécessite 1 bouteille pleine. L\'stock magasin en a 0. Souhaitez-vous ajouter automatiquement 1 bouteille à l\'stock magasin et continuer?';
   }
 
   @override
@@ -2119,10 +2123,10 @@ class AppL10nFr extends AppL10n {
       'Ajusté automatiquement pour le remplacement';
 
   @override
-  String get inventoryEnforceOnboardingTitle => 'Initialiser l\'inventaire';
+  String get inventoryEnforceOnboardingTitle => 'Initialiser l\'stock magasin';
 
   @override
   String inventoryEnforceOnboardingContent(String total) {
-    return 'Puisqu\'il s\'agit d\'un nouvel hôtel, il n\'y a aucun produit dans l\'inventaire. Souhaitez-vous initialiser automatiquement l\'inventaire avec $total bouteilles à placer dans les chambres?';
+    return 'Puisqu\'il s\'agit d\'un nouvel hôtel, il n\'y a aucun produit dans l\'stock magasin. Souhaitez-vous initialiser automatiquement l\'stock magasin avec $total bouteilles à placer dans les chambres?';
   }
 }

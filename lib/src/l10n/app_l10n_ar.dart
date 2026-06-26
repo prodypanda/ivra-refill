@@ -33,7 +33,7 @@ class AppL10nAr extends AppL10n {
 
   @override
   String confirmDeleteProduct(String productName) {
-    return 'هل أنت متأكد من رغبتك في حذف المنتج \'$productName\'؟ لا يمكن التراجع عن هذا الإجراء وسيؤثر على تتبع المخزون.';
+    return 'هل أنت متأكد من رغبتك في حذف المنتج \'$productName\'؟ لا يمكن التراجع عن هذا الإجراء وسيؤثر على تتبع مخزون المتجر.';
   }
 
   @override
@@ -131,13 +131,13 @@ class AppL10nAr extends AppL10n {
   String get dashboardUsageByFloor => 'الاستخدام حسب الطابق';
 
   @override
-  String get dashboardStockForecast => 'توقعات نفاد المخزون';
+  String get dashboardStockForecast => 'توقعات نفاد مخزون المتجر';
 
   @override
   String get dashboardUnusualPatterns => 'أنماط غير عادية';
 
   @override
-  String get dashboardNoStockData => 'لا توجد بيانات مخزون';
+  String get dashboardNoStockData => 'لا توجد بيانات مخزون المتجر';
 
   @override
   String dashboardRoomsRequireReview(String count) {
@@ -170,7 +170,7 @@ class AppL10nAr extends AppL10n {
   }
 
   @override
-  String get inventory => 'المخزون';
+  String get inventory => 'مخزون المتجر';
 
   @override
   String get alerts => 'تنبيهات';
@@ -266,6 +266,10 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get refillActivity => 'نشاط التعبئة';
+
+  @override
+  String get myCompletedTasksThisWeek =>
+      'عمليات إعادة التعبئة المكتملة لي هذا الأسبوع';
 
   @override
   String get last7Days => 'آخر 7 أيام';
@@ -414,18 +418,18 @@ class AppL10nAr extends AppL10n {
       'تصدير توصيات العبوات والجالونات وإعادة التدوير.';
 
   @override
-  String get reportInventorySnapshotTitle => 'لقطة المخزون';
+  String get reportInventorySnapshotTitle => 'لقطة مخزون المتجر';
 
   @override
   String get reportInventorySnapshotBody =>
-      'تصدير مخزون العبوات والجالونات الحالي حسب الفندق والمنتج.';
+      'تصدير مخزون المتجر للعبوات والجالونات الحالي حسب الفندق والمنتج.';
 
   @override
   String get reportOpenAlertsTitle => 'التنبيهات المفتوحة';
 
   @override
   String get reportOpenAlertsBody =>
-      'تصدير تنبيهات انخفاض المخزون والاستبدال والخمول والنشاط المشبوه.';
+      'تصدير تنبيهات انخفاض مخزون المتجر والاستبدال والخمول والنشاط المشبوه.';
 
   @override
   String get scheduleReportEmail => 'جدولة تقرير البريد الإلكتروني';
@@ -461,7 +465,7 @@ class AppL10nAr extends AppL10n {
   String get reportKpiRefills => 'إجمالي عمليات إعادة التعبئة';
 
   @override
-  String get reportKpiCorrections => 'تصحيحات المخزون';
+  String get reportKpiCorrections => 'تصحيحات مخزون المتجر';
 
   @override
   String get reportKpiReplacements => 'الاستبدالات';
@@ -500,7 +504,7 @@ class AppL10nAr extends AppL10n {
   String get metricBottlesToReplace => 'عبوات للاستبدال';
 
   @override
-  String get metricLowStockProducts => 'منتجات منخفضة المخزون';
+  String get metricLowStockProducts => 'منتجات منخفضة مخزون المتجر';
 
   @override
   String get inventoryTableProduct => 'المنتج';
@@ -598,7 +602,7 @@ class AppL10nAr extends AppL10n {
       'تم إعادة تدوير هذه العبوة ولا يمكن إعادة تعبئتها. يرجى استبدالها.';
 
   @override
-  String get adjustStockTitle => 'تعديل المخزون';
+  String get adjustStockTitle => 'تعديل مخزون المتجر';
 
   @override
   String get hotelRoomsTracked => 'غرف متبعة';
@@ -1034,7 +1038,7 @@ class AppL10nAr extends AppL10n {
 
   @override
   String adjustStockForProduct(String product) {
-    return 'تعديل المخزون لـ $product';
+    return 'تعديل مخزون المتجر لـ $product';
   }
 
   @override
@@ -1085,13 +1089,13 @@ class AppL10nAr extends AppL10n {
   String get productsLabelMaxAge => 'الحد الأقصى لعمر القارورة';
 
   @override
-  String get productsLabelLowStock => 'تنبيه انخفاض المخزون';
+  String get productsLabelLowStock => 'تنبيه انخفاض مخزون المتجر';
 
   @override
   String get productsBtnEdit => 'تعديل المنتج';
 
   @override
-  String get productsLabelSku => 'وحدة حفظ المخزون (SKU)';
+  String get productsLabelSku => 'وحدة حفظ مخزون المتجر (SKU)';
 
   @override
   String get productsLabelNameEn => 'الاسم بالإنجليزية';
@@ -1198,19 +1202,22 @@ class AppL10nAr extends AppL10n {
   String get inventoryAddHotelHint => 'أضف فندقًا للبدء.';
 
   @override
-  String get inventoryNoItemsToAdjust => 'لا توجد عناصر مخزون متاحة للتعديل.';
+  String get inventoryNoItemsToAdjust =>
+      'لا توجد عناصر مخزون المتجر متاحة للتعديل.';
 
   @override
-  String get inventoryNoInventoryYet => 'لا يوجد مخزون بعد';
+  String get inventoryNoInventoryYet => 'لا يوجد مخزون المتجر بعد';
 
   @override
-  String get inventoryNoProductsInInventory => 'لا توجد منتجات في المخزون.';
+  String get inventoryNoProductsInInventory =>
+      'لا توجد منتجات في مخزون المتجر.';
 
   @override
   String get inventoryNoSuggestedOrders => 'لا توجد طلبات مقترحة';
 
   @override
-  String get inventoryLevelsSufficient => 'مستويات المخزون لديك كافية حاليًا.';
+  String get inventoryLevelsSufficient =>
+      'مستويات مخزون المتجر لديك كافية حاليًا.';
 
   @override
   String get teamAccounts => 'حسابات الفريق';
@@ -1617,7 +1624,7 @@ class AppL10nAr extends AppL10n {
   String get syncActionBottleReplacement => 'استبدال العبوة';
 
   @override
-  String get syncActionStockAdjustment => 'تعديل المخزون';
+  String get syncActionStockAdjustment => 'تعديل مخزون المتجر';
 
   @override
   String get syncActionPendingEdit => 'تعديل معلّق';
@@ -1679,14 +1686,15 @@ class AppL10nAr extends AppL10n {
   String get notificationMoreInfo => 'مزيد من المعلومات';
 
   @override
-  String get bulkAdjustStockTitle => 'تعديل المخزون بالجملة';
+  String get bulkAdjustStockTitle => 'تعديل مخزون المتجر بالجملة';
 
   @override
   String get bulkAdjustStockHint =>
       'أدخل تعديلات الكمية التي ستنطبق على جميع المنتجات.';
 
   @override
-  String get bulkAdjustStockSuccess => 'تم تطبيق تعديل المخزون بالجملة بنجاح';
+  String get bulkAdjustStockSuccess =>
+      'تم تطبيق تعديل مخزون المتجر بالجملة بنجاح';
 
   @override
   String get bulkAdjustStockOfflineQueued =>
@@ -1708,22 +1716,23 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get alertsEmptyMessage =>
-      'حدّث التنبيهات الذكيّة لفحص المخزون وحدود إعادة التعبئة وعمر الزجاجات والموافقات المعلّقة.';
+      'حدّث التنبيهات الذكيّة لفحص مخزون المتجر وحدود إعادة التعبئة وعمر الزجاجات والموافقات المعلّقة.';
 
   @override
   String get alertsEmptyAction => 'تحديث التنبيهات';
 
   @override
-  String get alertTypeLowBidonStock => 'مخزون قوارير إعادة التعبئة منخفض';
+  String get alertTypeLowBidonStock =>
+      'مخزون المتجر من قوارير إعادة التعبئة منخفض';
 
   @override
   String alertLowBottleTitle(String product) {
-    return 'انخفاض مخزون زجاجات $product';
+    return 'انخفاض مخزون المتجر من زجاجات $product';
   }
 
   @override
   String alertLowBidonTitle(String product) {
-    return 'انخفاض مخزون قوارير إعادة التعبئة لـ $product';
+    return 'انخفاض مخزون المتجر من قوارير إعادة التعبئة لـ $product';
   }
 
   @override
@@ -1737,7 +1746,7 @@ class AppL10nAr extends AppL10n {
   }
 
   @override
-  String get alertTypeLowBottleStock => 'مخزون زجاجات منخفض';
+  String get alertTypeLowBottleStock => 'مخزون المتجر من زجاجات منخفض';
 
   @override
   String get alertTypeBottleAgeLimit => 'عمر الزجاجة';
@@ -1972,7 +1981,7 @@ class AppL10nAr extends AppL10n {
   String get pdfTitleSuggestedOrders => 'طلبات Ivra المقترحة';
 
   @override
-  String get pdfTitleInventorySnapshot => 'مخزون Ivra';
+  String get pdfTitleInventorySnapshot => 'مخزون المتجر Ivra';
 
   @override
   String get pdfTitleRefillHistory => 'سجل تعبئة Ivra';
@@ -1997,7 +2006,7 @@ class AppL10nAr extends AppL10n {
   }
 
   @override
-  String get productHistoryAdjustment => 'تعديل المخزون يدويًا';
+  String get productHistoryAdjustment => 'تعديل مخزون المتجر يدويًا';
 
   @override
   String productHistoryActionBy(String user) {
@@ -2048,17 +2057,17 @@ class AppL10nAr extends AppL10n {
   String get productHistoryStatAdjustments => 'التعديلات';
 
   @override
-  String get inventoryEnforceTitle => 'مخزون غير كافٍ';
+  String get inventoryEnforceTitle => 'مخزون المتجر غير كافٍ';
 
   @override
   String inventoryEnforceTemplateContent(
       String total, String product, String current, String needed) {
-    return 'وضع $total زجاجة (زجاجات) من $product يتطلب مخزونًا. يحتوي المخزون فقط على $current. هل ترغب في إضافة $needed زجاجة (زجاجات) تلقائيًا إلى المخزون والمتابعة؟';
+    return 'وضع $total زجاجة (زجاجات) من $product يتطلب مخزونًا للمتجر. يحتوي مخزون المتجر فقط على $current. هل ترغب في إضافة $needed زجاجة (زجاجات) تلقائيًا إلى مخزون المتجر والمتابعة؟';
   }
 
   @override
   String inventoryEnforceReplaceContent(String product, String room) {
-    return 'استبدال زجاجة $product في الغرفة $room يتطلب زجاجة ممتلئة واحدة. المخزون يحتوي على 0. هل ترغب في إضافة زجاجة واحدة تلقائيًا إلى المخزون والمتابعة؟';
+    return 'استبدال زجاجة $product في الغرفة $room يتطلب زجاجة ممتلئة واحدة. مخزون المتجر يحتوي على 0. هل ترغب في إضافة زجاجة واحدة تلقائيًا إلى مخزون المتجر والمتابعة؟';
   }
 
   @override
@@ -2072,10 +2081,10 @@ class AppL10nAr extends AppL10n {
   String get inventoryEnforceReasonReplace => 'تعديل تلقائي للاستبدال';
 
   @override
-  String get inventoryEnforceOnboardingTitle => 'تهيئة المخزون';
+  String get inventoryEnforceOnboardingTitle => 'تهيئة مخزون المتجر';
 
   @override
   String inventoryEnforceOnboardingContent(String total) {
-    return 'بما أن هذا فندق جديد، فلا توجد منتجات في المخزون. هل ترغب في تهيئة المخزون تلقائيًا بـ $total زجاجة لوضعها في الغرف؟';
+    return 'بما أن هذا فندق جديد، فلا توجد منتجات في مخزون المتجر. هل ترغب في تهيئة مخزون المتجر تلقائيًا بـ $total زجاجة لوضعها في الغرف؟';
   }
 }

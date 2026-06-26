@@ -33,7 +33,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String confirmDeleteProduct(String productName) {
-    return 'Sei sicuro di voler eliminare il prodotto \'$productName\'? Questa azione è permanente, non può essere annullata e influirà sul tracciamento dell\'inventario.';
+    return 'Sei sicuro di voler eliminare il prodotto \'$productName\'? Questa azione è permanente, non può essere annullata e influirà sul tracciamento dell\'stock magazzino.';
   }
 
   @override
@@ -170,7 +170,7 @@ class AppL10nIt extends AppL10n {
   }
 
   @override
-  String get inventory => 'Inventario';
+  String get inventory => 'Stock magazzino';
 
   @override
   String get alerts => 'Avvisi';
@@ -266,6 +266,10 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get refillActivity => 'Attività ricariche';
+
+  @override
+  String get myCompletedTasksThisWeek =>
+      'Le mie ricariche completate questa settimana';
 
   @override
   String get last7Days => 'Ultimi 7 giorni';
@@ -414,7 +418,7 @@ class AppL10nIt extends AppL10n {
       'Esporta bottiglie, bottiglie di ricarica e raccomandazioni di riciclaggio.';
 
   @override
-  String get reportInventorySnapshotTitle => 'Istantanea inventario';
+  String get reportInventorySnapshotTitle => 'Istantanea stock magazzino';
 
   @override
   String get reportInventorySnapshotBody =>
@@ -1216,21 +1220,21 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get inventoryNoItemsToAdjust =>
-      'Nessun articolo di inventario disponibile da regolare.';
+      'Nessun articolo di stock magazzino disponibile da regolare.';
 
   @override
-  String get inventoryNoInventoryYet => 'Nessun inventario ancora';
+  String get inventoryNoInventoryYet => 'Nessun stock magazzino ancora';
 
   @override
   String get inventoryNoProductsInInventory =>
-      'Non ci sono prodotti nell\'inventario.';
+      'Non ci sono prodotti nell\'stock magazzino.';
 
   @override
   String get inventoryNoSuggestedOrders => 'Nessun ordine suggerito';
 
   @override
   String get inventoryLevelsSufficient =>
-      'I tuoi livelli di inventario sono attualmente sufficienti.';
+      'I tuoi livelli di stock magazzino sono attualmente sufficienti.';
 
   @override
   String get teamAccounts => 'Account del team';
@@ -2006,7 +2010,7 @@ class AppL10nIt extends AppL10n {
   String get pdfTitleSuggestedOrders => 'Ordini suggeriti Ivra';
 
   @override
-  String get pdfTitleInventorySnapshot => 'Stato inventario Ivra';
+  String get pdfTitleInventorySnapshot => 'Stato stock magazzino Ivra';
 
   @override
   String get pdfTitleRefillHistory => 'Cronologia ricariche Ivra';
@@ -2088,12 +2092,12 @@ class AppL10nIt extends AppL10n {
   @override
   String inventoryEnforceTemplateContent(
       String total, String product, String current, String needed) {
-    return 'Posizionare $total bottiglia/e di $product richiede scorte. L\'inventario ha solo $current. Vuoi aggiungere automaticamente $needed bottiglia/e all\'inventario e procedere?';
+    return 'Posizionare $total bottiglia/e di $product richiede scorte. L\'stock magazzino ha solo $current. Vuoi aggiungere automaticamente $needed bottiglia/e all\'stock magazzino e procedere?';
   }
 
   @override
   String inventoryEnforceReplaceContent(String product, String room) {
-    return 'Sostituire la bottiglia di $product in Camera $room richiede 1 bottiglia piena. L\'inventario ha 0. Vuoi aggiungere automaticamente 1 bottiglia all\'inventario e procedere?';
+    return 'Sostituire la bottiglia di $product in Camera $room richiede 1 bottiglia piena. L\'stock magazzino ha 0. Vuoi aggiungere automaticamente 1 bottiglia all\'stock magazzino e procedere?';
   }
 
   @override
@@ -2108,10 +2112,10 @@ class AppL10nIt extends AppL10n {
       'Regolazione automatica per sostituzione';
 
   @override
-  String get inventoryEnforceOnboardingTitle => 'Inizializza inventario';
+  String get inventoryEnforceOnboardingTitle => 'Inizializza stock magazzino';
 
   @override
   String inventoryEnforceOnboardingContent(String total) {
-    return 'Trattandosi di un nuovo hotel, non ci sono prodotti in inventario. Vuoi inizializzare automaticamente l\'inventario con $total bottiglie da posizionare nelle camere?';
+    return 'Trattandosi di un nuovo hotel, non ci sono prodotti in stock magazzino. Vuoi inizializzare automaticamente l\'stock magazzino con $total bottiglie da posizionare nelle camere?';
   }
 }

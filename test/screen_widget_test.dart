@@ -259,7 +259,7 @@ void main() {
           .go(InventoryScreen.route);
       await tester.pumpAndSettle();
 
-      expect(find.text('Inventory'), findsWidgets);
+      expect(find.text('Store Stock'), findsWidgets);
       expect(find.text('Full bottles with pump'), findsWidgets);
       expect(find.text('Full refill bottles'), findsWidgets);
       expect(find.text('Empty & Open Bottles'), findsWidgets);
@@ -389,7 +389,7 @@ void main() {
 
       expect(find.text('Refill history'), findsWidgets);
       expect(find.text('Suggested orders'), findsWidgets);
-      expect(find.text('Inventory snapshot'), findsWidgets);
+      expect(find.text('Store Stock snapshot'), findsWidgets);
       expect(find.text('Open alerts'), findsWidgets);
     });
 
@@ -435,7 +435,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('سجل التعبئة'), findsWidgets);
-      expect(find.text('لقطة المخزون'), findsWidgets);
+      expect(find.text('لقطة مخزون المتجر'), findsWidgets);
       expect(find.text('التنبيهات المفتوحة'), findsWidgets);
       expect(find.text('تحميل CSV'), findsNWidgets(4));
       expect(find.text('تحميل PDF'), findsNWidgets(4));
@@ -705,7 +705,7 @@ void main() {
       expect(find.text('Dashboard'), findsWidgets);
       expect(find.text('Hotels'), findsWidgets);
       expect(find.text('Rooms'), findsWidgets);
-      expect(find.text('Inventory'), findsWidgets);
+      expect(find.text('Store Stock'), findsWidgets);
       expect(find.text('Products'), findsWidgets);
       expect(find.text('Team'), findsWidgets);
       expect(find.text('Approvals'), findsWidgets);
@@ -736,7 +736,7 @@ void main() {
 
       expect(find.text('Dashboard'), findsWidgets);
       expect(find.text('Rooms'), findsWidgets);
-      expect(find.text('Inventory'), findsWidgets);
+      expect(find.text('Store Stock'), findsWidgets);
       expect(find.text('Alerts'), findsWidgets);
       expect(find.text('Settings'), findsWidgets);
 
@@ -818,7 +818,7 @@ void main() {
 
       expect(find.byType(BottomSheet), findsOneWidget);
       expect(find.text('Team'), findsWidgets);
-      expect(find.text('Inventory'), findsWidgets);
+      expect(find.text('Store Stock'), findsWidgets);
     });
 
     testWidgets('extended rail appears at wide width', (tester) async {
@@ -841,7 +841,7 @@ void main() {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
       expect(find.text('Dashboard'), findsWidgets);
-      expect(find.text('Inventory'), findsWidgets);
+      expect(find.text('Store Stock'), findsWidgets);
       expect(find.text('Settings'), findsWidgets);
     });
 
@@ -853,7 +853,7 @@ void main() {
       );
 
       expect(find.text('Tableau de bord'), findsWidgets);
-      expect(find.text('Inventaire'), findsWidgets);
+      expect(find.text('Stock magasin'), findsWidgets);
       expect(find.text('Paramètres'), findsWidgets);
       expect(find.text('Chambres'), findsWidgets);
     });
@@ -866,7 +866,7 @@ void main() {
       );
 
       expect(find.text('لوحة القيادة'), findsWidgets);
-      expect(find.text('المخزون'), findsWidgets);
+      expect(find.text('مخزون المتجر'), findsWidgets);
       expect(find.text('الإعدادات'), findsWidgets);
       expect(find.text('الغرف'), findsWidgets);
 

@@ -725,19 +725,19 @@ void main() {
       expect(en.t('dashboard'), 'Dashboard');
       expect(en.t('hotels'), 'Hotels');
       expect(en.t('rooms'), 'Rooms');
-      expect(en.t('inventory'), 'Inventory');
+      expect(en.t('inventory'), 'Store Stock');
 
       // French labels
       expect(fr.t('dashboard'), 'Tableau de bord');
       expect(fr.t('hotels'), 'Hôtels');
       expect(fr.t('rooms'), 'Chambres');
-      expect(fr.t('inventory'), 'Inventaire');
+      expect(fr.t('inventory'), 'Stock magasin');
 
       // Arabic labels
       expect(ar.t('dashboard'), 'لوحة القيادة');
       expect(ar.t('hotels'), 'الفنادق');
       expect(ar.t('rooms'), 'الغرف');
-      expect(ar.t('inventory'), 'المخزون');
+      expect(ar.t('inventory'), 'مخزون المتجر');
     });
 
     test('all 3 languages have dashboard, hotels, rooms, inventory keys', () {

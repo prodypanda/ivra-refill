@@ -33,7 +33,7 @@ class AppL10nEn extends AppL10n {
 
   @override
   String confirmDeleteProduct(String productName) {
-    return 'Are you sure you want to delete product \'$productName\'? This action is permanent, cannot be undone, and will affect inventory tracking.';
+    return 'Are you sure you want to delete product \'$productName\'? This action is permanent, cannot be undone, and will affect store stock tracking.';
   }
 
   @override
@@ -170,7 +170,7 @@ class AppL10nEn extends AppL10n {
   }
 
   @override
-  String get inventory => 'Inventory';
+  String get inventory => 'Store Stock';
 
   @override
   String get alerts => 'Alerts';
@@ -266,6 +266,9 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get refillActivity => 'Refill Activity';
+
+  @override
+  String get myCompletedTasksThisWeek => 'My Completed Refills This Week';
 
   @override
   String get last7Days => 'Last 7 days';
@@ -414,7 +417,7 @@ class AppL10nEn extends AppL10n {
       'Export bottles, refill bottles, and recycling recommendations.';
 
   @override
-  String get reportInventorySnapshotTitle => 'Inventory snapshot';
+  String get reportInventorySnapshotTitle => 'Store Stock snapshot';
 
   @override
   String get reportInventorySnapshotBody =>
@@ -1207,21 +1210,21 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get inventoryNoItemsToAdjust =>
-      'No inventory items available to adjust.';
+      'No store stock items available to adjust.';
 
   @override
-  String get inventoryNoInventoryYet => 'No inventory yet';
+  String get inventoryNoInventoryYet => 'No store stock yet';
 
   @override
   String get inventoryNoProductsInInventory =>
-      'There are no products in the inventory.';
+      'There are no products in the store stock.';
 
   @override
   String get inventoryNoSuggestedOrders => 'No suggested orders';
 
   @override
   String get inventoryLevelsSufficient =>
-      'Your inventory levels are currently sufficient.';
+      'Your store stock levels are currently sufficient.';
 
   @override
   String get teamAccounts => 'Team accounts';
@@ -1988,7 +1991,7 @@ class AppL10nEn extends AppL10n {
   String get pdfTitleSuggestedOrders => 'Ivra Suggested Orders';
 
   @override
-  String get pdfTitleInventorySnapshot => 'Ivra Inventory Snapshot';
+  String get pdfTitleInventorySnapshot => 'Ivra Store Stock Snapshot';
 
   @override
   String get pdfTitleRefillHistory => 'Ivra Refill History';
@@ -2069,12 +2072,12 @@ class AppL10nEn extends AppL10n {
   @override
   String inventoryEnforceTemplateContent(
       String total, String product, String current, String needed) {
-    return 'Placing $total bottle(s) of $product requires stock. Inventory only has $current. Would you like to automatically add $needed bottle(s) to the inventory and proceed?';
+    return 'Placing $total bottle(s) of $product requires stock. Store Stock only has $current. Would you like to automatically add $needed bottle(s) to the store stock and proceed?';
   }
 
   @override
   String inventoryEnforceReplaceContent(String product, String room) {
-    return 'Replacing the bottle of $product in Room $room requires 1 full bottle. Inventory has 0. Would you like to automatically add 1 bottle to the inventory and proceed?';
+    return 'Replacing the bottle of $product in Room $room requires 1 full bottle. Store Stock has 0. Would you like to automatically add 1 bottle to the store stock and proceed?';
   }
 
   @override
@@ -2088,10 +2091,10 @@ class AppL10nEn extends AppL10n {
   String get inventoryEnforceReasonReplace => 'Auto-adjusted for replacement';
 
   @override
-  String get inventoryEnforceOnboardingTitle => 'Initialize Inventory';
+  String get inventoryEnforceOnboardingTitle => 'Initialize Store Stock';
 
   @override
   String inventoryEnforceOnboardingContent(String total) {
-    return 'Since this is a new hotel, there are no products in the inventory. Would you like to automatically initialize the inventory with $total bottles to place in the rooms?';
+    return 'Since this is a new hotel, there are no products in the store stock. Would you like to automatically initialize the store stock with $total bottles to place in the rooms?';
   }
 }

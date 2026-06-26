@@ -62,7 +62,7 @@ void main() {
     );
 
     expect(find.text('Rooms'), findsWidgets);
-    expect(find.text('Inventory'), findsWidgets);
+    expect(find.text('Store Stock'), findsWidgets);
     expect(find.text('Products'), findsNothing);
     expect(find.text('Team'), findsNothing);
     expect(find.text('Reports'), findsNothing);
@@ -133,7 +133,7 @@ void main() {
   test('reports export labels are localized', () {
     expect(
       const AppLocalizations(Locale('en')).t('reportInventorySnapshotTitle'),
-      'Inventory snapshot',
+      'Store Stock snapshot',
     );
     expect(
       const AppLocalizations(Locale('fr')).t('reportOpenAlertsTitle'),

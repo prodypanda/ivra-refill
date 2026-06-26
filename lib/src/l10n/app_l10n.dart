@@ -134,7 +134,7 @@ abstract class AppL10n {
   /// No description provided for @confirmDeleteProduct.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete product \'{productName}\'? This action is permanent, cannot be undone, and will affect inventory tracking.'**
+  /// **'Are you sure you want to delete product \'{productName}\'? This action is permanent, cannot be undone, and will affect store stock tracking.'**
   String confirmDeleteProduct(String productName);
 
   /// No description provided for @confirmDeleteAlert.
@@ -386,7 +386,7 @@ abstract class AppL10n {
   /// No description provided for @inventory.
   ///
   /// In en, this message translates to:
-  /// **'Inventory'**
+  /// **'Store Stock'**
   String get inventory;
 
   /// No description provided for @alerts.
@@ -574,6 +574,12 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Refill Activity'**
   String get refillActivity;
+
+  /// No description provided for @myCompletedTasksThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'My Completed Refills This Week'**
+  String get myCompletedTasksThisWeek;
 
   /// No description provided for @last7Days.
   ///
@@ -866,7 +872,7 @@ abstract class AppL10n {
   /// No description provided for @reportInventorySnapshotTitle.
   ///
   /// In en, this message translates to:
-  /// **'Inventory snapshot'**
+  /// **'Store Stock snapshot'**
   String get reportInventorySnapshotTitle;
 
   /// No description provided for @reportInventorySnapshotBody.
@@ -2348,19 +2354,19 @@ abstract class AppL10n {
   /// No description provided for @inventoryNoItemsToAdjust.
   ///
   /// In en, this message translates to:
-  /// **'No inventory items available to adjust.'**
+  /// **'No store stock items available to adjust.'**
   String get inventoryNoItemsToAdjust;
 
   /// No description provided for @inventoryNoInventoryYet.
   ///
   /// In en, this message translates to:
-  /// **'No inventory yet'**
+  /// **'No store stock yet'**
   String get inventoryNoInventoryYet;
 
   /// No description provided for @inventoryNoProductsInInventory.
   ///
   /// In en, this message translates to:
-  /// **'There are no products in the inventory.'**
+  /// **'There are no products in the store stock.'**
   String get inventoryNoProductsInInventory;
 
   /// No description provided for @inventoryNoSuggestedOrders.
@@ -2372,7 +2378,7 @@ abstract class AppL10n {
   /// No description provided for @inventoryLevelsSufficient.
   ///
   /// In en, this message translates to:
-  /// **'Your inventory levels are currently sufficient.'**
+  /// **'Your store stock levels are currently sufficient.'**
   String get inventoryLevelsSufficient;
 
   /// No description provided for @teamAccounts.
@@ -3740,7 +3746,7 @@ abstract class AppL10n {
   /// No description provided for @pdfTitleInventorySnapshot.
   ///
   /// In en, this message translates to:
-  /// **'Ivra Inventory Snapshot'**
+  /// **'Ivra Store Stock Snapshot'**
   String get pdfTitleInventorySnapshot;
 
   /// No description provided for @pdfTitleRefillHistory.
@@ -3878,14 +3884,14 @@ abstract class AppL10n {
   /// No description provided for @inventoryEnforceTemplateContent.
   ///
   /// In en, this message translates to:
-  /// **'Placing {total} bottle(s) of {product} requires stock. Inventory only has {current}. Would you like to automatically add {needed} bottle(s) to the inventory and proceed?'**
+  /// **'Placing {total} bottle(s) of {product} requires stock. Store Stock only has {current}. Would you like to automatically add {needed} bottle(s) to the store stock and proceed?'**
   String inventoryEnforceTemplateContent(
       String total, String product, String current, String needed);
 
   /// No description provided for @inventoryEnforceReplaceContent.
   ///
   /// In en, this message translates to:
-  /// **'Replacing the bottle of {product} in Room {room} requires 1 full bottle. Inventory has 0. Would you like to automatically add 1 bottle to the inventory and proceed?'**
+  /// **'Replacing the bottle of {product} in Room {room} requires 1 full bottle. Store Stock has 0. Would you like to automatically add 1 bottle to the store stock and proceed?'**
   String inventoryEnforceReplaceContent(String product, String room);
 
   /// No description provided for @inventoryEnforceBtnProceed.
@@ -3909,13 +3915,13 @@ abstract class AppL10n {
   /// No description provided for @inventoryEnforceOnboardingTitle.
   ///
   /// In en, this message translates to:
-  /// **'Initialize Inventory'**
+  /// **'Initialize Store Stock'**
   String get inventoryEnforceOnboardingTitle;
 
   /// No description provided for @inventoryEnforceOnboardingContent.
   ///
   /// In en, this message translates to:
-  /// **'Since this is a new hotel, there are no products in the inventory. Would you like to automatically initialize the inventory with {total} bottles to place in the rooms?'**
+  /// **'Since this is a new hotel, there are no products in the store stock. Would you like to automatically initialize the store stock with {total} bottles to place in the rooms?'**
   String inventoryEnforceOnboardingContent(String total);
 }
 

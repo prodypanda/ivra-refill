@@ -47,7 +47,7 @@
   "sending": "Envoi en cours...",
   "roomsEditRoomTitle": "Mettre à jour la chambre {roomNumber}",
   "roomsEditProductTitle": "Mettre à jour la bouteille de {productName} dans la chambre {roomNumber}",
-  "inventory": "Inventaire",
+  "inventory": "Stock magasin",
   "alerts": "Alertes",
   "approvals": "Approbations",
   "actionButtonsAndroid": "Boutons d'action (Android uniquement)",
@@ -607,7 +607,7 @@
   "approvalStatusCancelled": "Annulé",
   "approvalStatusPending": "En attente",
   "pdfTitleSuggestedOrders": "Commandes suggérées Ivra",
-  "pdfTitleInventorySnapshot": "Inventaire Ivra",
+  "pdfTitleInventorySnapshot": "Stock magasin Ivra",
   "pdfTitleRefillHistory": "Historique de recharge Ivra",
   "pdfTitleOpenAlerts": "Alertes ouvertes Ivra",
   "productHistoryTitle": "Historique du produit",
@@ -630,11 +630,11 @@
   "productHistoryStatReplacements": "Remplacements",
   "productHistoryStatAdjustments": "Ajustements",
   "inventoryEnforceTitle": "Stock insuffisant",
-  "inventoryEnforceTemplateContent": "Placer {total} bouteille(s) de {product} nécessite du stock. L'inventaire n'en a que {current}. Souhaitez-vous ajouter automatiquement {needed} bouteille(s) à l'inventaire et continuer?",
-  "inventoryEnforceReplaceContent": "Remplacer la bouteille de {product} dans la chambre {room} nécessite 1 bouteille pleine. L'inventaire en a 0. Souhaitez-vous ajouter automatiquement 1 bouteille à l'inventaire et continuer?",
+  "inventoryEnforceTemplateContent": "Placer {total} bouteille(s) de {product} nécessite du stock. L'stock magasin n'en a que {current}. Souhaitez-vous ajouter automatiquement {needed} bouteille(s) à l'stock magasin et continuer?",
+  "inventoryEnforceReplaceContent": "Remplacer la bouteille de {product} dans la chambre {room} nécessite 1 bouteille pleine. L'stock magasin en a 0. Souhaitez-vous ajouter automatiquement 1 bouteille à l'stock magasin et continuer?",
   "inventoryEnforceBtnProceed": "Ajuster et continuer",
   "inventoryEnforceReasonTemplate": "Ajusté automatiquement pour le modèle de création de chambre",
   "inventoryEnforceReasonReplace": "Ajusté automatiquement pour le remplacement",
-  "inventoryEnforceOnboardingTitle": "Initialiser l'inventaire",
-  "inventoryEnforceOnboardingContent": "Puisqu'il s'agit d'un nouvel hôtel, il n'y a aucun produit dans l'inventaire. Souhaitez-vous initialiser automatiquement l'inventaire avec {total} bouteilles à placer dans les chambres?"
+  "inventoryEnforceOnboardingTitle": "Initialiser l'stock magasin",
+  "inventoryEnforceOnboardingContent": "Puisqu'il s'agit d'un nouvel hôtel, il n'y a aucun produit dans l'stock magasin. Souhaitez-vous initialiser automatiquement l'stock magasin avec {total} bouteilles à placer dans les chambres?"
 }

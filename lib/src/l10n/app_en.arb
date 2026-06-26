@@ -33,7 +33,7 @@
       }
     }
   },
-  "confirmDeleteProduct": "Are you sure you want to delete product '{productName}'? This action is permanent, cannot be undone, and will affect inventory tracking.",
+  "confirmDeleteProduct": "Are you sure you want to delete product '{productName}'? This action is permanent, cannot be undone, and will affect store stock tracking.",
   "@confirmDeleteProduct": {
     "placeholders": {
       "productName": {
@@ -106,7 +106,7 @@
       }
     }
   },
-  "inventory": "Inventory",
+  "inventory": "Store Stock",
   "alerts": "Alerts",
   "approvals": "Approvals",
   "actionButtonsAndroid": "Action Buttons (Android Only)",
@@ -197,7 +197,7 @@
   "reportRefillHistoryTitle": "Refill history",
   "reportRefillHistoryBody": "Export recent refill activity by hotel, room, product, user, and time.",
   "reportSuggestedOrdersBody": "Export bottles, refill bottles, and recycling recommendations.",
-  "reportInventorySnapshotTitle": "Inventory snapshot",
+  "reportInventorySnapshotTitle": "Store Stock snapshot",
   "reportInventorySnapshotBody": "Export current bottle and refill bottle stock by hotel and product.",
   "reportOpenAlertsTitle": "Open alerts",
   "reportOpenAlertsBody": "Export low stock, replacement, inactivity, and suspicious activity alerts.",
@@ -524,11 +524,11 @@
   "refills": "refills",
   "inventoryNoHotels": "No Hotels Found",
   "inventoryAddHotelHint": "Add a hotel to get started.",
-  "inventoryNoItemsToAdjust": "No inventory items available to adjust.",
-  "inventoryNoInventoryYet": "No inventory yet",
-  "inventoryNoProductsInInventory": "There are no products in the inventory.",
+  "inventoryNoItemsToAdjust": "No store stock items available to adjust.",
+  "inventoryNoInventoryYet": "No store stock yet",
+  "inventoryNoProductsInInventory": "There are no products in the store stock.",
   "inventoryNoSuggestedOrders": "No suggested orders",
-  "inventoryLevelsSufficient": "Your inventory levels are currently sufficient.",
+  "inventoryLevelsSufficient": "Your store stock levels are currently sufficient.",
   "teamAccounts": "Team accounts",
   "teamNoMembers": "No team members found.",
   "teamTableColumnName": "Name",
@@ -1019,7 +1019,7 @@
   "approvalStatusCancelled": "Cancelled",
   "approvalStatusPending": "Pending",
   "pdfTitleSuggestedOrders": "Ivra Suggested Orders",
-  "pdfTitleInventorySnapshot": "Ivra Inventory Snapshot",
+  "pdfTitleInventorySnapshot": "Ivra Store Stock Snapshot",
   "pdfTitleRefillHistory": "Ivra Refill History",
   "pdfTitleOpenAlerts": "Ivra Open Alerts",
   "productHistoryTitle": "Product History",
@@ -1077,7 +1077,7 @@
   "productHistoryStatReplacements": "Replacements",
   "productHistoryStatAdjustments": "Adjustments",
   "inventoryEnforceTitle": "Insufficient Stock",
-  "inventoryEnforceTemplateContent": "Placing {total} bottle(s) of {product} requires stock. Inventory only has {current}. Would you like to automatically add {needed} bottle(s) to the inventory and proceed?",
+  "inventoryEnforceTemplateContent": "Placing {total} bottle(s) of {product} requires stock. Store Stock only has {current}. Would you like to automatically add {needed} bottle(s) to the store stock and proceed?",
   "@inventoryEnforceTemplateContent": {
     "placeholders": {
       "total": {
@@ -1094,7 +1094,7 @@
       }
     }
   },
-  "inventoryEnforceReplaceContent": "Replacing the bottle of {product} in Room {room} requires 1 full bottle. Inventory has 0. Would you like to automatically add 1 bottle to the inventory and proceed?",
+  "inventoryEnforceReplaceContent": "Replacing the bottle of {product} in Room {room} requires 1 full bottle. Store Stock has 0. Would you like to automatically add 1 bottle to the store stock and proceed?",
   "@inventoryEnforceReplaceContent": {
     "placeholders": {
       "product": {
@@ -1108,8 +1108,8 @@
   "inventoryEnforceBtnProceed": "Auto-Adjust & Proceed",
   "inventoryEnforceReasonTemplate": "Auto-adjusted for room creation template",
   "inventoryEnforceReasonReplace": "Auto-adjusted for replacement",
-  "inventoryEnforceOnboardingTitle": "Initialize Inventory",
-  "inventoryEnforceOnboardingContent": "Since this is a new hotel, there are no products in the inventory. Would you like to automatically initialize the inventory with {total} bottles to place in the rooms?",
+  "inventoryEnforceOnboardingTitle": "Initialize Store Stock",
+  "inventoryEnforceOnboardingContent": "Since this is a new hotel, there are no products in the store stock. Would you like to automatically initialize the store stock with {total} bottles to place in the rooms?",
   "@inventoryEnforceOnboardingContent": {
     "placeholders": {
       "total": {
