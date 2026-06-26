@@ -1793,6 +1793,12 @@ abstract class AppL10n {
   /// **'Refill Needed'**
   String get roomsStatusRefillNeeded;
 
+  /// No description provided for @roomsStatusNoProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'No products'**
+  String get roomsStatusNoProducts;
+
   /// No description provided for @roomsSearchPlaceholder.
   ///
   /// In en, this message translates to:

@@ -396,6 +396,7 @@
   "roomsStatusAllOk": "All OK",
   "roomsStatusAttentionRequired": "Attention Required",
   "roomsStatusRefillNeeded": "Refill Needed",
+  "roomsStatusNoProducts": "No products",
   "roomsSearchPlaceholder": "Search room...",
   "roomsRecentTitle": "Recent rooms",
   "roomsRecentClear": "Clear",

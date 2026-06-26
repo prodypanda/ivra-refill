@@ -917,6 +917,9 @@ class AppL10nEn extends AppL10n {
   String get roomsStatusRefillNeeded => 'Refill Needed';
 
   @override
+  String get roomsStatusNoProducts => 'No products';
+
+  @override
   String get roomsSearchPlaceholder => 'Search room...';
 
   @override

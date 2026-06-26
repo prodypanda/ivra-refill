@@ -456,6 +456,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   }
 
   _RoomOverallStatus _getRoomOverallStatus(List<RoomProduct> products) {
+    if (products.isEmpty) return _RoomOverallStatus.noProducts;
     final hasCritical = products.any((item) =>
         item.status == BottleStatus.refillLimitReached ||
         item.status == BottleStatus.tooOld ||
@@ -1184,7 +1185,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   }
 }
 
-enum _RoomOverallStatus { allOk, refillNeeded, attentionRequired }
+enum _RoomOverallStatus { allOk, refillNeeded, attentionRequired, noProducts }
 
 class _CompactRoomTile extends ConsumerWidget {
   const _CompactRoomTile({
@@ -1214,7 +1215,10 @@ class _CompactRoomTile extends ConsumerWidget {
     final hasWarning =
         roomProducts.any((item) => item.status == BottleStatus.needsRefill);
 
-    if (hasCritical) {
+    if (roomProducts.isEmpty) {
+      overallColor = Colors.blue.shade600;
+      overallIcon = Icons.info_outline;
+    } else if (hasCritical) {
       overallColor = theme.colorScheme.error;
       overallIcon = Icons.warning_amber_rounded;
     } else if (hasWarning) {
@@ -1756,7 +1760,11 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     final hasWarning = widget.roomProducts
         .any((item) => item.status == BottleStatus.needsRefill);
 
-    if (hasCritical) {
+    if (widget.roomProducts.isEmpty) {
+      overallStatus = l10n.t('roomsStatusNoProducts');
+      overallColor = Colors.blue.shade600;
+      overallIcon = Icons.info_outline;
+    } else if (hasCritical) {
       overallStatus = l10n.t('roomsStatusAttentionRequired');
       overallColor = theme.colorScheme.error;
       overallIcon = Icons.warning_amber_rounded;
@@ -2131,6 +2139,8 @@ class _RoomsMobileSummary extends StatelessWidget {
           refill++;
         case _RoomOverallStatus.allOk:
           ok++;
+        case _RoomOverallStatus.noProducts:
+          break;
       }
     }
 

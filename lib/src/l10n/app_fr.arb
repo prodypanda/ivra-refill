@@ -282,6 +282,7 @@
   "roomsStatusAllOk": "Tout est OK",
   "roomsStatusAttentionRequired": "Attention requise",
   "roomsStatusRefillNeeded": "Recharge requise",
+  "roomsStatusNoProducts": "Aucun produit",
   "roomsSearchPlaceholder": "Rechercher une chambre...",
   "roomsRecentTitle": "Chambres récentes",
   "roomsRecentClear": "Effacer",

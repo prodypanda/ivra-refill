@@ -923,6 +923,9 @@ class AppL10nIt extends AppL10n {
   String get roomsStatusRefillNeeded => 'Ricarica necessaria';
 
   @override
+  String get roomsStatusNoProducts => 'Nessun prodotto';
+
+  @override
   String get roomsSearchPlaceholder => 'Cerca camera...';
 
   @override

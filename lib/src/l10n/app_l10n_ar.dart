@@ -912,6 +912,9 @@ class AppL10nAr extends AppL10n {
   String get roomsStatusRefillNeeded => 'تعبئة مطلوبة';
 
   @override
+  String get roomsStatusNoProducts => 'لا توجد منتجات';
+
+  @override
   String get roomsSearchPlaceholder => 'البحث عن غرفة...';
 
   @override

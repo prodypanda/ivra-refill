@@ -282,6 +282,7 @@
   "roomsStatusAllOk": "Tutto OK",
   "roomsStatusAttentionRequired": "Richiesto intervento",
   "roomsStatusRefillNeeded": "Ricarica necessaria",
+  "roomsStatusNoProducts": "Nessun prodotto",
   "roomsSearchPlaceholder": "Cerca camera...",
   "roomsRecentTitle": "Camere recenti",
   "roomsRecentClear": "Cancella",

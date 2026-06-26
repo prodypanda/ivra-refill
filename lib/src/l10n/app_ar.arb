@@ -282,6 +282,7 @@
   "roomsStatusAllOk": "كل شيء سليم",
   "roomsStatusAttentionRequired": "انتباه مطلوب",
   "roomsStatusRefillNeeded": "تعبئة مطلوبة",
+  "roomsStatusNoProducts": "لا توجد منتجات",
   "roomsSearchPlaceholder": "البحث عن غرفة...",
   "roomsRecentTitle": "الغرف الأخيرة",
   "roomsRecentClear": "مسح",
