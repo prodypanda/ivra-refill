@@ -260,8 +260,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Store Stock'), findsWidgets);
-      expect(find.text('Full bottles with pump'), findsWidgets);
-      expect(find.text('Full refill bottles'), findsWidgets);
+      expect(find.text('Full 1L bottles with pump'), findsWidgets);
+      expect(find.text('Full 5L refill bottles'), findsWidgets);
       expect(find.text('Empty & Open Bottles'), findsWidgets);
     });
 

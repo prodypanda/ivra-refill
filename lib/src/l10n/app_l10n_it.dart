@@ -516,10 +516,21 @@ class AppL10nIt extends AppL10n {
   String get inventoryTableFullBottles => 'Bottiglie piene';
 
   @override
-  String get inventoryTableFullBottlesWithPump => 'Bottiglie piene con pompa';
+  String inventoryTableFullBottlesWithPump(String size) {
+    return 'Bottiglie piene da $size con pompa';
+  }
 
   @override
-  String get inventoryTableFullBottlesWithoutPump =>
+  String inventoryTableFullBottlesWithoutPump(String size) {
+    return 'Bottiglie piene da $size senza pompa';
+  }
+
+  @override
+  String get inventoryTableFullBottlesWithPumpGeneric =>
+      'Bottiglie piene con pompa';
+
+  @override
+  String get inventoryTableFullBottlesWithoutPumpGeneric =>
       'Bottiglie piene senza pompa';
 
   @override
@@ -532,7 +543,12 @@ class AppL10nIt extends AppL10n {
   String get inventoryTableEmptyBidons => 'Bottiglie di ricarica vuote';
 
   @override
-  String get inventoryTableFullBidons => 'Bottiglie di ricarica piene';
+  String inventoryTableFullBidons(String size) {
+    return 'Bottiglie di ricarica piene da $size';
+  }
+
+  @override
+  String get inventoryTableFullBidonsGeneric => 'Bottiglie di ricarica piene';
 
   @override
   String get inventoryTableOpenBidons => 'Bottiglie di ricarica aperte';

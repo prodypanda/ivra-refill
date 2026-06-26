@@ -1052,14 +1052,26 @@ abstract class AppL10n {
   /// No description provided for @inventoryTableFullBottlesWithPump.
   ///
   /// In en, this message translates to:
-  /// **'Full bottles with pump'**
-  String get inventoryTableFullBottlesWithPump;
+  /// **'Full {size} bottles with pump'**
+  String inventoryTableFullBottlesWithPump(String size);
 
   /// No description provided for @inventoryTableFullBottlesWithoutPump.
   ///
   /// In en, this message translates to:
+  /// **'Full {size} bottles without pump'**
+  String inventoryTableFullBottlesWithoutPump(String size);
+
+  /// No description provided for @inventoryTableFullBottlesWithPumpGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Full bottles with pump'**
+  String get inventoryTableFullBottlesWithPumpGeneric;
+
+  /// No description provided for @inventoryTableFullBottlesWithoutPumpGeneric.
+  ///
+  /// In en, this message translates to:
   /// **'Full bottles without pump'**
-  String get inventoryTableFullBottlesWithoutPump;
+  String get inventoryTableFullBottlesWithoutPumpGeneric;
 
   /// No description provided for @inventoryCollapseHeader.
   ///
@@ -1082,8 +1094,14 @@ abstract class AppL10n {
   /// No description provided for @inventoryTableFullBidons.
   ///
   /// In en, this message translates to:
+  /// **'Full {size} refill bottles'**
+  String inventoryTableFullBidons(String size);
+
+  /// No description provided for @inventoryTableFullBidonsGeneric.
+  ///
+  /// In en, this message translates to:
   /// **'Full refill bottles'**
-  String get inventoryTableFullBidons;
+  String get inventoryTableFullBidonsGeneric;
 
   /// No description provided for @inventoryTableOpenBidons.
   ///

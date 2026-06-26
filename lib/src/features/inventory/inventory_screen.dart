@@ -754,6 +754,7 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
     final lowStock = widget.item.lowBottles || widget.item.lowBidons;
     final statusColor =
         lowStock ? theme.colorScheme.error : theme.colorScheme.primary;
@@ -878,8 +879,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
               // Visual Stock Indicators
               _VisualStockBar(
                 label: widget.item.product.bottleType == BottleType.withPump
-                    ? l10n.t('inventoryTableFullBottlesWithPump')
-                    : l10n.t('inventoryTableFullBottlesWithoutPump'),
+                    ? l10n.tParams('inventoryTableFullBottlesWithPump', {'size': _getFormattedVolume(widget.item.product.bottleVolumeMl, language)})
+                    : l10n.tParams('inventoryTableFullBottlesWithoutPump', {'size': _getFormattedVolume(widget.item.product.bottleVolumeMl, language)}),
                 value: widget.item.fullBottles,
                 threshold: widget.item.product.lowBottleThreshold,
                 icon: widget.item.product.bottleType == BottleType.withPump
@@ -890,7 +891,7 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
               if (widget.item.product.isRefillable) ...[
                 const SizedBox(height: 12),
                 _VisualStockBar(
-                  label: l10n.t('inventoryTableFullBidons'),
+                  label: l10n.tParams('inventoryTableFullBidons', {'size': _getFormattedVolume(widget.item.product.bidonVolumeMl, language)}),
                   value: widget.item.fullBidons,
                   threshold: widget.item.product.lowBidonThreshold,
                   icon: IvraIcons.fullRefillBottle,
@@ -1285,8 +1286,8 @@ class _StockAdjustmentDialogState
                     _DeltaField(
                       controller: _fullBottles,
                       label: selectedItem.product.bottleType == BottleType.withPump
-                          ? l10n.t('inventoryTableFullBottlesWithPump')
-                          : l10n.t('inventoryTableFullBottlesWithoutPump'),
+                          ? l10n.tParams('inventoryTableFullBottlesWithPump', {'size': _getFormattedVolume(selectedItem.product.bottleVolumeMl, language)})
+                          : l10n.tParams('inventoryTableFullBottlesWithoutPump', {'size': _getFormattedVolume(selectedItem.product.bottleVolumeMl, language)}),
                     ),
                     const SizedBox(height: 12),
                     _DeltaField(
@@ -1297,7 +1298,7 @@ class _StockAdjustmentDialogState
                       const SizedBox(height: 12),
                       _DeltaField(
                         controller: _fullBidons,
-                        label: l10n.t('inventoryTableFullBidons'),
+                        label: l10n.tParams('inventoryTableFullBidons', {'size': _getFormattedVolume(selectedItem.product.bidonVolumeMl, language)}),
                       ),
                       const SizedBox(height: 8),
                       TextButton.icon(
@@ -1781,6 +1782,7 @@ class _BulkStockAdjustmentDialogState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final language = Localizations.localeOf(context).languageCode;
 
     final emptyBidonsLabel = l10n.t('inventoryTableEmptyBidons').isNotEmpty
         ? l10n.t('inventoryTableEmptyBidons')
@@ -1873,7 +1875,9 @@ class _BulkStockAdjustmentDialogState
                           const SizedBox(height: 12),
                           _DeltaField(
                             controller: _fullBidons,
-                            label: l10n.t('inventoryTableFullBidons'),
+                            label: selectedProducts.length == 1
+                                ? l10n.tParams('inventoryTableFullBidons', {'size': _getFormattedVolume(selectedProducts.first.bidonVolumeMl, language)})
+                                : l10n.t('inventoryTableFullBidonsGeneric'),
                           ),
                           const SizedBox(height: 8),
                           TextButton.icon(
@@ -2554,6 +2558,17 @@ class _UnifiedHistoryItem {
   final IconData icon;
   final Color color;
   final bool isRoomEvent;
+}
+
+String _getFormattedVolume(int ml, String lang) {
+  if (ml >= 1000) {
+    final double l = ml / 1000.0;
+    final String formattedStr = l == l.toInt() ? l.toInt().toString() : l.toStringAsFixed(1);
+    final separator = (lang == 'fr' || lang == 'it' || lang == 'ar') ? ',' : '.';
+    return '${formattedStr}L'.replaceAll('.', separator);
+  } else {
+    return '${ml}ml';
+  }
 }
 
 

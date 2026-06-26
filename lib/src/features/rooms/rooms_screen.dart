@@ -1200,6 +1200,7 @@ class _CompactRoomTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     Color overallColor = Colors.green;
@@ -1320,7 +1321,7 @@ class _CompactRoomTile extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        'Room',
+                        l10n.t('roomsLabelRoom'),
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           color: theme.colorScheme.onSurfaceVariant,
@@ -2354,7 +2355,7 @@ class _RoomCardProductRow extends ConsumerWidget {
           spacing: 6,
           runSpacing: 4,
           children: [
-            if (item.product.isRefillable) ...[
+            if (item.product.isRefillable)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
@@ -2366,18 +2367,17 @@ class _RoomCardProductRow extends ConsumerWidget {
                   style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  '${l10n.t('roomsLabelAge')}: ${item.bottleAgeDays(DateTime.now())}${l10n.t('roomsLabelDaysUnit')}',
-                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
-                ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(4),
               ),
-            ],
+              child: Text(
+                '${l10n.t('roomsLabelAge')}: ${item.bottleAgeDays(DateTime.now())}${l10n.t('roomsLabelDaysUnit')}',
+                style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+              ),
+            ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
@@ -2428,8 +2428,8 @@ class _RoomCardProductRow extends ConsumerWidget {
                 style: FilledButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
+                  backgroundColor: const Color(0xFF267D65),
+                  foregroundColor: Colors.white,
                   minimumSize: const Size(80, 36),
                 ),
                 onPressed: item.status == BottleStatus.recycled

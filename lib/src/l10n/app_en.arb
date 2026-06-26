@@ -227,12 +227,36 @@
   "metricLowStockProducts": "Low stock products",
   "inventoryTableProduct": "Product",
   "inventoryTableFullBottles": "Full bottles",
-  "inventoryTableFullBottlesWithPump": "Full bottles with pump",
-  "inventoryTableFullBottlesWithoutPump": "Full bottles without pump",
+  "inventoryTableFullBottlesWithPump": "Full {size} bottles with pump",
+  "@inventoryTableFullBottlesWithPump": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "inventoryTableFullBottlesWithoutPump": "Full {size} bottles without pump",
+  "@inventoryTableFullBottlesWithoutPump": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "inventoryTableFullBottlesWithPumpGeneric": "Full bottles with pump",
+  "inventoryTableFullBottlesWithoutPumpGeneric": "Full bottles without pump",
   "inventoryCollapseHeader": "Empty & Open Bottles",
   "inventoryTableEmptyBottles": "Empty bottles",
   "inventoryTableEmptyBidons": "Empty refill bottles",
-  "inventoryTableFullBidons": "Full refill bottles",
+  "inventoryTableFullBidons": "Full {size} refill bottles",
+  "@inventoryTableFullBidons": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "inventoryTableFullBidonsGeneric": "Full refill bottles",
   "inventoryTableOpenBidons": "Opened refill bottles",
   "inventoryTableStatus": "Status",
   "errorUniqueViolation": "This record already exists.",
