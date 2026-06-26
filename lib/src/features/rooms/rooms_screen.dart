@@ -3561,12 +3561,6 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
   Future<void> _save() async {
     final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedProductIds.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.t('roomsMsgSelectOneProduct'))),
-      );
-      return;
-    }
 
     final messenger = ScaffoldMessenger.of(context);
     final firstRoomNumber = int.parse(_firstRoomNumber.text);
@@ -3834,12 +3828,6 @@ class _AddRoomDialogState extends ConsumerState<_AddRoomDialog> {
   Future<void> _save() async {
     final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedProductIds.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.t('roomsMsgSelectOneProduct'))),
-      );
-      return;
-    }
 
     final messenger = ScaffoldMessenger.of(context);
     final roomNumber = _roomNumber.text.trim();

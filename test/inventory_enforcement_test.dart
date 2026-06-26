@@ -128,5 +128,33 @@ void main() {
       final events = await repository.recentInventoryEvents(hotelId: hotel.id);
       expect(events.any((e) => e.reason == 'Auto-adjusted for room creation template' && e.fullBottlesDelta == 5), true);
     });
+
+    test('createRoomsFromTemplate succeeds with empty productIds', () async {
+      final hotels = await repository.hotels();
+      expect(hotels.isNotEmpty, true);
+      final hotel = hotels.first;
+
+      final initialRooms = await repository.rooms(hotelId: hotel.id);
+
+      // Call createRoomsFromTemplate with empty productIds
+      await repository.createRoomsFromTemplate(
+        hotelId: hotel.id,
+        floorNumber: 10,
+        firstRoomNumber: 1001,
+        roomCount: 3,
+        productIds: [],
+        autoAdjustInventory: false,
+      );
+
+      final finalRooms = await repository.rooms(hotelId: hotel.id);
+      expect(finalRooms.length - initialRooms.length, 3);
+
+      // Verify that new rooms do not have products
+      final newRooms = finalRooms.where((room) => room.floorNumber == 10).toList();
+      expect(newRooms.length, 3);
+      for (final room in newRooms) {
+        expect(room.productCount, 0);
+      }
+    });
   });
 }

@@ -432,6 +432,7 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
   final _firstRoomNumber = TextEditingController(text: '101');
   final _roomCount = TextEditingController(text: '10');
   final Set<String> _selectedProductIds = {};
+  var _didInitializeProducts = false;
   var _isSaving = false;
 
   @override
@@ -454,8 +455,9 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final products = ref.watch(productsProvider).valueOrNull ?? const <Product>[];
-    if (_selectedProductIds.isEmpty && products.isNotEmpty) {
+    if (!_didInitializeProducts && products.isNotEmpty) {
       _selectedProductIds.addAll(products.take(3).map((p) => p.id));
+      _didInitializeProducts = true;
     }
     return Container(
       width: double.infinity,
@@ -602,16 +604,13 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
   }
 
   Future<void> _finish() async {
-    if (_selectedProductIds.isEmpty) {
-      PremiumSnackbar.showError(context, AppLocalizations.of(context).t('bulkAdjustNoProductsSelected'));
-      return;
-    }
-
     final l10n = AppLocalizations.of(context);
     final roomCount = int.tryParse(_roomCount.text) ?? 0;
     final totalBottles = roomCount * _selectedProductIds.length;
 
-    final proceed = await _showOnboardingInventoryDialog(context, totalBottles);
+    final proceed = totalBottles > 0
+        ? await _showOnboardingInventoryDialog(context, totalBottles)
+        : true;
     if (proceed != true) return;
 
     setState(() => _isSaving = true);
