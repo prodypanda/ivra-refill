@@ -346,8 +346,8 @@ class RoomProduct {
     required this.refillCount,
     required this.lastRefillAt,
     required this.bottleStartedAt,
-    required this.status,
-  });
+    required BottleStatus status,
+  }) : _status = status;
 
   final String id;
   final String hotelId;
@@ -358,7 +358,26 @@ class RoomProduct {
   final int refillCount;
   final DateTime? lastRefillAt;
   final DateTime bottleStartedAt;
-  final BottleStatus status;
+  final BottleStatus _status;
+
+  BottleStatus get status {
+    if (_status == BottleStatus.damaged ||
+        _status == BottleStatus.lost ||
+        _status == BottleStatus.recycled ||
+        _status == BottleStatus.needsReplacement) {
+      return _status;
+    }
+    // Check refill limit for refillable products
+    if (product.isRefillable && refillCount >= product.maxRefillCount) {
+      return BottleStatus.refillLimitReached;
+    }
+    // Check age limit
+    final age = DateTime.now().difference(bottleStartedAt).inDays;
+    if (age >= product.maxBottleAgeDays) {
+      return BottleStatus.tooOld;
+    }
+    return _status;
+  }
 
   int bottleAgeDays(DateTime now) => now.difference(bottleStartedAt).inDays;
 
@@ -367,6 +386,7 @@ class RoomProduct {
   RoomProduct copyWith({
     String? roomNumber,
     int? floorNumber,
+    Product? product,
     int? refillCount,
     DateTime? lastRefillAt,
     DateTime? bottleStartedAt,
@@ -378,11 +398,11 @@ class RoomProduct {
       roomId: roomId,
       roomNumber: roomNumber ?? this.roomNumber,
       floorNumber: floorNumber ?? this.floorNumber,
-      product: product,
+      product: product ?? this.product,
       refillCount: refillCount ?? this.refillCount,
       lastRefillAt: lastRefillAt ?? this.lastRefillAt,
       bottleStartedAt: bottleStartedAt ?? this.bottleStartedAt,
-      status: status ?? this.status,
+      status: status ?? this._status,
     );
   }
 }
@@ -412,6 +432,7 @@ class InventoryItem {
   bool get lowBidons => product.isRefillable && fullBidons <= product.lowBidonThreshold;
 
   InventoryItem copyWith({
+    Product? product,
     int? fullBottles,
     int? emptyBottles,
     int? fullBidons,
@@ -421,7 +442,7 @@ class InventoryItem {
     return InventoryItem(
       id: id,
       hotelId: hotelId,
-      product: product,
+      product: product ?? this.product,
       fullBottles: fullBottles ?? this.fullBottles,
       emptyBottles: emptyBottles ?? this.emptyBottles,
       fullBidons: fullBidons ?? this.fullBidons,

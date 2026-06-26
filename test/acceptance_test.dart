@@ -4,6 +4,7 @@ import 'package:ivra_refill/src/data/mock_ivra_repository.dart';
 import 'package:ivra_refill/src/data/offline/offline_sync_service.dart';
 import 'package:ivra_refill/src/data/report_export_service.dart';
 import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
 import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -754,6 +755,51 @@ void main() {
                   'Key "$key" should have a translated value for ${locale.languageCode}');
         }
       }
+    });
+
+    test('RoomProduct status is calculated dynamically for age and refills', () {
+      final productRefillable = Product(
+        id: 'p1',
+        sku: 'SKU1',
+        nameEn: 'P1',
+        nameFr: 'P1',
+        nameAr: 'P1',
+        nameIt: 'P1',
+        maxRefillCount: 40,
+        maxBottleAgeDays: 5,
+        lowBottleThreshold: 5,
+        lowBidonThreshold: 2,
+        refillType: RefillType.refillable,
+      );
+
+      final rpTooOld = RoomProduct(
+        id: 'rp1',
+        hotelId: 'h1',
+        roomId: 'r1',
+        roomNumber: '101',
+        floorNumber: 1,
+        product: productRefillable,
+        refillCount: 0,
+        lastRefillAt: null,
+        bottleStartedAt: DateTime.now().subtract(const Duration(days: 11)),
+        status: BottleStatus.active,
+      );
+
+      final rpRefillsExceeded = RoomProduct(
+        id: 'rp2',
+        hotelId: 'h1',
+        roomId: 'r1',
+        roomNumber: '101',
+        floorNumber: 1,
+        product: productRefillable,
+        refillCount: 43,
+        lastRefillAt: null,
+        bottleStartedAt: DateTime.now().subtract(const Duration(days: 2)),
+        status: BottleStatus.active,
+      );
+
+      expect(rpTooOld.status, BottleStatus.tooOld);
+      expect(rpRefillsExceeded.status, BottleStatus.refillLimitReached);
     });
   });
 }

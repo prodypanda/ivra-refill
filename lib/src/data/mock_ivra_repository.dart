@@ -1059,7 +1059,7 @@ class MockIvraRepository implements IvraRepository {
     final index = _products.indexWhere((product) => product.id == productId);
     if (index == -1) return;
 
-    _products[index] = _products[index].copyWith(
+    final updated = _products[index].copyWith(
       sku: sku,
       nameEn: nameEn,
       nameFr: nameFr,
@@ -1075,6 +1075,21 @@ class MockIvraRepository implements IvraRepository {
       bottleType: bottleType,
       refillType: refillType,
     );
+    _products[index] = updated;
+
+    // Update product inside _roomProducts
+    for (int i = 0; i < _roomProducts.length; i++) {
+      if (_roomProducts[i].product.id == productId) {
+        _roomProducts[i] = _roomProducts[i].copyWith(product: updated);
+      }
+    }
+
+    // Update product inside _inventory
+    for (int i = 0; i < _inventory.length; i++) {
+      if (_inventory[i].product.id == productId) {
+        _inventory[i] = _inventory[i].copyWith(product: updated);
+      }
+    }
   }
 
   @override
