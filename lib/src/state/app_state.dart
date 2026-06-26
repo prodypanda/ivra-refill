@@ -87,7 +87,10 @@ final offlineActionsProvider = FutureProvider<List<OfflineAction>>((ref) {
   return ref.watch(offlineSyncServiceProvider).pendingActions();
 });
 
-final selectedHotelIdProvider = StateProvider<String?>((ref) => null);
+final selectedHotelIdProvider = StateProvider<String?>((ref) {
+  final user = ref.watch(currentUserProvider).valueOrNull;
+  return user?.hotelId;
+});
 
 /// When an app admin chooses "View as" another user, the target's profile is
 /// stored here. While set, [currentUserProvider] returns this profile instead
