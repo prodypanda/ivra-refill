@@ -10,6 +10,52 @@ import 'ivra_repository.dart';
 
 class MockIvraRepository implements IvraRepository {
   MockIvraRepository() {
+    _mockRolePermissions = {
+      'app_admin': {
+        'manage_hotels',
+        'manage_rooms',
+        'manage_products',
+        'manage_team',
+        'view_approvals',
+        'approve_corrections',
+        'view_reports',
+        'send_notifications',
+        'view_audit_logs',
+        'view_alerts',
+        'view_rooms',
+        'view_inventory',
+        'submit_edit_requests',
+      },
+      'app_manager': {
+        'manage_hotels',
+        'manage_rooms',
+        'manage_products',
+        'manage_team',
+        'view_approvals',
+        'approve_corrections',
+        'view_reports',
+        'send_notifications',
+        'view_alerts',
+        'view_rooms',
+        'view_inventory',
+        'submit_edit_requests',
+      },
+      'hotel_manager': {
+        'manage_rooms',
+        'manage_team',
+        'view_approvals',
+        'view_reports',
+        'view_alerts',
+        'view_rooms',
+        'view_inventory',
+        'submit_edit_requests',
+      },
+      'hotel_staff': {
+        'view_alerts',
+        'view_rooms',
+        'view_inventory',
+      },
+    };
     _hotels = [
       const Hotel(
         id: 'hotel-seaside',
@@ -179,12 +225,14 @@ class MockIvraRepository implements IvraRepository {
         fullName: 'Ivra Manager',
         email: 'manager@ivra.example',
         role: UserRole.appManager,
+        roleString: 'app_manager',
       ),
       const UserProfile(
         id: 'hotel-manager-seaside',
         fullName: 'Amina Bello',
         email: 'amina@seaside.example',
         role: UserRole.hotelManager,
+        roleString: 'hotel_manager',
         hotelId: 'hotel-seaside',
       ),
       const UserProfile(
@@ -192,6 +240,7 @@ class MockIvraRepository implements IvraRepository {
         fullName: 'Housekeeping Lead',
         email: 'housekeeping@seaside.example',
         role: UserRole.hotelStaff,
+        roleString: 'hotel_staff',
         hotelId: 'hotel-seaside',
       ),
     ];
@@ -276,11 +325,20 @@ class MockIvraRepository implements IvraRepository {
 
   final _uuid = const Uuid();
 
+  final List<String> _mockRoles = [
+    'app_admin',
+    'app_manager',
+    'hotel_manager',
+    'hotel_staff',
+  ];
+  late final Map<String, Set<String>> _mockRolePermissions;
+
   var _currentUser = const UserProfile(
     id: 'demo-admin',
     fullName: 'Ivra Admin',
     email: 'admin@ivra.example',
     role: UserRole.appAdmin,
+    roleString: 'app_admin',
   );
 
   final _products = [
@@ -966,6 +1024,7 @@ class MockIvraRepository implements IvraRepository {
         fullName: invitation.fullName,
         email: invitation.email,
         role: invitation.role,
+        roleString: invitation.role.value,
         hotelId: invitation.hotelId,
       ),
     );
@@ -1689,5 +1748,30 @@ class MockIvraRepository implements IvraRepository {
     _hotels[index] = hotel.copyWith(
       pendingEdits: max(hotel.pendingEdits - 1, 0),
     );
+  }
+
+  @override
+  Future<List<String>> fetchRoles() async {
+    return _mockRoles;
+  }
+
+  @override
+  Future<Map<String, Set<String>>> fetchRolePermissions() async {
+    return Map.from(_mockRolePermissions);
+  }
+
+  @override
+  Future<void> updateRolePermission({
+    required String role,
+    required String permission,
+    required bool isEnabled,
+  }) async {
+    final permissions = _mockRolePermissions[role] ?? {};
+    if (isEnabled) {
+      permissions.add(permission);
+    } else {
+      permissions.remove(permission);
+    }
+    _mockRolePermissions[role] = permissions;
   }
 }

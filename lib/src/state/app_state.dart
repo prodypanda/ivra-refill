@@ -341,6 +341,8 @@ void invalidateAccountScopedData(WidgetRef ref) {
   ref.invalidate(refillEventsProvider);
   ref.invalidate(inventoryEventsProvider);
   ref.invalidate(offlineActionsProvider);
+  ref.invalidate(rolesProvider);
+  ref.invalidate(rolePermissionsProvider);
 }
 
 final refillEventsProvider = FutureProvider<List<RefillEvent>>((ref) {
@@ -510,5 +512,44 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
         : DailyRefillStatus.hasPriority,
     nextPriorityRoomNumber: nextPriorityRoomNumber,
   );
+});
+
+final rolesProvider = FutureProvider<List<String>>((ref) async {
+  return ref.watch(repositoryProvider).fetchRoles();
+});
+
+final rolePermissionsProvider = FutureProvider<Map<String, Set<String>>>((ref) async {
+  return ref.watch(repositoryProvider).fetchRolePermissions();
+});
+
+final hasPermissionProvider = Provider.family<bool, String>((ref, permission) {
+  final userProfile = ref.watch(currentUserProvider).valueOrNull;
+  if (userProfile == null) return false;
+
+  final permissionsAsync = ref.watch(rolePermissionsProvider);
+  final matrix = permissionsAsync.valueOrNull;
+
+  if (matrix == null) {
+    switch (userProfile.role) {
+      case UserRole.appAdmin:
+        return true;
+      case UserRole.appManager:
+        return permission != 'view_audit_logs';
+      case UserRole.hotelManager:
+        return permission != 'manage_hotels' &&
+            permission != 'manage_products' &&
+            permission != 'approve_corrections' &&
+            permission != 'send_notifications' &&
+            permission != 'view_audit_logs' &&
+            permission != 'view_authorizations';
+      case UserRole.hotelStaff:
+        return permission == 'view_alerts' ||
+            permission == 'view_rooms' ||
+            permission == 'view_inventory';
+    }
+  }
+
+  final rolePermissions = matrix[userProfile.roleString];
+  return rolePermissions?.contains(permission) ?? false;
 });
 

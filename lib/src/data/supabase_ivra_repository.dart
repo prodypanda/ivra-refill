@@ -1146,4 +1146,56 @@ class SupabaseIvraRepository implements IvraRepository {
       refillType: RefillType.fromValue(asString(map['refill_type'], fallback: 'refillable')),
     );
   }
+
+  @override
+  Future<List<String>> fetchRoles() async {
+    final List<dynamic> data = await _client
+        .from('roles')
+        .select('name')
+        .order('name', ascending: true);
+    return data.map<String>((row) => row['name'] as String).toList();
+  }
+
+  @override
+  Future<Map<String, Set<String>>> fetchRolePermissions() async {
+    final List<String> roles = await fetchRoles();
+    final Map<String, Set<String>> matrix = {
+      for (final r in roles) r: {},
+    };
+
+    final List<dynamic> data = await _client
+        .from('role_permissions')
+        .select('role, permission, is_enabled');
+    
+    for (final row in data) {
+      final role = row['role'] as String;
+      final permission = row['permission'] as String;
+      final isEnabled = row['is_enabled'] as bool;
+      if (isEnabled) {
+        matrix.putIfAbsent(role, () => {}).add(permission);
+      }
+    }
+    return matrix;
+  }
+
+  @override
+  Future<void> updateRolePermission({
+    required String role,
+    required String permission,
+    required bool isEnabled,
+  }) async {
+    await _client.from('role_permissions').upsert({
+      'role': role,
+      'permission': permission,
+      'is_enabled': isEnabled,
+    });
+    await _auditService.logAction(
+      'Updated role permission',
+      details: {
+        'role': role,
+        'permission': permission,
+        'is_enabled': isEnabled,
+      },
+    );
+  }
 }

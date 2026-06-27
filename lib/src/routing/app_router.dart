@@ -23,6 +23,7 @@ import '../features/shell/app_shell.dart';
 import '../features/team/team_screen.dart';
 import '../features/notifications/send_notification_screen.dart';
 import '../features/audit/audit_logs_screen.dart';
+import '../features/authorizations/authorizations_screen.dart';
 import '../domain/app_enums.dart';
 import '../state/app_state.dart';
 
@@ -88,10 +89,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         }
       }
 
-      if (!isPublicAuthRoute &&
-          currentUser != null &&
-          !_isAllowedRoute(currentUser.role, path)) {
-        return DashboardScreen.route;
+      if (!isPublicAuthRoute && currentUser != null) {
+        if (path == HotelsScreen.route) {
+          final hasHotelsAccess = ref.read(hasPermissionProvider('manage_hotels')) ||
+              ref.read(hasPermissionProvider('view_approvals'));
+          if (!hasHotelsAccess) {
+            return DashboardScreen.route;
+          }
+        } else {
+          final permission = _permissionForPath(path);
+          if (permission != null) {
+            final hasPerm = ref.read(hasPermissionProvider(permission));
+            if (!hasPerm) {
+              return DashboardScreen.route;
+            }
+          }
+        }
       }
       return null;
     },
@@ -189,65 +202,26 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: AuditLogsScreen.route,
             builder: (context, state) => const AuditLogsScreen(),
           ),
+          GoRoute(
+            path: AuthorizationsScreen.route,
+            builder: (context, state) => const AuthorizationsScreen(),
+          ),
         ],
       ),
     ],
   );
 });
 
-bool _isAllowedRoute(UserRole role, String path) {
-  final allowedRoutes = _allowedRoutesByRole[role];
-  return allowedRoutes == null || allowedRoutes.contains(path);
+String? _permissionForPath(String path) {
+  if (path == RoomsScreen.route) return 'view_rooms';
+  if (path == InventoryScreen.route) return 'view_inventory';
+  if (path == ProductsScreen.route) return 'manage_products';
+  if (path == TeamScreen.route) return 'manage_team';
+  if (path == ApprovalsScreen.route) return 'view_approvals';
+  if (path == AlertsScreen.route) return 'view_alerts';
+  if (path == ReportsScreen.route) return 'view_reports';
+  if (path == SendNotificationScreen.route) return 'send_notifications';
+  if (path == AuditLogsScreen.route) return 'view_audit_logs';
+  if (path == AuthorizationsScreen.route) return 'view_authorizations';
+  return null;
 }
-
-const _allowedRoutesByRole = {
-  UserRole.appAdmin: {
-    DashboardScreen.route,
-    HotelsScreen.route,
-    RoomsScreen.route,
-    InventoryScreen.route,
-    ProductsScreen.route,
-    TeamScreen.route,
-    AccountScreen.route,
-    ApprovalsScreen.route,
-    AlertsScreen.route,
-    ReportsScreen.route,
-    SendNotificationScreen.route,
-    AuditLogsScreen.route,
-    SettingsScreen.route,
-  },
-  UserRole.appManager: {
-    DashboardScreen.route,
-    HotelsScreen.route,
-    RoomsScreen.route,
-    InventoryScreen.route,
-    ProductsScreen.route,
-    TeamScreen.route,
-    AccountScreen.route,
-    ApprovalsScreen.route,
-    AlertsScreen.route,
-    ReportsScreen.route,
-    SendNotificationScreen.route,
-    SettingsScreen.route,
-  },
-  UserRole.hotelManager: {
-    DashboardScreen.route,
-    HotelsScreen.route,
-    RoomsScreen.route,
-    InventoryScreen.route,
-    TeamScreen.route,
-    AccountScreen.route,
-    ApprovalsScreen.route,
-    AlertsScreen.route,
-    ReportsScreen.route,
-    SettingsScreen.route,
-  },
-  UserRole.hotelStaff: {
-    DashboardScreen.route,
-    RoomsScreen.route,
-    InventoryScreen.route,
-    AccountScreen.route,
-    AlertsScreen.route,
-    SettingsScreen.route,
-  },
-};

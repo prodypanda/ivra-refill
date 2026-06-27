@@ -45,7 +45,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   Widget build(BuildContext context) {
     final currentUserAsync = ref.watch(currentUserProvider);
     final currentUser = currentUserAsync.valueOrNull;
-    final navItems = _navItems(context, currentUser?.role);
+    final navItems = _navItems(context, ref);
     final location = GoRouterState.of(context).uri.toString();
     final selectedIndex = navItems.indexWhere(
       (item) => location == item.route,
@@ -131,140 +131,99 @@ class _AppShellState extends ConsumerState<AppShell> {
     );
   }
 
-  List<_NavItem> _navItems(BuildContext context, UserRole? role) {
+  List<_NavItem> _navItems(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final items = [
       _NavItem(
         l10n.t('dashboard'),
         Icons.space_dashboard_outlined,
         DashboardScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-          UserRole.hotelStaff,
-        },
         shortLabel: l10n.t('dashboardShort'),
       ),
       _NavItem(
         l10n.t('hotels'),
         Icons.apartment_outlined,
         HotelsScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-        },
+        permission: 'manage_hotels',
       ),
       _NavItem(
         l10n.t('rooms'),
         Icons.meeting_room_outlined,
         RoomsScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-          UserRole.hotelStaff,
-        },
+        permission: 'view_rooms',
       ),
       _NavItem(
         l10n.t('inventory'),
         Icons.inventory_2_outlined,
         InventoryScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-          UserRole.hotelStaff,
-        },
+        permission: 'view_inventory',
       ),
       _NavItem(
         l10n.t('products'),
         Icons.spa_outlined,
         ProductsScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-        },
+        permission: 'manage_products',
       ),
       _NavItem(
         l10n.t('team'),
         Icons.groups_2_outlined,
         TeamScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-        },
+        permission: 'manage_team',
       ),
       _NavItem(
         l10n.t('approvals'),
         Icons.fact_check_outlined,
         ApprovalsScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-        },
+        permission: 'view_approvals',
       ),
       _NavItem(
         l10n.t('alerts'),
         Icons.notifications_active_outlined,
         AlertsScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-          UserRole.hotelStaff,
-        },
+        permission: 'view_alerts',
       ),
       _NavItem(
         l10n.t('reports'),
         Icons.summarize_outlined,
         ReportsScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-        },
+        permission: 'view_reports',
       ),
       _NavItem(
         l10n.t('menuSendPush'),
         Icons.send_rounded,
         SendNotificationScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-        },
+        permission: 'send_notifications',
       ),
       _NavItem(
         l10n.t('menuAuditLogs'),
         Icons.security_outlined,
         AuditLogsScreen.route,
-        const {
-          UserRole.appAdmin,
-        },
+        permission: 'view_audit_logs',
+      ),
+      _NavItem(
+        l10n.t('authorizationsTitle'),
+        Icons.admin_panel_settings_outlined,
+        '/authorizations',
+        permission: 'view_authorizations',
       ),
       _NavItem(
         l10n.t('settings'),
         Icons.settings_outlined,
         SettingsScreen.route,
-        const {
-          UserRole.appAdmin,
-          UserRole.appManager,
-          UserRole.hotelManager,
-          UserRole.hotelStaff,
-        },
       ),
     ];
 
-    if (role == null) {
+    final userProfile = ref.watch(currentUserProvider).valueOrNull;
+    if (userProfile == null) {
       return items
           .where((item) => item.route == DashboardScreen.route)
           .toList();
     }
 
-    return items.where((item) => item.allowedRoles.contains(role)).toList();
+    return items.where((item) {
+      if (item.permission == null) return true;
+      return ref.watch(hasPermissionProvider(item.permission!));
+    }).toList();
   }
 }
 
@@ -421,14 +380,19 @@ class _BrandMark extends StatelessWidget {
 }
 
 class _NavItem {
-  const _NavItem(this.label, this.icon, this.route, this.allowedRoles,
-      {this.shortLabel});
+  const _NavItem(
+    this.label,
+    this.icon,
+    this.route, {
+    this.permission,
+    this.shortLabel,
+  });
 
   final String label;
   final String? shortLabel;
   final IconData icon;
   final String route;
-  final Set<UserRole> allowedRoles;
+  final String? permission;
 
   String get mobileLabel => shortLabel ?? label;
 }

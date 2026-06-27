@@ -21,9 +21,7 @@ class ApprovalsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final role = ref.watch(currentUserProvider).valueOrNull?.role;
-    final canReviewRequests =
-        role == UserRole.appAdmin || role == UserRole.appManager;
+    final canReviewRequests = ref.watch(hasPermissionProvider('approve_corrections'));
 
     final l10n = AppLocalizations.of(context);
     return PageScaffold(

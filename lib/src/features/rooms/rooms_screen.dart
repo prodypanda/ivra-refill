@@ -324,9 +324,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
 
                     final sortedFloors = roomsByFloor.keys.toList()..sort();
                     final isMobile = MediaQuery.sizeOf(context).width < 720;
-                    final canDeleteRooms = currentUser?.isIvraUser == true ||
-                        (currentUser?.hotelId == selectedHotelId &&
-                            currentUser?.role == UserRole.hotelManager);
+                    final canDeleteRooms = ref.watch(hasPermissionProvider('manage_rooms')) &&
+                        (currentUser?.isIvraUser == true || currentUser?.hotelId == selectedHotelId);
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1827,9 +1826,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     final isMobile = MediaQuery.sizeOf(context).width < 720 && !widget.isDialog;
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
-    final canManageRooms = currentUser?.isIvraUser == true ||
-        (currentUser?.hotelId == selectedHotelId &&
-            currentUser?.role == UserRole.hotelManager);
+    final canManageRooms = ref.watch(hasPermissionProvider('manage_rooms')) &&
+        (currentUser?.isIvraUser == true || currentUser?.hotelId == selectedHotelId);
 
     var overallStatus = l10n.t('roomsStatusAllOk');
     var overallColor = Colors.orange.shade700;
@@ -2450,8 +2448,7 @@ class _RoomCardProductRow extends ConsumerWidget {
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
-    final canSubmitEditRequests =
-        currentUser != null && currentUser.role != UserRole.hotelStaff;
+    final canSubmitEditRequests = ref.watch(hasPermissionProvider('submit_edit_requests'));
 
     final statusColor = switch (item.status) {
       BottleStatus.refillLimitReached ||
@@ -2752,7 +2749,10 @@ class _RoomCardProductRow extends ConsumerWidget {
               child: statusChips,
             ),
             const SizedBox(width: 12),
-            actions,
+            Expanded(
+              flex: 4,
+              child: actions,
+            ),
           ],
         );
       },

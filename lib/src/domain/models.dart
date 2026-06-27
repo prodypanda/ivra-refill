@@ -7,6 +7,7 @@ class UserProfile {
     required this.fullName,
     required this.email,
     required this.role,
+    required this.roleString,
     this.isActive = true,
     this.hotelId,
   });
@@ -15,6 +16,7 @@ class UserProfile {
   final String fullName;
   final String email;
   final UserRole role;
+  final String roleString;
   final bool isActive;
   final String? hotelId;
 
@@ -22,11 +24,13 @@ class UserProfile {
       role == UserRole.appAdmin || role == UserRole.appManager;
 
   factory UserProfile.fromMap(Map<String, dynamic> map) {
+    final roleStr = asString(map['role'], fallback: 'hotel_staff');
     return UserProfile(
       id: asString(map['id']),
       fullName: asString(map['full_name']),
       email: asString(map['email']),
-      role: UserRole.fromValue(asString(map['role'], fallback: 'hotel_staff')),
+      role: UserRole.fromValue(roleStr),
+      roleString: roleStr,
       isActive: asBool(map['is_active'], fallback: true),
       hotelId: asNullableString(map['hotel_id']),
     );
@@ -36,6 +40,7 @@ class UserProfile {
     String? fullName,
     String? email,
     UserRole? role,
+    String? roleString,
     bool? isActive,
     String? hotelId,
   }) {
@@ -44,6 +49,7 @@ class UserProfile {
       fullName: fullName ?? this.fullName,
       email: email ?? this.email,
       role: role ?? this.role,
+      roleString: roleString ?? (role != null ? role.value : this.roleString),
       isActive: isActive ?? this.isActive,
       hotelId: hotelId ?? this.hotelId,
     );

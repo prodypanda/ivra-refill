@@ -978,6 +978,7 @@ UserProfile _userForRole(UserRole role) {
     fullName: 'Test ${role.value}',
     email: '${role.value}@ivra.test',
     role: role,
+    roleString: role.value,
     hotelId: role == UserRole.hotelManager || role == UserRole.hotelStaff
         ? 'hotel-seaside'
         : null,

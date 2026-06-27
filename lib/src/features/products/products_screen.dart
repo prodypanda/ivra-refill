@@ -17,14 +17,7 @@ import '../shared/product_image.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/premium_confirm_dialog.dart';
 
-/// Product create/edit/delete is restricted server-side to Ivra-level roles
-/// (`app_admin`/`app_manager`, see the `products_write_ivra` RLS policy).
-/// Hotel managers and staff would only hit a permission error, so hide the
-/// management controls from them entirely.
-bool canManageProducts(UserProfile? user) {
-  if (user == null) return false;
-  return user.role == UserRole.appAdmin || user.role == UserRole.appManager;
-}
+
 
 class ProductsScreen extends ConsumerWidget {
   const ProductsScreen({super.key});
@@ -34,8 +27,7 @@ class ProductsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final canManage =
-        canManageProducts(ref.watch(currentUserProvider).valueOrNull);
+    final canManage = ref.watch(hasPermissionProvider('manage_products'));
     return PageScaffold(
       title: l10n.t('productsCatalogTitle'),
       onRefresh: () async {
@@ -87,8 +79,7 @@ class _ProductsTable extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final language = Localizations.localeOf(context).languageCode;
     final l10n = AppLocalizations.of(context);
-    final canManage =
-        canManageProducts(ref.watch(currentUserProvider).valueOrNull);
+    final canManage = ref.watch(hasPermissionProvider('manage_products'));
 
     if (products.isEmpty) {
       return Card(

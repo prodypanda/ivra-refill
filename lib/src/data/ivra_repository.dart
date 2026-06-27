@@ -45,6 +45,14 @@ abstract class IvraRepository {
   Future<List<AuditLog>> fetchAuditLogs();
   Future<void> clearAuditLogs();
 
+  Future<List<String>> fetchRoles();
+  Future<Map<String, Set<String>>> fetchRolePermissions();
+  Future<void> updateRolePermission({
+    required String role,
+    required String permission,
+    required bool isEnabled,
+  });
+
   Future<void> createHotel({
     required String name,
     String legalName = '',
