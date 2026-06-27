@@ -1455,6 +1455,7 @@ Future<void> _showBottleEditRequest(
   ref.invalidate(approvalsProvider);
   ref.invalidate(hotelsProvider);
   ref.invalidate(roomProductsProvider);
+  ref.invalidate(refillEventsProvider);
   ref.invalidate(alertsProvider);
   ref.invalidate(dashboardProvider);
 }

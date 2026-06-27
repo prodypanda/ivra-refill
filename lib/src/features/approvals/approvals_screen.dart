@@ -134,6 +134,7 @@ void _refreshAfterReview(WidgetRef ref) {
   ref.invalidate(hotelsProvider);
   ref.invalidate(roomsProvider);
   ref.invalidate(roomProductsProvider);
+  ref.invalidate(refillEventsProvider);
   ref.invalidate(inventoryProvider);
   ref.invalidate(suggestedOrdersProvider);
   ref.invalidate(alertsProvider);
