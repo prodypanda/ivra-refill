@@ -212,6 +212,14 @@ class SupabaseIvraRepository implements IvraRepository {
     }
   }
 
+  Future<void> _clearRefillEventsCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys().where((k) => k.startsWith('cache_recent_refill_events_')).toList();
+    for (final key in keys) {
+      await prefs.remove(key);
+    }
+  }
+
   @override
   Future<UserProfile> currentUser() async {
     final user = _client.auth.currentUser;
@@ -781,6 +789,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_notes': notes,
       'p_client_request_id': clientRequestId,
     });
+    await _clearRefillEventsCache();
     await _auditService.logAction('Recorded refill', details: {'room_product_id': roomProductId});
   }
 
@@ -793,6 +802,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_refill_event_id': refillEventId,
       'p_client_request_id': clientRequestId,
     });
+    await _clearRefillEventsCache();
     await _auditService.logAction('Undid refill', details: {'refill_event_id': refillEventId});
   }
 
@@ -807,6 +817,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_reason': reason,
       'p_client_request_id': clientRequestId,
     });
+    await _clearRefillEventsCache();
     await _auditService.logAction('Requested stock correction', details: {'refill_event_id': refillEventId});
   }
 
@@ -823,6 +834,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_client_request_id': clientRequestId,
       'p_auto_adjust_inventory': autoAdjustInventory,
     });
+    await _clearRefillEventsCache();
     await _auditService.logAction('Replaced bottle', details: {'room_product_id': roomProductId});
   }
 
@@ -888,7 +900,7 @@ class SupabaseIvraRepository implements IvraRepository {
       'p_request_id': approvalRequestId,
       'p_notes': notes,
     });
-    
+    await _clearRefillEventsCache();
     await _auditService.logAction('Approved change request', details: {
       'request_id': approvalRequestId,
     });
