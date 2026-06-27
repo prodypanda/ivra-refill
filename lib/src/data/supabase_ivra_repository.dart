@@ -479,7 +479,7 @@ class SupabaseIvraRepository implements IvraRepository {
 
   @override
   Future<List<RefillEvent>> recentRefillEvents({String? hotelId}) async {
-    var query = _client.from('refill_events').select();
+    var query = _client.from('refill_events').select('*, profiles!refill_events_performed_by_profile_fkey(full_name)');
     if (hotelId != null) query = query.eq('hotel_id', hotelId);
     final rows = await _fetchWithCache(
       'recent_refill_events_${hotelId ?? 'all'}',
@@ -1089,6 +1089,8 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   RefillEvent _refillEventFromMap(Map<String, dynamic> map) {
+    final profileMap = map['profiles'] as Map<String, dynamic>?;
+    final performedByName = profileMap?['full_name'] as String?;
     return RefillEvent(
       id: asString(map['id']),
       roomProductId: asString(map['room_product_id']),
@@ -1100,8 +1102,10 @@ class SupabaseIvraRepository implements IvraRepository {
       newRefillCount: asInt(map['new_refill_count']),
       occurredAt: asDateTime(map['occurred_at']),
       performedBy: asString(map['performed_by']),
+      performedByName: performedByName,
       notes: asNullableString(map['notes']),
       clientRequestId: asNullableString(map['client_request_id']),
+      proofPhotoUrl: asNullableString(map['proof_photo_url']),
     );
   }
 

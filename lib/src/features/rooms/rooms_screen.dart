@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../ui/ivra_icons.dart';
@@ -1108,6 +1111,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     _recordRecentRoom(group.hotelId, group.roomNumber);
     showCenteredFormSheet<void>(
       context: context,
+      scrollable: false,
       builder: (context) => Padding(
         padding: const EdgeInsets.all(16),
         child: _RoomCard(
@@ -1450,6 +1454,42 @@ Future<void> _showBottleEditRequest(
   await showCenteredFormSheet<void>(
     context: context,
     builder: (context) => _BottleLifecycleEditDialog(item: item),
+  );
+
+  ref.invalidate(approvalsProvider);
+  ref.invalidate(hotelsProvider);
+  ref.invalidate(roomProductsProvider);
+  ref.invalidate(refillEventsProvider);
+  ref.invalidate(alertsProvider);
+  ref.invalidate(dashboardProvider);
+}
+
+Future<void> _showMarkDamagedDialog(
+  BuildContext context,
+  WidgetRef ref,
+  RoomProduct item,
+) async {
+  await showCenteredFormSheet<void>(
+    context: context,
+    builder: (context) => _MarkDamagedDialog(item: item),
+  );
+
+  ref.invalidate(approvalsProvider);
+  ref.invalidate(hotelsProvider);
+  ref.invalidate(roomProductsProvider);
+  ref.invalidate(refillEventsProvider);
+  ref.invalidate(alertsProvider);
+  ref.invalidate(dashboardProvider);
+}
+
+Future<void> _showMarkLostDialog(
+  BuildContext context,
+  WidgetRef ref,
+  RoomProduct item,
+) async {
+  await showCenteredFormSheet<void>(
+    context: context,
+    builder: (context) => _MarkLostDialog(item: item),
   );
 
   ref.invalidate(approvalsProvider);
@@ -1856,6 +1896,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
             borderWidth: _isHovered ? 2.0 : 1.5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   padding: EdgeInsets.all(isMobile ? 16 : 12)
@@ -1868,141 +1909,267 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                       topRight: Radius.circular(isMobile ? 28 : 16),
                     ),
                   ),
-                  child: isMobile
-                      ? _MobileRoomHeader(
-                          roomNumber: widget.roomNumber,
-                          floorNumber: widget.floorNumber,
-                          status: overallStatus,
-                          statusColor: overallColor,
-                          statusIcon: overallIcon,
-                          onScanPressed: () => _scanCardProductQr(context),
-                          onEdit: canManageRooms ? () => _showEditRoomLocal(context) : null,
-                          onDelete: canManageRooms ? () => _confirmDeleteRoomLocal(context) : null,
-                        )
-                      : Row(
+                  child: widget.isDialog
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.meeting_room_outlined,
-                                color: overallColor),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                '${l10n.t('roomsLabelRoom')} ${widget.roomNumber}',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                            Row(
+                              children: [
+                                Icon(Icons.meeting_room_outlined,
+                                    color: overallColor),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '${l10n.t('roomsLabelRoom')} ${widget.roomNumber}',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              tooltip: l10n.t('qrScanTitle'),
-                              icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
-                              color: overallColor,
-                              onPressed: () => _scanCardProductQr(context),
-                              visualDensity: VisualDensity.compact,
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color:
-                                    theme.colorScheme.surfaceContainerHighest,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                '${l10n.t('roomsLabelFloor')} ${widget.floorNumber}',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  tooltip: l10n.t('qrScanTitle'),
+                                  icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+                                  color: overallColor,
+                                  onPressed: () => _scanCardProductQr(context),
+                                  visualDensity: VisualDensity.compact,
                                 ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Flexible(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: overallColor.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                      color:
-                                          overallColor.withValues(alpha: 0.5)),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        theme.colorScheme.surfaceContainerHighest,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    '${l10n.t('roomsLabelFloor')} ${widget.floorNumber}',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(overallIcon,
-                                        size: 14, color: overallColor),
-                                    const SizedBox(width: 4),
-                                    Flexible(
-                                      child: Text(
+                                const Spacer(),
+                                IconButton(
+                                  icon: const Icon(Icons.close, size: 20),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  visualDensity: VisualDensity.compact,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: overallColor.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color:
+                                            overallColor.withValues(alpha: 0.5)),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(overallIcon,
+                                          size: 14, color: overallColor),
+                                      const SizedBox(width: 4),
+                                      Text(
                                         overallStatus,
                                         style:
                                             theme.textTheme.bodySmall?.copyWith(
                                           color: overallColor,
                                           fontWeight: FontWeight.bold,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
+                                const Spacer(),
+                                if (canManageRooms) ...[
+                                  IconButton(
+                                    tooltip: l10n.t('roomsDialogRoomEditTitle'),
+                                    icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.primary),
+                                    onPressed: () => _showEditRoomLocal(context),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    tooltip: l10n.t('delete'),
+                                    icon: Icon(Icons.delete_outline, size: 20, color: theme.colorScheme.error),
+                                    onPressed: () => _confirmDeleteRoomLocal(context),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ],
+                              ],
                             ),
-                            if (canManageRooms) ...[
-                              const SizedBox(width: 8),
-                              IconButton(
-                                tooltip: l10n.t('roomsDialogRoomEditTitle'),
-                                icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.primary),
-                                onPressed: () => _showEditRoomLocal(context),
-                                visualDensity: VisualDensity.compact,
-                              ),
-                              const SizedBox(width: 8),
-                              IconButton(
-                                tooltip: l10n.t('delete'),
-                                icon: Icon(Icons.delete_outline, size: 20, color: theme.colorScheme.error),
-                                onPressed: () => _confirmDeleteRoomLocal(context),
-                                visualDensity: VisualDensity.compact,
-                              ),
-                            ],
-                            if (widget.isDialog) ...[
-                              const SizedBox(width: 8),
-                              IconButton(
-                                icon: const Icon(Icons.close, size: 20),
-                                onPressed: () => Navigator.of(context).pop(),
-                                visualDensity: VisualDensity.compact,
-                              ),
-                            ],
                           ],
-                        ),
+                        )
+                      : (isMobile
+                          ? _MobileRoomHeader(
+                              roomNumber: widget.roomNumber,
+                              floorNumber: widget.floorNumber,
+                              status: overallStatus,
+                              statusColor: overallColor,
+                              statusIcon: overallIcon,
+                              onScanPressed: () => _scanCardProductQr(context),
+                              onEdit: canManageRooms ? () => _showEditRoomLocal(context) : null,
+                              onDelete: canManageRooms ? () => _confirmDeleteRoomLocal(context) : null,
+                            )
+                          : Row(
+                              children: [
+                                Icon(Icons.meeting_room_outlined,
+                                    color: overallColor),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    '${l10n.t('roomsLabelRoom')} ${widget.roomNumber}',
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  tooltip: l10n.t('qrScanTitle'),
+                                  icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+                                  color: overallColor,
+                                  onPressed: () => _scanCardProductQr(context),
+                                  visualDensity: VisualDensity.compact,
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        theme.colorScheme.surfaceContainerHighest,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    '${l10n.t('roomsLabelFloor')} ${widget.floorNumber}',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: overallColor.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                          color:
+                                              overallColor.withValues(alpha: 0.5)),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(overallIcon,
+                                            size: 14, color: overallColor),
+                                        const SizedBox(width: 4),
+                                        Flexible(
+                                          child: Text(
+                                            overallStatus,
+                                            style:
+                                                theme.textTheme.bodySmall?.copyWith(
+                                              color: overallColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (canManageRooms) ...[
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    tooltip: l10n.t('roomsDialogRoomEditTitle'),
+                                    icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.primary),
+                                    onPressed: () => _showEditRoomLocal(context),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    tooltip: l10n.t('delete'),
+                                    icon: Icon(Icons.delete_outline, size: 20, color: theme.colorScheme.error),
+                                    onPressed: () => _confirmDeleteRoomLocal(context),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ],
+                              ],
+                            )),
                 ),
                 const Divider(height: 1),
-                Padding(
-                  padding: EdgeInsets.all(isMobile ? 14 : 16),
-                  child: Column(
-                    children: [
-                      if (displayedProducts.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 24),
-                          child: Center(
-                            child: Text(
-                              l10n.t('roomsNoProducts'),
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                if (widget.isDialog)
+                  Flexible(
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.all(isMobile ? 14 : 16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (displayedProducts.isEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 24),
+                                  child: Center(
+                                    child: Text(
+                                      l10n.t('roomsNoProducts'),
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        color: theme.colorScheme.onSurfaceVariant,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
+                              else
+                                for (int i = 0; i < displayedProducts.length; i++) ...[
+                                  if (i > 0) Divider(height: isMobile ? 18 : 24),
+                                  _RoomCardProductRow(item: displayedProducts[i]),
+                                ],
+                            ],
                           ),
-                        )
-                      else
-                        for (int i = 0; i < displayedProducts.length; i++) ...[
-                          if (i > 0) Divider(height: isMobile ? 18 : 24),
-                          _RoomCardProductRow(item: displayedProducts[i]),
-                        ],
-                    ],
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: EdgeInsets.all(isMobile ? 14 : 16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (displayedProducts.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24),
+                            child: Center(
+                              child: Text(
+                                l10n.t('roomsNoProducts'),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
+                        else
+                          for (int i = 0; i < displayedProducts.length; i++) ...[
+                            if (i > 0) Divider(height: isMobile ? 18 : 24),
+                            _RoomCardProductRow(item: displayedProducts[i]),
+                          ],
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -2526,6 +2693,22 @@ class _RoomCardProductRow extends ConsumerWidget {
                 ],
               ],
             ),
+            if (canSubmitEditRequests) ...[
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                tooltip: l10n.t('bottleStatusDamaged'),
+                icon: const Icon(Icons.report_problem_outlined, size: 20),
+                color: theme.colorScheme.error,
+                onPressed: () => _showMarkDamagedDialog(context, ref, item),
+              ),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                tooltip: l10n.t('bottleStatusLost'),
+                icon: const Icon(Icons.help_outline_outlined, size: 20),
+                color: theme.colorScheme.onSurfaceVariant,
+                onPressed: () => _showMarkLostDialog(context, ref, item),
+              ),
+            ],
           ],
         );
 
@@ -2601,6 +2784,378 @@ class _RoomCardProductRow extends ConsumerWidget {
         child: content,
       ),
     );
+  }
+}
+
+class _MarkDamagedDialog extends ConsumerStatefulWidget {
+  const _MarkDamagedDialog({required this.item});
+
+  final RoomProduct item;
+
+  @override
+  ConsumerState<_MarkDamagedDialog> createState() => _MarkDamagedDialogState();
+}
+
+class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _notesController = TextEditingController();
+  XFile? _selectedImage;
+  var _isSaving = false;
+
+  Future<void> _pickImage() async {
+    final l10n = AppLocalizations.of(context);
+    XFile? image;
+    try {
+      final picker = ImagePicker();
+      try {
+        image = await picker.pickImage(source: ImageSource.gallery);
+      } catch (_) {
+        image = await picker.pickMedia();
+      }
+    } catch (e) {
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          '${l10n.t('productsImageUploadFailed')} ($e)',
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
+      return;
+    }
+    if (image == null) return;
+
+    final ext = image.name.split('.').last.toLowerCase();
+    final allowed = ['jpg', 'jpeg', 'png', 'webp'];
+    if (!allowed.contains(ext)) {
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('productsInvalidImageFormat'),
+          icon: Icons.error_outline,
+          isError: true,
+        );
+      }
+      return;
+    }
+
+    setState(() => _selectedImage = image);
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          left: 16,
+          right: 16,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${l10n.t('roomsBtnMarkDamaged')} - ${l10n.t('roomsLabelRoom')} ${widget.item.roomNumber}',
+              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: _isSaving ? null : _pickImage,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: theme.colorScheme.outlineVariant),
+                        borderRadius: BorderRadius.circular(12),
+                        color: theme.colorScheme.surfaceContainerLow,
+                      ),
+                      child: _selectedImage != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Image.network(
+                                      _selectedImage!.path,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 4,
+                                    top: 4,
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.black.withValues(alpha: 0.6),
+                                      radius: 16,
+                                      child: IconButton(
+                                        padding: EdgeInsets.zero,
+                                        icon: const Icon(Icons.close, size: 16, color: Colors.white),
+                                        onPressed: () => setState(() => _selectedImage = null),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.camera_alt_outlined, color: theme.colorScheme.onSurfaceVariant, size: 32),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    l10n.t('roomsUploadProofAction'),
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _notesController,
+                    maxLines: 2,
+                    decoration: InputDecoration(
+                      labelText: l10n.t('roomsNotesOptional'),
+                      hintText: l10n.t('roomsNotesOptional'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _submit,
+                  icon: const Icon(Icons.check),
+                  label: Text(l10n.t('btnSubmitRequest')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submit() async {
+    setState(() => _isSaving = true);
+    final l10n = AppLocalizations.of(context);
+    try {
+      final language = Localizations.localeOf(context).languageCode;
+      final title = 'Mark damaged - ${widget.item.product.label(language)} in Room ${widget.item.roomNumber}';
+
+      String? imageUrl;
+      if (_selectedImage != null) {
+        final supabaseEnabled = ref.read(useSupabaseProvider);
+        final bytes = await _selectedImage!.readAsBytes();
+        final ext = _selectedImage!.name.split('.').last.toLowerCase();
+        if (!supabaseEnabled) {
+          final mime = ext == 'png' ? 'image/png' : 'image/jpeg';
+          imageUrl = 'data:$mime;base64,${base64Encode(bytes)}';
+        } else {
+          final fileName = 'proofs/${DateTime.now().millisecondsSinceEpoch}.$ext';
+          await Supabase.instance.client.storage
+              .from('products')
+              .uploadBinary(fileName, bytes, fileOptions: const FileOptions(upsert: true));
+          imageUrl = Supabase.instance.client.storage
+              .from('products')
+              .getPublicUrl(fileName);
+        }
+      }
+
+      final oldData = {
+        'status': widget.item.status.value,
+        'bottle_started_at': _formatDate(widget.item.bottleStartedAt),
+      };
+      final newData = {
+        'status': BottleStatus.damaged.value,
+        'bottle_started_at': _formatDate(widget.item.bottleStartedAt),
+        'notes': _notesController.text.trim(),
+        if (imageUrl != null) 'proof_photo_url': imageUrl,
+      };
+
+      final offline = ref.read(offlineModeProvider);
+      final appliedImmediately = await _submitPendingEditRequest(
+        ref: ref,
+        hotelId: widget.item.hotelId,
+        title: title,
+        targetTable: 'room_products',
+        targetId: widget.item.id,
+        oldData: oldData,
+        newData: newData,
+      );
+
+      if (mounted) {
+        Navigator.of(context).pop();
+        PremiumSnackbar.showSuccess(
+          context,
+          offline
+              ? l10n.t('roomsMsgEditRequestQueued')
+              : appliedImmediately
+                  ? l10n.t('roomsMsgDetailsUpdated')
+                  : l10n.t('roomsMsgEditRequestSubmitted'),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        PremiumSnackbar.showError(context, e);
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+}
+
+class _MarkLostDialog extends ConsumerStatefulWidget {
+  const _MarkLostDialog({required this.item});
+
+  final RoomProduct item;
+
+  @override
+  ConsumerState<_MarkLostDialog> createState() => _MarkLostDialogState();
+}
+
+class _MarkLostDialogState extends ConsumerState<_MarkLostDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _notesController = TextEditingController();
+  var _isSaving = false;
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          left: 16,
+          right: 16,
+          top: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${l10n.t('roomsBtnMarkLost')} - ${l10n.t('roomsLabelRoom')} ${widget.item.roomNumber}',
+              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: _notesController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  labelText: l10n.t('roomsNotesOptional'),
+                  hintText: l10n.t('roomsNotesOptional'),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _submit,
+                  icon: const Icon(Icons.check),
+                  label: Text(l10n.t('btnSubmitRequest')),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submit() async {
+    setState(() => _isSaving = true);
+    final l10n = AppLocalizations.of(context);
+    try {
+      final language = Localizations.localeOf(context).languageCode;
+      final title = 'Mark lost - ${widget.item.product.label(language)} in Room ${widget.item.roomNumber}';
+
+      final oldData = {
+        'status': widget.item.status.value,
+        'bottle_started_at': _formatDate(widget.item.bottleStartedAt),
+      };
+      final newData = {
+        'status': BottleStatus.lost.value,
+        'bottle_started_at': _formatDate(widget.item.bottleStartedAt),
+        'notes': _notesController.text.trim(),
+      };
+
+      final offline = ref.read(offlineModeProvider);
+      final appliedImmediately = await _submitPendingEditRequest(
+        ref: ref,
+        hotelId: widget.item.hotelId,
+        title: title,
+        targetTable: 'room_products',
+        targetId: widget.item.id,
+        oldData: oldData,
+        newData: newData,
+      );
+
+      if (mounted) {
+        Navigator.of(context).pop();
+        PremiumSnackbar.showSuccess(
+          context,
+          offline
+              ? l10n.t('roomsMsgEditRequestQueued')
+              : appliedImmediately
+                  ? l10n.t('roomsMsgDetailsUpdated')
+                  : l10n.t('roomsMsgEditRequestSubmitted'),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        PremiumSnackbar.showError(context, e);
+      }
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 }
 
@@ -3247,16 +3802,70 @@ class _RefillHistoryDialog extends ConsumerWidget {
                             'oldValue': oldLocalized,
                             'newValue': newLocalized,
                           });
-                          
-                          subtitleWidget = Text(
-                            _formatDateTime(event.occurredAt),
-                          );
-                        } else {
-                          subtitleWidget = Text(
-                            '${_formatDateTime(event.occurredAt)} | '
-                            '${event.previousRefillCount} -> ${event.newRefillCount}',
+                        }
+
+                        final performerStr = event.performedByName != null && event.performedByName!.isNotEmpty
+                            ? ' | ${event.performedByName}'
+                            : '';
+                        final subtitleText = isStatusChange
+                            ? '${_formatDateTime(event.occurredAt)}$performerStr'
+                            : '${_formatDateTime(event.occurredAt)}$performerStr | ${event.previousRefillCount} -> ${event.newRefillCount}';
+
+                        Widget? proofPhotoWidget;
+                        if (event.proofPhotoUrl != null && event.proofPhotoUrl!.isNotEmpty) {
+                          proofPhotoWidget = Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showDialog<void>(
+                                      context: context,
+                                      builder: (context) => Dialog(
+                                        child: Stack(
+                                          alignment: Alignment.topRight,
+                                          children: [
+                                            InteractiveViewer(
+                                              child: Image.network(event.proofPhotoUrl!),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.close, color: Colors.white),
+                                              style: IconButton.styleFrom(
+                                                backgroundColor: Colors.black.withValues(alpha: 0.6),
+                                              ),
+                                              onPressed: () => Navigator.of(context).pop(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    width: 80,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                                      image: DecorationImage(
+                                        image: NetworkImage(event.proofPhotoUrl!),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
                         }
+
+                        subtitleWidget = Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(subtitleText),
+                            if (proofPhotoWidget != null) proofPhotoWidget,
+                          ],
+                        );
 
                         return ListTile(
                           contentPadding: EdgeInsets.zero,

@@ -953,6 +953,24 @@ class AppL10nIt extends AppL10n {
   String get roomsBtnMoreActions => 'Altre azioni';
 
   @override
+  String get roomsBtnMarkDamaged => 'Segnala come danneggiata';
+
+  @override
+  String get roomsBtnMarkLost => 'Segnala come persa';
+
+  @override
+  String get roomsLabelProofPhoto => 'Foto di prova';
+
+  @override
+  String get roomsNotesOptional => 'Note (Opzionale)';
+
+  @override
+  String get roomsLabelUploadedProof => 'Prova caricata';
+
+  @override
+  String get roomsUploadProofAction => 'Carica foto';
+
+  @override
   String get roomsReplacementQueued =>
       'Sostituzione bottiglia in coda per la camera';
 

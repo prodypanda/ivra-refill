@@ -461,8 +461,10 @@ class RefillEvent {
     required this.newRefillCount,
     required this.occurredAt,
     required this.performedBy,
+    this.performedByName,
     this.notes,
     this.clientRequestId,
+    this.proofPhotoUrl,
   });
 
   final String id;
@@ -472,7 +474,9 @@ class RefillEvent {
   final int newRefillCount;
   final DateTime occurredAt;
   final String performedBy;
+  final String? performedByName;
   final String? notes;
+  final String? proofPhotoUrl;
 
   /// The idempotency key supplied by the client when the originating action was
   /// recorded (== [OfflineAction.id]). Lets the optimistic offline overlay tell

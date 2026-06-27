@@ -225,6 +225,7 @@ class MockIvraRepository implements IvraRepository {
           newRefillCount: 7,
           occurredAt: DateTime.now().subtract(const Duration(days: 3)),
           performedBy: 'hotel-staff-seaside',
+          performedByName: 'Sarah Staff',
           notes: 'Refilled to max',
         ),
         RefillEvent(
@@ -235,6 +236,7 @@ class MockIvraRepository implements IvraRepository {
           newRefillCount: 0,
           occurredAt: DateTime.now().subtract(const Duration(hours: 4)),
           performedBy: 'hotel-staff-seaside',
+          performedByName: 'Sarah Staff',
           notes: 'Replaced old bottle',
         ),
       ]);
@@ -1118,6 +1120,7 @@ class MockIvraRepository implements IvraRepository {
       newRefillCount: newCount,
       occurredAt: DateTime.now(),
       performedBy: _currentUser.id,
+      performedByName: _currentUser.fullName,
       notes: notes,
       clientRequestId: clientRequestId,
     );
@@ -1159,6 +1162,7 @@ class MockIvraRepository implements IvraRepository {
         newRefillCount: event.previousRefillCount,
         occurredAt: DateTime.now(),
         performedBy: _currentUser.id,
+        performedByName: _currentUser.fullName,
       ),
     );
     _roomProducts[index] = item.copyWith(
@@ -1271,6 +1275,7 @@ class MockIvraRepository implements IvraRepository {
         newRefillCount: 0,
         occurredAt: now,
         performedBy: _currentUser.id,
+        performedByName: _currentUser.fullName,
         notes: notes,
         clientRequestId: clientRequestId,
       ),
@@ -1628,6 +1633,7 @@ class MockIvraRepository implements IvraRepository {
                     newRefillCount: 0,
                     occurredAt: DateTime.now(),
                     performedBy: _currentUser.id,
+                    performedByName: _currentUser.fullName,
                     notes: 'Initial bottle placement',
                   ),
                 );
@@ -1644,6 +1650,7 @@ class MockIvraRepository implements IvraRepository {
         final item = _roomProducts[index];
         final statusValue = request.newData['status'] as String?;
         final startValue = request.newData['bottle_started_at'] as String?;
+        final proofPhotoUrl = request.newData['proof_photo_url'] as String?;
         final oldStatus = item.status;
         final newStatus = statusValue == null ? oldStatus : BottleStatus.fromValue(statusValue);
 
@@ -1658,7 +1665,9 @@ class MockIvraRepository implements IvraRepository {
               newRefillCount: item.refillCount,
               occurredAt: DateTime.now(),
               performedBy: _currentUser.id,
+              performedByName: _currentUser.fullName,
               notes: 'Status changed from ${oldStatus.value} to ${newStatus.value}',
+              proofPhotoUrl: proofPhotoUrl,
             ),
           );
         }

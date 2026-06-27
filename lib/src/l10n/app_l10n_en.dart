@@ -948,6 +948,24 @@ class AppL10nEn extends AppL10n {
   String get roomsBtnMoreActions => 'More actions';
 
   @override
+  String get roomsBtnMarkDamaged => 'Mark as Damaged';
+
+  @override
+  String get roomsBtnMarkLost => 'Mark as Lost';
+
+  @override
+  String get roomsLabelProofPhoto => 'Proof Photo';
+
+  @override
+  String get roomsNotesOptional => 'Notes (Optional)';
+
+  @override
+  String get roomsLabelUploadedProof => 'Uploaded Proof';
+
+  @override
+  String get roomsUploadProofAction => 'Upload Photo';
+
+  @override
   String get roomsReplacementQueued => 'Bottle replacement queued for room';
 
   @override

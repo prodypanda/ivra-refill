@@ -1841,6 +1841,42 @@ abstract class AppL10n {
   /// **'More actions'**
   String get roomsBtnMoreActions;
 
+  /// No description provided for @roomsBtnMarkDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Damaged'**
+  String get roomsBtnMarkDamaged;
+
+  /// No description provided for @roomsBtnMarkLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Lost'**
+  String get roomsBtnMarkLost;
+
+  /// No description provided for @roomsLabelProofPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Proof Photo'**
+  String get roomsLabelProofPhoto;
+
+  /// No description provided for @roomsNotesOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (Optional)'**
+  String get roomsNotesOptional;
+
+  /// No description provided for @roomsLabelUploadedProof.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded Proof'**
+  String get roomsLabelUploadedProof;
+
+  /// No description provided for @roomsUploadProofAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Photo'**
+  String get roomsUploadProofAction;
+
   /// No description provided for @roomsReplacementQueued.
   ///
   /// In en, this message translates to:

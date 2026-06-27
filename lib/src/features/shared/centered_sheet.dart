@@ -15,6 +15,7 @@ Future<T?> showCenteredFormSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
   double maxWidth = 560,
+  bool scrollable = true,
 }) {
   return showDialog<T>(
     context: context,
@@ -23,6 +24,7 @@ Future<T?> showCenteredFormSheet<T>({
       return _CenteredFormSheetDialog(
         builder: builder,
         maxWidth: maxWidth,
+        scrollable: scrollable,
       );
     },
   );
@@ -32,10 +34,12 @@ class _CenteredFormSheetDialog extends StatefulWidget {
   const _CenteredFormSheetDialog({
     required this.builder,
     required this.maxWidth,
+    this.scrollable = true,
   });
 
   final WidgetBuilder builder;
   final double maxWidth;
+  final bool scrollable;
 
   @override
   State<_CenteredFormSheetDialog> createState() => _CenteredFormSheetDialogState();
@@ -64,6 +68,17 @@ class _CenteredFormSheetDialogState extends State<_CenteredFormSheetDialog> {
     // Keep the popup within the visible area, leaving room for the keyboard.
     final maxHeight = media.size.height - media.padding.vertical - 48 - bottomInset;
 
+    final childWidget = widget.scrollable
+        ? Scrollbar(
+            controller: _scrollController,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: widget.builder(context),
+            ),
+          )
+        : widget.builder(context);
+
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Center(
@@ -82,14 +97,7 @@ class _CenteredFormSheetDialogState extends State<_CenteredFormSheetDialog> {
                   color: theme.colorScheme.surface.withValues(alpha: 0.96),
                   borderRadius: BorderRadius.circular(28),
                   clipBehavior: Clip.antiAlias,
-                  child: Scrollbar(
-                    controller: _scrollController,
-                    thumbVisibility: true,
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      child: widget.builder(context),
-                    ),
-                  ),
+                  child: childWidget,
                 ),
               ),
             ),

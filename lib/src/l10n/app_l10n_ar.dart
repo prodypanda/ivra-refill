@@ -943,6 +943,24 @@ class AppL10nAr extends AppL10n {
   String get roomsBtnMoreActions => 'مزيد من الإجراءات';
 
   @override
+  String get roomsBtnMarkDamaged => 'تحديد كتالف';
+
+  @override
+  String get roomsBtnMarkLost => 'تحديد كمفقود';
+
+  @override
+  String get roomsLabelProofPhoto => 'صورة الإثبات';
+
+  @override
+  String get roomsNotesOptional => 'ملاحظات (اختياري)';
+
+  @override
+  String get roomsLabelUploadedProof => 'الإثبات المرفوع';
+
+  @override
+  String get roomsUploadProofAction => 'رفع صورة';
+
+  @override
   String get roomsReplacementQueued => 'تمت جدولة استبدال العبوة للغرفة';
 
   @override
