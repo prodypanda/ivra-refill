@@ -2206,6 +2206,57 @@ class AppL10nFr extends AppL10n {
   }
 
   @override
+  String get authBtnCreateRole => 'Créer un Rôle';
+
+  @override
+  String get authCreateRoleTitle => 'Créer un Rôle Personnalisé';
+
+  @override
+  String get authRoleNameLabel => 'Nom du Rôle (minuscules snake_case)';
+
+  @override
+  String get authRoleNameError =>
+      'Le nom du rôle doit être en minuscules snake_case (ex. night_auditor)';
+
+  @override
+  String get authRoleDisplayNameLabel =>
+      'Nom d\'Affichage Convivial (ex. Night Auditor)';
+
+  @override
+  String get authRoleDisplayNameError =>
+      'Le nom d\'affichage ne peut pas être vide';
+
+  @override
+  String get authRoleDescLabel => 'Description';
+
+  @override
+  String get authCategoryCore => 'Opérations de Base';
+
+  @override
+  String get authCategoryManagement => 'Gestion';
+
+  @override
+  String get authCategoryControl => 'Contrôle & Approbations';
+
+  @override
+  String get authCategoryAnalytics => 'Analyses & Diffusions';
+
+  @override
+  String get authCategorySecurity => 'Sécurité & Administration';
+
+  @override
+  String get authBulkGrantAll => 'Tout Accorder';
+
+  @override
+  String get authBulkRevokeAll => 'Tout Révoquer';
+
+  @override
+  String get authRoleCreatedSuccess => 'Rôle créé avec succès.';
+
+  @override
+  String get authSearchHint => 'Rechercher des permissions...';
+
+  @override
   String get authorizationsTitle => 'Matrice des Autorisations';
 
   @override

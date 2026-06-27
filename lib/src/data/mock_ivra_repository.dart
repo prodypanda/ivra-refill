@@ -416,6 +416,7 @@ class MockIvraRepository implements IvraRepository {
   final List<RefillEvent> _events = [];
   final List<InventoryEvent> _inventoryEvents = [];
   final Set<String> _processedClientRequestIds = {};
+  final List<AuditLog> _mockAuditLogs = [];
 
 
   @override
@@ -742,10 +743,14 @@ class MockIvraRepository implements IvraRepository {
   }
 
   @override
-  Future<List<AuditLog>> fetchAuditLogs() async => [];
+  Future<List<AuditLog>> fetchAuditLogs() async {
+    return List.from(_mockAuditLogs);
+  }
 
   @override
-  Future<void> clearAuditLogs() async {}
+  Future<void> clearAuditLogs() async {
+    _mockAuditLogs.clear();
+  }
 
   @override
   Future<List<RefillEvent>> recentRefillEvents({String? hotelId}) async {
@@ -1783,5 +1788,45 @@ class MockIvraRepository implements IvraRepository {
       permissions.remove(permission);
     }
     _mockRolePermissions[role] = permissions;
+
+    _mockAuditLogs.insert(
+      0,
+      AuditLog(
+        id: 'mock_audit_${DateTime.now().millisecondsSinceEpoch}_update_perm',
+        userId: 'app_admin',
+        action: 'Updated role permission',
+        details: {
+          'role': role,
+          'permission': permission,
+          'is_enabled': isEnabled,
+        },
+        createdAt: DateTime.now(),
+      ),
+    );
+  }
+
+  @override
+  Future<void> createRole({
+    required String name,
+    String? description,
+  }) async {
+    if (!_mockRoles.contains(name)) {
+      _mockRoles.add(name);
+    }
+    _mockRolePermissions[name] = {};
+
+    _mockAuditLogs.insert(
+      0,
+      AuditLog(
+        id: 'mock_audit_${DateTime.now().millisecondsSinceEpoch}_create_role',
+        userId: 'app_admin',
+        action: 'Created custom role',
+        details: {
+          'role': name,
+          'description': description ?? '',
+        },
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 }

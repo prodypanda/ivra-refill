@@ -53,6 +53,10 @@ abstract class IvraRepository {
     required String permission,
     required bool isEnabled,
   });
+  Future<void> createRole({
+    required String name,
+    String? description,
+  });
 
   Future<void> createHotel({
     required String name,

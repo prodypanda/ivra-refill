@@ -1209,4 +1209,22 @@ class SupabaseIvraRepository implements IvraRepository {
       },
     );
   }
+
+  @override
+  Future<void> createRole({
+    required String name,
+    String? description,
+  }) async {
+    await _client.from('roles').insert({
+      'name': name,
+      'description': description ?? '',
+    });
+    await _auditService.logAction(
+      'Created custom role',
+      details: {
+        'role': name,
+        'description': description ?? '',
+      },
+    );
+  }
 }

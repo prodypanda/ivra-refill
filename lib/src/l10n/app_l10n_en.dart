@@ -2174,6 +2174,56 @@ class AppL10nEn extends AppL10n {
   }
 
   @override
+  String get authBtnCreateRole => 'Create Role';
+
+  @override
+  String get authCreateRoleTitle => 'Create Custom Role';
+
+  @override
+  String get authRoleNameLabel => 'Role Name (lowercase snake_case)';
+
+  @override
+  String get authRoleNameError =>
+      'Role name must be lowercase snake_case (e.g., night_auditor)';
+
+  @override
+  String get authRoleDisplayNameLabel =>
+      'Friendly Display Name (e.g., Night Auditor)';
+
+  @override
+  String get authRoleDisplayNameError => 'Display name cannot be empty';
+
+  @override
+  String get authRoleDescLabel => 'Description';
+
+  @override
+  String get authCategoryCore => 'Core Operations';
+
+  @override
+  String get authCategoryManagement => 'Management';
+
+  @override
+  String get authCategoryControl => 'Control & Approvals';
+
+  @override
+  String get authCategoryAnalytics => 'Analytics & Broadcasts';
+
+  @override
+  String get authCategorySecurity => 'Security & Administration';
+
+  @override
+  String get authBulkGrantAll => 'Grant All';
+
+  @override
+  String get authBulkRevokeAll => 'Revoke All';
+
+  @override
+  String get authRoleCreatedSuccess => 'Role created successfully.';
+
+  @override
+  String get authSearchHint => 'Search permissions...';
+
+  @override
   String get authorizationsTitle => 'Authorizations Matrix';
 
   @override

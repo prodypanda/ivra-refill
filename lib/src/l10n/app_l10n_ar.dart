@@ -2164,6 +2164,56 @@ class AppL10nAr extends AppL10n {
   }
 
   @override
+  String get authBtnCreateRole => 'إنشاء دور';
+
+  @override
+  String get authCreateRoleTitle => 'إنشاء دور مخصص';
+
+  @override
+  String get authRoleNameLabel => 'اسم الدور (أحرف صغيرة snake_case)';
+
+  @override
+  String get authRoleNameError =>
+      'يجب أن يكون اسم الدور snake_case وبأحرف صغيرة (مثال: night_auditor)';
+
+  @override
+  String get authRoleDisplayNameLabel =>
+      'اسم العرض المألوف (مثال: Night Auditor)';
+
+  @override
+  String get authRoleDisplayNameError => 'اسم العرض لا يمكن أن يكون فارغاً';
+
+  @override
+  String get authRoleDescLabel => 'الوصف';
+
+  @override
+  String get authCategoryCore => 'العمليات الأساسية';
+
+  @override
+  String get authCategoryManagement => 'الإدارة';
+
+  @override
+  String get authCategoryControl => 'الرقابة والموافقات';
+
+  @override
+  String get authCategoryAnalytics => 'التحليلات والبث';
+
+  @override
+  String get authCategorySecurity => 'الأمان والإدارة';
+
+  @override
+  String get authBulkGrantAll => 'منح الكل';
+
+  @override
+  String get authBulkRevokeAll => 'إلغاء الكل';
+
+  @override
+  String get authRoleCreatedSuccess => 'تم إنشاء الدور بنجاح.';
+
+  @override
+  String get authSearchHint => 'البحث في الصلاحيات...';
+
+  @override
   String get authorizationsTitle => 'مصفوفة الصلاحيات';
 
   @override

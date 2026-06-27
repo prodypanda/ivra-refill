@@ -4056,6 +4056,102 @@ abstract class AppL10n {
   /// **'Since this is a new hotel, there are no products in the store stock. Would you like to automatically initialize the store stock with {total} bottles to place in the rooms?'**
   String inventoryEnforceOnboardingContent(String total);
 
+  /// No description provided for @authBtnCreateRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Role'**
+  String get authBtnCreateRole;
+
+  /// No description provided for @authCreateRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Custom Role'**
+  String get authCreateRoleTitle;
+
+  /// No description provided for @authRoleNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Role Name (lowercase snake_case)'**
+  String get authRoleNameLabel;
+
+  /// No description provided for @authRoleNameError.
+  ///
+  /// In en, this message translates to:
+  /// **'Role name must be lowercase snake_case (e.g., night_auditor)'**
+  String get authRoleNameError;
+
+  /// No description provided for @authRoleDisplayNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Friendly Display Name (e.g., Night Auditor)'**
+  String get authRoleDisplayNameLabel;
+
+  /// No description provided for @authRoleDisplayNameError.
+  ///
+  /// In en, this message translates to:
+  /// **'Display name cannot be empty'**
+  String get authRoleDisplayNameError;
+
+  /// No description provided for @authRoleDescLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get authRoleDescLabel;
+
+  /// No description provided for @authCategoryCore.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Operations'**
+  String get authCategoryCore;
+
+  /// No description provided for @authCategoryManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Management'**
+  String get authCategoryManagement;
+
+  /// No description provided for @authCategoryControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Control & Approvals'**
+  String get authCategoryControl;
+
+  /// No description provided for @authCategoryAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics & Broadcasts'**
+  String get authCategoryAnalytics;
+
+  /// No description provided for @authCategorySecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security & Administration'**
+  String get authCategorySecurity;
+
+  /// No description provided for @authBulkGrantAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant All'**
+  String get authBulkGrantAll;
+
+  /// No description provided for @authBulkRevokeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke All'**
+  String get authBulkRevokeAll;
+
+  /// No description provided for @authRoleCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Role created successfully.'**
+  String get authRoleCreatedSuccess;
+
+  /// No description provided for @authSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search permissions...'**
+  String get authSearchHint;
+
   /// No description provided for @authorizationsTitle.
   ///
   /// In en, this message translates to:
