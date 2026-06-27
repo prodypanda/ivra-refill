@@ -2608,90 +2608,96 @@ class _RoomCardProductRow extends ConsumerWidget {
           ],
         );
 
-        final actions = Wrap(
-          spacing: 4,
-          runSpacing: 4,
-          crossAxisAlignment: WrapCrossAlignment.center,
+        final actions = Row(
           children: [
-            if (item.product.isRefillable) ...[
-              FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  backgroundColor: const Color(0xFF267D65),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(80, 36),
-                ),
-                onPressed: item.canRefill ? performRefill : null,
-                icon: const Icon(IvraIcons.refillAction, size: 18),
-                label:
-                    Text(l10n.t('roomsBtnRefillBottle'), style: const TextStyle(fontSize: 12)),
-              ),
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                tooltip: l10n.t('roomsBtnReplaceBottle'),
-                icon: const Icon(IvraIcons.replaceAction, size: 24),
-                onPressed: item.status == BottleStatus.recycled
-                    ? null
-                    : () => _replaceBottle(context, ref, item),
-              ),
-            ] else ...[
-              FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  backgroundColor: const Color(0xFF267D65),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(80, 36),
-                ),
-                onPressed: item.status == BottleStatus.recycled
-                    ? null
-                    : () => _replaceBottle(context, ref, item),
-                icon: const Icon(IvraIcons.replaceAction, size: 18),
-                label:
-                    Text(l10n.t('roomsBtnReplaceBottle'), style: const TextStyle(fontSize: 12)),
-              ),
-            ],
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              tooltip: l10n.t('roomsBtnHistory'),
-              icon: const Icon(Icons.history_outlined, size: 24),
-              onPressed: () => _showRefillHistory(context, ref, item),
-            ),
-            PopupMenuButton<String>(
-              tooltip: l10n.t('roomsBtnMoreActions'),
-              icon: const Icon(Icons.more_vert, size: 20),
-              onSelected: (val) {
-                if (val == 'bottle_edit') {
-                  _showBottleEditRequest(context, ref, item);
-                } else if (val == 'room_edit') {
-                  _showRoomEditRequest(context, ref, item);
-                }
-              },
-              itemBuilder: (context) => [
-                if (canSubmitEditRequests) ...[
-                  PopupMenuItem(
-                    value: 'bottle_edit',
-                    child: Row(
-                      children: [
-                        const Icon(Icons.spa_outlined, size: 18),
-                        const SizedBox(width: 8),
-                        Text(l10n.t('roomsBtnBottleEdit')),
-                      ],
+            Expanded(
+              child: Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (item.product.isRefillable) ...[
+                    FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        backgroundColor: const Color(0xFF267D65),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(80, 36),
+                      ),
+                      onPressed: item.canRefill ? performRefill : null,
+                      icon: const Icon(IvraIcons.refillAction, size: 18),
+                      label:
+                          Text(l10n.t('roomsBtnRefillBottle'), style: const TextStyle(fontSize: 12)),
                     ),
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      tooltip: l10n.t('roomsBtnReplaceBottle'),
+                      icon: const Icon(IvraIcons.replaceAction, size: 24),
+                      onPressed: item.status == BottleStatus.recycled
+                          ? null
+                          : () => _replaceBottle(context, ref, item),
+                    ),
+                  ] else ...[
+                    FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        backgroundColor: const Color(0xFF267D65),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(80, 36),
+                      ),
+                      onPressed: item.status == BottleStatus.recycled
+                          ? null
+                          : () => _replaceBottle(context, ref, item),
+                      icon: const Icon(IvraIcons.replaceAction, size: 18),
+                      label:
+                          Text(l10n.t('roomsBtnReplaceBottle'), style: const TextStyle(fontSize: 12)),
+                    ),
+                  ],
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    tooltip: l10n.t('roomsBtnHistory'),
+                    icon: const Icon(Icons.history_outlined, size: 24),
+                    onPressed: () => _showRefillHistory(context, ref, item),
                   ),
-                  PopupMenuItem(
-                    value: 'room_edit',
-                    child: Row(
-                      children: [
-                        const Icon(Icons.edit_location_alt_outlined, size: 18),
-                        const SizedBox(width: 8),
-                        Text(l10n.t('roomsBtnRoomEdit')),
+                  PopupMenuButton<String>(
+                    tooltip: l10n.t('roomsBtnMoreActions'),
+                    icon: const Icon(Icons.more_vert, size: 20),
+                    onSelected: (val) {
+                      if (val == 'bottle_edit') {
+                        _showBottleEditRequest(context, ref, item);
+                      } else if (val == 'room_edit') {
+                        _showRoomEditRequest(context, ref, item);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      if (canSubmitEditRequests) ...[
+                        PopupMenuItem(
+                          value: 'bottle_edit',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.spa_outlined, size: 18),
+                              const SizedBox(width: 8),
+                              Text(l10n.t('roomsBtnBottleEdit')),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'room_edit',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.edit_location_alt_outlined, size: 18),
+                              const SizedBox(width: 8),
+                              Text(l10n.t('roomsBtnRoomEdit')),
+                            ],
+                          ),
+                        ),
                       ],
-                    ),
+                    ],
                   ),
                 ],
-              ],
+              ),
             ),
             if (canSubmitEditRequests) ...[
               IconButton(
@@ -2704,7 +2710,7 @@ class _RoomCardProductRow extends ConsumerWidget {
               IconButton(
                 visualDensity: VisualDensity.compact,
                 tooltip: l10n.t('bottleStatusLost'),
-                icon: const Icon(Icons.help_outline_outlined, size: 20),
+                icon: const Icon(Icons.search_off_outlined, size: 20),
                 color: theme.colorScheme.onSurfaceVariant,
                 onPressed: () => _showMarkLostDialog(context, ref, item),
               ),
