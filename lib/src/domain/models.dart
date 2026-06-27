@@ -381,7 +381,17 @@ class RoomProduct {
 
   int bottleAgeDays(DateTime now) => now.difference(bottleStartedAt).inDays;
 
-  bool get canRefill => status != BottleStatus.recycled && product.isRefillable;
+  static const _nonRefillableStatuses = {
+    BottleStatus.recycled,
+    BottleStatus.damaged,
+    BottleStatus.lost,
+    BottleStatus.tooOld,
+    BottleStatus.refillLimitReached,
+    BottleStatus.needsReplacement,
+  };
+
+  bool get canRefill =>
+      !_nonRefillableStatuses.contains(status) && product.isRefillable;
 
   RoomProduct copyWith({
     String? roomNumber,
