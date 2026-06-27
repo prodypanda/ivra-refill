@@ -1,0 +1,4 @@
+## 2026-06-27 - [Fix Supabase RPC Self-Approval Loophole]
+**Vulnerability:** The `approve_change_request` and `reject_change_request` RPC functions in Supabase contained a logic flaw `if v_request.requested_by = auth.uid() and not is_app_admin() then`. This allowed `app_admin` accounts (even if compromised or acting maliciously via impersonation) to approve or reject their own change requests.
+**Learning:** Hard-coding exception paths for admin roles in critical business logic checks (like self-approval prevention) breaks the principle of least privilege and separation of duties. Even an admin should not be able to bypass auditing and approval flows for actions they initiated.
+**Prevention:** Remove the role-based exception for self-approval checks entirely. A user should never be able to approve a request where `requested_by = auth.uid()`, regardless of their role.
