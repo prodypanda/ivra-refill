@@ -1644,9 +1644,27 @@ class MockIvraRepository implements IvraRepository {
         final item = _roomProducts[index];
         final statusValue = request.newData['status'] as String?;
         final startValue = request.newData['bottle_started_at'] as String?;
+        final oldStatus = item.status;
+        final newStatus = statusValue == null ? oldStatus : BottleStatus.fromValue(statusValue);
+
+        if (oldStatus != newStatus) {
+          _events.insert(
+            0,
+            RefillEvent(
+              id: _uuid.v4(),
+              roomProductId: item.id,
+              type: RefillEventType.bottleReplaced,
+              previousRefillCount: item.refillCount,
+              newRefillCount: item.refillCount,
+              occurredAt: DateTime.now(),
+              performedBy: _currentUser.id,
+              notes: 'Status changed from ${oldStatus.value} to ${newStatus.value}',
+            ),
+          );
+        }
+
         _roomProducts[index] = item.copyWith(
-          status:
-              statusValue == null ? null : BottleStatus.fromValue(statusValue),
+          status: newStatus,
           bottleStartedAt:
               startValue == null ? null : DateTime.tryParse(startValue),
         );

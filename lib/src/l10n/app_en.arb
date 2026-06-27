@@ -445,6 +445,17 @@
   "roomsMsgRoomAddQueued": "Room creation queued",
   "roomsHistoryRefill": "Refill",
   "roomsHistoryNewBottle": "New bottle placed",
+  "roomsHistoryStatusChanged": "Status changed from {oldValue} to {newValue}",
+  "@roomsHistoryStatusChanged": {
+    "placeholders": {
+      "oldValue": {
+        "type": "String"
+      },
+      "newValue": {
+        "type": "String"
+      }
+    }
+  },
   "roomsFilterAll": "All",
   "roomsDialogBottleEditTitle": "Request bottle edit for room",
   "roomsLabelBottleStatus": "Bottle status",

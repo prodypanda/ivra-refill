@@ -338,33 +338,46 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                         _buildCollapseExpandBar(sortedFloors, l10n, theme),
                         const SizedBox(height: 8),
                         for (final floor in sortedFloors) ...[
-                          _buildFloorHeader(
-                            floor,
-                            l10n,
-                            theme,
-                            primaryColor,
-                            isExpanded: _expandedFloors.contains(floor) ||
-                                _searchQuery.isNotEmpty ||
-                                _productSearchQuery.isNotEmpty,
-                            roomCount: roomsByFloor[floor]!.length,
-                            onToggle: () {
-                              HapticFeedback.lightImpact();
-                              setState(() {
-                                if (_expandedFloors.contains(floor)) {
-                                  _expandedFloors.remove(floor);
-                                } else {
-                                  _expandedFloors.add(floor);
-                                }
-                              });
-                            },
-                            onAddRoom: canDeleteRooms
-                                ? () => _showAddRoomDialog(
-                                    context, ref, selectedHotelId, floor)
-                                : null,
-                            onDeleteFloor: canDeleteRooms
-                                ? () => _confirmDeleteFloor(context, ref, floor)
-                                : null,
-                          ),
+                          (() {
+                            final floorRooms = roomsByFloor[floor]!;
+                            final floorHasCritical = floorRooms.any((group) {
+                              final status = _getRoomOverallStatus(group.products);
+                              return status == _RoomOverallStatus.attentionRequired;
+                            });
+                            final floorHasWarning = floorRooms.any((group) {
+                              final status = _getRoomOverallStatus(group.products);
+                              return status == _RoomOverallStatus.refillNeeded;
+                            });
+                            return _buildFloorHeader(
+                              floor,
+                              l10n,
+                              theme,
+                              primaryColor,
+                              isExpanded: _expandedFloors.contains(floor) ||
+                                  _searchQuery.isNotEmpty ||
+                                  _productSearchQuery.isNotEmpty,
+                              roomCount: floorRooms.length,
+                              hasCritical: floorHasCritical,
+                              hasWarning: floorHasWarning,
+                              onToggle: () {
+                                HapticFeedback.lightImpact();
+                                setState(() {
+                                  if (_expandedFloors.contains(floor)) {
+                                    _expandedFloors.remove(floor);
+                                  } else {
+                                    _expandedFloors.add(floor);
+                                  }
+                                });
+                              },
+                              onAddRoom: canDeleteRooms
+                                  ? () => _showAddRoomDialog(
+                                      context, ref, selectedHotelId, floor)
+                                  : null,
+                              onDeleteFloor: canDeleteRooms
+                                  ? () => _confirmDeleteFloor(context, ref, floor)
+                                  : null,
+                            );
+                          })(),
                           if (_expandedFloors.contains(floor) ||
                               _searchQuery.isNotEmpty ||
                               _productSearchQuery.isNotEmpty) ...[
@@ -509,6 +522,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     Color primaryColor, {
     required bool isExpanded,
     required int roomCount,
+    required bool hasCritical,
+    required bool hasWarning,
     required VoidCallback onToggle,
     VoidCallback? onAddRoom,
     VoidCallback? onDeleteFloor,
@@ -593,6 +608,27 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 ),
               ),
             ),
+            if (hasCritical) ...[
+              const SizedBox(width: 8),
+              Tooltip(
+                message: l10n.t('roomsStatusAttentionRequired'),
+                child: Icon(
+                  Icons.warning_amber_rounded,
+                  color: theme.colorScheme.error,
+                  size: 20,
+                ),
+              ),
+            ] else if (hasWarning) ...[
+              const SizedBox(width: 8),
+              Tooltip(
+                message: l10n.t('roomsStatusRefillNeeded'),
+                child: Icon(
+                  Icons.hourglass_empty_rounded,
+                  color: Colors.orange.shade700,
+                  size: 20,
+                ),
+              ),
+            ],
             const SizedBox(width: 16),
             Expanded(
               child: Container(
@@ -3190,17 +3226,46 @@ class _RefillHistoryDialog extends ConsumerWidget {
                             event.type == RefillEventType.bottleReplaced &&
                                 index == events.length - 1 &&
                                 event.previousRefillCount == 0;
+                        final isStatusChange = event.type == RefillEventType.bottleReplaced &&
+                            event.notes != null &&
+                            event.notes!.startsWith('Status changed from ');
+
+                        String label = _eventLabel(l10n, event.type, isInitialPlacement);
+                        Widget subtitleWidget;
+
+                        if (isStatusChange) {
+                          final parts = event.notes!.split(' ');
+                          final oldStatusVal = parts.length > 3 ? parts[3] : '';
+                          final newStatusVal = parts.length > 5 ? parts[5] : '';
+                          final oldStatus = BottleStatus.fromValue(oldStatusVal);
+                          final newStatus = BottleStatus.fromValue(newStatusVal);
+                          final oldLocalized = _getLocalizedBottleStatus(context, oldStatus);
+                          final newLocalized = _getLocalizedBottleStatus(context, newStatus);
+                          
+                          label = l10n.tParams('roomsHistoryStatusChanged', {
+                            'oldValue': oldLocalized,
+                            'newValue': newLocalized,
+                          });
+                          
+                          subtitleWidget = Text(
+                            _formatDateTime(event.occurredAt),
+                          );
+                        } else {
+                          subtitleWidget = Text(
+                            '${_formatDateTime(event.occurredAt)} | '
+                            '${event.previousRefillCount} -> ${event.newRefillCount}',
+                          );
+                        }
+
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
                           leading: Icon(isInitialPlacement
                               ? Icons.add_circle_outline
-                              : _eventIcon(event.type)),
-                          title: Text(_eventLabel(
-                              l10n, event.type, isInitialPlacement)),
-                          subtitle: Text(
-                            '${_formatDateTime(event.occurredAt)} | '
-                            '${event.previousRefillCount} -> ${event.newRefillCount}',
-                          ),
+                              : isStatusChange
+                                  ? Icons.published_with_changes_outlined
+                                  : _eventIcon(event.type)),
+                          title: Text(label),
+                          subtitle: subtitleWidget,
                           trailing: event.type == RefillEventType.refill
                               ? Wrap(
                                   spacing: 8,

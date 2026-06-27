@@ -310,6 +310,7 @@
   "roomsMsgRoomAddQueued": "تم وضع إنشاء الغرفة في قائمة الانتظار",
   "roomsHistoryRefill": "إعادة تعبئة",
   "roomsHistoryNewBottle": "تم وضع زجاجة جديدة",
+  "roomsHistoryStatusChanged": "تغيرت الحالة من {oldValue} إلى {newValue}",
   "roomsFilterAll": "الكل",
   "roomsDialogBottleEditTitle": "طلب تعديل العبوة للغرفة",
   "roomsLabelBottleStatus": "حالة العبوة",

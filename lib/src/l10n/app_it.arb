@@ -310,6 +310,7 @@
   "roomsMsgRoomAddQueued": "Creazione camera in coda",
   "roomsHistoryRefill": "Ricaricato",
   "roomsHistoryNewBottle": "Nuova bottiglia posizionata",
+  "roomsHistoryStatusChanged": "Stato modificato da {oldValue} a {newValue}",
   "roomsFilterAll": "Tutti",
   "roomsDialogBottleEditTitle": "Richiesta modifica bottiglia per camera",
   "roomsLabelBottleStatus": "Stato bottiglia",

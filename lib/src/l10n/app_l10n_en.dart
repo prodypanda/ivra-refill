@@ -1008,6 +1008,11 @@ class AppL10nEn extends AppL10n {
   String get roomsHistoryNewBottle => 'New bottle placed';
 
   @override
+  String roomsHistoryStatusChanged(String oldValue, String newValue) {
+    return 'Status changed from $oldValue to $newValue';
+  }
+
+  @override
   String get roomsFilterAll => 'All';
 
   @override

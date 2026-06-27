@@ -310,6 +310,7 @@
   "roomsMsgRoomAddQueued": "Création de la chambre mise en file d'attente",
   "roomsHistoryRefill": "Recharge",
   "roomsHistoryNewBottle": "Nouvelle bouteille placée",
+  "roomsHistoryStatusChanged": "Statut modifié de {oldValue} à {newValue}",
   "roomsFilterAll": "Tout",
   "roomsDialogBottleEditTitle": "Demander la modification de bouteille pour la chambre",
   "roomsLabelBottleStatus": "Statut de la bouteille",

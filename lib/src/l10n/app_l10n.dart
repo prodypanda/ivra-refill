@@ -1961,6 +1961,12 @@ abstract class AppL10n {
   /// **'New bottle placed'**
   String get roomsHistoryNewBottle;
 
+  /// No description provided for @roomsHistoryStatusChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Status changed from {oldValue} to {newValue}'**
+  String roomsHistoryStatusChanged(String oldValue, String newValue);
+
   /// No description provided for @roomsFilterAll.
   ///
   /// In en, this message translates to:
