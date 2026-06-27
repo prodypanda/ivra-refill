@@ -3614,7 +3614,8 @@ Future<bool> _submitPendingEditRequest({
 }) async {
   var isOffline = ref.read(offlineModeProvider);
   final currentUser = ref.read(currentUserProvider).valueOrNull;
-  final applyImmediately = currentUser?.isIvraUser ?? false;
+  final applyImmediately = (currentUser?.isIvraUser == true) ||
+      (currentUser?.role == UserRole.hotelManager && currentUser?.hotelId == hotelId);
 
   if (!isOffline) {
     try {
