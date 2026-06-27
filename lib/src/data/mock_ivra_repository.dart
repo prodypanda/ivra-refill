@@ -42,6 +42,7 @@ class MockIvraRepository implements IvraRepository {
         'submit_edit_requests',
       },
       'hotel_manager': {
+        'manage_hotels',
         'manage_rooms',
         'manage_team',
         'view_approvals',
@@ -485,20 +486,29 @@ class MockIvraRepository implements IvraRepository {
 
   @override
   Future<DashboardMetrics> dashboardMetrics({String? hotelId}) async {
-    final lowStock = (await inventory()).where(
+    final lowStock = (await inventory(hotelId: hotelId)).where(
       (item) => item.lowBidons || item.lowBottles,
     );
+    final roomsList = _rooms.where((room) => hotelId == null || room.hotelId == hotelId).toList();
+
     return DashboardMetrics(
-      hotelCount: _hotels.length,
-      roomCount: _rooms.length,
+      hotelCount: hotelId == null ? _hotels.length : 1,
+      roomCount: roomsList.length,
       pendingApprovals: _approvalRequests
-          .where((item) => item.status == ApprovalStatus.pending)
+          .where((item) =>
+              item.status == ApprovalStatus.pending &&
+              (hotelId == null || item.hotelId == hotelId))
           .length,
-      openAlerts: _alerts.where((alert) => !alert.isResolved).length,
+      openAlerts: _alerts
+          .where((alert) =>
+              !alert.isResolved &&
+              (hotelId == null || alert.hotelId == hotelId))
+          .length,
       bottlesToReplace: _roomProducts
           .where((item) =>
-              item.status == BottleStatus.refillLimitReached ||
-              item.status == BottleStatus.tooOld)
+              (hotelId == null || item.hotelId == hotelId) &&
+              (item.status == BottleStatus.refillLimitReached ||
+                  item.status == BottleStatus.tooOld))
           .length,
       lowStockProducts: lowStock.length,
     );

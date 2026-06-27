@@ -624,19 +624,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
 }
 
 void _refreshAppData(WidgetRef ref) {
-  ref.invalidate(currentUserProvider);
-  ref.invalidate(dashboardProvider);
-  ref.invalidate(hotelsProvider);
-  ref.invalidate(roomsProvider);
-  ref.invalidate(roomProductsProvider);
-  ref.invalidate(inventoryProvider);
-  ref.invalidate(suggestedOrdersProvider);
-  ref.invalidate(approvalsProvider);
-  ref.invalidate(alertsProvider);
-  ref.invalidate(refillEventsProvider);
-  ref.invalidate(teamMembersProvider);
-  ref.invalidate(teamInvitationsProvider);
-  ref.invalidate(demoUsersProvider);
+  invalidateAccountScopedData(ref);
 }
 
 class _OfflineConflictDialog extends StatefulWidget {

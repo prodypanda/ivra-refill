@@ -326,6 +326,8 @@ final alertsProvider = FutureProvider<List<AlertItem>>((ref) {
 /// pull-to-refresh. Call this whenever the authenticated user changes so the
 /// new account's data is fetched immediately.
 void invalidateAccountScopedData(WidgetRef ref) {
+  ref.invalidate(currentUserProvider);
+  ref.invalidate(selectedHotelIdProvider);
   ref.invalidate(dashboardProvider);
   ref.invalidate(hotelsProvider);
   ref.invalidate(productsProvider);
@@ -540,8 +542,7 @@ final hasPermissionProvider = Provider.family<bool, String>((ref, permission) {
       case UserRole.appManager:
         return permission != 'view_audit_logs';
       case UserRole.hotelManager:
-        return permission != 'manage_hotels' &&
-            permission != 'manage_products' &&
+        return permission != 'manage_products' &&
             permission != 'approve_corrections' &&
             permission != 'send_notifications' &&
             permission != 'view_audit_logs' &&
