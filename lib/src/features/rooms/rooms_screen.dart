@@ -2541,12 +2541,15 @@ class _RoomCardProductRow extends ConsumerWidget {
             const SizedBox(height: 3),
             Row(
               children: [
-                Text(
-                  item.product.sku,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: 'monospace',
-                    color: theme.colorScheme.onSurfaceVariant,
-                    fontSize: 12,
+                Flexible(
+                  child: Text(
+                    item.product.sku,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontFamily: 'monospace',
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 8),
