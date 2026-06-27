@@ -1,3 +1,1 @@
-// GENERATED FILE. DO NOT EDIT.
-const appVersion = '1.0.48';
-
+const appVersion = '1.0.49+57';

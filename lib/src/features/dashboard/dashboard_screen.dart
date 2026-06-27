@@ -506,8 +506,8 @@ class _MetricCardState extends State<_MetricCard> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 theme.colorScheme.surface.withValues(alpha: 0.9),
                 theme.colorScheme.surface.withValues(alpha: 0.7),
@@ -617,8 +617,8 @@ class _MobileHeroState extends State<_MobileHero> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             theme.colorScheme.primary,
             theme.colorScheme.primary.withRed(220).withGreen(120),
@@ -634,8 +634,8 @@ class _MobileHeroState extends State<_MobileHero> {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: -20,
+          PositionedDirectional(
+            end: -20,
             top: -20,
             child: Icon(
               Icons.spa,
@@ -856,7 +856,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
                 ),
               );
 
-              final headerControls = _buildSelectors(context, hotels, selectedHotelId);
+              final headerControls = _DashboardSelectors(isStaff: widget.isStaff, hotels: hotels, selectedHotelId: selectedHotelId, dateRange: _dateRange, onDateRangeChanged: (val) { if (val != null) { setState(() { _dateRange = val; }); } },);
 
               if (isWide) {
                 return Row(
@@ -889,9 +889,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
           refillEventsAsync.when(
             loading: () => const SizedBox(
               height: 220,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: CardShimmer(),
             ),
             error: (err, stack) => SizedBox(
               height: 220,
@@ -1021,6 +1019,8 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
               return SizedBox(
                 height: 220,
                 child: LineChart(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
                   LineChartData(
                     gridData: FlGridData(
                       show: true,
@@ -1152,8 +1152,27 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
     ));
   }
 
-  Widget _buildSelectors(BuildContext context, List<Hotel> hotels, String? selectedHotelId) {
-    if (widget.isStaff) return const SizedBox.shrink();
+
+}
+
+class _DashboardSelectors extends ConsumerWidget {
+  const _DashboardSelectors({
+    required this.isStaff,
+    required this.hotels,
+    required this.selectedHotelId,
+    required this.dateRange,
+    required this.onDateRangeChanged,
+  });
+
+  final bool isStaff;
+  final List<Hotel> hotels;
+  final String? selectedHotelId;
+  final ChartDateRange dateRange;
+  final ValueChanged<ChartDateRange?> onDateRangeChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (isStaff) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final showHotelSelector = hotels.length > 1;
@@ -1164,7 +1183,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         if (showHotelSelector) ...[
-          _buildDropdown<String?>(
+          _DashboardDropdown<String?>(
             value: selectedHotelId,
             items: [
               DropdownMenuItem(
@@ -1181,11 +1200,10 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
               ref.read(selectedHotelIdProvider.notifier).state = val;
             },
             icon: Icons.hotel_outlined,
-            theme: theme,
           ),
         ],
-        _buildDropdown<ChartDateRange>(
-          value: _dateRange,
+        _DashboardDropdown<ChartDateRange>(
+          value: dateRange,
           items: [
             DropdownMenuItem(
               value: ChartDateRange.last7Days,
@@ -1200,27 +1218,30 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
               child: Text(l10n.t('lastYear')),
             ),
           ],
-          onChanged: (val) {
-            if (val != null) {
-              setState(() {
-                _dateRange = val;
-              });
-            }
-          },
+          onChanged: onDateRangeChanged,
           icon: Icons.date_range_outlined,
-          theme: theme,
         ),
       ],
     );
   }
+}
 
-  Widget _buildDropdown<T>({
-    required T value,
-    required List<DropdownMenuItem<T>> items,
-    required ValueChanged<T?> onChanged,
-    required IconData icon,
-    required ThemeData theme,
-  }) {
+class _DashboardDropdown<T> extends StatelessWidget {
+  const _DashboardDropdown({
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    required this.icon,
+  });
+
+  final T value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       height: 38,
       padding: const EdgeInsets.symmetric(horizontal: 10),

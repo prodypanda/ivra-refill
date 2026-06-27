@@ -797,6 +797,8 @@ class _TrendChart extends StatelessWidget {
             SizedBox(
               height: 200,
               child: BarChart(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
                 BarChartData(
                   maxY: maxY,
                   minY: 0,
@@ -892,8 +894,8 @@ class _TrendChart extends StatelessWidget {
                                 theme.colorScheme.primary,
                                 theme.colorScheme.primary.withValues(alpha: 0.7),
                               ],
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
+                              begin: AlignmentDirectional.bottomCenter,
+                              end: AlignmentDirectional.topCenter,
                             ),
                             width: 14,
                             borderRadius: const BorderRadius.only(
@@ -1031,8 +1033,8 @@ class _ReportActionState extends State<_ReportAction> {
                           theme.colorScheme.primaryContainer
                               .withValues(alpha: 0.1),
                         ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                        begin: AlignmentDirectional.topStart,
+                        end: AlignmentDirectional.bottomEnd,
                       ),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(20),
