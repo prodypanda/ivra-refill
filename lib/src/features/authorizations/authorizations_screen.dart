@@ -21,7 +21,7 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
   bool _isSaving = false;
   TabController? _tabController;
 
-  static const _allPermissions = [
+  static const _fallbackPermissions = [
     'view_rooms',
     'manage_rooms',
     'view_inventory',
@@ -35,6 +35,7 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
     'view_reports',
     'send_notifications',
     'view_audit_logs',
+    'view_authorizations',
   ];
 
   @override
@@ -72,6 +73,8 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
         return l10n.t('permViewRooms');
       case 'view_inventory':
         return l10n.t('permViewInventory');
+      case 'view_authorizations':
+        return l10n.t('permViewAuthorizations');
       default:
         return key;
     }
@@ -106,6 +109,8 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
         return l10n.t('permViewRoomsDesc');
       case 'view_inventory':
         return l10n.t('permViewInventoryDesc');
+      case 'view_authorizations':
+        return l10n.t('permViewAuthorizationsDesc');
       default:
         return '';
     }
@@ -162,6 +167,7 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
     final l10n = AppLocalizations.of(context);
     final rolesAsync = ref.watch(rolesProvider);
     final permissionsAsync = ref.watch(rolePermissionsProvider);
+    final allPermissionsAsync = ref.watch(allPermissionsProvider);
 
     return PageScaffold(
       title: l10n.t('authorizationsTitle'),
@@ -189,138 +195,145 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
             value: permissionsAsync,
             onRetry: () => ref.invalidate(rolePermissionsProvider),
             builder: (matrix) {
-              final isWide = MediaQuery.sizeOf(context).width >= 720;
+              return AsyncValueView(
+                value: allPermissionsAsync,
+                onRetry: () => ref.invalidate(allPermissionsProvider),
+                builder: (allPermissions) {
+                  final isWide = MediaQuery.sizeOf(context).width >= 720;
+                  final permissionsList = allPermissions.isNotEmpty ? allPermissions : _fallbackPermissions;
 
-              return Card(
-                clipBehavior: Clip.antiAlias,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.t('authorizationsHeader'),
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            l10n.t('authorizationsSubtitle'),
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    if (isWide)
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: SingleChildScrollView(
-                            child: DataTable(
-                              columnSpacing: 32,
-                              columns: [
-                                DataColumn(label: Text(l10n.t('authorizationsPermission'))),
-                                ...roles.map(
-                                  (role) => DataColumn(
-                                    label: Text(
-                                      _getRoleLabel(context, role),
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                  return Card(
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.t('authorizationsHeader'),
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ),
-                                ),
-                              ],
-                              rows: _allPermissions.map((permission) {
-                                return DataRow(
-                                  cells: [
-                                    DataCell(
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              _getPermissionTitle(context, permission),
-                                              style: const TextStyle(fontWeight: FontWeight.w600),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              _getPermissionDescription(context, permission),
-                                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                                  ),
-                                            ),
-                                          ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.t('authorizationsSubtitle'),
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        if (isWide)
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: SingleChildScrollView(
+                                child: DataTable(
+                                  columnSpacing: 32,
+                                  columns: [
+                                    DataColumn(label: Text(l10n.t('authorizationsPermission'))),
+                                    ...roles.map(
+                                      (role) => DataColumn(
+                                        label: Text(
+                                          _getRoleLabel(context, role),
+                                          style: const TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                     ),
-                                    ...roles.map((role) {
-                                      final isEnabled = matrix[role]?.contains(permission) ?? false;
-                                      final isSystemAdmin = role == 'app_admin';
-
-                                      return DataCell(
-                                        Switch(
-                                          value: isSystemAdmin ? true : isEnabled,
-                                          activeColor: const Color(0xFF267D65),
-                                          onChanged: isSystemAdmin
-                                              ? null
-                                              : (val) => _togglePermission(role, permission, val),
-                                        ),
-                                      );
-                                    }),
                                   ],
+                                  rows: permissionsList.map((permission) {
+                                    return DataRow(
+                                      cells: [
+                                        DataCell(
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  _getPermissionTitle(context, permission),
+                                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  _getPermissionDescription(context, permission),
+                                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        ...roles.map((role) {
+                                          final isEnabled = matrix[role]?.contains(permission) ?? false;
+                                          final isSystemAdmin = role == 'app_admin';
+
+                                          return DataCell(
+                                            Switch(
+                                              value: isSystemAdmin ? true : isEnabled,
+                                              activeColor: const Color(0xFF267D65),
+                                              onChanged: isSystemAdmin
+                                                  ? null
+                                                  : (val) => _togglePermission(role, permission, val),
+                                            ),
+                                          );
+                                        }),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          )
+                        else ...[
+                          TabBar(
+                            controller: _tabController,
+                            isScrollable: true,
+                            tabAlignment: TabAlignment.start,
+                            tabs: roles.map((role) => Tab(text: _getRoleLabel(context, role))).toList(),
+                          ),
+                          Expanded(
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: roles.map((role) {
+                                return ListView.separated(
+                                  itemCount: permissionsList.length,
+                                  separatorBuilder: (context, index) => const Divider(height: 1),
+                                  itemBuilder: (context, index) {
+                                    final permission = permissionsList[index];
+                                    final isEnabled = matrix[role]?.contains(permission) ?? false;
+                                    final isSystemAdmin = role == 'app_admin';
+
+                                    return SwitchListTile(
+                                      value: isSystemAdmin ? true : isEnabled,
+                                      title: Text(
+                                        _getPermissionTitle(context, permission),
+                                        style: const TextStyle(fontWeight: FontWeight.w600),
+                                      ),
+                                      subtitle: Text(_getPermissionDescription(context, permission)),
+                                      activeColor: const Color(0xFF267D65),
+                                      onChanged: isSystemAdmin
+                                          ? null
+                                          : (val) => _togglePermission(role, permission, val),
+                                    );
+                                  },
                                 );
                               }).toList(),
                             ),
                           ),
-                        ),
-                      )
-                    else ...[
-                      TabBar(
-                        controller: _tabController,
-                        isScrollable: true,
-                        tabAlignment: TabAlignment.start,
-                        tabs: roles.map((role) => Tab(text: _getRoleLabel(context, role))).toList(),
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: roles.map((role) {
-                            return ListView.separated(
-                              itemCount: _allPermissions.length,
-                              separatorBuilder: (context, index) => const Divider(height: 1),
-                              itemBuilder: (context, index) {
-                                final permission = _allPermissions[index];
-                                final isEnabled = matrix[role]?.contains(permission) ?? false;
-                                final isSystemAdmin = role == 'app_admin';
-
-                                return SwitchListTile(
-                                  value: isSystemAdmin ? true : isEnabled,
-                                  title: Text(
-                                    _getPermissionTitle(context, permission),
-                                    style: const TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  subtitle: Text(_getPermissionDescription(context, permission)),
-                                  activeColor: const Color(0xFF267D65),
-                                  onChanged: isSystemAdmin
-                                      ? null
-                                      : (val) => _togglePermission(role, permission, val),
-                                );
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                        ],
+                      ],
+                    ),
+                  );
+                },
               );
             },
           );

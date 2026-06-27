@@ -4055,6 +4055,228 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Since this is a new hotel, there are no products in the store stock. Would you like to automatically initialize the store stock with {total} bottles to place in the rooms?'**
   String inventoryEnforceOnboardingContent(String total);
+
+  /// No description provided for @authorizationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorizations Matrix'**
+  String get authorizationsTitle;
+
+  /// No description provided for @authorizationsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorizations Matrix'**
+  String get authorizationsHeader;
+
+  /// No description provided for @authorizationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage application features and action permissions by user role.'**
+  String get authorizationsSubtitle;
+
+  /// No description provided for @authorizationsPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission'**
+  String get authorizationsPermission;
+
+  /// No description provided for @authorizationsUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorizations updated successfully.'**
+  String get authorizationsUpdatedSuccessfully;
+
+  /// No description provided for @roleAppAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'App Admin'**
+  String get roleAppAdmin;
+
+  /// No description provided for @roleAppManager.
+  ///
+  /// In en, this message translates to:
+  /// **'App Manager'**
+  String get roleAppManager;
+
+  /// No description provided for @roleHotelManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel Manager'**
+  String get roleHotelManager;
+
+  /// No description provided for @roleHotelStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel Staff'**
+  String get roleHotelStaff;
+
+  /// No description provided for @permManageHotels.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Hotels'**
+  String get permManageHotels;
+
+  /// No description provided for @permManageHotelsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Create, edit, and delete hotel properties'**
+  String get permManageHotelsDesc;
+
+  /// No description provided for @permManageRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Rooms'**
+  String get permManageRooms;
+
+  /// No description provided for @permManageRoomsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Add, edit, and remove rooms and floors'**
+  String get permManageRoomsDesc;
+
+  /// No description provided for @permManageProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Products'**
+  String get permManageProducts;
+
+  /// No description provided for @permManageProductsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure global product types and catalogs'**
+  String get permManageProductsDesc;
+
+  /// No description provided for @permManageTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Team'**
+  String get permManageTeam;
+
+  /// No description provided for @permManageTeamDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite and manage team members and roles'**
+  String get permManageTeamDesc;
+
+  /// No description provided for @permSubmitEditRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Edit Requests'**
+  String get permSubmitEditRequests;
+
+  /// No description provided for @permSubmitEditRequestsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit room, bottle, and stock modification requests'**
+  String get permSubmitEditRequestsDesc;
+
+  /// No description provided for @permApproveCorrections.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve Corrections'**
+  String get permApproveCorrections;
+
+  /// No description provided for @permApproveCorrectionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve or reject pending change and correction requests'**
+  String get permApproveCorrectionsDesc;
+
+  /// No description provided for @permViewApprovals.
+  ///
+  /// In en, this message translates to:
+  /// **'View Approvals'**
+  String get permViewApprovals;
+
+  /// No description provided for @permViewApprovalsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Access the approvals dashboard screen'**
+  String get permViewApprovalsDesc;
+
+  /// No description provided for @permViewAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'View Alerts'**
+  String get permViewAlerts;
+
+  /// No description provided for @permViewAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View and monitor operation alerts'**
+  String get permViewAlertsDesc;
+
+  /// No description provided for @permViewReports.
+  ///
+  /// In en, this message translates to:
+  /// **'View Reports'**
+  String get permViewReports;
+
+  /// No description provided for @permViewReportsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Access analytics reports and performance charts'**
+  String get permViewReportsDesc;
+
+  /// No description provided for @permSendNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Push Notifications'**
+  String get permSendNotifications;
+
+  /// No description provided for @permSendNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Compose and broadcast app push notifications'**
+  String get permSendNotificationsDesc;
+
+  /// No description provided for @permViewAuditLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'View Security Audit Logs'**
+  String get permViewAuditLogs;
+
+  /// No description provided for @permViewAuditLogsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect detailed operation and login history logs'**
+  String get permViewAuditLogsDesc;
+
+  /// No description provided for @permViewRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'View Rooms'**
+  String get permViewRooms;
+
+  /// No description provided for @permViewRoomsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View room refill status list and details'**
+  String get permViewRoomsDesc;
+
+  /// No description provided for @permViewInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'View Inventory'**
+  String get permViewInventory;
+
+  /// No description provided for @permViewInventoryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View hotel inventory stock status and suggest orders'**
+  String get permViewInventoryDesc;
+
+  /// No description provided for @permViewAuthorizations.
+  ///
+  /// In en, this message translates to:
+  /// **'View Authorizations'**
+  String get permViewAuthorizations;
+
+  /// No description provided for @permViewAuthorizationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Access and manage role-based permission settings screen'**
+  String get permViewAuthorizationsDesc;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

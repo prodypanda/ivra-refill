@@ -522,6 +522,10 @@ final rolePermissionsProvider = FutureProvider<Map<String, Set<String>>>((ref) a
   return ref.watch(repositoryProvider).fetchRolePermissions();
 });
 
+final allPermissionsProvider = FutureProvider<List<String>>((ref) async {
+  return ref.watch(repositoryProvider).fetchAllPermissions();
+});
+
 final hasPermissionProvider = Provider.family<bool, String>((ref, permission) {
   final userProfile = ref.watch(currentUserProvider).valueOrNull;
   if (userProfile == null) return false;

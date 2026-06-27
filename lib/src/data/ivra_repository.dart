@@ -47,6 +47,7 @@ abstract class IvraRepository {
 
   Future<List<String>> fetchRoles();
   Future<Map<String, Set<String>>> fetchRolePermissions();
+  Future<List<String>> fetchAllPermissions();
   Future<void> updateRolePermission({
     required String role,
     required String permission,

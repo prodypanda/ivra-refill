@@ -2162,4 +2162,123 @@ class AppL10nAr extends AppL10n {
   String inventoryEnforceOnboardingContent(String total) {
     return 'بما أن هذا فندق جديد، فلا توجد منتجات في مخزون المتجر. هل ترغب في تهيئة مخزون المتجر تلقائيًا بـ $total زجاجة لوضعها في الغرف؟';
   }
+
+  @override
+  String get authorizationsTitle => 'مصفوفة الصلاحيات';
+
+  @override
+  String get authorizationsHeader => 'مصفوفة الصلاحيات';
+
+  @override
+  String get authorizationsSubtitle =>
+      'إدارة ميزات التطبيق وصلاحيات الإجراءات حسب دور المستخدم.';
+
+  @override
+  String get authorizationsPermission => 'الصلاحية';
+
+  @override
+  String get authorizationsUpdatedSuccessfully => 'تم تحديث الصلاحيات بنجاح.';
+
+  @override
+  String get roleAppAdmin => 'مدير التطبيق';
+
+  @override
+  String get roleAppManager => 'مشرف التطبيق';
+
+  @override
+  String get roleHotelManager => 'مدير الفندق';
+
+  @override
+  String get roleHotelStaff => 'موظف الفندق';
+
+  @override
+  String get permManageHotels => 'إدارة الفنادق';
+
+  @override
+  String get permManageHotelsDesc => 'إنشاء وتعديل وحذف الفنادق';
+
+  @override
+  String get permManageRooms => 'إدارة الغرف';
+
+  @override
+  String get permManageRoomsDesc => 'إضافة وتعديل وإزالة الغرف والطوابق';
+
+  @override
+  String get permManageProducts => 'إدارة المنتجات';
+
+  @override
+  String get permManageProductsDesc =>
+      'تكوين أنواع المنتجات العالمية والكتالوجات';
+
+  @override
+  String get permManageTeam => 'إدارة الفريق';
+
+  @override
+  String get permManageTeamDesc => 'دعوة وإدارة أعضاء الفريق والأدوار';
+
+  @override
+  String get permSubmitEditRequests => 'تقديم طلبات التعديل';
+
+  @override
+  String get permSubmitEditRequestsDesc =>
+      'تقديم طلبات تعديل الغرف والزجاجات والمخزون';
+
+  @override
+  String get permApproveCorrections => 'اعتماد التصحيحات';
+
+  @override
+  String get permApproveCorrectionsDesc =>
+      'الموافقة على طلبات التغيير والتصحيح المعلقة أو رفضها';
+
+  @override
+  String get permViewApprovals => 'عرض الموافقات';
+
+  @override
+  String get permViewApprovalsDesc => 'الوصول إلى شاشة لوحة تحكم الموافقات';
+
+  @override
+  String get permViewAlerts => 'عرض التنبيهات';
+
+  @override
+  String get permViewAlertsDesc => 'عرض ومراقبة تنبيهات العمليات';
+
+  @override
+  String get permViewReports => 'عرض التقارير';
+
+  @override
+  String get permViewReportsDesc =>
+      'الوصول إلى تقارير التحليلات ومخططات الأداء';
+
+  @override
+  String get permSendNotifications => 'إرسال إشعارات الهاتف';
+
+  @override
+  String get permSendNotificationsDesc => 'إنشاء وبث إشعارات الهاتف للتطبيق';
+
+  @override
+  String get permViewAuditLogs => 'عرض سجلات التدقيق الأمني';
+
+  @override
+  String get permViewAuditLogsDesc =>
+      'فحص سجلات العمليات وتاريخ تسجيل الدخول المفصلة';
+
+  @override
+  String get permViewRooms => 'عرض الغرف';
+
+  @override
+  String get permViewRoomsDesc =>
+      'عرض قائمة وحالات إعادة تعبئة الغرف وتفاصيلها';
+
+  @override
+  String get permViewInventory => 'عرض المخزون';
+
+  @override
+  String get permViewInventoryDesc => 'عرض حالة مخزون الفندق واقتراح الطلبات';
+
+  @override
+  String get permViewAuthorizations => 'عرض الصلاحيات';
+
+  @override
+  String get permViewAuthorizationsDesc =>
+      'الوصول إلى شاشة إعدادات صلاحيات الأدوار وإدارتها';
 }

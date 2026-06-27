@@ -2193,4 +2193,130 @@ class AppL10nIt extends AppL10n {
   String inventoryEnforceOnboardingContent(String total) {
     return 'Trattandosi di un nuovo hotel, non ci sono prodotti in stock magazzino. Vuoi inizializzare automaticamente l\'stock magazzino con $total bottiglie da posizionare nelle camere?';
   }
+
+  @override
+  String get authorizationsTitle => 'Matrice delle Autorizzazioni';
+
+  @override
+  String get authorizationsHeader => 'Matrice delle Autorizzazioni';
+
+  @override
+  String get authorizationsSubtitle =>
+      'Gestisci le funzionalità dell\'applicazione e le autorizzazioni delle azioni per ruolo utente.';
+
+  @override
+  String get authorizationsPermission => 'Autorizzazione';
+
+  @override
+  String get authorizationsUpdatedSuccessfully =>
+      'Autorizzazioni aggiornate con successo.';
+
+  @override
+  String get roleAppAdmin => 'Amministratore app';
+
+  @override
+  String get roleAppManager => 'Responsabile app';
+
+  @override
+  String get roleHotelManager => 'Responsabile hotel';
+
+  @override
+  String get roleHotelStaff => 'Personale hotel';
+
+  @override
+  String get permManageHotels => 'Gestisci Hotel';
+
+  @override
+  String get permManageHotelsDesc =>
+      'Crea, modifica ed elimina proprietà dell\'hotel';
+
+  @override
+  String get permManageRooms => 'Gestisci Camere';
+
+  @override
+  String get permManageRoomsDesc =>
+      'Aggiungi, modifica e rimuovi camere e piani';
+
+  @override
+  String get permManageProducts => 'Gestisci Prodotti';
+
+  @override
+  String get permManageProductsDesc =>
+      'Configura tipi di prodotti globali e cataloghi';
+
+  @override
+  String get permManageTeam => 'Gestisci Team';
+
+  @override
+  String get permManageTeamDesc => 'Invita e gestisci membri del team e ruoli';
+
+  @override
+  String get permSubmitEditRequests => 'Invia Richieste di Modifica';
+
+  @override
+  String get permSubmitEditRequestsDesc =>
+      'Invia richieste di modifica di camere, bottiglie e scorte';
+
+  @override
+  String get permApproveCorrections => 'Approva Correzioni';
+
+  @override
+  String get permApproveCorrectionsDesc =>
+      'Approva o rifiuta richieste di modifica e correzione in attesa';
+
+  @override
+  String get permViewApprovals => 'Visualizza Approvazioni';
+
+  @override
+  String get permViewApprovalsDesc =>
+      'Accedi alla schermata delle approvazioni';
+
+  @override
+  String get permViewAlerts => 'Visualizza Avvisi';
+
+  @override
+  String get permViewAlertsDesc => 'Visualizza e monitora gli avvisi operativi';
+
+  @override
+  String get permViewReports => 'Visualizza Report';
+
+  @override
+  String get permViewReportsDesc =>
+      'Accedi ai report analitici e ai grafici delle prestazioni';
+
+  @override
+  String get permSendNotifications => 'Invia Notifiche Push';
+
+  @override
+  String get permSendNotificationsDesc =>
+      'Componi e trasmetti notifiche push dell\'app';
+
+  @override
+  String get permViewAuditLogs =>
+      'Visualizza Registri di Controllo di Sicurezza';
+
+  @override
+  String get permViewAuditLogsDesc =>
+      'Ispeziona i registri dettagliati della cronologia delle operazioni e degli accessi';
+
+  @override
+  String get permViewRooms => 'Visualizza Camere';
+
+  @override
+  String get permViewRoomsDesc =>
+      'Visualizza l\'elenco e i dettagli dello stato di ricarica delle camere';
+
+  @override
+  String get permViewInventory => 'Visualizza Inventario';
+
+  @override
+  String get permViewInventoryDesc =>
+      'Visualizza lo stato delle scorte dell\'hotel e suggerisci ordini';
+
+  @override
+  String get permViewAuthorizations => 'Visualizza Autorizzazioni';
+
+  @override
+  String get permViewAuthorizationsDesc =>
+      'Accedi e gestisci la schermata delle impostazioni di autorizzazione basata sui ruoli';
 }

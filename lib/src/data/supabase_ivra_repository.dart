@@ -1179,6 +1179,17 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<List<String>> fetchAllPermissions() async {
+    final List<dynamic> data = await _client
+        .from('role_permissions')
+        .select('permission')
+        .order('permission', ascending: true);
+    final permissions = data.map<String>((row) => row['permission'] as String).toSet().toList();
+    permissions.sort();
+    return permissions;
+  }
+
+  @override
   Future<void> updateRolePermission({
     required String role,
     required String permission,

@@ -2172,4 +2172,126 @@ class AppL10nEn extends AppL10n {
   String inventoryEnforceOnboardingContent(String total) {
     return 'Since this is a new hotel, there are no products in the store stock. Would you like to automatically initialize the store stock with $total bottles to place in the rooms?';
   }
+
+  @override
+  String get authorizationsTitle => 'Authorizations Matrix';
+
+  @override
+  String get authorizationsHeader => 'Authorizations Matrix';
+
+  @override
+  String get authorizationsSubtitle =>
+      'Manage application features and action permissions by user role.';
+
+  @override
+  String get authorizationsPermission => 'Permission';
+
+  @override
+  String get authorizationsUpdatedSuccessfully =>
+      'Authorizations updated successfully.';
+
+  @override
+  String get roleAppAdmin => 'App Admin';
+
+  @override
+  String get roleAppManager => 'App Manager';
+
+  @override
+  String get roleHotelManager => 'Hotel Manager';
+
+  @override
+  String get roleHotelStaff => 'Hotel Staff';
+
+  @override
+  String get permManageHotels => 'Manage Hotels';
+
+  @override
+  String get permManageHotelsDesc =>
+      'Create, edit, and delete hotel properties';
+
+  @override
+  String get permManageRooms => 'Manage Rooms';
+
+  @override
+  String get permManageRoomsDesc => 'Add, edit, and remove rooms and floors';
+
+  @override
+  String get permManageProducts => 'Manage Products';
+
+  @override
+  String get permManageProductsDesc =>
+      'Configure global product types and catalogs';
+
+  @override
+  String get permManageTeam => 'Manage Team';
+
+  @override
+  String get permManageTeamDesc => 'Invite and manage team members and roles';
+
+  @override
+  String get permSubmitEditRequests => 'Submit Edit Requests';
+
+  @override
+  String get permSubmitEditRequestsDesc =>
+      'Submit room, bottle, and stock modification requests';
+
+  @override
+  String get permApproveCorrections => 'Approve Corrections';
+
+  @override
+  String get permApproveCorrectionsDesc =>
+      'Approve or reject pending change and correction requests';
+
+  @override
+  String get permViewApprovals => 'View Approvals';
+
+  @override
+  String get permViewApprovalsDesc => 'Access the approvals dashboard screen';
+
+  @override
+  String get permViewAlerts => 'View Alerts';
+
+  @override
+  String get permViewAlertsDesc => 'View and monitor operation alerts';
+
+  @override
+  String get permViewReports => 'View Reports';
+
+  @override
+  String get permViewReportsDesc =>
+      'Access analytics reports and performance charts';
+
+  @override
+  String get permSendNotifications => 'Send Push Notifications';
+
+  @override
+  String get permSendNotificationsDesc =>
+      'Compose and broadcast app push notifications';
+
+  @override
+  String get permViewAuditLogs => 'View Security Audit Logs';
+
+  @override
+  String get permViewAuditLogsDesc =>
+      'Inspect detailed operation and login history logs';
+
+  @override
+  String get permViewRooms => 'View Rooms';
+
+  @override
+  String get permViewRoomsDesc => 'View room refill status list and details';
+
+  @override
+  String get permViewInventory => 'View Inventory';
+
+  @override
+  String get permViewInventoryDesc =>
+      'View hotel inventory stock status and suggest orders';
+
+  @override
+  String get permViewAuthorizations => 'View Authorizations';
+
+  @override
+  String get permViewAuthorizationsDesc =>
+      'Access and manage role-based permission settings screen';
 }

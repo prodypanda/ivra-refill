@@ -21,6 +21,7 @@ import '../shared/web_download_banner.dart';
 import '../team/team_screen.dart';
 import '../notifications/send_notification_screen.dart';
 import '../../services/notification_service.dart';
+import '../authorizations/authorizations_screen.dart';
 
 class AppShell extends ConsumerStatefulWidget {
   const AppShell({required this.child, super.key});
@@ -203,7 +204,7 @@ class _AppShellState extends ConsumerState<AppShell> {
       _NavItem(
         l10n.t('authorizationsTitle'),
         Icons.admin_panel_settings_outlined,
-        '/authorizations',
+        AuthorizationsScreen.route,
         permission: 'view_authorizations',
       ),
       _NavItem(

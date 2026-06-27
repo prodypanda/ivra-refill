@@ -2204,4 +2204,131 @@ class AppL10nFr extends AppL10n {
   String inventoryEnforceOnboardingContent(String total) {
     return 'Puisqu\'il s\'agit d\'un nouvel hôtel, il n\'y a aucun produit dans l\'stock magasin. Souhaitez-vous initialiser automatiquement l\'stock magasin avec $total bouteilles à placer dans les chambres?';
   }
+
+  @override
+  String get authorizationsTitle => 'Matrice des Autorisations';
+
+  @override
+  String get authorizationsHeader => 'Matrice des Autorisations';
+
+  @override
+  String get authorizationsSubtitle =>
+      'Gérer les fonctionnalités de l\'application et les permissions d\'action par rôle d\'utilisateur.';
+
+  @override
+  String get authorizationsPermission => 'Permission';
+
+  @override
+  String get authorizationsUpdatedSuccessfully =>
+      'Autorisations mises à jour avec succès.';
+
+  @override
+  String get roleAppAdmin => 'Admin de l\'App';
+
+  @override
+  String get roleAppManager => 'Manager de l\'App';
+
+  @override
+  String get roleHotelManager => 'Manager d\'Hôtel';
+
+  @override
+  String get roleHotelStaff => 'Personnel d\'Hôtel';
+
+  @override
+  String get permManageHotels => 'Gérer les Hôtels';
+
+  @override
+  String get permManageHotelsDesc =>
+      'Créer, modifier et supprimer les établissements hôteliers';
+
+  @override
+  String get permManageRooms => 'Gérer les Chambres';
+
+  @override
+  String get permManageRoomsDesc =>
+      'Ajouter, modifier et supprimer des chambres et des étages';
+
+  @override
+  String get permManageProducts => 'Gérer les Produits';
+
+  @override
+  String get permManageProductsDesc =>
+      'Configurer les types de produits globaux et les catalogues';
+
+  @override
+  String get permManageTeam => 'Gérer l\'Équipe';
+
+  @override
+  String get permManageTeamDesc =>
+      'Inviter et gérer les membres de l\'équipe et les rôles';
+
+  @override
+  String get permSubmitEditRequests => 'Soumettre des Demandes de Modification';
+
+  @override
+  String get permSubmitEditRequestsDesc =>
+      'Soumettre des demandes de modification de chambres, de bouteilles et de stocks';
+
+  @override
+  String get permApproveCorrections => 'Approuver les Corrections';
+
+  @override
+  String get permApproveCorrectionsDesc =>
+      'Approuver ou rejeter les demandes de modification et de correction en attente';
+
+  @override
+  String get permViewApprovals => 'Voir les Approbations';
+
+  @override
+  String get permViewApprovalsDesc =>
+      'Accéder à l\'écran du tableau de bord des approbations';
+
+  @override
+  String get permViewAlerts => 'Voir les Alertes';
+
+  @override
+  String get permViewAlertsDesc =>
+      'Visualiser et surveiller les alertes de fonctionnement';
+
+  @override
+  String get permViewReports => 'Voir les Rapports';
+
+  @override
+  String get permViewReportsDesc =>
+      'Accéder aux rapports analytiques et aux graphiques de performance';
+
+  @override
+  String get permSendNotifications => 'Envoyer des Notifications Push';
+
+  @override
+  String get permSendNotificationsDesc =>
+      'Rédiger et diffuser des notifications push de l\'application';
+
+  @override
+  String get permViewAuditLogs => 'Voir les Journaux d\'Audit de Sécurité';
+
+  @override
+  String get permViewAuditLogsDesc =>
+      'Inspecter les journaux détaillés de l\'historique des opérations et des connexions';
+
+  @override
+  String get permViewRooms => 'Voir les Chambres';
+
+  @override
+  String get permViewRoomsDesc =>
+      'Voir la liste des statuts de recharge des chambres et les détails';
+
+  @override
+  String get permViewInventory => 'Voir les Stocks';
+
+  @override
+  String get permViewInventoryDesc =>
+      'Visualiser le statut des stocks de l\'hôtel et suggérer des commandes';
+
+  @override
+  String get permViewAuthorizations => 'Voir les Autorisations';
+
+  @override
+  String get permViewAuthorizationsDesc =>
+      'Accéder et gérer l\'écran des paramètres d\'autorisation basés sur les rôles';
 }

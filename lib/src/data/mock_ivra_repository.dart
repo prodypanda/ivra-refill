@@ -25,6 +25,7 @@ class MockIvraRepository implements IvraRepository {
         'view_rooms',
         'view_inventory',
         'submit_edit_requests',
+        'view_authorizations',
       },
       'app_manager': {
         'manage_hotels',
@@ -1758,6 +1759,15 @@ class MockIvraRepository implements IvraRepository {
   @override
   Future<Map<String, Set<String>>> fetchRolePermissions() async {
     return Map.from(_mockRolePermissions);
+  }
+
+  @override
+  Future<List<String>> fetchAllPermissions() async {
+    final all = <String>{};
+    for (final permSet in _mockRolePermissions.values) {
+      all.addAll(permSet);
+    }
+    return all.toList()..sort();
   }
 
   @override

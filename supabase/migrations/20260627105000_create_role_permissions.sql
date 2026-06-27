@@ -46,6 +46,7 @@ INSERT INTO public.role_permissions (role, permission, is_enabled) VALUES
     ('app_admin', 'view_alerts', true),
     ('app_admin', 'view_rooms', true),
     ('app_admin', 'view_inventory', true),
+    ('app_admin', 'view_authorizations', true),
     
     -- app_manager defaults
     ('app_manager', 'manage_hotels', true),
