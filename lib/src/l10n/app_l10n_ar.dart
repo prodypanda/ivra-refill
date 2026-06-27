@@ -880,6 +880,33 @@ class AppL10nAr extends AppL10n {
   String get roomsLabelRoom => 'غرفة';
 
   @override
+  String get bottleStatusActive => 'نشطة';
+
+  @override
+  String get bottleStatusNeedsRefill => 'بحاجة لإعادة التعبئة';
+
+  @override
+  String get bottleStatusRefilled => 'تمت إعادة التعبئة';
+
+  @override
+  String get bottleStatusRefillLimitReached => 'تم الوصول لحد التعبئة';
+
+  @override
+  String get bottleStatusTooOld => 'قديمة جداً';
+
+  @override
+  String get bottleStatusNeedsReplacement => 'بحاجة للاستبدال';
+
+  @override
+  String get bottleStatusRecycled => 'معاد تدويرها';
+
+  @override
+  String get bottleStatusDamaged => 'تالفة';
+
+  @override
+  String get bottleStatusLost => 'مفقودة';
+
+  @override
   String get roomsLabelFloor => 'الطابق';
 
   @override

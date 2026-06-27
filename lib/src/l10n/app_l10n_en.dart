@@ -885,6 +885,33 @@ class AppL10nEn extends AppL10n {
   String get roomsLabelRoom => 'Room';
 
   @override
+  String get bottleStatusActive => 'Active';
+
+  @override
+  String get bottleStatusNeedsRefill => 'Needs refill';
+
+  @override
+  String get bottleStatusRefilled => 'Refilled';
+
+  @override
+  String get bottleStatusRefillLimitReached => 'Refill limit reached';
+
+  @override
+  String get bottleStatusTooOld => 'Too old';
+
+  @override
+  String get bottleStatusNeedsReplacement => 'Needs replacement';
+
+  @override
+  String get bottleStatusRecycled => 'Recycled';
+
+  @override
+  String get bottleStatusDamaged => 'Damaged';
+
+  @override
+  String get bottleStatusLost => 'Lost';
+
+  @override
   String get roomsLabelFloor => 'Floor';
 
   @override

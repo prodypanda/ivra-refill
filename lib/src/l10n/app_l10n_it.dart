@@ -890,6 +890,33 @@ class AppL10nIt extends AppL10n {
   String get roomsLabelRoom => 'Camera';
 
   @override
+  String get bottleStatusActive => 'Attiva';
+
+  @override
+  String get bottleStatusNeedsRefill => 'Da ricaricare';
+
+  @override
+  String get bottleStatusRefilled => 'Ricaricata';
+
+  @override
+  String get bottleStatusRefillLimitReached => 'Limite ricarica raggiunto';
+
+  @override
+  String get bottleStatusTooOld => 'Troppo vecchia';
+
+  @override
+  String get bottleStatusNeedsReplacement => 'Da sostituire';
+
+  @override
+  String get bottleStatusRecycled => 'Riciclata';
+
+  @override
+  String get bottleStatusDamaged => 'Danneggiata';
+
+  @override
+  String get bottleStatusLost => 'Persa';
+
+  @override
   String get roomsLabelFloor => 'Piano';
 
   @override

@@ -1572,13 +1572,15 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
 
   Future<void> _scanCardProductQr(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final products = widget.roomProducts.map((e) => 'product:${e.product.sku}').toList();
+    final allProducts = ref.read(roomProductsProvider).valueOrNull ?? widget.roomProducts;
+    final currentRoomProducts = allProducts.where((p) => p.roomId == widget.roomId).toList();
+    final products = currentRoomProducts.map((e) => 'product:${e.product.sku}').toList();
 
     final code = await PremiumQrScannerDialog.show(context, demoCodes: products);
     if (code == null) return;
 
     final sku = code.startsWith('product:') ? code.split(':')[1] : code;
-    final matchedItem = widget.roomProducts.where((e) => e.product.sku.toLowerCase() == sku.toLowerCase()).firstOrNull;
+    final matchedItem = currentRoomProducts.where((e) => e.product.sku.toLowerCase() == sku.toLowerCase()).firstOrNull;
 
     if (matchedItem == null) {
       if (mounted) {
@@ -1738,6 +1740,11 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
 
   @override
   Widget build(BuildContext context) {
+    final roomProductsAsync = ref.watch(roomProductsProvider);
+    final roomProducts = roomProductsAsync.valueOrNull
+        ?.where((p) => p.roomId == widget.roomId)
+        .toList() ?? widget.roomProducts;
+
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final isMobile = MediaQuery.sizeOf(context).width < 720 && !widget.isDialog;
@@ -1751,17 +1758,17 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     var overallColor = Colors.orange.shade700;
     var overallIcon = Icons.check_circle_outline;
 
-    final hasCritical = widget.roomProducts.any((item) =>
+    final hasCritical = roomProducts.any((item) =>
         item.status == BottleStatus.refillLimitReached ||
         item.status == BottleStatus.tooOld ||
         item.status == BottleStatus.needsReplacement ||
         item.status == BottleStatus.damaged ||
         item.status == BottleStatus.lost);
 
-    final hasWarning = widget.roomProducts
+    final hasWarning = roomProducts
         .any((item) => item.status == BottleStatus.needsRefill);
 
-    if (widget.roomProducts.isEmpty) {
+    if (roomProducts.isEmpty) {
       overallStatus = l10n.t('roomsStatusNoProducts');
       overallColor = Colors.blue.shade600;
       overallIcon = Icons.info_outline;
@@ -1779,7 +1786,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     }
 
     final lang = Localizations.localeOf(context).languageCode;
-    final displayedProducts = widget.roomProducts.where((item) {
+    final displayedProducts = roomProducts.where((item) {
       if (widget.productSearchQuery.isEmpty) return true;
       final name = item.product.label(lang).toLowerCase();
       final sku = item.product.sku.toLowerCase();
@@ -2386,7 +2393,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                item.status.value.replaceAll('_', ' '),
+                _getLocalizedBottleStatus(context, item.status),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 11,
                   color: statusColor,
@@ -2629,7 +2636,7 @@ class _BottleLifecycleEditDialogState
                       for (final status in BottleStatus.values)
                         DropdownMenuItem(
                           value: status,
-                          child: Text(status.value.replaceAll('_', ' ')),
+                          child: Text(_getLocalizedBottleStatus(context, status)),
                         ),
                     ],
                     onChanged: (value) {
@@ -4035,4 +4042,19 @@ class _RoomGroup {
   String get roomNumber => roomInfo.roomNumber;
   int get floorNumber => roomInfo.floorNumber;
   String get hotelId => roomInfo.hotelId;
+}
+
+String _getLocalizedBottleStatus(BuildContext context, BottleStatus status) {
+  final l10n = AppLocalizations.of(context);
+  return switch (status) {
+    BottleStatus.active => l10n.t('bottleStatusActive'),
+    BottleStatus.needsRefill => l10n.t('bottleStatusNeedsRefill'),
+    BottleStatus.refilled => l10n.t('bottleStatusRefilled'),
+    BottleStatus.refillLimitReached => l10n.t('bottleStatusRefillLimitReached'),
+    BottleStatus.tooOld => l10n.t('bottleStatusTooOld'),
+    BottleStatus.needsReplacement => l10n.t('bottleStatusNeedsReplacement'),
+    BottleStatus.recycled => l10n.t('bottleStatusRecycled'),
+    BottleStatus.damaged => l10n.t('bottleStatusDamaged'),
+    BottleStatus.lost => l10n.t('bottleStatusLost'),
+  };
 }

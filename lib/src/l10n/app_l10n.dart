@@ -1715,6 +1715,60 @@ abstract class AppL10n {
   /// **'Room'**
   String get roomsLabelRoom;
 
+  /// No description provided for @bottleStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get bottleStatusActive;
+
+  /// No description provided for @bottleStatusNeedsRefill.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs refill'**
+  String get bottleStatusNeedsRefill;
+
+  /// No description provided for @bottleStatusRefilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Refilled'**
+  String get bottleStatusRefilled;
+
+  /// No description provided for @bottleStatusRefillLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill limit reached'**
+  String get bottleStatusRefillLimitReached;
+
+  /// No description provided for @bottleStatusTooOld.
+  ///
+  /// In en, this message translates to:
+  /// **'Too old'**
+  String get bottleStatusTooOld;
+
+  /// No description provided for @bottleStatusNeedsReplacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs replacement'**
+  String get bottleStatusNeedsReplacement;
+
+  /// No description provided for @bottleStatusRecycled.
+  ///
+  /// In en, this message translates to:
+  /// **'Recycled'**
+  String get bottleStatusRecycled;
+
+  /// No description provided for @bottleStatusDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged'**
+  String get bottleStatusDamaged;
+
+  /// No description provided for @bottleStatusLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost'**
+  String get bottleStatusLost;
+
   /// No description provided for @roomsLabelFloor.
   ///
   /// In en, this message translates to:

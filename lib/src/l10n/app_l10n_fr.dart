@@ -894,6 +894,33 @@ class AppL10nFr extends AppL10n {
   String get roomsLabelRoom => 'Chambre';
 
   @override
+  String get bottleStatusActive => 'Active';
+
+  @override
+  String get bottleStatusNeedsRefill => 'À recharger';
+
+  @override
+  String get bottleStatusRefilled => 'Rechargée';
+
+  @override
+  String get bottleStatusRefillLimitReached => 'Limite de recharge atteinte';
+
+  @override
+  String get bottleStatusTooOld => 'Trop ancienne';
+
+  @override
+  String get bottleStatusNeedsReplacement => 'À remplacer';
+
+  @override
+  String get bottleStatusRecycled => 'Recyclée';
+
+  @override
+  String get bottleStatusDamaged => 'Endommagée';
+
+  @override
+  String get bottleStatusLost => 'Perdue';
+
+  @override
   String get roomsLabelFloor => 'Étage';
 
   @override
