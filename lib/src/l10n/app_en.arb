@@ -562,6 +562,20 @@
       }
     }
   },
+  "qrGenerateTabScan": "Scan QR Code",
+  "qrGenerateTabGenerate": "Generate QR Codes",
+  "qrGenerateHotel": "Hotel",
+  "qrGenerateScope": "QR Label Type",
+  "qrGenerateScopeRoom": "Room Door (No SKU)",
+  "qrGenerateScopeDispenser": "Dispenser (With SKU)",
+  "qrGenerateRoom": "Room",
+  "qrGenerateProduct": "Product",
+  "qrGenerateAllRooms": "All Rooms",
+  "qrGenerateAllProducts": "All Products",
+  "qrGenerateBtnDownload": "Generate & Download PDF",
+  "qrGenerateDownloading": "Generating PDF...",
+  "qrGenerateSuccess": "PDF generated and downloaded successfully",
+  "qrLabelScanInstructions": "Scan with IVRA app to refill or replace",
   "roomsSearchProductPlaceholder": "Search product by name or SKU...",
   "adjustStockForProduct": "Adjust Stock for {product}",
   "@adjustStockForProduct": {

@@ -2279,6 +2279,90 @@ abstract class AppL10n {
   /// **'Room {room} (Floor {floor}) does not contain product SKU: \"{sku}\"'**
   String qrProductNotFoundMessage(String room, String floor, String sku);
 
+  /// No description provided for @qrGenerateTabScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get qrGenerateTabScan;
+
+  /// No description provided for @qrGenerateTabGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate QR Codes'**
+  String get qrGenerateTabGenerate;
+
+  /// No description provided for @qrGenerateHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel'**
+  String get qrGenerateHotel;
+
+  /// No description provided for @qrGenerateScope.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Label Type'**
+  String get qrGenerateScope;
+
+  /// No description provided for @qrGenerateScopeRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Door (No SKU)'**
+  String get qrGenerateScopeRoom;
+
+  /// No description provided for @qrGenerateScopeDispenser.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispenser (With SKU)'**
+  String get qrGenerateScopeDispenser;
+
+  /// No description provided for @qrGenerateRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get qrGenerateRoom;
+
+  /// No description provided for @qrGenerateProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get qrGenerateProduct;
+
+  /// No description provided for @qrGenerateAllRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'All Rooms'**
+  String get qrGenerateAllRooms;
+
+  /// No description provided for @qrGenerateAllProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'All Products'**
+  String get qrGenerateAllProducts;
+
+  /// No description provided for @qrGenerateBtnDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate & Download PDF'**
+  String get qrGenerateBtnDownload;
+
+  /// No description provided for @qrGenerateDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating PDF...'**
+  String get qrGenerateDownloading;
+
+  /// No description provided for @qrGenerateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF generated and downloaded successfully'**
+  String get qrGenerateSuccess;
+
+  /// No description provided for @qrLabelScanInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan with IVRA app to refill or replace'**
+  String get qrLabelScanInstructions;
+
   /// No description provided for @roomsSearchProductPlaceholder.
   ///
   /// In en, this message translates to:

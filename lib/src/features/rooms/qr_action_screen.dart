@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:collection/collection.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:intl/intl.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -18,8 +19,11 @@ import '../shared/glass_card.dart';
 import '../shared/premium_snackbar.dart';
 import '../../ui/ivra_icons.dart';
 import 'rooms_screen.dart'; // Reuses exposed dialog functions: showRefillHistory, showMarkDamagedDialog, showMarkLostDialog, replaceBottle
+import '../../services/qr_code_pdf_service.dart';
 
 enum ActionResult { none, success, failure }
+enum _QrTab { scan, generate }
+enum _QrScope { room, dispenser }
 
 class QrActionScreen extends ConsumerStatefulWidget {
   const QrActionScreen({
@@ -44,6 +48,14 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
   bool _isPerformingAction = false;
   ActionResult _actionResult = ActionResult.none;
   String? _actionMessage;
+
+  // Tab & Generator States
+  _QrTab _activeTab = _QrTab.scan;
+  _QrScope _scope = _QrScope.dispenser;
+  String? _selectedHotelId;
+  String _selectedRoomNumber = 'all_rooms';
+  String _selectedProductSku = 'all_products';
+  bool _isGeneratingPdf = false;
 
   // Scanner Mode State Controllers
   late final AnimationController _scanController;
@@ -116,11 +128,13 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       if (uri.path.contains('/q/')) {
         final segments = uri.pathSegments;
         final qIndex = segments.indexOf('q');
-        if (qIndex != -1 && segments.length > qIndex + 4) {
+        if (qIndex != -1 && segments.length >= qIndex + 4) {
           hotelId = segments[qIndex + 1];
           floor = segments[qIndex + 2];
           room = segments[qIndex + 3];
-          sku = segments[qIndex + 4];
+          if (segments.length > qIndex + 4) {
+            sku = segments[qIndex + 4];
+          }
         }
       } else if (uri.path.contains('/qr') || uri.path.contains('/app/qr')) {
         hotelId = uri.queryParameters['hId'];
@@ -135,25 +149,32 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     // Fallback: Check if it looks like a manual segment paste
     if (hotelId == null && normalized.contains('/')) {
       final segments = normalized.split('/').where((s) => s.isNotEmpty).toList();
-      if (segments.length >= 4) {
+      if (segments.length >= 3) {
+        // Find if any segment is a known product SKU or similar, or just assume format
         hotelId = segments[0];
         floor = segments[1];
         room = segments[2];
-        sku = segments[3];
+        if (segments.length >= 4) {
+          sku = segments[3];
+        }
       }
     }
 
-    if (hotelId != null && floor != null && room != null && sku != null) {
+    if (hotelId != null && floor != null && room != null) {
       // Clear action state before transition
       setState(() {
         _actionResult = ActionResult.none;
         _actionMessage = null;
       });
-      context.go('/q/$hotelId/$floor/$room/$sku');
+      if (sku != null && sku.trim().isNotEmpty) {
+        context.go('/q/$hotelId/$floor/$room/$sku');
+      } else {
+        context.go('/rooms?hotelId=$hotelId&floorNumber=$floor&roomNumber=$room');
+      }
     } else {
       PremiumSnackbar.show(
         context,
-        'Invalid QR format. Use: /q/hotel/floor/room/sku',
+        'Invalid QR format. Use: /q/hotel/floor/room[/sku]',
         icon: Icons.error_outline,
       );
     }
@@ -214,7 +235,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     ];
 
     return Container(
-      constraints: const BoxConstraints(maxWidth: 420),
+      constraints: const BoxConstraints(maxWidth: 440),
       child: GlassCard(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -225,22 +246,30 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.qr_code_scanner_rounded,
-                      color: colorScheme.primary,
-                      size: 26,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      l10n.t('qrScanTitle') ?? 'Scan QR Code',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.5,
+                Expanded(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.qr_code_scanner_rounded,
+                        color: colorScheme.primary,
+                        size: 26,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          _activeTab == _QrTab.scan
+                              ? (l10n.t('qrScanTitle') ?? 'Scan QR Code')
+                              : (l10n.t('qrGenerateTabGenerate') ?? 'Generate QR Codes'),
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -250,179 +279,570 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
             ),
             const SizedBox(height: 20),
 
-            // Viewfinder Simulator
-            Center(
-              child: Container(
-                width: 240,
-                height: 240,
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: colorScheme.primary.withValues(alpha: 0.4),
-                    width: 2,
-                  ),
+            // Segmented Tab Selector
+            SegmentedButton<_QrTab>(
+              segments: [
+                ButtonSegment<_QrTab>(
+                  value: _QrTab.scan,
+                  label: Text(l10n.t('qrGenerateTabScan') ?? 'Scan QR'),
+                  icon: const Icon(Icons.camera_alt_outlined),
                 ),
-                child: Stack(
-                  clipBehavior: Clip.antiAlias,
-                  children: [
-                    if (!_isCameraInitialized)
-                      Center(
-                        child: Icon(
-                          Icons.camera_alt_outlined,
-                          size: 48,
-                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                        ),
-                      )
-                    else
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(22),
-                        child: MobileScanner(
-                          controller: _cameraController,
-                          onDetect: (capture) {
-                            final List<Barcode> barcodes = capture.barcodes;
-                            for (final barcode in barcodes) {
-                              if (barcode.rawValue != null) {
-                                _onCodeScanned(barcode.rawValue!);
-                                break;
+                ButtonSegment<_QrTab>(
+                  value: _QrTab.generate,
+                  label: Text(l10n.t('qrGenerateTabGenerate') ?? 'Generate'),
+                  icon: const Icon(Icons.picture_as_pdf_outlined),
+                ),
+              ],
+              selected: {_activeTab},
+              onSelectionChanged: (val) {
+                HapticFeedback.lightImpact();
+                setState(() {
+                  _activeTab = val.first;
+                });
+              },
+              style: SegmentedButton.styleFrom(
+                selectedBackgroundColor: colorScheme.primary.withValues(alpha: 0.15),
+                selectedForegroundColor: colorScheme.primary,
+                visualDensity: VisualDensity.compact,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Conditional View Render
+            if (_activeTab == _QrTab.scan) ...[
+              // Viewfinder Simulator
+              Center(
+                child: Container(
+                  width: 240,
+                  height: 240,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: colorScheme.primary.withValues(alpha: 0.4),
+                      width: 2,
+                    ),
+                  ),
+                  child: Stack(
+                    clipBehavior: Clip.antiAlias,
+                    children: [
+                      if (!_isCameraInitialized)
+                        Center(
+                          child: Icon(
+                            Icons.camera_alt_outlined,
+                            size: 48,
+                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                          ),
+                        )
+                      else
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(22),
+                          child: MobileScanner(
+                            controller: _cameraController,
+                            onDetect: (capture) {
+                              final List<Barcode> barcodes = capture.barcodes;
+                              for (final barcode in barcodes) {
+                                if (barcode.rawValue != null) {
+                                  _onCodeScanned(barcode.rawValue!);
+                                  break;
+                                }
                               }
-                            }
-                          },
-                          errorBuilder: (context, error) {
-                            final isPermission = error.errorCode ==
-                                MobileScannerErrorCode.permissionDenied;
-                            return Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      isPermission
-                                          ? Icons.no_photography_outlined
-                                          : Icons.error_outline_rounded,
-                                      color: colorScheme.error,
-                                      size: 36,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      isPermission
-                                          ? (l10n.t('qrCameraPermission') ?? 'Camera permission denied')
-                                          : (l10n.t('qrCameraUnavailable') ?? 'Camera unavailable'),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: colorScheme.onSurfaceVariant,
-                                        fontWeight: FontWeight.bold,
+                            },
+                            errorBuilder: (context, error) {
+                              final isPermission = error.errorCode ==
+                                  MobileScannerErrorCode.permissionDenied;
+                              return Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        isPermission
+                                            ? Icons.no_photography_outlined
+                                            : Icons.error_outline_rounded,
+                                        color: colorScheme.error,
+                                        size: 36,
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        isPermission
+                                            ? (l10n.t('qrCameraPermission') ?? 'Camera permission denied')
+                                            : (l10n.t('qrCameraUnavailable') ?? 'Camera unavailable'),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: colorScheme.onSurfaceVariant,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      // Corners
+                      const _ViewfinderCorners(),
+                      // Laser Scanner Line
+                      AnimatedBuilder(
+                        animation: _scanController,
+                        builder: (context, child) {
+                          return Positioned(
+                            top: _scanController.value * 240,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 3,
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colorScheme.primary,
+                                    blurRadius: 10,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                                gradient: LinearGradient(
+                                  colors: [
+                                    colorScheme.primary.withValues(alpha: 0.1),
+                                    colorScheme.primary,
+                                    colorScheme.primary.withValues(alpha: 0.1),
                                   ],
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    // Corners
-                    const _ViewfinderCorners(),
-                    // Laser Scanner Line
-                    AnimatedBuilder(
-                      animation: _scanController,
-                      builder: (context, child) {
-                        return Positioned(
-                          top: _scanController.value * 240,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            height: 3,
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: colorScheme.primary,
-                                  blurRadius: 10,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                              gradient: LinearGradient(
-                                colors: [
-                                  colorScheme.primary.withValues(alpha: 0.1),
-                                  colorScheme.primary,
-                                  colorScheme.primary.withValues(alpha: 0.1),
-                                ],
-                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Manual Entry Input
-            TextField(
-              controller: _inputController,
-              decoration: InputDecoration(
-                hintText: l10n.t('qrScanPlaceholder') ?? 'Enter code or URL manually...',
-                prefixIcon: const Icon(Icons.link_rounded, size: 20),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.arrow_forward_rounded, size: 20),
-                  onPressed: () => _onCodeScanned(_inputController.text),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
-              onSubmitted: _onCodeScanned,
-            ),
-            const SizedBox(height: 24),
-
-            // Demo Codes Area
-            Text(
-              l10n.t('qrDemoCodes') ?? 'Quick scan demo/test codes:',
-              style: theme.textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              constraints: const BoxConstraints(maxHeight: 140),
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final code in demoQrCodes)
-                      ActionChip(
-                        label: Text(
-                          _extractDemoLabel(code),
-                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
-                        avatar: Icon(
-                          code.contains('beachfront')
-                              ? Icons.gpp_bad_outlined
-                              : Icons.local_drink_outlined,
-                          size: 14,
-                        ),
-                        onPressed: () => _onCodeScanned(code),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                          );
+                        },
                       ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(height: 24),
+
+              // Manual Entry Input
+              TextField(
+                controller: _inputController,
+                decoration: InputDecoration(
+                  hintText: l10n.t('qrScanPlaceholder') ?? 'Enter code or URL manually...',
+                  prefixIcon: const Icon(Icons.link_rounded, size: 20),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.arrow_forward_rounded, size: 20),
+                    onPressed: () => _onCodeScanned(_inputController.text),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                ),
+                onSubmitted: _onCodeScanned,
+              ),
+              const SizedBox(height: 24),
+
+              // Demo Codes Area
+              Text(
+                l10n.t('qrDemoCodes') ?? 'Quick scan demo/test codes:',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 140),
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final code in demoQrCodes)
+                        ActionChip(
+                          avatar: const Icon(
+                            Icons.qr_code_2_rounded,
+                            size: 14,
+                          ),
+                          label: Text(
+                            _extractDemoLabel(code),
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                          onPressed: () => _onCodeScanned(code),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ] else ...[
+              // Generator Panel
+              _buildGeneratorForm(context),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildGeneratorForm(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+
+    final hotelsAsync = ref.watch(hotelsProvider);
+    final roomProductsAsync = ref.watch(allRoomProductsProvider);
+    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final isSpecialUser = currentUser?.role == UserRole.appAdmin || currentUser?.role == UserRole.appManager;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Hotel Selector
+        AsyncValueView<List<Hotel>>(
+          value: hotelsAsync,
+          onRetry: () => ref.invalidate(hotelsProvider),
+          builder: (hotels) {
+            // Set initial selected hotel ID if not set or invalid
+            if (_selectedHotelId == null || !hotels.any((h) => h.id == _selectedHotelId)) {
+              if (currentUser != null && !isSpecialUser && currentUser.hotelId != null) {
+                _selectedHotelId = currentUser.hotelId;
+              } else if (hotels.isNotEmpty) {
+                _selectedHotelId = hotels.first.id;
+              }
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  l10n.t('qrGenerateHotel') ?? 'Hotel',
+                  style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                if (isSpecialUser)
+                  DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: _selectedHotelId,
+                    borderRadius: BorderRadius.circular(16),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    items: [
+                      for (final h in hotels)
+                        DropdownMenuItem(
+                          value: h.id,
+                          child: Text(h.name),
+                        ),
+                    ],
+                    onChanged: (val) {
+                      setState(() {
+                        _selectedHotelId = val;
+                        _selectedRoomNumber = 'all_rooms';
+                        _selectedProductSku = 'all_products';
+                      });
+                    },
+                  )
+                else
+                  // For managers/staff, display non-editable card
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.35)),
+                    ),
+                    child: Text(
+                      hotels.firstWhere((h) => h.id == _selectedHotelId, orElse: () => hotels.first).name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 16),
+
+        // QR Label Scope Selector
+        Text(
+          l10n.t('qrGenerateScope') ?? 'QR Label Type',
+          style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        SegmentedButton<_QrScope>(
+          segments: [
+            ButtonSegment<_QrScope>(
+              value: _QrScope.room,
+              label: Text(l10n.t('qrGenerateScopeRoom') ?? 'Room Door (No SKU)'),
+              icon: const Icon(Icons.meeting_room_outlined),
+            ),
+            ButtonSegment<_QrScope>(
+              value: _QrScope.dispenser,
+              label: Text(l10n.t('qrGenerateScopeDispenser') ?? 'Dispenser (With SKU)'),
+              icon: const Icon(Icons.sanitizer_outlined),
+            ),
+          ],
+          selected: {_scope},
+          onSelectionChanged: (val) {
+            HapticFeedback.lightImpact();
+            setState(() {
+              _scope = val.first;
+              _selectedRoomNumber = 'all_rooms';
+              _selectedProductSku = 'all_products';
+            });
+          },
+          style: SegmentedButton.styleFrom(
+            selectedBackgroundColor: colorScheme.primary.withValues(alpha: 0.15),
+            selectedForegroundColor: colorScheme.primary,
+            visualDensity: VisualDensity.compact,
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Dynamic Room & Product inputs based on allRoomProductsProvider
+        AsyncValueView<List<RoomProduct>>(
+          value: roomProductsAsync,
+          onRetry: () => ref.invalidate(allRoomProductsProvider),
+          builder: (allProducts) {
+            final hotelProducts = allProducts.where((p) => p.hotelId == _selectedHotelId).toList();
+
+            // Get unique room numbers
+            final rooms = hotelProducts
+                .map((p) => p.roomNumber)
+                .toSet()
+                .toList()
+              ..sort((a, b) {
+                final na = int.tryParse(a);
+                final nb = int.tryParse(b);
+                if (na != null && nb != null) return na.compareTo(nb);
+                return a.compareTo(b);
+              });
+
+            // Get unique products (SKUs)
+            final products = hotelProducts
+                .map((p) => p.product)
+                .toSet()
+                .toList()
+              ..sort((a, b) => a.sku.compareTo(b.sku));
+
+            // Validate active choices
+            if (_selectedRoomNumber != 'all_rooms' && !rooms.contains(_selectedRoomNumber)) {
+              _selectedRoomNumber = 'all_rooms';
+            }
+            if (_selectedProductSku != 'all_products' && !products.any((p) => p.sku == _selectedProductSku)) {
+              _selectedProductSku = 'all_products';
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Room Selector
+                Text(
+                  l10n.t('qrGenerateRoom') ?? 'Room',
+                  style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  value: _selectedRoomNumber,
+                  borderRadius: BorderRadius.circular(16),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'all_rooms',
+                      child: Text(l10n.t('qrGenerateAllRooms') ?? 'All Rooms'),
+                    ),
+                    for (final r in rooms)
+                      DropdownMenuItem(
+                        value: r,
+                        child: Text('Room $r'),
+                      ),
+                  ],
+                  onChanged: (val) {
+                    setState(() {
+                      _selectedRoomNumber = val ?? 'all_rooms';
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                // Product Selector (Only if scope is dispenser)
+                if (_scope == _QrScope.dispenser) ...[
+                  Text(
+                    l10n.t('qrGenerateProduct') ?? 'Product',
+                    style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: _selectedProductSku,
+                    borderRadius: BorderRadius.circular(16),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: 'all_products',
+                        child: Text(l10n.t('qrGenerateAllProducts') ?? 'All Products'),
+                      ),
+                      for (final p in products)
+                        DropdownMenuItem(
+                          value: p.sku,
+                          child: Text('${p.sku} - ${p.label(language)}'),
+                        ),
+                    ],
+                    onChanged: (val) {
+                      setState(() {
+                        _selectedProductSku = val ?? 'all_products';
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ],
+            );
+          },
+        ),
+
+        // Generate & Download Button
+        _isGeneratingPdf
+            ? const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 14),
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            : FilledButton.icon(
+                onPressed: () => _handlePdfGeneration(context),
+                icon: const Icon(Icons.download_rounded),
+                label: Text(
+                  l10n.t('qrGenerateBtnDownload') ?? 'Generate & Download PDF',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+              ),
+      ],
+    );
+  }
+
+  Future<void> _handlePdfGeneration(BuildContext context) async {
+    setState(() => _isGeneratingPdf = true);
+    HapticFeedback.mediumImpact();
+    final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+
+    try {
+      final allProducts = ref.read(allRoomProductsProvider).valueOrNull ?? [];
+      final hotels = ref.read(hotelsProvider).valueOrNull ?? [];
+
+      final hotel = hotels.firstWhereOrNull((h) => h.id == _selectedHotelId);
+      if (hotel == null) {
+        throw Exception('Selected hotel not found');
+      }
+
+      // Filter products based on selections
+      var matchedProducts = allProducts.where((p) => p.hotelId == _selectedHotelId).toList();
+      if (_selectedRoomNumber != 'all_rooms') {
+        matchedProducts = matchedProducts.where((p) => p.roomNumber == _selectedRoomNumber).toList();
+      }
+      if (_scope == _QrScope.dispenser && _selectedProductSku != 'all_products') {
+        matchedProducts = matchedProducts.where((p) => p.product.sku == _selectedProductSku).toList();
+      }
+
+      if (matchedProducts.isEmpty) {
+        throw Exception('No rooms or products match your configuration');
+      }
+
+      final labelList = <QrCodeLabelData>[];
+
+      if (_scope == _QrScope.room) {
+        // Group matched products by unique room
+        final uniqueRooms = <String, RoomProduct>{};
+        for (final p in matchedProducts) {
+          final key = '${p.floorNumber}_${p.roomNumber}';
+          uniqueRooms[key] = p;
+        }
+
+        for (final item in uniqueRooms.values) {
+          labelList.add(QrCodeLabelData(
+            hotelName: hotel.name,
+            floor: '${item.floorNumber}',
+            room: item.roomNumber,
+            url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/${item.floorNumber}/${item.roomNumber}',
+          ));
+        }
+      } else {
+        // Dispenser labels - one label per matching RoomProduct
+        for (final item in matchedProducts) {
+          labelList.add(QrCodeLabelData(
+            hotelName: hotel.name,
+            floor: '${item.floorNumber}',
+            room: item.roomNumber,
+            productName: item.product.label(language),
+            productSku: item.product.sku,
+            url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/${item.floorNumber}/${item.roomNumber}/IVR-${item.product.sku}',
+          ));
+        }
+      }
+
+      // Sort labels by floor then room for printing convenience
+      labelList.sort((a, b) {
+        final fa = int.tryParse(a.floor) ?? 0;
+        final fb = int.tryParse(b.floor) ?? 0;
+        if (fa != fb) return fa.compareTo(fb);
+
+        final ra = int.tryParse(a.room) ?? 0;
+        final rb = int.tryParse(b.room) ?? 0;
+        if (ra != rb) return ra.compareTo(rb);
+        return a.room.compareTo(b.room);
+      });
+
+      // Generate PDF
+      final pdfService = ref.read(qrCodePdfServiceProvider);
+      final pdfBytes = await pdfService.generateQrPdf(
+        labels: labelList,
+        languageCode: language,
+      );
+
+      // Trigger download
+      final fileName = 'ivra-qr-codes-${_normalize(hotel.name)}-${_scope.name}.pdf';
+      await ref.read(exportFileServiceProvider).saveBytes(
+            fileName: fileName,
+            bytes: pdfBytes,
+            mimeType: 'application/pdf',
+          );
+
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('qrGenerateSuccess') ?? 'PDF generated and downloaded successfully',
+          icon: Icons.check_circle_outline_rounded,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        PremiumSnackbar.show(
+          context,
+          e.toString().replaceAll('Exception: ', ''),
+          icon: Icons.error_outline_rounded,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isGeneratingPdf = false);
+      }
+    }
   }
 
   String _extractDemoLabel(String url) {
@@ -633,7 +1053,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                       _buildStatsRow(
                         context,
                         label: l10n.t('roomsBottleStatus') ?? 'Dispenser Status',
-                        value: _getLocalizedStatusName(context, matchedItem.status),
+                        value: _getStatusText(context, matchedItem),
                         isWarning: matchedItem.status == BottleStatus.needsReplacement ||
                             matchedItem.status == BottleStatus.tooOld ||
                             matchedItem.status == BottleStatus.refillLimitReached ||
@@ -758,7 +1178,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                               icon: Icons.report_problem_outlined,
                               label: l10n.t('bottleStatusDamaged') ?? 'Damaged',
                               color: theme.colorScheme.error,
-                              isEnabled: isAuthorized,
+                              isEnabled: isAuthorized && matchedItem.status != BottleStatus.damaged && matchedItem.status != BottleStatus.lost,
                               onPressed: () => showMarkDamagedDialog(context, ref, matchedItem),
                             ),
                             _buildSmallActionButton(
@@ -766,7 +1186,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                               icon: Icons.search_off_outlined,
                               label: l10n.t('bottleStatusLost') ?? 'Lost',
                               color: theme.colorScheme.onSurfaceVariant,
-                              isEnabled: isAuthorized,
+                              isEnabled: isAuthorized && matchedItem.status != BottleStatus.lost && matchedItem.status != BottleStatus.damaged,
                               onPressed: () => showMarkLostDialog(context, ref, matchedItem),
                             ),
                           ],
@@ -913,7 +1333,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                 _buildStatsRow(
                   context,
                   label: l10n.t('roomsBottleStatus') ?? 'Dispenser Status',
-                  value: _getLocalizedStatusName(context, updatedItem.status),
+                  value: _getStatusText(context, updatedItem),
                   isWarning: updatedItem.status == BottleStatus.needsReplacement ||
                       updatedItem.status == BottleStatus.tooOld ||
                       updatedItem.status == BottleStatus.refillLimitReached,
@@ -1025,11 +1445,15 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        Text(
-          value,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: isWarning ? theme.colorScheme.error : theme.colorScheme.onSurface,
+        const SizedBox(width: 12),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: isWarning ? theme.colorScheme.error : theme.colorScheme.onSurface,
+            ),
           ),
         ),
       ],
@@ -1115,6 +1539,15 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       BottleStatus.damaged => l10n.t('bottleStatusDamaged') ?? 'Damaged',
       BottleStatus.lost => l10n.t('bottleStatusLost') ?? 'Lost',
     };
+  }
+
+  String _getStatusText(BuildContext context, RoomProduct item) {
+    final statusText = _getLocalizedStatusName(context, item.status);
+    if (item.status == BottleStatus.refilled && item.lastRefillAt != null) {
+      final dateStr = DateFormat('yyyy-MM-dd HH:mm').format(item.lastRefillAt!.toLocal());
+      return '$statusText ($dateStr)';
+    }
+    return statusText;
   }
 
   Future<void> _executeRefill(BuildContext context, RoomProduct item) async {

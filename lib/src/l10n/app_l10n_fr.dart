@@ -1202,6 +1202,49 @@ class AppL10nFr extends AppL10n {
   }
 
   @override
+  String get qrGenerateTabScan => 'Scanner code QR';
+
+  @override
+  String get qrGenerateTabGenerate => 'Générer codes QR';
+
+  @override
+  String get qrGenerateHotel => 'Hôtel';
+
+  @override
+  String get qrGenerateScope => 'Type d\'étiquette QR';
+
+  @override
+  String get qrGenerateScopeRoom => 'Porte de chambre (sans SKU)';
+
+  @override
+  String get qrGenerateScopeDispenser => 'Distributeur (avec SKU)';
+
+  @override
+  String get qrGenerateRoom => 'Chambre';
+
+  @override
+  String get qrGenerateProduct => 'Produit';
+
+  @override
+  String get qrGenerateAllRooms => 'Toutes les chambres';
+
+  @override
+  String get qrGenerateAllProducts => 'Tous les produits';
+
+  @override
+  String get qrGenerateBtnDownload => 'Générer & Télécharger le PDF';
+
+  @override
+  String get qrGenerateDownloading => 'Génération du PDF...';
+
+  @override
+  String get qrGenerateSuccess => 'PDF généré et téléchargé avec succès';
+
+  @override
+  String get qrLabelScanInstructions =>
+      'Scanner avec l\'application IVRA pour remplir ou remplacer';
+
+  @override
   String get roomsSearchProductPlaceholder =>
       'Rechercher un produit par nom ou SKU...';
 
