@@ -59,6 +59,10 @@ Future<void> saveLoginCredentials(String email, String password) async {
   if (prefs.containsKey(AuthPrefs.passwordKey(trimmed))) {
     await prefs.remove(AuthPrefs.passwordKey(trimmed));
   }
+  // Also scrub the global legacy password if it still exists.
+  if (prefs.containsKey(AuthPrefs.legacyPassword)) {
+    await prefs.remove(AuthPrefs.legacyPassword);
+  }
 }
 
 /// The saved password for [email], if any.
@@ -76,6 +80,12 @@ Future<String?> savedPasswordFor(String email) async {
   if (password != null && password.isNotEmpty) {
     await saveLoginCredentials(email, password);
   }
+
+  // Scrub the global legacy password if it still exists, to ensure it doesn't linger.
+  if (prefs.containsKey(AuthPrefs.legacyPassword)) {
+    await prefs.remove(AuthPrefs.legacyPassword);
+  }
+
   return password;
 }
 
@@ -149,6 +159,10 @@ class BiometricAccountNotifier extends StateNotifier<String?> {
     // account once after upgrading.
     if (prefs.containsKey(AuthPrefs.legacyBiometricEnabled)) {
       await prefs.remove(AuthPrefs.legacyBiometricEnabled);
+    }
+    // Also drop the legacy global plaintext password.
+    if (prefs.containsKey(AuthPrefs.legacyPassword)) {
+      await prefs.remove(AuthPrefs.legacyPassword);
     }
     if (!mounted) return;
     final account = prefs.getString(AuthPrefs.biometricAccount);
