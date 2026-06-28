@@ -360,8 +360,8 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
             LayoutBuilder(builder: (context, constraints) {
               final wide = constraints.maxWidth >= 860;
               final cards = [
-                _AnalyticsListCard(title: l10n.t('dashboardProductUsage'), icon: Icons.spa_outlined, rows: _topRows(productUsage)),
-                _AnalyticsListCard(title: l10n.t('dashboardUsageByFloor'), icon: Icons.layers_outlined, rows: _topRows(floorUsage)),
+                _AnalyticsListCard(title: l10n.t('dashboardProductUsage'), icon: Icons.spa_outlined, rows: _topRows(context, productUsage)),
+                _AnalyticsListCard(title: l10n.t('dashboardUsageByFloor'), icon: Icons.layers_outlined, rows: _topRows(context, floorUsage)),
                 _AnalyticsListCard(title: l10n.t('dashboardStockForecast'), icon: Icons.trending_down_outlined, rows: forecasts.isEmpty ? [MapEntry(l10n.t('dashboardNoStockData'), '')] : forecasts.take(5).toList()),
                 _AnalyticsListCard(title: l10n.t('dashboardUnusualPatterns'), icon: Icons.warning_amber_outlined, rows: attentionRooms.length > 8 ? [MapEntry(l10n.tParams('dashboardRoomsRequireReview', {'count': '${attentionRooms.length}'}), l10n.t('dashboardHighPriority'))] : [MapEntry(l10n.t('dashboardNoUnusualPatterns'), '')]),
               ];
@@ -374,8 +374,8 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
     );
   }
 
-  List<MapEntry<String, String>> _topRows(Map<String, int> values) {
-    if (values.isEmpty) return const [MapEntry('No refill data yet', '')];
+  List<MapEntry<String, String>> _topRows(BuildContext context, Map<String, int> values) {
+    if (values.isEmpty) return [MapEntry(AppLocalizations.of(context).t('reportNoAnalyticsData'), '')];
     final entries = values.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
     return entries.take(5).map((e) => MapEntry(e.key, e.value.toString())).toList();
   }
@@ -506,8 +506,8 @@ class _MetricCardState extends State<_MetricCard> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 theme.colorScheme.surface.withValues(alpha: 0.9),
                 theme.colorScheme.surface.withValues(alpha: 0.7),
@@ -617,8 +617,8 @@ class _MobileHeroState extends State<_MobileHero> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             theme.colorScheme.primary,
             theme.colorScheme.primary.withRed(220).withGreen(120),
@@ -634,8 +634,9 @@ class _MobileHeroState extends State<_MobileHero> {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: -20,
+          Positioned.directional(
+            textDirection: Directionality.of(context),
+            end: -20,
             top: -20,
             child: Icon(
               Icons.spa,
@@ -889,9 +890,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
           refillEventsAsync.when(
             loading: () => const SizedBox(
               height: 220,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: CardShimmer(isCompact: true),
             ),
             error: (err, stack) => SizedBox(
               height: 220,
@@ -1021,6 +1020,8 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
               return SizedBox(
                 height: 220,
                 child: LineChart(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
                   LineChartData(
                     gridData: FlGridData(
                       show: true,

@@ -14,6 +14,7 @@ import '../../state/app_state.dart';
 import '../auth/auth_validation.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/shimmer_loading.dart';
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -33,6 +34,17 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+
+    if (ref.watch(refillEventsProvider).isLoading ||
+        ref.watch(roomProductsProvider).isLoading ||
+        ref.watch(hotelsProvider).isLoading ||
+        ref.watch(productsProvider).isLoading) {
+      return PageScaffold(
+        title: l10n.t('reports'),
+        child: const CardShimmer(),
+      );
+    }
+
     final events = ref.watch(refillEventsProvider).valueOrNull ?? const [];
     final roomProducts = ref.watch(roomProductsProvider).valueOrNull ?? const [];
     final hotels = ref.watch(hotelsProvider).valueOrNull ?? const [];
@@ -797,6 +809,8 @@ class _TrendChart extends StatelessWidget {
             SizedBox(
               height: 200,
               child: BarChart(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
                 BarChartData(
                   maxY: maxY,
                   minY: 0,
@@ -896,9 +910,8 @@ class _TrendChart extends StatelessWidget {
                               end: Alignment.topCenter,
                             ),
                             width: 14,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(6),
-                              topRight: Radius.circular(6),
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(6),
                             ),
                             backDrawRodData: BackgroundBarChartRodData(
                               show: true,
@@ -1031,12 +1044,11 @@ class _ReportActionState extends State<_ReportAction> {
                           theme.colorScheme.primaryContainer
                               .withValues(alpha: 0.1),
                         ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                        begin: AlignmentDirectional.topStart,
+                        end: AlignmentDirectional.bottomEnd,
                       ),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
                       ),
                     ),
                     child: Row(
