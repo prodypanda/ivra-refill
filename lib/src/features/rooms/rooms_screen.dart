@@ -115,12 +115,13 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final primaryColor = theme.colorScheme.primary;
 
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
-    final canCreateRoomsFromTemplate = currentUser?.isIvraUser ?? false;
+    final selectedHotelId = ref.watch(selectedHotelIdProvider);
+    final canCreateRoomsFromTemplate = (currentUser?.isIvraUser == true) ||
+        (currentUser?.role == UserRole.hotelManager && currentUser?.hotelId == selectedHotelId);
 
     final hotelsAsync = ref.watch(hotelsProvider);
     final roomsAsync = ref.watch(roomsProvider);
     final roomProductsAsync = ref.watch(roomProductsProvider);
-    final selectedHotelId = ref.watch(selectedHotelIdProvider);
 
     final combinedAsync = roomsAsync.when<AsyncValue<List<_RoomGroup>>>(
       data: (rooms) {
