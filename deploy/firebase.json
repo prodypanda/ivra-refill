@@ -19,6 +19,18 @@
         ]
       }
     ],
+    "redirects": [
+      {
+        "source": "/q/:rest*",
+        "destination": "/app/q/:rest*",
+        "type": 302
+      },
+      {
+        "source": "/public/product/:sku",
+        "destination": "/app/public/product/:sku",
+        "type": 302
+      }
+    ],
     "rewrites": [
       {
         "source": "/app/**",

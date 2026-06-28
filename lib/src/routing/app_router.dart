@@ -67,7 +67,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isSetPassword = path == SetPasswordScreen.route;
       final isAuthCallback = path == '/auth/callback';
 
-      final isQrLink = path.startsWith('/app/qr') || path.startsWith('/q/');
+      final isQrLink = path.startsWith('/app/qr') || path.startsWith('/qr') || path.startsWith('/q/');
       final isPublicProduct = path.startsWith('/public/product/');
       final isPublicAuthRoute = isLogin ||
           isResetPassword ||
@@ -80,7 +80,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn) {
         if (isQrLink) {
           String? sku;
-          if (path.startsWith('/app/qr')) {
+          if (path.startsWith('/app/qr') || path.startsWith('/qr')) {
             sku = state.uri.queryParameters['sku'];
           } else {
             final segments = state.uri.pathSegments;
@@ -102,7 +102,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         String? floor;
         String? room;
         String? sku;
-        if (path.startsWith('/app/qr')) {
+        if (path.startsWith('/app/qr') || path.startsWith('/qr')) {
           hotelId = state.uri.queryParameters['hId'];
           floor = state.uri.queryParameters['f'];
           room = state.uri.queryParameters['r'];
@@ -205,6 +205,28 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/app/qr',
+        pageBuilder: (context, state) {
+          final hotelId = state.uri.queryParameters['hId'] ?? '';
+          final floor = state.uri.queryParameters['f'] ?? '';
+          final room = state.uri.queryParameters['r'] ?? '';
+          final sku = state.uri.queryParameters['sku'] ?? '';
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: QrActionScreen(
+              hotelSlugOrId: hotelId,
+              floor: floor,
+              room: room,
+              sku: sku,
+            ),
+            opaque: false,
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },
+      ),
+      GoRoute(
+        path: '/qr',
         pageBuilder: (context, state) {
           final hotelId = state.uri.queryParameters['hId'] ?? '';
           final floor = state.uri.queryParameters['f'] ?? '';
