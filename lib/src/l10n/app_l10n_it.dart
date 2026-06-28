@@ -1005,6 +1005,9 @@ class AppL10nIt extends AppL10n {
   String get roomsRecentClear => 'Cancella';
 
   @override
+  String get roomsGestionExpressQr => 'Gestione Espressa (QR)';
+
+  @override
   String get roomsSelectHotelFirst => 'Seleziona hotel...';
 
   @override

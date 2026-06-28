@@ -95,7 +95,7 @@ class QrCodePdfService {
                           ),
                           borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
                         ),
-                        height: 165,
+                        height: 172,
                         child: pw.Column(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: pw.CrossAxisAlignment.center,
@@ -131,8 +131,8 @@ class QrCodePdfService {
                               child: pw.BarcodeWidget(
                                 barcode: pw.Barcode.qrCode(),
                                 data: label.url,
-                                width: 64,
-                                height: 64,
+                                width: 62,
+                                height: 62,
                               ),
                             ),
                             pw.SizedBox(height: 4),
@@ -179,6 +179,17 @@ class QrCodePdfService {
                               style: const pw.TextStyle(
                                 fontSize: 5.5,
                                 color: PdfColors.grey500,
+                              ),
+                              textAlign: pw.TextAlign.center,
+                            ),
+                            pw.SizedBox(height: 1),
+
+                            // Branding Text
+                            pw.Text(
+                              'iVRA Refill, by Pulire Tunisia (+216)71.973.551 \u2013 28.053.002',
+                              style: const pw.TextStyle(
+                                fontSize: 4.5,
+                                color: PdfColors.grey600,
                               ),
                               textAlign: pw.TextAlign.center,
                             ),

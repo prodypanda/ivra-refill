@@ -993,6 +993,9 @@ class AppL10nAr extends AppL10n {
   String get roomsRecentClear => 'مسح';
 
   @override
+  String get roomsGestionExpressQr => 'الإدارة السريعة (QR)';
+
+  @override
   String get roomsSelectHotelFirst => 'اختر فندقاً...';
 
   @override

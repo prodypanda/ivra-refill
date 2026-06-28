@@ -1937,6 +1937,12 @@ abstract class AppL10n {
   /// **'Clear'**
   String get roomsRecentClear;
 
+  /// No description provided for @roomsGestionExpressQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Express QR Management'**
+  String get roomsGestionExpressQr;
+
   /// No description provided for @roomsSelectHotelFirst.
   ///
   /// In en, this message translates to:

@@ -998,6 +998,9 @@ class AppL10nEn extends AppL10n {
   String get roomsRecentClear => 'Clear';
 
   @override
+  String get roomsGestionExpressQr => 'Express QR Management';
+
+  @override
   String get roomsSelectHotelFirst => 'Select a hotel...';
 
   @override

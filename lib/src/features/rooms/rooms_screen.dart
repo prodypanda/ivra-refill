@@ -128,6 +128,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
+    final isCompact = MediaQuery.of(context).size.width < 600;
 
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
@@ -208,6 +209,37 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         ]);
       },
       actions: [
+        if (isCompact)
+          IconButton(
+            tooltip: l10n.t('roomsGestionExpressQr'),
+            icon: const Icon(Icons.qr_code_scanner_rounded),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              context.go('/qr');
+            },
+          )
+        else
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: primaryColor.withValues(alpha: 0.1),
+              foregroundColor: primaryColor,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
+            label: Text(
+              l10n.t('roomsGestionExpressQr'),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              context.go('/qr');
+            },
+          ),
+        const SizedBox(width: 8),
         if (canCreateRoomsFromTemplate)
           IconButton(
             tooltip: l10n.t('roomsTooltipCreateTemplate'),
