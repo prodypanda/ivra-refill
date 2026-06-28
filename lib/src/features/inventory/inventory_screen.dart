@@ -942,7 +942,9 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                         children: [
                           Expanded(
                             child: _MiniStat(
-                              label: l10n.t('inventoryTableEmptyBottles'),
+                              label: l10n.tParams('inventoryTableEmptyBottles', {
+                                'months': '${(widget.item.product.maxBottleAgeDays / 30.0).round()}'
+                              }),
                               value: widget.item.emptyBottles,
                               icon: widget.item.product.bottleType == BottleType.withPump
                                   ? IvraIcons.emptyBottleWithPump
@@ -1292,7 +1294,9 @@ class _StockAdjustmentDialogState
                     const SizedBox(height: 12),
                     _DeltaField(
                       controller: _emptyBottles,
-                      label: l10n.t('inventoryTableEmptyBottles'),
+                      label: l10n.tParams('inventoryTableEmptyBottles', {
+                        'months': '${(selectedItem.product.maxBottleAgeDays / 30.0).round()}'
+                      }),
                     ),
                     if (selectedItem.product.isRefillable) ...[
                       const SizedBox(height: 12),
@@ -1869,7 +1873,11 @@ class _BulkStockAdjustmentDialogState
                         const SizedBox(height: 12),
                         _DeltaField(
                           controller: _emptyBottles,
-                          label: l10n.t('inventoryTableEmptyBottles'),
+                          label: selectedProducts.length == 1
+                              ? l10n.tParams('inventoryTableEmptyBottles', {
+                                  'months': '${(selectedProducts.first.maxBottleAgeDays / 30.0).round()}'
+                                })
+                              : l10n.t('inventoryTableEmptyBottlesGeneric'),
                         ),
                         if (showRefillFields) ...[
                           const SizedBox(height: 12),

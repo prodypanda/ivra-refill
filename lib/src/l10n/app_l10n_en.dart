@@ -533,7 +533,12 @@ class AppL10nEn extends AppL10n {
   String get inventoryCollapseHeader => 'Empty & Open Bottles';
 
   @override
-  String get inventoryTableEmptyBottles => 'Empty bottles';
+  String inventoryTableEmptyBottles(String months) {
+    return 'Replaced bottles after $months months (Used)';
+  }
+
+  @override
+  String get inventoryTableEmptyBottlesGeneric => 'Replaced bottles (Used)';
 
   @override
   String get inventoryTableEmptyBidons => 'Empty refill bottles';
@@ -547,7 +552,7 @@ class AppL10nEn extends AppL10n {
   String get inventoryTableFullBidonsGeneric => 'Full refill bottles';
 
   @override
-  String get inventoryTableOpenBidons => 'Opened refill bottles';
+  String get inventoryTableOpenBidons => 'Used refill bottles';
 
   @override
   String get inventoryTableStatus => 'Status';

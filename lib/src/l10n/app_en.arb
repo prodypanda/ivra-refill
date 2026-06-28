@@ -246,7 +246,15 @@
   "inventoryTableFullBottlesWithPumpGeneric": "Full bottles with pump",
   "inventoryTableFullBottlesWithoutPumpGeneric": "Full bottles without pump",
   "inventoryCollapseHeader": "Empty & Open Bottles",
-  "inventoryTableEmptyBottles": "Empty bottles",
+  "inventoryTableEmptyBottles": "Replaced bottles after {months} months (Used)",
+  "@inventoryTableEmptyBottles": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "inventoryTableEmptyBottlesGeneric": "Replaced bottles (Used)",
   "inventoryTableEmptyBidons": "Empty refill bottles",
   "inventoryTableFullBidons": "Full {size} refill bottles",
   "@inventoryTableFullBidons": {
@@ -257,7 +265,7 @@
     }
   },
   "inventoryTableFullBidonsGeneric": "Full refill bottles",
-  "inventoryTableOpenBidons": "Opened refill bottles",
+  "inventoryTableOpenBidons": "Used refill bottles",
   "inventoryTableStatus": "Status",
   "errorUniqueViolation": "This record already exists.",
   "errorForeignKeyViolation": "Related record not found.",

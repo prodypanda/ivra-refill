@@ -534,7 +534,12 @@ class AppL10nAr extends AppL10n {
   String get inventoryCollapseHeader => 'العبوات الفارغة والمفتوحة';
 
   @override
-  String get inventoryTableEmptyBottles => 'العبوات الفارغة';
+  String inventoryTableEmptyBottles(String months) {
+    return 'العبوات المستبدلة بعد $months أشهر (مستعملة)';
+  }
+
+  @override
+  String get inventoryTableEmptyBottlesGeneric => 'العبوات المستبدلة (مستعملة)';
 
   @override
   String get inventoryTableEmptyBidons => 'قوارير إعادة التعبئة الفارغة';
@@ -548,7 +553,7 @@ class AppL10nAr extends AppL10n {
   String get inventoryTableFullBidonsGeneric => 'عبوات إعادة تعبئة ممتلئة';
 
   @override
-  String get inventoryTableOpenBidons => 'قوارير إعادة التعبئة المفتوحة';
+  String get inventoryTableOpenBidons => 'قوارير إعادة التعبئة المستعملة';
 
   @override
   String get inventoryTableStatus => 'الحالة';

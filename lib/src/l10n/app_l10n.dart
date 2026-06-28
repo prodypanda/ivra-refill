@@ -1082,8 +1082,14 @@ abstract class AppL10n {
   /// No description provided for @inventoryTableEmptyBottles.
   ///
   /// In en, this message translates to:
-  /// **'Empty bottles'**
-  String get inventoryTableEmptyBottles;
+  /// **'Replaced bottles after {months} months (Used)'**
+  String inventoryTableEmptyBottles(String months);
+
+  /// No description provided for @inventoryTableEmptyBottlesGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaced bottles (Used)'**
+  String get inventoryTableEmptyBottlesGeneric;
 
   /// No description provided for @inventoryTableEmptyBidons.
   ///
@@ -1106,7 +1112,7 @@ abstract class AppL10n {
   /// No description provided for @inventoryTableOpenBidons.
   ///
   /// In en, this message translates to:
-  /// **'Opened refill bottles'**
+  /// **'Used refill bottles'**
   String get inventoryTableOpenBidons;
 
   /// No description provided for @inventoryTableStatus.

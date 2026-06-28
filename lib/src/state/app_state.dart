@@ -114,6 +114,19 @@ final currentUserProvider = FutureProvider<UserProfile>((ref) async {
   return ref.watch(realCurrentUserProvider.future);
 });
 
+final isLoggedInProvider = Provider<bool>((ref) {
+  final useSupabase = ref.watch(useSupabaseProvider);
+  if (useSupabase) {
+    return Supabase.instance.client.auth.currentSession != null;
+  }
+  final userAsync = ref.watch(currentUserProvider);
+  return userAsync.when(
+    data: (user) => true,
+    error: (_, __) => false,
+    loading: () => true,
+  );
+});
+
 /// True while an app admin is viewing the app as another user.
 final isImpersonatingProvider = Provider<bool>((ref) {
   return ref.watch(impersonatedUserProvider) != null;
@@ -264,6 +277,13 @@ final roomProductsProvider = FutureProvider<List<RoomProduct>>((ref) async {
     }
     return updated;
   }).toList();
+});
+
+/// Unscoped room products – returns ALL products regardless of the user's
+/// hotel assignment. Used by [QrActionScreen] so it can resolve any scanned
+/// QR code and then apply its own authorization gate.
+final allRoomProductsProvider = FutureProvider<List<RoomProduct>>((ref) async {
+  return ref.watch(repositoryProvider).roomProducts();
 });
 
 final inventoryProvider = FutureProvider<List<InventoryItem>>((ref) async {

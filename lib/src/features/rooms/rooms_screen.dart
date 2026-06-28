@@ -27,10 +27,19 @@ import '../shared/premium_confirm_dialog.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 
 class RoomsScreen extends ConsumerStatefulWidget {
-  const RoomsScreen({super.key, this.autoStartScan = false});
+  const RoomsScreen({
+    super.key,
+    this.autoStartScan = false,
+    this.hotelId,
+    this.floorNumber,
+    this.roomNumber,
+  });
 
   static const route = '/rooms';
   final bool autoStartScan;
+  final String? hotelId;
+  final String? floorNumber;
+  final String? roomNumber;
 
   @override
   ConsumerState<RoomsScreen> createState() => _RoomsScreenState();
@@ -45,6 +54,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   late final TextEditingController _searchController;
   late final TextEditingController _productSearchController;
   bool _scanTriggered = false;
+  bool _hasAutoOpened = false;
 
   // Recently-visited room numbers for the currently loaded hotel, most-recent
   // first. Persisted per hotel so housekeeping staff can jump back to rooms
@@ -99,6 +109,11 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     super.initState();
     _searchController = TextEditingController();
     _productSearchController = TextEditingController();
+    if (widget.hotelId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(selectedHotelIdProvider.notifier).state = widget.hotelId;
+      });
+    }
   }
 
   @override
@@ -163,6 +178,21 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
           }
         }
       });
+    }
+
+    final combinedValue = combinedAsync.valueOrNull;
+    if (combinedValue != null && widget.roomNumber != null && !_hasAutoOpened) {
+      final matchedGroup = combinedValue.cast<_RoomGroup?>().firstWhere(
+        (g) => g?.roomNumber.toLowerCase() == widget.roomNumber!.toLowerCase(),
+        orElse: () => null,
+      );
+      if (matchedGroup != null) {
+        _hasAutoOpened = true;
+        _expandedFloors.add(matchedGroup.floorNumber);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showRoomDetailsDialog(context, matchedGroup);
+        });
+      }
     }
 
     return PageScaffold(
@@ -1396,7 +1426,7 @@ class _CompactRoomTile extends ConsumerWidget {
 }
 
 // Extracted top-level private helpers for both product-centric and room-centric views
-Future<void> _showRefillHistory(
+Future<void> showRefillHistory(
   BuildContext context,
   WidgetRef ref,
   RoomProduct item,
@@ -1464,7 +1494,7 @@ Future<void> _showBottleEditRequest(
   ref.invalidate(dashboardProvider);
 }
 
-Future<void> _showMarkDamagedDialog(
+Future<void> showMarkDamagedDialog(
   BuildContext context,
   WidgetRef ref,
   RoomProduct item,
@@ -1482,7 +1512,7 @@ Future<void> _showMarkDamagedDialog(
   ref.invalidate(dashboardProvider);
 }
 
-Future<void> _showMarkLostDialog(
+Future<void> showMarkLostDialog(
   BuildContext context,
   WidgetRef ref,
   RoomProduct item,
@@ -1531,7 +1561,7 @@ Future<bool?> _showInsufficientStockDialog({
   );
 }
 
-Future<void> _replaceBottle(
+Future<void> replaceBottle(
   BuildContext context,
   WidgetRef ref,
   RoomProduct item,
@@ -1712,7 +1742,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     } else if (selection == 'replace') {
       if (matchedItem.status != BottleStatus.recycled) {
         if (mounted) {
-          await _replaceBottle(context, ref, matchedItem);
+          await replaceBottle(context, ref, matchedItem);
         }
       }
     }
@@ -2634,7 +2664,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                       icon: const Icon(IvraIcons.replaceAction, size: 24),
                       onPressed: item.status == BottleStatus.recycled
                           ? null
-                          : () => _replaceBottle(context, ref, item),
+                          : () => replaceBottle(context, ref, item),
                     ),
                   ] else ...[
                     FilledButton.icon(
@@ -2647,7 +2677,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                       ),
                       onPressed: item.status == BottleStatus.recycled
                           ? null
-                          : () => _replaceBottle(context, ref, item),
+                          : () => replaceBottle(context, ref, item),
                       icon: const Icon(IvraIcons.replaceAction, size: 18),
                       label:
                           Text(l10n.t('roomsBtnReplaceBottle'), style: const TextStyle(fontSize: 12)),
@@ -2657,7 +2687,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                     visualDensity: VisualDensity.compact,
                     tooltip: l10n.t('roomsBtnHistory'),
                     icon: const Icon(Icons.history_outlined, size: 24),
-                    onPressed: () => _showRefillHistory(context, ref, item),
+                    onPressed: () => showRefillHistory(context, ref, item),
                   ),
                   PopupMenuButton<String>(
                     tooltip: l10n.t('roomsBtnMoreActions'),
@@ -2703,14 +2733,14 @@ class _RoomCardProductRow extends ConsumerWidget {
                 tooltip: l10n.t('bottleStatusDamaged'),
                 icon: const Icon(Icons.report_problem_outlined, size: 20),
                 color: theme.colorScheme.error,
-                onPressed: () => _showMarkDamagedDialog(context, ref, item),
+                onPressed: () => showMarkDamagedDialog(context, ref, item),
               ),
               IconButton(
                 visualDensity: VisualDensity.compact,
                 tooltip: l10n.t('bottleStatusLost'),
                 icon: const Icon(Icons.search_off_outlined, size: 20),
                 color: theme.colorScheme.onSurfaceVariant,
-                onPressed: () => _showMarkLostDialog(context, ref, item),
+                onPressed: () => showMarkLostDialog(context, ref, item),
               ),
             ],
           ],

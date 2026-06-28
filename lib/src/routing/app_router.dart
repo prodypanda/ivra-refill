@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../features/account/account_screen.dart';
+import '../features/products/public_product_screen.dart';
+import '../features/rooms/qr_action_screen.dart';
 import '../features/auth/accept_invitation_screen.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/reset_password_screen.dart';
@@ -36,6 +38,7 @@ class RouterNotifier extends ChangeNotifier {
       notifyListeners();
     });
     _ref.listen(currentUserProvider, (_, __) => notifyListeners());
+    _ref.listen(isLoggedInProvider, (_, __) => notifyListeners());
     _ref.listen(useSupabaseProvider, (_, __) => notifyListeners());
   }
 
@@ -51,12 +54,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     errorBuilder: (context, state) => NotFoundScreen(error: state.error),
     redirect: (context, state) {
       final useSupabase = ref.read(useSupabaseProvider);
-      final hasSession =
-          !useSupabase || Supabase.instance.client.auth.currentSession != null;
-      final currentUserValue = hasSession ? ref.read(currentUserProvider) : null;
+      final isLoggedIn = ref.read(isLoggedInProvider);
+      final currentUserValue = isLoggedIn ? ref.read(currentUserProvider) : null;
       final currentUser = currentUserValue?.valueOrNull;
       final hasProfileError =
-          useSupabase && hasSession && (currentUserValue?.hasError ?? false);
+          useSupabase && isLoggedIn && (currentUserValue?.hasError ?? false);
 
       final path = state.uri.path;
       final isLogin = path == LoginScreen.route;
@@ -64,19 +66,76 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAcceptInvite = path == AcceptInvitationScreen.route;
       final isSetPassword = path == SetPasswordScreen.route;
       final isAuthCallback = path == '/auth/callback';
-      final isPublicAuthRoute = isLogin || isResetPassword || isAcceptInvite || isSetPassword || isAuthCallback;
+
+      final isQrLink = path.startsWith('/app/qr') || path.startsWith('/q/');
+      final isPublicProduct = path.startsWith('/public/product/');
+      final isPublicAuthRoute = isLogin ||
+          isResetPassword ||
+          isAcceptInvite ||
+          isSetPassword ||
+          isAuthCallback ||
+          isQrLink ||
+          isPublicProduct;
+
+      if (!isLoggedIn) {
+        if (isQrLink) {
+          String? sku;
+          if (path.startsWith('/app/qr')) {
+            sku = state.uri.queryParameters['sku'];
+          } else {
+            final segments = state.uri.pathSegments;
+            if (segments.length >= 5) {
+              sku = segments[4];
+            }
+          }
+          if (sku != null && sku.trim().isNotEmpty) {
+            return '/public/product/$sku';
+          } else {
+            return LoginScreen.route;
+          }
+        }
+        if (!isPublicAuthRoute) return LoginScreen.route;
+      }
+
+      if (isLoggedIn && isQrLink) {
+        String? hotelId;
+        String? floor;
+        String? room;
+        String? sku;
+        if (path.startsWith('/app/qr')) {
+          hotelId = state.uri.queryParameters['hId'];
+          floor = state.uri.queryParameters['f'];
+          room = state.uri.queryParameters['r'];
+          sku = state.uri.queryParameters['sku'];
+        } else {
+          final segments = state.uri.pathSegments;
+          if (segments.length >= 4) {
+            hotelId = segments[1];
+            floor = segments[2];
+            room = segments[3];
+            if (segments.length >= 5) {
+              sku = segments[4];
+            }
+          }
+        }
+        if (sku == null || sku.trim().isEmpty) {
+          if (hotelId != null && floor != null && room != null) {
+            return '${RoomsScreen.route}?hotelId=$hotelId&floorNumber=$floor&roomNumber=$room';
+          }
+        }
+      }
 
       if (useSupabase) {
-        final isLoggedIn = Supabase.instance.client.auth.currentSession != null;
-        final userMetadata = Supabase.instance.client.auth.currentUser?.userMetadata ?? {};
+        final userMetadata =
+            Supabase.instance.client.auth.currentUser?.userMetadata ?? {};
         final isInvitedUser = userMetadata['invitation_id'] != null;
         final isOnboarded = userMetadata['onboarded'] == true;
         final passwordAlreadySet = ref.read(passwordSetProvider);
         final isPasswordRecovery = ref.read(isPasswordRecoveryProvider);
-        final needsPassword = (isLoggedIn && isInvitedUser && !isOnboarded && !passwordAlreadySet) || isPasswordRecovery;
+        final needsPassword =
+            (isLoggedIn && isInvitedUser && !isOnboarded && !passwordAlreadySet) ||
+                isPasswordRecovery;
 
-        if (!isLoggedIn && !isPublicAuthRoute) return LoginScreen.route;
-        
         if (needsPassword && !isSetPassword) {
           return SetPasswordScreen.route;
         }
@@ -91,8 +150,9 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       if (!isPublicAuthRoute && currentUser != null) {
         if (path == HotelsScreen.route) {
-          final hasHotelsAccess = ref.read(hasPermissionProvider('manage_hotels')) ||
-              ref.read(hasPermissionProvider('view_approvals'));
+          final hasHotelsAccess =
+              ref.read(hasPermissionProvider('manage_hotels')) ||
+                  ref.read(hasPermissionProvider('view_approvals'));
           if (!hasHotelsAccess) {
             return DashboardScreen.route;
           }
@@ -136,6 +196,57 @@ final routerProvider = Provider<GoRouter>((ref) {
           body: Center(child: CircularProgressIndicator()),
         ),
       ),
+      GoRoute(
+        path: '/public/product/:sku',
+        builder: (context, state) {
+          final sku = state.pathParameters['sku'] ?? '';
+          return PublicProductScreen(sku: sku);
+        },
+      ),
+      GoRoute(
+        path: '/app/qr',
+        pageBuilder: (context, state) {
+          final hotelId = state.uri.queryParameters['hId'] ?? '';
+          final floor = state.uri.queryParameters['f'] ?? '';
+          final room = state.uri.queryParameters['r'] ?? '';
+          final sku = state.uri.queryParameters['sku'] ?? '';
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: QrActionScreen(
+              hotelSlugOrId: hotelId,
+              floor: floor,
+              room: room,
+              sku: sku,
+            ),
+            opaque: false,
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },
+      ),
+      GoRoute(
+        path: '/q/:h/:f/:r/:p',
+        pageBuilder: (context, state) {
+          final hotel = state.pathParameters['h'] ?? '';
+          final floor = state.pathParameters['f'] ?? '';
+          final room = state.pathParameters['r'] ?? '';
+          final sku = state.pathParameters['p'] ?? '';
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: QrActionScreen(
+              hotelSlugOrId: hotel,
+              floor: floor,
+              room: room,
+              sku: sku,
+            ),
+            opaque: false,
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
+        },
+      ),
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
         routes: [
@@ -154,7 +265,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: RoomsScreen.route,
             builder: (context, state) {
               final scan = state.uri.queryParameters['scan'] == 'true';
-              return RoomsScreen(autoStartScan: scan);
+              final hotelId = state.uri.queryParameters['hotelId'];
+              final floorNumber = state.uri.queryParameters['floorNumber'];
+              final roomNumber = state.uri.queryParameters['roomNumber'];
+              return RoomsScreen(
+                autoStartScan: scan,
+                hotelId: hotelId,
+                floorNumber: floorNumber,
+                roomNumber: roomNumber,
+              );
             },
           ),
           GoRoute(
