@@ -60,6 +60,16 @@ void main() {
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.containsKey(AuthPrefs.legacyBiometricEnabled), isFalse);
     });
+
+    test('drops the legacy global saved_password flag on load', () async {
+      SharedPreferences.setMockInitialValues({
+        AuthPrefs.legacyPassword: 'plaintext_password',
+      });
+      final notifier = BiometricAccountNotifier();
+      await notifier.load();
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.containsKey(AuthPrefs.legacyPassword), isFalse);
+    });
   });
 
   group('isBiometricEnabledForEmail', () {
@@ -89,11 +99,17 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    test('saveLoginCredentials stores password keyed by email', () async {
+    test('saveLoginCredentials stores password keyed by email and scrubs legacy password', () async {
+      SharedPreferences.setMockInitialValues({
+        AuthPrefs.legacyPassword: 'plaintext_password',
+      });
       await saveLoginCredentials('Admin@Ivra.com', 'hunter2');
       expect(await savedPasswordFor('admin@ivra.com'), 'hunter2');
       // A different account has no stored password.
       expect(await savedPasswordFor('nashab2015@gmail.com'), isNull);
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.containsKey(AuthPrefs.legacyPassword), isFalse);
     });
 
     test('signing in as a second account does not overwrite the first',
@@ -124,6 +140,7 @@ void main() {
       // Seed a legacy plaintext password directly in SharedPreferences.
       SharedPreferences.setMockInitialValues({
         AuthPrefs.passwordKey('admin@ivra.com'): 'legacy_password_123',
+        AuthPrefs.legacyPassword: 'plaintext_password',
       });
 
       // Reading it transparently migrates via the fallback path.
@@ -135,6 +152,9 @@ void main() {
         prefs.containsKey(AuthPrefs.passwordKey('admin@ivra.com')),
         isFalse,
       );
+
+      // Also the global legacy password should be gone.
+      expect(prefs.containsKey(AuthPrefs.legacyPassword), isFalse);
 
       // The password must now live in secure storage.
       const secureStorage = FlutterSecureStorage();
