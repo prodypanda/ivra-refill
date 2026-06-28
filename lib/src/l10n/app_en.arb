@@ -504,6 +504,64 @@
   },
   "qrActionRefill": "Refill Bottle",
   "qrActionReplace": "Replace Bottle",
+  "hotelNotFound": "Hotel Not Found",
+  "productNotFound": "Product Not Found",
+  "qrAccessDeniedMessage": "You are not authorized to perform actions at this hotel.",
+  "roomsFillCount": "Refill Count",
+  "roomsBottleStatus": "Dispenser Status",
+  "btnBack": "Back",
+  "qrActionSuccess": "Action Successful",
+  "qrActionFailed": "Action Failed",
+  "qrUpdatedStatus": "Updated Dispenser Status:",
+  "qrScanAnother": "Scan another QR code",
+  "qrReturnRooms": "Return to rooms",
+  "qrTryScanAgain": "Try scanning again",
+  "qrFloorRoom": "Floor {floor} • Room {room}",
+  "@qrFloorRoom": {
+    "placeholders": {
+      "floor": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "qrRoomFloor": "Room {room} • Floor {floor}",
+  "@qrRoomFloor": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
+  "qrCameraPermission": "Camera permission denied",
+  "qrCameraUnavailable": "Camera unavailable",
+  "qrHotelNotFoundMessage": "Could not match hotel: \"{hotel}\"",
+  "@qrHotelNotFoundMessage": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      }
+    }
+  },
+  "qrProductNotFoundMessage": "Room {room} (Floor {floor}) does not contain product SKU: \"{sku}\"",
+  "@qrProductNotFoundMessage": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
   "roomsSearchProductPlaceholder": "Search product by name or SKU...",
   "adjustStockForProduct": "Adjust Stock for {product}",
   "@adjustStockForProduct": {

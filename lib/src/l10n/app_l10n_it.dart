@@ -1130,6 +1130,69 @@ class AppL10nIt extends AppL10n {
   String get qrActionReplace => 'Sostituisci bottiglia';
 
   @override
+  String get hotelNotFound => 'Hotel non trovato';
+
+  @override
+  String get productNotFound => 'Prodotto non trovato';
+
+  @override
+  String get qrAccessDeniedMessage =>
+      'Non sei autorizzato a eseguire azioni in questo hotel.';
+
+  @override
+  String get roomsFillCount => 'Conteggio ricariche';
+
+  @override
+  String get roomsBottleStatus => 'Stato dispensatore';
+
+  @override
+  String get btnBack => 'Indietro';
+
+  @override
+  String get qrActionSuccess => 'Azione riuscita';
+
+  @override
+  String get qrActionFailed => 'Azione fallita';
+
+  @override
+  String get qrUpdatedStatus => 'Stato dispensatore aggiornato:';
+
+  @override
+  String get qrScanAnother => 'Scansiona un altro codice QR';
+
+  @override
+  String get qrReturnRooms => 'Torna alle camere';
+
+  @override
+  String get qrTryScanAgain => 'Riprova la scansione';
+
+  @override
+  String qrFloorRoom(String floor, String room) {
+    return 'Piano $floor • Camera $room';
+  }
+
+  @override
+  String qrRoomFloor(String room, String floor) {
+    return 'Camera $room • Piano $floor';
+  }
+
+  @override
+  String get qrCameraPermission => 'Permesso fotocamera negato';
+
+  @override
+  String get qrCameraUnavailable => 'Fotocamera non disponibile';
+
+  @override
+  String qrHotelNotFoundMessage(String hotel) {
+    return 'Impossibile trovare l\'hotel: «$hotel»';
+  }
+
+  @override
+  String qrProductNotFoundMessage(String room, String floor, String sku) {
+    return 'La camera $room (piano $floor) non contiene il prodotto SKU: «$sku»';
+  }
+
+  @override
   String get roomsSearchProductPlaceholder =>
       'Cerca prodotto per nome o SKU...';
 

@@ -2171,6 +2171,114 @@ abstract class AppL10n {
   /// **'Replace Bottle'**
   String get qrActionReplace;
 
+  /// No description provided for @hotelNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel Not Found'**
+  String get hotelNotFound;
+
+  /// No description provided for @productNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Not Found'**
+  String get productNotFound;
+
+  /// No description provided for @qrAccessDeniedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not authorized to perform actions at this hotel.'**
+  String get qrAccessDeniedMessage;
+
+  /// No description provided for @roomsFillCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Count'**
+  String get roomsFillCount;
+
+  /// No description provided for @roomsBottleStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispenser Status'**
+  String get roomsBottleStatus;
+
+  /// No description provided for @btnBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get btnBack;
+
+  /// No description provided for @qrActionSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Action Successful'**
+  String get qrActionSuccess;
+
+  /// No description provided for @qrActionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Action Failed'**
+  String get qrActionFailed;
+
+  /// No description provided for @qrUpdatedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated Dispenser Status:'**
+  String get qrUpdatedStatus;
+
+  /// No description provided for @qrScanAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan another QR code'**
+  String get qrScanAnother;
+
+  /// No description provided for @qrReturnRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to rooms'**
+  String get qrReturnRooms;
+
+  /// No description provided for @qrTryScanAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try scanning again'**
+  String get qrTryScanAgain;
+
+  /// No description provided for @qrFloorRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Floor {floor} • Room {room}'**
+  String qrFloorRoom(String floor, String room);
+
+  /// No description provided for @qrRoomFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Room {room} • Floor {floor}'**
+  String qrRoomFloor(String room, String floor);
+
+  /// No description provided for @qrCameraPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission denied'**
+  String get qrCameraPermission;
+
+  /// No description provided for @qrCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera unavailable'**
+  String get qrCameraUnavailable;
+
+  /// No description provided for @qrHotelNotFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not match hotel: \"{hotel}\"'**
+  String qrHotelNotFoundMessage(String hotel);
+
+  /// No description provided for @qrProductNotFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Room {room} (Floor {floor}) does not contain product SKU: \"{sku}\"'**
+  String qrProductNotFoundMessage(String room, String floor, String sku);
+
   /// No description provided for @roomsSearchProductPlaceholder.
   ///
   /// In en, this message translates to:

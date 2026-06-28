@@ -307,8 +307,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                     const SizedBox(height: 8),
                                     Text(
                                       isPermission
-                                          ? 'Camera permission denied'
-                                          : 'Camera unavailable',
+                                          ? (l10n.t('qrCameraPermission') ?? 'Camera permission denied')
+                                          : (l10n.t('qrCameraUnavailable') ?? 'Camera unavailable'),
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: colorScheme.onSurfaceVariant,
@@ -468,7 +468,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
             return _buildErrorCard(
               context,
               title: l10n.t('hotelNotFound') ?? 'Hotel Not Found',
-              message: 'Could not match hotel: "${widget.hotelSlugOrId}"',
+              message: l10n.tParams('qrHotelNotFoundMessage', {'hotel': widget.hotelSlugOrId}) ?? 'Could not match hotel: "${widget.hotelSlugOrId}"',
             );
           }
 
@@ -496,7 +496,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                 return _buildErrorCard(
                   context,
                   title: l10n.t('productNotFound') ?? 'Product Not Found',
-                  message: 'Room ${widget.room} (Floor ${widget.floor}) does not contain product SKU: "${widget.sku}"',
+                  message: l10n.tParams('qrProductNotFoundMessage', {'room': widget.room, 'floor': widget.floor, 'sku': widget.sku}) ?? 'Room ${widget.room} (Floor ${widget.floor}) does not contain product SKU: "${widget.sku}"',
                 );
               }
 
@@ -544,7 +544,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  'Floor ${widget.floor} • Room ${widget.room}',
+                                  l10n.tParams('qrFloorRoom', {'floor': widget.floor, 'room': widget.room}) ?? 'Floor ${widget.floor} \u2022 Room ${widget.room}',
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                   ),
@@ -822,7 +822,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  isSuccess ? 'Action Successful' : 'Action Failed',
+                  isSuccess ? (l10n.t('qrActionSuccess') ?? 'Action Successful') : (l10n.t('qrActionFailed') ?? 'Action Failed'),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isSuccess ? const Color(0xFF267D65) : colorScheme.error,
@@ -845,7 +845,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
 
           // Updated Product Summary
           Text(
-            'Updated Dispenser Status:',
+            l10n.t('qrUpdatedStatus') ?? 'Updated Dispenser Status:',
             style: theme.textTheme.labelMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurfaceVariant,
@@ -888,7 +888,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                             ),
                           ),
                           Text(
-                            'Room ${updatedItem.roomNumber} • Floor ${updatedItem.floorNumber}',
+                            l10n.tParams('qrRoomFloor', {'room': updatedItem.roomNumber, 'floor': '${updatedItem.floorNumber}'}) ?? 'Room ${updatedItem.roomNumber} \u2022 Floor ${updatedItem.floorNumber}',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -928,9 +928,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
             key: const ValueKey('scan_another_button'),
             onPressed: () => context.go('/qr'),
             icon: const Icon(Icons.qr_code_scanner_rounded),
-            label: const Text(
-              'Scan another QR code',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            label: Text(
+              l10n.t('qrScanAnother') ?? 'Scan another QR code',
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -943,9 +943,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           OutlinedButton.icon(
             onPressed: () => context.go('/rooms'),
             icon: const Icon(Icons.dashboard_outlined),
-            label: const Text(
-              'Return to rooms',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            label: Text(
+              l10n.t('qrReturnRooms') ?? 'Return to rooms',
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -1079,7 +1079,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   child: OutlinedButton.icon(
                     onPressed: () => context.go('/qr'),
                     icon: const Icon(Icons.qr_code_scanner_rounded),
-                    label: const Text('Try scanning again'),
+                    label: Text(l10n.t('qrTryScanAgain') ?? 'Try scanning again'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
