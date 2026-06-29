@@ -54,6 +54,44 @@ Locale resolveInitialLocale() {
 
 final offlineModeProvider = StateProvider<bool>((ref) => false);
 
+final precisionScanWindowEnabledProvider = StateProvider<bool>((ref) {
+  ref.listenSelf((previous, next) async {
+    if (previous != null && previous != next) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('precision_scan_window', next);
+      } catch (e) {
+        debugPrint('Error saving precision scan window: $e');
+      }
+    }
+  });
+
+  final prefs = ref.watch(sharedPreferencesProvider);
+  if (prefs != null) {
+    return prefs.getBool('precision_scan_window') ?? true;
+  }
+  return true;
+});
+
+final tapToScanEnabledProvider = StateProvider<bool>((ref) {
+  ref.listenSelf((previous, next) async {
+    if (previous != null && previous != next) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('tap_to_scan', next);
+      } catch (e) {
+        debugPrint('Error saving tap to scan selection: $e');
+      }
+    }
+  });
+
+  final prefs = ref.watch(sharedPreferencesProvider);
+  if (prefs != null) {
+    return prefs.getBool('tap_to_scan') ?? true;
+  }
+  return true;
+});
+
 /// Set to true after the invited user successfully sets their password.
 /// This prevents the router from redirecting back to SetPasswordScreen
 /// during the brief window where userMetadata hasn't propagated yet.

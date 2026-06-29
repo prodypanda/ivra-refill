@@ -1225,6 +1225,47 @@ class AppL10nEn extends AppL10n {
   String get qrGenerateSuccess => 'PDF generated and downloaded successfully';
 
   @override
+  String get settingsScannerHeader => 'Scanner Settings';
+
+  @override
+  String get settingsPrecisionScanTitle => 'Precision Scan Window';
+
+  @override
+  String get settingsPrecisionScanSubtitle =>
+      'Only scan codes aligned in the viewfinder center';
+
+  @override
+  String get settingsTapToScanTitle => 'Tap to Scan';
+
+  @override
+  String get settingsTapToScanSubtitle =>
+      'Tap on a detected QR code box to scan it';
+
+  @override
+  String get qrConfirmAssignTitle => 'Product Not Placed';
+
+  @override
+  String qrConfirmAssignMessage(String product, String room) {
+    return 'Product $product is not assigned to Room $room. Add 1 piece to inventory and assign it to the room?';
+  }
+
+  @override
+  String get qrAssignSuccess => 'Product assigned and refilled successfully';
+
+  @override
+  String get qrActionCanceled => 'Operation Canceled';
+
+  @override
+  String get qrActionCanceledMessage =>
+      'You chose not to assign the product. You can scan another code or return to rooms.';
+
+  @override
+  String get qrGenAllRoomProducts => 'All products in the selected room';
+
+  @override
+  String get qrGenAllInventoryProducts => 'All products in the inventory';
+
+  @override
   String get qrLabelScanInstructions =>
       'Scan with IVRA app to refill or replace';
 

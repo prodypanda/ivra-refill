@@ -213,6 +213,14 @@ abstract class IvraRepository {
     required String hotelId,
   });
 
+  Future<void> addProductToRoom({
+    required String hotelId,
+    required String floor,
+    required String roomNumber,
+    required String productSku,
+    bool autoAdjustInventory = false,
+  });
+
   /// Clear any locally persisted offline read-cache. Called on sign-out so a
   /// different account signing in offline can't be served the previous user's
   /// cached data.

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
@@ -54,8 +55,13 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
   _QrScope _scope = _QrScope.dispenser;
   String? _selectedHotelId;
   String _selectedRoomNumber = 'all_rooms';
-  String _selectedProductSku = 'all_products';
+  String _selectedProductSku = 'all_room_products';
   bool _isGeneratingPdf = false;
+
+  // Tap-to-scan state fields
+  List<Barcode> _detectedBarcodes = [];
+  Size? _lastCaptureSize;
+  Timer? _clearBarcodesTimer;
 
   // Scanner Mode State Controllers
   late final AnimationController _scanController;
@@ -150,6 +156,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
 
   @override
   void dispose() {
+    _clearBarcodesTimer?.cancel();
     _scanController.dispose();
     _inputController.dispose();
     _cameraController?.dispose();
@@ -227,6 +234,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+    final precisionScanWindow = ref.watch(precisionScanWindowEnabledProvider);
+    final tapToScanEnabled = ref.watch(tapToScanEnabledProvider);
 
     final isScanMode = widget.hotelSlugOrId.isEmpty ||
         widget.floor.isEmpty ||
@@ -268,6 +278,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
+    final precisionScanWindow = ref.watch(precisionScanWindowEnabledProvider);
+    final tapToScanEnabled = ref.watch(tapToScanEnabledProvider);
+    final language = Localizations.localeOf(context).languageCode;
 
     // Dynamic mock codes matching the mock repository for testing on desktop
     final List<String> demoQrCodes = [
@@ -396,50 +409,74 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                       else
                         ClipRRect(
                           borderRadius: BorderRadius.circular(22),
-                          child: MobileScanner(
-                            controller: _cameraController,
-                            onDetect: (capture) {
-                              final List<Barcode> barcodes = capture.barcodes;
-                              for (final barcode in barcodes) {
-                                if (barcode.rawValue != null) {
-                                  _onCodeScanned(barcode.rawValue!);
-                                  break;
-                                }
-                              }
-                            },
-                            errorBuilder: (context, error) {
-                              final isPermission = error.errorCode ==
-                                  MobileScannerErrorCode.permissionDenied;
-                              return Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        isPermission
-                                            ? Icons.no_photography_outlined
-                                            : Icons.error_outline_rounded,
-                                        color: colorScheme.error,
-                                        size: 36,
+                          child: Stack(
+                            children: [
+                              MobileScanner(
+                                controller: _cameraController,
+                                scanWindow: precisionScanWindow ? const Rect.fromLTWH(0, 0, 240, 240) : null,
+                                onDetect: (capture) {
+                                  final List<Barcode> barcodes = capture.barcodes;
+                                  final sensorSize = capture.size;
+                                  if (sensorSize != null) {
+                                    _lastCaptureSize = sensorSize;
+                                  }
+
+                                  final filtered = barcodes.where((b) => b.rawValue != null).toList();
+                                  if (filtered.isEmpty) return;
+
+                                  if (tapToScanEnabled && filtered.length > 1) {
+                                    _clearBarcodesTimer?.cancel();
+                                    setState(() {
+                                      _detectedBarcodes = filtered;
+                                    });
+                                    _clearBarcodesTimer = Timer(const Duration(milliseconds: 2000), () {
+                                      if (mounted) {
+                                        setState(() {
+                                          _detectedBarcodes = [];
+                                        });
+                                      }
+                                    });
+                                  } else {
+                                    _onCodeScanned(filtered.first.rawValue!);
+                                  }
+                                },
+                                errorBuilder: (context, error) {
+                                  final isPermission = error.errorCode ==
+                                      MobileScannerErrorCode.permissionDenied;
+                                  return Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            isPermission
+                                                ? Icons.no_photography_outlined
+                                                : Icons.error_outline_rounded,
+                                            color: colorScheme.error,
+                                            size: 36,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            isPermission
+                                                ? (l10n.t('qrCameraPermission') ?? 'Camera permission denied')
+                                                : (l10n.t('qrCameraUnavailable') ?? 'Camera unavailable'),
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: colorScheme.onSurfaceVariant,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        isPermission
-                                            ? (l10n.t('qrCameraPermission') ?? 'Camera permission denied')
-                                            : (l10n.t('qrCameraUnavailable') ?? 'Camera unavailable'),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: colorScheme.onSurfaceVariant,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
+                                    ),
+                                  );
+                                },
+                              ),
+                              if (tapToScanEnabled)
+                                ..._buildInteractiveBoxes(const Size(240, 240), theme),
+                            ],
                           ),
                         ),
                       // Corners
@@ -478,6 +515,69 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   ),
                 ),
               ),
+              if (tapToScanEnabled && _detectedBarcodes.length > 1) ...[
+                const SizedBox(height: 12),
+                Text(
+                  l10n.t('qrMultipleDetected') ?? 'Multiple QR codes detected. Tap to select:',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 50,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _detectedBarcodes.length,
+                    itemBuilder: (context, index) {
+                      final barcode = _detectedBarcodes[index];
+                      final val = barcode.rawValue;
+                      if (val == null) return const SizedBox.shrink();
+
+                      // Map label for button
+                      String label = '';
+                      final uri = Uri.tryParse(val);
+                      final products = ref.read(productsProvider).valueOrNull ?? [];
+                      if (uri != null) {
+                        final segments = uri.pathSegments;
+                        if (segments.length >= 5) {
+                          final sku = segments.last;
+                          final prod = products.firstWhereOrNull((p) => p.sku.toLowerCase() == sku.toLowerCase());
+                          label = prod != null ? '${prod.label(language)} ($sku)' : sku;
+                        } else if (segments.length >= 4) {
+                          label = '${l10n.t('room') ?? 'Room'} ${segments.last}';
+                        }
+                      }
+                      if (label.isEmpty) {
+                        label = val.split('/').last;
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: ActionChip(
+                          avatar: Icon(Icons.qr_code_2_rounded, size: 16, color: colorScheme.primary),
+                          label: Text(
+                            label,
+                            style: TextStyle(
+                              color: colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                          backgroundColor: colorScheme.primaryContainer.withValues(alpha: 0.7),
+                          side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.5)),
+                          onPressed: () {
+                            HapticFeedback.mediumImpact();
+                            _onCodeScanned(val);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
               const SizedBox(height: 24),
 
               // Manual Entry Input
@@ -546,6 +646,130 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     );
   }
 
+  List<Widget> _buildInteractiveBoxes(Size widgetSize, ThemeData theme) {
+    if (_detectedBarcodes.isEmpty) return [];
+    final sensorSize = _lastCaptureSize ?? const Size(1280, 720);
+    final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+    final products = ref.read(productsProvider).valueOrNull ?? [];
+
+    return _detectedBarcodes.map((barcode) {
+      final rawValue = barcode.rawValue;
+      if (rawValue == null) return const SizedBox.shrink();
+
+      final corners = barcode.corners;
+      if (corners == null || corners.isEmpty) return const SizedBox.shrink();
+      double minX = corners[0].dx;
+      double minY = corners[0].dy;
+      double maxX = corners[0].dx;
+      double maxY = corners[0].dy;
+      for (final corner in corners) {
+        if (corner.dx < minX) minX = corner.dx;
+        if (corner.dy < minY) minY = corner.dy;
+        if (corner.dx > maxX) maxX = corner.dx;
+        if (corner.dy > maxY) maxY = corner.dy;
+      }
+      final bbox = Rect.fromLTRB(minX, minY, maxX, maxY);
+
+      double sensorWidth = sensorSize.width;
+      double sensorHeight = sensorSize.height;
+      if (sensorWidth > sensorHeight) {
+        sensorWidth = sensorSize.height;
+        sensorHeight = sensorSize.width;
+      }
+
+      final double scaleX = widgetSize.width / sensorWidth;
+      final double scaleY = widgetSize.height / sensorHeight;
+
+      final rect = Rect.fromLTRB(
+        bbox.left * scaleX,
+        bbox.top * scaleY,
+        bbox.right * scaleX,
+        bbox.bottom * scaleY,
+      );
+
+      final left = rect.left.clamp(0.0, widgetSize.width - 40.0);
+      final top = rect.top.clamp(0.0, widgetSize.height - 40.0);
+      final width = rect.width.clamp(40.0, widgetSize.width - left);
+      final height = rect.height.clamp(40.0, widgetSize.height - top);
+
+      String label = '';
+      final uri = Uri.tryParse(rawValue);
+      if (uri != null) {
+        final segments = uri.pathSegments;
+        if (segments.length >= 5) {
+          final sku = segments.last;
+          final prod = products.firstWhereOrNull((p) => p.sku.toLowerCase() == sku.toLowerCase());
+          label = prod != null ? prod.label(language) : sku;
+        } else if (segments.length >= 4) {
+          label = '${l10n.t('room') ?? 'Room'} ${segments.last}';
+        }
+      }
+      if (label.isEmpty) {
+        label = rawValue.split('/').last;
+      }
+
+      return Positioned(
+        left: left,
+        top: top,
+        width: width,
+        height: height,
+        child: GestureDetector(
+          onTap: () {
+            HapticFeedback.mediumImpact();
+            _onCodeScanned(rawValue);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withValues(alpha: 0.15),
+              border: Border.all(
+                color: theme.colorScheme.primary,
+                width: 3,
+              ),
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                )
+              ],
+            ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  bottom: -24,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        label,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }).toList();
+  }
+
   Widget _buildGeneratorForm(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -602,7 +826,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                       setState(() {
                         _selectedHotelId = val;
                         _selectedRoomNumber = 'all_rooms';
-                        _selectedProductSku = 'all_products';
+                        _selectedProductSku = 'all_room_products';
                       });
                     },
                   )
@@ -651,7 +875,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
             setState(() {
               _scope = val.first;
               _selectedRoomNumber = 'all_rooms';
-              _selectedProductSku = 'all_products';
+              _selectedProductSku = 'all_room_products';
             });
           },
           style: SegmentedButton.styleFrom(
@@ -681,92 +905,100 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                 return a.compareTo(b);
               });
 
-            // Get unique products (SKUs)
-            final products = hotelProducts
-                .map((p) => p.product)
-                .toSet()
-                .toList()
-              ..sort((a, b) => a.sku.compareTo(b.sku));
+            final productsAsync = ref.watch(productsProvider);
+            return AsyncValueView<List<Product>>(
+              value: productsAsync,
+              onRetry: () => ref.invalidate(productsProvider),
+              builder: (masterProducts) {
+                final sortedMasterProducts = masterProducts.toList()..sort((a, b) => a.sku.compareTo(b.sku));
 
-            // Validate active choices
-            if (_selectedRoomNumber != 'all_rooms' && !rooms.contains(_selectedRoomNumber)) {
-              _selectedRoomNumber = 'all_rooms';
-            }
-            if (_selectedProductSku != 'all_products' && !products.any((p) => p.sku == _selectedProductSku)) {
-              _selectedProductSku = 'all_products';
-            }
+                // Validate active choices
+                if (_selectedRoomNumber != 'all_rooms' && !rooms.contains(_selectedRoomNumber)) {
+                  _selectedRoomNumber = 'all_rooms';
+                }
+                if (_selectedProductSku != 'all_room_products' &&
+                    _selectedProductSku != 'all_inventory_products' &&
+                    !sortedMasterProducts.any((p) => p.sku == _selectedProductSku)) {
+                  _selectedProductSku = 'all_room_products';
+                }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Room Selector
-                Text(
-                  l10n.t('qrGenerateRoom') ?? 'Room',
-                  style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                DropdownButtonFormField<String>(
-                  isExpanded: true,
-                  value: _selectedRoomNumber,
-                  borderRadius: BorderRadius.circular(16),
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  ),
-                  items: [
-                    DropdownMenuItem(
-                      value: 'all_rooms',
-                      child: Text(l10n.t('qrGenerateAllRooms') ?? 'All Rooms'),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Room Selector
+                    Text(
+                      l10n.t('qrGenerateRoom') ?? 'Room',
+                      style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                    for (final r in rooms)
-                      DropdownMenuItem(
-                        value: r,
-                        child: Text('Room $r'),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      isExpanded: true,
+                      value: _selectedRoomNumber,
+                      borderRadius: BorderRadius.circular(16),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                  ],
-                  onChanged: (val) {
-                    setState(() {
-                      _selectedRoomNumber = val ?? 'all_rooms';
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Product Selector (Only if scope is dispenser)
-                if (_scope == _QrScope.dispenser) ...[
-                  Text(
-                    l10n.t('qrGenerateProduct') ?? 'Product',
-                    style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    isExpanded: true,
-                    value: _selectedProductSku,
-                    borderRadius: BorderRadius.circular(16),
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                    items: [
-                      DropdownMenuItem(
-                        value: 'all_products',
-                        child: Text(l10n.t('qrGenerateAllProducts') ?? 'All Products'),
-                      ),
-                      for (final p in products)
+                      items: [
                         DropdownMenuItem(
-                          value: p.sku,
-                          child: Text('${p.sku} - ${p.label(language)}'),
+                          value: 'all_rooms',
+                          child: Text(l10n.t('qrGenerateAllRooms') ?? 'All Rooms'),
                         ),
+                        for (final r in rooms)
+                          DropdownMenuItem(
+                            value: r,
+                            child: Text('Room $r'),
+                          ),
+                      ],
+                      onChanged: (val) {
+                        setState(() {
+                          _selectedRoomNumber = val ?? 'all_rooms';
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Product Selector (Only if scope is dispenser)
+                    if (_scope == _QrScope.dispenser) ...[
+                      Text(
+                        l10n.t('qrGenerateProduct') ?? 'Product',
+                        style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        value: _selectedProductSku,
+                        borderRadius: BorderRadius.circular(16),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        ),
+                        items: [
+                          DropdownMenuItem(
+                            value: 'all_room_products',
+                            child: Text(l10n.t('qrGenAllRoomProducts') ?? 'All products in the selected room'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'all_inventory_products',
+                            child: Text(l10n.t('qrGenAllInventoryProducts') ?? 'All products in the inventory'),
+                          ),
+                          for (final p in sortedMasterProducts)
+                            DropdownMenuItem(
+                              value: p.sku,
+                              child: Text('${p.sku} - ${p.label(language)}'),
+                            ),
+                        ],
+                        onChanged: (val) {
+                          setState(() {
+                            _selectedProductSku = val ?? 'all_room_products';
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 24),
                     ],
-                    onChanged: (val) {
-                      setState(() {
-                        _selectedProductSku = val ?? 'all_products';
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                ],
-              ],
+                  ],
+                );
+              },
             );
           },
         ),
@@ -802,57 +1034,101 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     final language = Localizations.localeOf(context).languageCode;
 
     try {
-      final allProducts = ref.read(allRoomProductsProvider).valueOrNull ?? [];
+      final allRoomProducts = ref.read(allRoomProductsProvider).valueOrNull ?? [];
       final hotels = ref.read(hotelsProvider).valueOrNull ?? [];
+      final masterProducts = ref.read(productsProvider).valueOrNull ?? [];
 
       final hotel = hotels.firstWhereOrNull((h) => h.id == _selectedHotelId);
       if (hotel == null) {
         throw Exception('Selected hotel not found');
       }
 
-      // Filter products based on selections
-      var matchedProducts = allProducts.where((p) => p.hotelId == _selectedHotelId).toList();
-      if (_selectedRoomNumber != 'all_rooms') {
-        matchedProducts = matchedProducts.where((p) => p.roomNumber == _selectedRoomNumber).toList();
-      }
-      if (_scope == _QrScope.dispenser && _selectedProductSku != 'all_products') {
-        matchedProducts = matchedProducts.where((p) => p.product.sku == _selectedProductSku).toList();
+      final hotelProducts = allRoomProducts.where((p) => p.hotelId == _selectedHotelId).toList();
+
+      // Get unique rooms in the hotel with their floor numbers
+      final uniqueRoomsMap = <String, int>{}; // roomNumber -> floorNumber
+      for (final p in hotelProducts) {
+        uniqueRoomsMap[p.roomNumber] = p.floorNumber;
       }
 
-      if (matchedProducts.isEmpty) {
-        throw Exception('No rooms or products match your configuration');
+      // Filter rooms list to process
+      final roomsToProcess = <String>[];
+      if (_selectedRoomNumber != 'all_rooms') {
+        roomsToProcess.add(_selectedRoomNumber);
+        // Ensure we have a floor number mapped; fallback to 1
+        if (!uniqueRoomsMap.containsKey(_selectedRoomNumber)) {
+          uniqueRoomsMap[_selectedRoomNumber] = 1;
+        }
+      } else {
+        roomsToProcess.addAll(uniqueRoomsMap.keys);
       }
 
       final labelList = <QrCodeLabelData>[];
 
       if (_scope == _QrScope.room) {
-        // Group matched products by unique room
-        final uniqueRooms = <String, RoomProduct>{};
-        for (final p in matchedProducts) {
-          final key = '${p.floorNumber}_${p.roomNumber}';
-          uniqueRooms[key] = p;
-        }
-
-        for (final item in uniqueRooms.values) {
+        // Room Door QR (No SKU)
+        for (final roomNum in roomsToProcess) {
+          final floorNum = uniqueRoomsMap[roomNum] ?? 1;
           labelList.add(QrCodeLabelData(
             hotelName: hotel.name,
-            floor: '${item.floorNumber}',
-            room: item.roomNumber,
-            url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/${item.floorNumber}/${item.roomNumber}',
+            floor: '$floorNum',
+            room: roomNum,
+            url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/$floorNum/$roomNum',
           ));
         }
       } else {
-        // Dispenser labels - one label per matching RoomProduct
-        for (final item in matchedProducts) {
-          labelList.add(QrCodeLabelData(
-            hotelName: hotel.name,
-            floor: '${item.floorNumber}',
-            room: item.roomNumber,
-            productName: item.product.label(language),
-            productSku: item.product.sku,
-            url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/${item.floorNumber}/${item.roomNumber}/${item.product.sku.toUpperCase().startsWith('IVR-') ? item.product.sku : 'IVR-${item.product.sku}'}',
-          ));
+        // Dispenser scope (with SKU)
+        if (_selectedProductSku == 'all_room_products') {
+          // Only generate for products already placed in the selected room(s)
+          for (final item in hotelProducts) {
+            if (_selectedRoomNumber == 'all_rooms' || item.roomNumber == _selectedRoomNumber) {
+              labelList.add(QrCodeLabelData(
+                hotelName: hotel.name,
+                floor: '${item.floorNumber}',
+                room: item.roomNumber,
+                productName: item.product.label(language),
+                productSku: item.product.sku,
+                url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/${item.floorNumber}/${item.roomNumber}/${item.product.sku.toUpperCase().startsWith('IVR-') ? item.product.sku : 'IVR-${item.product.sku}'}',
+              ));
+            }
+          }
+        } else if (_selectedProductSku == 'all_inventory_products') {
+          // Generate for ALL master products in the selected room(s)
+          for (final roomNum in roomsToProcess) {
+            final floorNum = uniqueRoomsMap[roomNum] ?? 1;
+            for (final p in masterProducts) {
+              labelList.add(QrCodeLabelData(
+                hotelName: hotel.name,
+                floor: '$floorNum',
+                room: roomNum,
+                productName: p.label(language),
+                productSku: p.sku,
+                url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/$floorNum/$roomNum/${p.sku.toUpperCase().startsWith('IVR-') ? p.sku : 'IVR-${p.sku}'}',
+              ));
+            }
+          }
+        } else {
+          // Specific SKU selected
+          final selectedProd = masterProducts.firstWhereOrNull((p) => p.sku == _selectedProductSku);
+          if (selectedProd == null) {
+            throw Exception('Selected product SKU not found in catalog');
+          }
+          for (final roomNum in roomsToProcess) {
+            final floorNum = uniqueRoomsMap[roomNum] ?? 1;
+            labelList.add(QrCodeLabelData(
+              hotelName: hotel.name,
+              floor: '$floorNum',
+              room: roomNum,
+              productName: selectedProd.label(language),
+              productSku: selectedProd.sku,
+              url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/$floorNum/$roomNum/${selectedProd.sku.toUpperCase().startsWith('IVR-') ? selectedProd.sku : 'IVR-${selectedProd.sku}'}',
+            ));
+          }
         }
+      }
+
+      if (labelList.isEmpty) {
+        throw Exception('No rooms or products match your configuration');
       }
 
       // Sort labels by floor then room for printing convenience
@@ -972,10 +1248,14 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               });
 
               if (matchedItem == null) {
-                return _buildErrorCard(
+                // Scan & Assign: product not in room, offer to assign it
+                return _buildScanAssignCard(
                   context,
-                  title: l10n.t('productNotFound') ?? 'Product Not Found',
-                  message: l10n.tParams('qrProductNotFoundMessage', {'room': widget.room, 'floor': widget.floor, 'sku': widget.sku}) ?? 'Room ${widget.room} (Floor ${widget.floor}) does not contain product SKU: "${widget.sku}"',
+                  hotel: hotel,
+                  floor: widget.floor,
+                  room: widget.room,
+                  sku: widget.sku,
+                  language: language,
                 );
               }
 
@@ -1517,6 +1797,407 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         ),
       ],
     );
+  }
+
+  // --- Scan & Assign Flow ---
+
+  Widget _buildScanAssignCard(
+    BuildContext context, {
+    required Hotel hotel,
+    required String floor,
+    required String room,
+    required String sku,
+    required String language,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context);
+    final inventoryAsync = ref.watch(inventoryProvider);
+    final productsAsync = ref.watch(productsProvider);
+
+    // If action result already set (from a completed assign), show the result card
+    if (_actionResult != ActionResult.none) {
+      final isSuccess = _actionResult == ActionResult.success;
+      return Hero(
+        tag: 'qr-overlay-assign-result',
+        child: GlassCard(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    isSuccess ? Icons.check_circle_rounded : Icons.error_outline_rounded,
+                    color: isSuccess ? Colors.green : colorScheme.error,
+                    size: 36,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      isSuccess
+                          ? (l10n.t('scanAssignSuccess') ?? 'Product Assigned Successfully')
+                          : (l10n.t('scanAssignFailed') ?? 'Assignment Failed'),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: isSuccess ? Colors.green : colorScheme.error,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (_actionMessage != null) ...[
+                const SizedBox(height: 12),
+                Text(_actionMessage!, style: theme.textTheme.bodyMedium),
+              ],
+              const SizedBox(height: 24),
+              OutlinedButton.icon(
+                onPressed: () => context.go('/qr'),
+                icon: const Icon(Icons.qr_code_scanner_rounded),
+                label: Text(l10n.t('qrTryScanAgain') ?? 'Scan another'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: () => context.go('/rooms?hotelId=${hotel.id}&floorNumber=$floor&roomNumber=$room'),
+                icon: const Icon(Icons.meeting_room_rounded),
+                label: Text(l10n.t('goToRoom') ?? 'Go to Room'),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return productsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => _buildErrorCard(
+        context,
+        title: l10n.t('errorLoadingProducts') ?? 'Error',
+        message: e.toString(),
+      ),
+      data: (products) {
+        final product = products.firstWhereOrNull(
+          (p) => p.sku.toLowerCase() == sku.toLowerCase(),
+        );
+
+        if (product == null) {
+          return _buildErrorCard(
+            context,
+            title: l10n.t('productNotFound') ?? 'Product Not Found',
+            message: l10n.tParams('qrUnknownSku', {'sku': sku}) ??
+                'SKU "$sku" does not match any known product.',
+          );
+        }
+
+        final productName = product.label(language);
+
+        return inventoryAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => _buildErrorCard(
+            context,
+            title: l10n.t('errorLoadingInventory') ?? 'Error',
+            message: e.toString(),
+          ),
+          data: (inventoryItems) {
+            final inventoryItem = inventoryItems.firstWhereOrNull(
+              (i) => i.hotelId == hotel.id && i.product.sku.toLowerCase() == sku.toLowerCase(),
+            );
+            final stock = inventoryItem?.fullBottles ?? 0;
+            final hasStock = stock > 0;
+
+            return Hero(
+              tag: 'qr-overlay-assign-card',
+              child: GlassCard(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Header
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: colorScheme.tertiaryContainer,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.add_circle_outline_rounded,
+                            color: colorScheme.onTertiaryContainer,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.t('scanAssignTitle') ?? 'Assign Product to Room',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 24),
+
+                    // Location
+                    Row(
+                      children: [
+                        Icon(Icons.hotel_rounded, size: 16, color: colorScheme.primary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            '${hotel.name} · ${l10n.t('floor') ?? 'Floor'} $floor · ${l10n.t('room') ?? 'Room'} $room',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Product info
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 48,
+                            height: 48,
+                            child: ProductImage(imagePath: product.imagePath),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  productName,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'SKU: ${product.sku}',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Inventory Status
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: hasStock
+                            ? Colors.green.withValues(alpha: 0.1)
+                            : Colors.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: hasStock
+                              ? Colors.green.withValues(alpha: 0.3)
+                              : Colors.orange.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            hasStock ? Icons.inventory_2_rounded : Icons.warning_amber_rounded,
+                            size: 18,
+                            color: hasStock ? Colors.green : Colors.orange,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              hasStock
+                                  ? (l10n.tParams('scanAssignInStock', {'count': stock.toString()}) ??
+                                      '$stock in stock — will deduct 1 and assign to room')
+                                  : (l10n.t('scanAssignOutOfStock') ??
+                                      'Out of stock — 1 unit will be auto-added to inventory then assigned'),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: hasStock ? Colors.green.shade700 : Colors.orange.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Description
+                    Text(
+                      l10n.t('scanAssignDescription') ??
+                          'This product is not yet assigned to this room. Tap below to assign it.',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Action buttons
+                    if (_isPerformingAction)
+                      const Center(child: CircularProgressIndicator())
+                    else ...[
+                      if (hasStock)
+                        FilledButton.icon(
+                          onPressed: () => _executeScanAssign(
+                            hotelId: hotel.id,
+                            floor: floor,
+                            room: room,
+                            productSku: sku,
+                            autoAdjustInventory: false,
+                          ),
+                          icon: const Icon(Icons.add_task_rounded),
+                          label: Text(l10n.t('scanAssignButton') ?? 'Assign to Room'),
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                        )
+                      else
+                        FilledButton.icon(
+                          onPressed: () => _showAutoAddConfirmation(
+                            hotelId: hotel.id,
+                            floor: floor,
+                            room: room,
+                            productSku: sku,
+                            productName: productName,
+                          ),
+                          icon: const Icon(Icons.add_shopping_cart_rounded),
+                          label: Text(l10n.t('scanAssignAutoAdd') ?? 'Add to Inventory & Assign'),
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            backgroundColor: Colors.orange,
+                          ),
+                        ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: () => context.go('/qr'),
+                        icon: const Icon(Icons.qr_code_scanner_rounded),
+                        label: Text(l10n.t('qrTryScanAgain') ?? 'Scan another'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showAutoAddConfirmation({
+    required String hotelId,
+    required String floor,
+    required String room,
+    required String productSku,
+    required String productName,
+  }) async {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: Icon(Icons.inventory_2_outlined, color: theme.colorScheme.tertiary, size: 36),
+        title: Text(l10n.t('scanAssignAutoAddTitle') ?? 'Add to Inventory?'),
+        content: Text(
+          l10n.tParams('scanAssignAutoAddMessage', {'product': productName}) ??
+              'Product "$productName" is out of stock. Would you like to automatically add 1 unit to inventory and assign it to this room?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.t('btnCancel') ?? 'Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.t('scanAssignConfirm') ?? 'Yes, add & assign'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      _executeScanAssign(
+        hotelId: hotelId,
+        floor: floor,
+        room: room,
+        productSku: productSku,
+        autoAdjustInventory: true,
+      );
+    }
+  }
+
+  Future<void> _executeScanAssign({
+    required String hotelId,
+    required String floor,
+    required String room,
+    required String productSku,
+    required bool autoAdjustInventory,
+  }) async {
+    setState(() => _isPerformingAction = true);
+    final l10n = AppLocalizations.of(context);
+    try {
+      await ref.read(repositoryProvider).addProductToRoom(
+            hotelId: hotelId,
+            floor: floor,
+            roomNumber: room,
+            productSku: productSku,
+            autoAdjustInventory: autoAdjustInventory,
+          );
+
+      ref.invalidate(allRoomProductsProvider);
+      ref.invalidate(roomProductsProvider);
+      ref.invalidate(inventoryProvider);
+      ref.invalidate(dashboardProvider);
+
+      if (mounted) {
+        HapticFeedback.mediumImpact();
+        setState(() {
+          _actionResult = ActionResult.success;
+          _actionMessage = l10n.tParams('scanAssignSuccessMessage', {
+                'product': productSku,
+                'room': room,
+                'floor': floor,
+              }) ??
+              'Product $productSku has been assigned to Room $room (Floor $floor).';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _actionResult = ActionResult.failure;
+          _actionMessage = e.toString();
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isPerformingAction = false);
+      }
+    }
   }
 
   Widget _buildErrorCard(

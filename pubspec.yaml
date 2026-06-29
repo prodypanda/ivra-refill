@@ -2,7 +2,7 @@
 name: ivra_refill
 description: Ivra hotel refill operations app for Android and web.
 publish_to: none
-version: 1.1.2+62
+version: 1.1.3+63
 
 environment:
   sdk: ">=3.3.0 <4.0.0"

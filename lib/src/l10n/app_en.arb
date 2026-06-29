@@ -576,6 +576,28 @@
   "qrGenerateBtnDownload": "Generate & Download PDF",
   "qrGenerateDownloading": "Generating PDF...",
   "qrGenerateSuccess": "PDF generated and downloaded successfully",
+  "settingsScannerHeader": "Scanner Settings",
+  "settingsPrecisionScanTitle": "Precision Scan Window",
+  "settingsPrecisionScanSubtitle": "Only scan codes aligned in the viewfinder center",
+  "settingsTapToScanTitle": "Tap to Scan",
+  "settingsTapToScanSubtitle": "Tap on a detected QR code box to scan it",
+  "qrConfirmAssignTitle": "Product Not Placed",
+  "qrConfirmAssignMessage": "Product {product} is not assigned to Room {room}. Add 1 piece to inventory and assign it to the room?",
+  "@qrConfirmAssignMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "qrAssignSuccess": "Product assigned and refilled successfully",
+  "qrActionCanceled": "Operation Canceled",
+  "qrActionCanceledMessage": "You chose not to assign the product. You can scan another code or return to rooms.",
+  "qrGenAllRoomProducts": "All products in the selected room",
+  "qrGenAllInventoryProducts": "All products in the inventory",
   "qrLabelScanInstructions": "Scan with IVRA app to refill or replace",
   "roomsSearchProductPlaceholder": "Search product by name or SKU...",
   "adjustStockForProduct": "Adjust Stock for {product}",

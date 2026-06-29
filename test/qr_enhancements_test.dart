@@ -148,14 +148,166 @@ void main() {
       expect(damagedBtnWidget.onPressed, isNull);
       expect(lostBtnWidget.onPressed, isNull);
     });
+
+    testWidgets('Settings page allows toggling precision scan window and tap-to-scan', (tester) async {
+      await _pumpIvraApp(
+        tester,
+        currentUser: _userForRole(UserRole.hotelManager),
+      );
+
+      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
+
+      // Verify default state is true
+      expect(container.read(precisionScanWindowEnabledProvider), isTrue);
+      expect(container.read(tapToScanEnabledProvider), isTrue);
+
+      // Navigate to /settings
+      container.read(routerProvider).go('/settings');
+      await tester.pumpAndSettle();
+      // Find the SwitchListTiles
+      final precisionTileFinder = find.widgetWithText(SwitchListTile, 'Precision Scan Window');
+      final tapToScanTileFinder = find.widgetWithText(SwitchListTile, 'Tap to Scan');
+
+      expect(precisionTileFinder, findsOneWidget);
+      expect(tapToScanTileFinder, findsOneWidget);
+
+      // Verify initial switch values
+      final SwitchListTile precisionTile = tester.widget<SwitchListTile>(precisionTileFinder);
+      final SwitchListTile tapToScanTile = tester.widget<SwitchListTile>(tapToScanTileFinder);
+      expect(precisionTile.value, isTrue);
+      expect(tapToScanTile.value, isTrue);
+
+      // Tap precision scan window switch
+      await tester.tap(find.descendant(of: precisionTileFinder, matching: find.byType(Switch)));
+      await tester.pumpAndSettle();
+      expect(container.read(precisionScanWindowEnabledProvider), isFalse);
+
+      // Tap tap to scan switch
+      await tester.tap(find.descendant(of: tapToScanTileFinder, matching: find.byType(Switch)));
+      await tester.pumpAndSettle();
+      expect(container.read(tapToScanEnabledProvider), isFalse);
+    });
+
+    testWidgets('Scan & Assign - In Stock Flow successfully assigns product', (tester) async {
+      await _pumpIvraApp(
+        tester,
+        currentUser: _userForRole(UserRole.hotelManager),
+      );
+
+      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
+      // Navigate to Room 101 with IVR-GEL-1L (which is not in Room 101, but is in stock = 22)
+      container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-GEL-1L');
+      await tester.pumpAndSettle();
+
+      // Verify Scan & Assign screen is shown
+      expect(find.text('Assign Product to Room'), findsOneWidget);
+      expect(find.textContaining('22 in stock — will deduct 1 and assign to room'), findsOneWidget);
+
+      // Find the Assign button
+      final assignButton = find.widgetWithText(FilledButton, 'Assign to Room');
+      expect(assignButton, findsOneWidget);
+
+      // Tap the Assign button
+      await tester.tap(assignButton);
+      await tester.pumpAndSettle();
+
+      // Verify success card is displayed
+      expect(find.text('Action Successful'), findsOneWidget);
+      expect(find.textContaining('Product IVR-GEL-1L has been assigned to Room 101 (Floor 1).'), findsOneWidget);
+    });
+
+    testWidgets('Scan & Assign - Out of Stock Flow: Confirm Add successfully adds and assigns', (tester) async {
+      await _pumpIvraApp(
+        tester,
+        currentUser: _userForRole(UserRole.hotelManager),
+      );
+
+      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
+      // Navigate to Room 101 with IVR-CON-1L (not in room, out of stock)
+      container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-CON-1L');
+      await tester.pumpAndSettle();
+
+      // Verify Scan & Assign screen for out of stock
+      expect(find.text('Assign Product to Room'), findsOneWidget);
+      expect(find.textContaining('Out of stock — 1 unit will be auto-added to inventory then assigned'), findsOneWidget);
+
+      // Find the "Add to Inventory & Assign" button
+      final autoAddButton = find.widgetWithText(FilledButton, 'Add to Inventory & Assign');
+      expect(autoAddButton, findsOneWidget);
+
+      // Tap it to show confirmation dialog
+      await tester.tap(autoAddButton);
+      await tester.pumpAndSettle();
+
+      // Verify AlertDialog is shown
+      expect(find.text('Add to Inventory?'), findsOneWidget);
+      expect(find.textContaining('Product "Conditioner" is out of stock.'), findsOneWidget);
+
+      // Find the Confirm button in dialog
+      final confirmButton = find.widgetWithText(FilledButton, 'Yes, add & assign');
+      expect(confirmButton, findsOneWidget);
+
+      // Tap confirm
+      await tester.tap(confirmButton);
+      await tester.pumpAndSettle();
+
+      // Verify success card
+      expect(find.text('Action Successful'), findsOneWidget);
+      expect(find.textContaining('Product IVR-CON-1L has been assigned to Room 101 (Floor 1).'), findsOneWidget);
+    });
+
+    testWidgets('Scan & Assign - Out of Stock Flow: Cancel does not perform assign', (tester) async {
+      await _pumpIvraApp(
+        tester,
+        currentUser: _userForRole(UserRole.hotelManager),
+      );
+
+      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
+      // Navigate to Room 101 with IVR-CON-1L (not in room, out of stock)
+      container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-CON-1L');
+      await tester.pumpAndSettle();
+
+      final autoAddButton = find.widgetWithText(FilledButton, 'Add to Inventory & Assign');
+      await tester.tap(autoAddButton);
+      await tester.pumpAndSettle();
+
+      // Find the Cancel button in dialog
+      final cancelButton = find.widgetWithText(TextButton, 'Cancel');
+      expect(cancelButton, findsOneWidget);
+
+      // Tap Cancel
+      await tester.tap(cancelButton);
+      await tester.pumpAndSettle();
+
+      // Verify dialog is dismissed but we are still on the assign screen and no success card
+      expect(find.text('Add to Inventory?'), findsNothing);
+      expect(find.text('Assign Product to Room'), findsOneWidget);
+      expect(find.text('Action Successful'), findsNothing);
+    });
   });
 }
 
 UserProfile _userForRole(UserRole role) {
+  String id = 'test-${role.value}';
+  String fullName = 'Test ${role.value}';
+  String email = '${role.value}@ivra.test';
+  if (role == UserRole.hotelManager) {
+    id = 'hotel-manager-seaside';
+    fullName = 'Amina Bello';
+    email = 'amina@seaside.example';
+  } else if (role == UserRole.hotelStaff) {
+    id = 'hotel-staff-seaside';
+    fullName = 'Housekeeping Lead';
+    email = 'housekeeping@seaside.example';
+  } else if (role == UserRole.appManager) {
+    id = 'demo-manager';
+    fullName = 'Ivra Manager';
+    email = 'manager@ivra.example';
+  }
   return UserProfile(
-    id: 'test-${role.value}',
-    fullName: 'Test ${role.value}',
-    email: '${role.value}@ivra.test',
+    id: id,
+    fullName: fullName,
+    email: email,
     role: role,
     roleString: role.value,
     hotelId: role == UserRole.hotelManager || role == UserRole.hotelStaff

@@ -25,6 +25,8 @@ class SettingsScreen extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
     final useSupabase = ref.watch(useSupabaseProvider);
     final offlineMode = ref.watch(offlineModeProvider);
+    final precisionScanWindow = ref.watch(precisionScanWindowEnabledProvider);
+    final tapToScan = ref.watch(tapToScanEnabledProvider);
 
     return PageScaffold(
       title: l10n.t('settings'),
@@ -106,6 +108,52 @@ class SettingsScreen extends ConsumerWidget {
                 onChanged: (value) {
                   ref.read(offlineModeProvider.notifier).state = value;
                 },
+              ),
+            ),
+            const SizedBox(height: 20),
+            Card(
+              elevation: isMobile ? 0 : null,
+              shape: isMobile
+                  ? RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      side: BorderSide(
+                        color: theme.colorScheme.outlineVariant,
+                      ),
+                    )
+                  : null,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+                    child: Text(
+                      l10n.t('settingsScannerHeader'),
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SwitchListTile(
+                    secondary: const Icon(Icons.center_focus_strong_outlined),
+                    title: Text(l10n.t('settingsPrecisionScanTitle')),
+                    subtitle: Text(l10n.t('settingsPrecisionScanSubtitle')),
+                    value: precisionScanWindow,
+                    onChanged: (value) {
+                      ref.read(precisionScanWindowEnabledProvider.notifier).state = value;
+                    },
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    secondary: const Icon(Icons.touch_app_outlined),
+                    title: Text(l10n.t('settingsTapToScanTitle')),
+                    subtitle: Text(l10n.t('settingsTapToScanSubtitle')),
+                    value: tapToScan,
+                    onChanged: (value) {
+                      ref.read(tapToScanEnabledProvider.notifier).state = value;
+                    },
+                  ),
+                ],
               ),
             ),
             if (useSupabase) ...[

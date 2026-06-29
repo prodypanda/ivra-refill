@@ -1227,4 +1227,108 @@ class SupabaseIvraRepository implements IvraRepository {
       },
     );
   }
+
+  @override
+  Future<void> addProductToRoom({
+    required String hotelId,
+    required String floor,
+    required String roomNumber,
+    required String productSku,
+    bool autoAdjustInventory = false,
+  }) async {
+    // 1. Fetch products to find the target product ID
+    final prodList = await products();
+    final product = prodList.where((p) => p.sku.toLowerCase() == productSku.toLowerCase()).firstOrNull;
+    if (product == null) {
+      throw Exception('Product SKU $productSku not found');
+    }
+
+    final floorNum = int.tryParse(floor) ?? 0;
+    // 2. Fetch or create floor
+    final floorResult = await _client.from('floors').select('id').eq('hotel_id', hotelId).eq('floor_number', floorNum).maybeSingle();
+    String floorId;
+    if (floorResult == null) {
+      final newFloor = await _client.from('floors').insert({
+        'hotel_id': hotelId,
+        'floor_number': floorNum,
+        'name': 'Floor $floorNum',
+      }).select('id').single();
+      floorId = asString(newFloor['id']);
+    } else {
+      floorId = asString(floorResult['id']);
+    }
+
+    // 3. Fetch or create room
+    final roomResult = await _client.from('rooms').select('id').eq('hotel_id', hotelId).eq('room_number', roomNumber).maybeSingle();
+    String roomId;
+    if (roomResult == null) {
+      final newRoom = await _client.from('rooms').insert({
+        'hotel_id': hotelId,
+        'floor_id': floorId,
+        'room_number': roomNumber,
+      }).select('id').single();
+      roomId = asString(newRoom['id']);
+    } else {
+      roomId = asString(roomResult['id']);
+    }
+
+    // 4. Check inventory
+    final invResult = await _client.from('hotel_inventory').select('full_bottles').eq('hotel_id', hotelId).eq('product_id', product.id).maybeSingle();
+    final currentStock = invResult != null ? asInt(invResult['full_bottles']) : 0;
+
+    if (currentStock <= 0) {
+      if (!autoAdjustInventory) {
+        throw StateError('Product not in inventory');
+      } else {
+        // Automatically add 1 piece to inventory
+        await _client.from('hotel_inventory').upsert({
+          'hotel_id': hotelId,
+          'product_id': product.id,
+          'full_bottles': 1,
+          'empty_bottles': 0,
+        }, onConflict: 'hotel_id,product_id');
+
+        // Log inventory event
+        await _client.from('inventory_events').insert({
+          'hotel_id': hotelId,
+          'product_id': product.id,
+          'full_bottles_delta': 1,
+          'empty_bottles_delta': 0,
+          'reason': 'Auto-added to inventory for single room placement',
+          'performed_by': _client.auth.currentUser?.id,
+        });
+      }
+    }
+
+    // 5. Decrement inventory by 1
+    await _client.rpc('record_stock_adjustment', params: {
+      'p_hotel_id': hotelId,
+      'p_product_id': product.id,
+      'p_full_bottles_delta': -1,
+      'p_reason': 'Deducted for room placement',
+    });
+
+    // 6. Insert room product
+    final roomProductResult = await _client.from('room_products').insert({
+      'hotel_id': hotelId,
+      'room_id': roomId,
+      'product_id': product.id,
+      'status': 'active',
+    }).select('id').single();
+
+    final roomProductId = asString(roomProductResult['id']);
+
+    // 7. Insert refill event (bottle_replaced)
+    await _client.from('refill_events').insert({
+      'hotel_id': hotelId,
+      'room_product_id': roomProductId,
+      'event_type': 'bottle_replaced',
+      'previous_refill_count': 0,
+      'new_refill_count': 0,
+      'performed_by': _client.auth.currentUser?.id,
+      'notes': 'Initial bottle placement',
+    });
+
+    await _clearRefillEventsCache();
+  }
 }

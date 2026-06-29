@@ -1219,6 +1219,46 @@ class AppL10nAr extends AppL10n {
   String get qrGenerateSuccess => 'تم توليد وتنزيل ملف PDF بنجاح';
 
   @override
+  String get settingsScannerHeader => 'إعدادات الماسح الضوئي';
+
+  @override
+  String get settingsPrecisionScanTitle => 'نافذة المسح الدقيقة';
+
+  @override
+  String get settingsPrecisionScanSubtitle =>
+      'مسح الرموز المحاذية لمركز محدد فقط';
+
+  @override
+  String get settingsTapToScanTitle => 'النقر للمسح';
+
+  @override
+  String get settingsTapToScanSubtitle => 'انقر على مربع رمز QR المكتشف لمسحه';
+
+  @override
+  String get qrConfirmAssignTitle => 'المنتج غير موضوع';
+
+  @override
+  String qrConfirmAssignMessage(String product, String room) {
+    return 'المنتج $product غير مخصص للغرفة $room. هل تريد إضافة قطعة واحدة إلى المخزون وتخصيصها للغرفة؟';
+  }
+
+  @override
+  String get qrAssignSuccess => 'تم تخصيص المنتج وإعادة تعبئته بنجاح';
+
+  @override
+  String get qrActionCanceled => 'تم إلغاء العملية';
+
+  @override
+  String get qrActionCanceledMessage =>
+      'اخترت عدم تخصيص المنتج. يمكنك مسح رمز آخر أو العودة إلى الغرف.';
+
+  @override
+  String get qrGenAllRoomProducts => 'جميع المنتجات في الغرفة المحددة';
+
+  @override
+  String get qrGenAllInventoryProducts => 'جميع المنتجات في المخزون';
+
+  @override
   String get qrLabelScanInstructions =>
       'امسح بتطبيق IVRA لإعادة التعبئة أو الاستبدال';
 

@@ -2363,6 +2363,78 @@ abstract class AppL10n {
   /// **'PDF generated and downloaded successfully'**
   String get qrGenerateSuccess;
 
+  /// No description provided for @settingsScannerHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanner Settings'**
+  String get settingsScannerHeader;
+
+  /// No description provided for @settingsPrecisionScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Precision Scan Window'**
+  String get settingsPrecisionScanTitle;
+
+  /// No description provided for @settingsPrecisionScanSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Only scan codes aligned in the viewfinder center'**
+  String get settingsPrecisionScanSubtitle;
+
+  /// No description provided for @settingsTapToScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to Scan'**
+  String get settingsTapToScanTitle;
+
+  /// No description provided for @settingsTapToScanSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap on a detected QR code box to scan it'**
+  String get settingsTapToScanSubtitle;
+
+  /// No description provided for @qrConfirmAssignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Not Placed'**
+  String get qrConfirmAssignTitle;
+
+  /// No description provided for @qrConfirmAssignMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Product {product} is not assigned to Room {room}. Add 1 piece to inventory and assign it to the room?'**
+  String qrConfirmAssignMessage(String product, String room);
+
+  /// No description provided for @qrAssignSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Product assigned and refilled successfully'**
+  String get qrAssignSuccess;
+
+  /// No description provided for @qrActionCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation Canceled'**
+  String get qrActionCanceled;
+
+  /// No description provided for @qrActionCanceledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You chose not to assign the product. You can scan another code or return to rooms.'**
+  String get qrActionCanceledMessage;
+
+  /// No description provided for @qrGenAllRoomProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'All products in the selected room'**
+  String get qrGenAllRoomProducts;
+
+  /// No description provided for @qrGenAllInventoryProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'All products in the inventory'**
+  String get qrGenAllInventoryProducts;
+
   /// No description provided for @qrLabelScanInstructions.
   ///
   /// In en, this message translates to:

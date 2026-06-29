@@ -1839,4 +1839,135 @@ class MockIvraRepository implements IvraRepository {
       ),
     );
   }
+
+  @override
+  Future<void> addProductToRoom({
+    required String hotelId,
+    required String floor,
+    required String roomNumber,
+    required String productSku,
+    bool autoAdjustInventory = false,
+  }) async {
+    final product = _products.where((p) => p.sku.toLowerCase() == productSku.toLowerCase()).firstOrNull;
+    if (product == null) {
+      throw Exception('Product SKU $productSku not found');
+    }
+
+    final floorNum = int.tryParse(floor) ?? 0;
+    // Find the room or create it if not exists
+    var room = _rooms.where((r) => r.hotelId == hotelId && r.roomNumber == roomNumber && r.floorNumber == floorNum).firstOrNull;
+    final roomId = room?.id ?? _uuid.v4();
+    if (room == null) {
+      room = RoomInfo(
+        id: roomId,
+        hotelId: hotelId,
+        floorId: 'floor-$hotelId-$floorNum',
+        roomNumber: roomNumber,
+        floorNumber: floorNum,
+        productCount: 1,
+      );
+      _rooms.add(room);
+    } else {
+      final roomIndex = _rooms.indexOf(room);
+      _rooms[roomIndex] = RoomInfo(
+        id: room.id,
+        hotelId: room.hotelId,
+        floorId: room.floorId,
+        roomNumber: room.roomNumber,
+        floorNumber: room.floorNumber,
+        productCount: room.productCount + 1,
+      );
+    }
+
+    // Check inventory
+    final inventoryIndex = _inventory.indexWhere(
+      (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
+    );
+    final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
+
+    if (currentStock <= 0) {
+      if (!autoAdjustInventory) {
+        throw StateError('Product not in inventory');
+      } else {
+        // Automatically add 1 piece to the inventory first (by adding to stock)
+        if (inventoryIndex != -1) {
+          final stock = _inventory[inventoryIndex];
+          _inventory[inventoryIndex] = stock.copyWith(
+            fullBottles: stock.fullBottles + 1,
+          );
+        } else {
+          _inventory.add(InventoryItem(
+            id: _uuid.v4(),
+            hotelId: hotelId,
+            product: product,
+            fullBottles: 1,
+            emptyBottles: 0,
+            fullBidons: 0,
+            openBidons: 0,
+            emptyBidons: 0,
+          ));
+        }
+
+        // Log adjustment event (+1 bottle)
+        _inventoryEvents.insert(
+          0,
+          InventoryEvent(
+            id: _uuid.v4(),
+            hotelId: hotelId,
+            productId: product.id,
+            fullBottlesDelta: 1,
+            emptyBottlesDelta: 0,
+            fullBidonsDelta: 0,
+            openBidonsDelta: 0,
+            emptyBidonsDelta: 0,
+            reason: 'Auto-added to inventory for single room placement',
+            performedBy: _currentUser.id,
+            occurredAt: DateTime.now(),
+          ),
+        );
+      }
+    }
+
+    // Now decrement the stock by 1
+    final updatedInventoryIndex = _inventory.indexWhere(
+      (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
+    );
+    if (updatedInventoryIndex != -1) {
+      final stock = _inventory[updatedInventoryIndex];
+      _inventory[updatedInventoryIndex] = stock.copyWith(
+        fullBottles: max(stock.fullBottles - 1, 0),
+      );
+    }
+
+    // Insert into room products
+    final roomProductId = _uuid.v4();
+    _roomProducts.add(
+      RoomProduct(
+        id: roomProductId,
+        hotelId: hotelId,
+        roomId: roomId,
+        roomNumber: roomNumber,
+        floorNumber: floorNum,
+        product: product,
+        refillCount: 0,
+        lastRefillAt: null,
+        bottleStartedAt: DateTime.now(),
+        status: BottleStatus.active,
+      ),
+    );
+
+    // Add initial replacement event for history
+    _events.insert(
+      0,
+      RefillEvent(
+        id: _uuid.v4(),
+        roomProductId: roomProductId,
+        type: RefillEventType.bottleReplaced,
+        previousRefillCount: 0,
+        newRefillCount: 0,
+        occurredAt: DateTime.now(),
+        performedBy: _currentUser.id,
+      ),
+    );
+  }
 }
