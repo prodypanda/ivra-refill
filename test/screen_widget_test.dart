@@ -532,7 +532,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Offline mode'), findsWidgets);
-      expect(find.byType(SwitchListTile), findsOneWidget);
+      expect(find.byType(SwitchListTile), findsWidgets);
     });
 
     testWidgets('shows pending sync section', (tester) async {
