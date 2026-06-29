@@ -32,7 +32,7 @@ import '../state/app_state.dart';
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this._ref) {
     _ref.listen(supabaseAuthStateProvider, (_, next) {
-      if (next.value?.event == AuthChangeEvent.passwordRecovery) {
+      if (next.valueOrNull?.event == AuthChangeEvent.passwordRecovery) {
         _ref.read(isPasswordRecoveryProvider.notifier).state = true;
       }
       notifyListeners();
