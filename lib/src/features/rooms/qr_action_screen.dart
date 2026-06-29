@@ -88,7 +88,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     }
 
     _inputController = TextEditingController();
-    _initCamera();
+    if (isScanMode) {
+      _initCamera();
+    }
   }
 
   void _initCamera() {
@@ -96,6 +98,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     if (isTestEnv) {
       return;
     }
+    if (_cameraController != null) return;
     _cameraController = MobileScannerController(
       detectionSpeed: DetectionSpeed.noDuplicates,
       facing: CameraFacing.back,
@@ -103,6 +106,46 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     setState(() {
       _isCameraInitialized = true;
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant QrActionScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final wasScanMode = oldWidget.hotelSlugOrId.isEmpty ||
+        oldWidget.floor.isEmpty ||
+        oldWidget.room.isEmpty ||
+        oldWidget.sku.isEmpty;
+
+    final isScanMode = widget.hotelSlugOrId.isEmpty ||
+        widget.floor.isEmpty ||
+        widget.room.isEmpty ||
+        widget.sku.isEmpty;
+
+    if (!wasScanMode && isScanMode) {
+      // Transitioning back to scanning mode (e.g. from error/action screen via GoRouter)
+      setState(() {
+        _actionResult = ActionResult.none;
+        _actionMessage = null;
+        _activeTab = _QrTab.scan;
+      });
+      _cameraController?.dispose();
+      _cameraController = null;
+      _initCamera();
+
+      final bool isTestEnv = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+      if (!isTestEnv) {
+        _scanController.repeat(reverse: true);
+      }
+    } else if (wasScanMode && !isScanMode) {
+      // Transitioning to action screen
+      _scanController.stop();
+      _cameraController?.dispose();
+      setState(() {
+        _isCameraInitialized = false;
+        _cameraController = null;
+      });
+    }
   }
 
   @override
@@ -296,9 +339,25 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               selected: {_activeTab},
               onSelectionChanged: (val) {
                 HapticFeedback.lightImpact();
-                setState(() {
-                  _activeTab = val.first;
-                });
+                final newTab = val.first;
+                if (newTab == _QrTab.generate) {
+                  _scanController.stop();
+                  _cameraController?.dispose();
+                  setState(() {
+                    _isCameraInitialized = false;
+                    _cameraController = null;
+                    _activeTab = newTab;
+                  });
+                } else {
+                  setState(() {
+                    _activeTab = newTab;
+                  });
+                  _initCamera();
+                  final bool isTestEnv = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+                  if (!isTestEnv) {
+                    _scanController.repeat(reverse: true);
+                  }
+                }
               },
               style: SegmentedButton.styleFrom(
                 selectedBackgroundColor: colorScheme.primary.withValues(alpha: 0.15),
@@ -791,7 +850,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
             room: item.roomNumber,
             productName: item.product.label(language),
             productSku: item.product.sku,
-            url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/${item.floorNumber}/${item.roomNumber}/IVR-${item.product.sku}',
+            url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/${item.floorNumber}/${item.roomNumber}/${item.product.sku.toUpperCase().startsWith('IVR-') ? item.product.sku : 'IVR-${item.product.sku}'}',
           ));
         }
       }
