@@ -424,7 +424,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                   final filtered = barcodes.where((b) => b.rawValue != null).toList();
                                   if (filtered.isEmpty) return;
 
-                                  if (tapToScanEnabled && filtered.length > 1) {
+                                  if (tapToScanEnabled) {
                                     _clearBarcodesTimer?.cancel();
                                     setState(() {
                                       _detectedBarcodes = filtered;
