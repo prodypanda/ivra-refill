@@ -73,9 +73,19 @@ Future<String?> savedPasswordFor(String email) async {
 
   final prefs = await SharedPreferences.getInstance();
   password = prefs.getString(AuthPrefs.passwordKey(email));
+
+  if (password == null || password.isEmpty) {
+    password = prefs.getString(AuthPrefs.legacyPassword);
+  }
+
   if (password != null && password.isNotEmpty) {
     await saveLoginCredentials(email, password);
   }
+
+  if (prefs.containsKey(AuthPrefs.legacyPassword)) {
+    await prefs.remove(AuthPrefs.legacyPassword);
+  }
+
   return password;
 }
 
