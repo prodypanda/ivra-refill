@@ -38,7 +38,7 @@ class RefillPercentageDialog extends StatefulWidget {
 }
 
 class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
-  double _refillPercentage = 1.0; // Default to 100%
+  double _refillPercentage = 0.1; // Default to 10% (0.1)
   late final TextEditingController _notesController;
 
   @override
@@ -121,6 +121,7 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                       // Animated Bottle representation
                       AnimatedBottleRefillIndicator(
                         refillPercentage: _refillPercentage,
+                        bottleVolumeMl: widget.item.product.bottleVolumeMl,
                         baseColor: baseColor,
                         accentColor: accentColor,
                         width: 140,

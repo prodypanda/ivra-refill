@@ -89,9 +89,9 @@ void main() {
     expect(find.byType(AnimatedBottleRefillIndicator), findsOneWidget);
     expect(find.byType(Slider), findsOneWidget);
 
-    // Initial slider value is usually 1.0 (or 100%)
+    // Initial slider value is 0.1 (or 10%)
     final Slider slider = tester.widget(find.byType(Slider));
-    expect(slider.value, equals(1.0));
+    expect(slider.value, equals(0.1));
 
     // Drag or tap slider to 50%
     await tester.tap(find.byType(Slider));
@@ -155,7 +155,7 @@ void main() {
     // Dialog should be closed
     expect(find.byType(RefillPercentageDialog), findsNothing);
     expect(returnedResult, isNotNull);
-    expect(returnedResult!.refillPercentage, equals(100));
+    expect(returnedResult!.refillPercentage, equals(10));
     expect(returnedResult!.notes, equals('Refilled under supervision'));
   });
 }
