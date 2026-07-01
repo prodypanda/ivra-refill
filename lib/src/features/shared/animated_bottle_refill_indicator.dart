@@ -48,8 +48,11 @@ class _AnimatedBottleRefillIndicatorState
     extends State<AnimatedBottleRefillIndicator>
     with TickerProviderStateMixin {
   late final AnimationController _waveController;
-  late final AnimationController _fillController;
-  late Animation<double> _fillAnimation;
+  late final AnimationController _oldLiquidController;
+  late final AnimationController _newLiquidController;
+
+  late Animation<double> _oldLiquidAnimation;
+  late Animation<double> _newLiquidAnimation;
 
   @override
   void initState() {
@@ -59,23 +62,31 @@ class _AnimatedBottleRefillIndicatorState
       duration: const Duration(milliseconds: 2500),
     )..repeat();
 
-    _fillController = AnimationController(
+    _oldLiquidController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+
+    _newLiquidController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
 
+    final targetOld = (1.0 - widget.refillPercentage).clamp(0.0, 1.0);
+    _oldLiquidAnimation = AlwaysStoppedAnimation<double>(targetOld);
+
     if (widget.isInteracting) {
-      _fillAnimation = const AlwaysStoppedAnimation<double>(0.0);
+      _newLiquidAnimation = const AlwaysStoppedAnimation<double>(0.0);
     } else {
-      _fillAnimation = Tween<double>(
+      _newLiquidAnimation = Tween<double>(
         begin: 0.0,
         end: widget.refillPercentage,
       ).animate(CurvedAnimation(
-        parent: _fillController,
+        parent: _newLiquidController,
         curve: Curves.easeOutCubic,
       ));
       if (widget.refillPercentage > 0.0) {
-        _fillController.forward(from: 0.0);
+        _newLiquidController.forward(from: 0.0);
       }
     }
   }
@@ -84,39 +95,59 @@ class _AnimatedBottleRefillIndicatorState
   void didUpdateWidget(AnimatedBottleRefillIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    final targetOld = (1.0 - widget.refillPercentage).clamp(0.0, 1.0);
+
+    // If target percentage changed, animate the old liquid level smoothly (Evaporation/Adjusting)
+    if (oldWidget.refillPercentage != widget.refillPercentage) {
+      _oldLiquidController.stop();
+      _oldLiquidAnimation = Tween<double>(
+        begin: _oldLiquidAnimation.value,
+        end: targetOld,
+      ).animate(CurvedAnimation(
+        parent: _oldLiquidController,
+        curve: Curves.easeOutCubic,
+      ));
+      _oldLiquidController.forward(from: 0.0);
+    }
+
+    // Handle interaction state transitions
     if (oldWidget.isInteracting != widget.isInteracting) {
-      _fillController.stop();
+      _newLiquidController.stop();
 
       if (widget.isInteracting) {
-        _fillAnimation = const AlwaysStoppedAnimation<double>(0.0);
+        // While dragging, new liquid is instantly hidden
+        _newLiquidAnimation = const AlwaysStoppedAnimation<double>(0.0);
       } else {
-        _fillAnimation = Tween<double>(
+        // On release, animate new liquid up from 0.0
+        _newLiquidAnimation = Tween<double>(
           begin: 0.0,
           end: widget.refillPercentage,
         ).animate(CurvedAnimation(
-          parent: _fillController,
+          parent: _newLiquidController,
           curve: Curves.easeOutCubic,
         ));
-        _fillController.forward(from: 0.0);
+        _newLiquidController.forward(from: 0.0);
       }
     } else if (!widget.isInteracting &&
         oldWidget.refillPercentage != widget.refillPercentage) {
-      _fillController.stop();
-      _fillAnimation = Tween<double>(
-        begin: _fillAnimation.value,
+      // If not interacting but target changed from outside, animate new liquid to target
+      _newLiquidController.stop();
+      _newLiquidAnimation = Tween<double>(
+        begin: _newLiquidAnimation.value,
         end: widget.refillPercentage,
       ).animate(CurvedAnimation(
-        parent: _fillController,
+        parent: _newLiquidController,
         curve: Curves.easeOutCubic,
       ));
-      _fillController.forward(from: 0.0);
+      _newLiquidController.forward(from: 0.0);
     }
   }
 
   @override
   void dispose() {
     _waveController.dispose();
-    _fillController.dispose();
+    _oldLiquidController.dispose();
+    _newLiquidController.dispose();
     super.dispose();
   }
 
@@ -131,12 +162,13 @@ class _AnimatedBottleRefillIndicatorState
         (isDark ? Colors.cyanAccent.shade400 : Colors.teal.shade400);
 
     return AnimatedBuilder(
-      animation: Listenable.merge([_waveController, _fillController]),
+      animation: Listenable.merge([_waveController, _oldLiquidController, _newLiquidController]),
       builder: (context, child) {
         return CustomPaint(
           size: Size(widget.width, widget.height),
           painter: _BottlePainter(
-            refillPercentage: _fillAnimation.value,
+            oldLiquidPercentage: _oldLiquidAnimation.value,
+            newLiquidPercentage: _newLiquidAnimation.value,
             targetRefillPercentage: widget.refillPercentage,
             isInteracting: widget.isInteracting,
             bottleVolumeMl: widget.bottleVolumeMl,
@@ -155,7 +187,8 @@ class _AnimatedBottleRefillIndicatorState
 
 class _BottlePainter extends CustomPainter {
   _BottlePainter({
-    required this.refillPercentage,
+    required this.oldLiquidPercentage,
+    required this.newLiquidPercentage,
     required this.targetRefillPercentage,
     required this.isInteracting,
     required this.bottleVolumeMl,
@@ -167,7 +200,8 @@ class _BottlePainter extends CustomPainter {
     required this.toAddLabel,
   });
 
-  final double refillPercentage;
+  final double oldLiquidPercentage;
+  final double newLiquidPercentage;
   final double targetRefillPercentage;
   final bool isInteracting;
   final int bottleVolumeMl;
@@ -184,12 +218,12 @@ class _BottlePainter extends CustomPainter {
     final xLeft = size.width * 0.22; // Nudge in slightly to leave room for left scale ruler
     final xRight = size.width * 0.88;
     final yBottom = size.height * 0.93;
-    final yTop = size.height * 0.25; // Shortened neck/mouth (was 0.18)
+    final yTop = size.height * 0.32; // Shortened neck/mouth (was 0.25/0.18)
     final yShoulder = size.height * 0.42; // Adjusted shoulder proportion (was 0.42)
-    final yNeckBase = size.height * 0.32; // Adjusted neck base (was 0.34)
+    final yNeckBase = size.height * 0.36; // Adjusted neck base (was 0.32/0.34)
     final xNeckLeft = xLeft + (xRight - xLeft) * 0.34;
     final xNeckRight = xLeft + (xRight - xLeft) * 0.66;
-    const cornerRadius = 16.0;
+    const cornerRadius = 24.0; // True large rounded premium corners (was 16.0)
 
     // 1. Draw a soft, premium drop shadow beneath the bottle base
     final shadowPaint = Paint()
@@ -233,13 +267,13 @@ class _BottlePainter extends CustomPainter {
     canvas.save();
     canvas.clipPath(bottlePath);
 
-    final yMaxLiquid = size.height * 0.36; // Lowered liquid top to match shoulder adjustments
+    final yMaxLiquid = size.height * 0.44; // Lowered liquid top to match shoulder adjustments (was 0.36)
     final yMinLiquid = size.height * 0.91;
     final liquidSpan = yMinLiquid - yMaxLiquid;
 
     // Liquid physical ratios:
-    final double r_old = (1.0 - targetRefillPercentage).clamp(0.0, 1.0);
-    final double r_new = (isInteracting ? 0.0 : refillPercentage).clamp(0.0, targetRefillPercentage);
+    final double r_old = oldLiquidPercentage;
+    final double r_new = newLiquidPercentage;
 
     final double ySplit = yMinLiquid - r_old * liquidSpan;
     final double yNewSurface = yMinLiquid - (r_old + r_new) * liquidSpan;
@@ -262,10 +296,20 @@ class _BottlePainter extends CustomPainter {
       }
     }
 
+    // Calculate dynamic wave dampening factor
+    double waveFactor = 0.0;
+    if (!isInteracting && targetRefillPercentage > 0.001) {
+      final double progress = (r_new / targetRefillPercentage).clamp(0.0, 1.0);
+      waveFactor = math.pow(1.0 - progress, 1.2).toDouble();
+      if (progress >= 0.98) {
+        waveFactor = 0.0;
+      }
+    }
+
     // A. Draw newly added liquid (accentColor) at the top
     if (r_new > 0.001) {
       final addedWavePath = Path();
-      const waveAmplitude = 4.5;
+      final waveAmplitude = 4.5 * waveFactor;
       const waveFrequency = 0.055;
 
       addedWavePath.moveTo(xLeft - 10, size.height);
@@ -322,7 +366,7 @@ class _BottlePainter extends CustomPainter {
     // B. Draw pre-existing liquid (baseColor) on top to overlay beautifully
     if (r_old > 0.001) {
       final existingWavePath = Path();
-      const waveAmplitude = 3.5;
+      final waveAmplitude = 3.5 * waveFactor;
       const waveFrequency = 0.045;
 
       existingWavePath.moveTo(xLeft - 10, size.height);
@@ -712,7 +756,8 @@ class _BottlePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _BottlePainter oldDelegate) {
-    return oldDelegate.refillPercentage != refillPercentage ||
+    return oldDelegate.oldLiquidPercentage != oldLiquidPercentage ||
+        oldDelegate.newLiquidPercentage != newLiquidPercentage ||
         oldDelegate.targetRefillPercentage != targetRefillPercentage ||
         oldDelegate.isInteracting != isInteracting ||
         oldDelegate.bottleVolumeMl != bottleVolumeMl ||

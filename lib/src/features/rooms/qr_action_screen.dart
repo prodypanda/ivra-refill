@@ -2334,6 +2334,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       ref.invalidate(roomProductsProvider);
       ref.invalidate(dashboardProvider);
       ref.invalidate(refillEventsProvider);
+      ref.invalidate(inventoryProvider);
 
       if (mounted) {
         HapticFeedback.mediumImpact();

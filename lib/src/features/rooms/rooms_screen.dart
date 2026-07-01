@@ -1822,6 +1822,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
       ref.invalidate(refillEventsProvider);
       ref.invalidate(approvalsProvider);
       ref.invalidate(dashboardProvider);
+      ref.invalidate(inventoryProvider);
 
       if (mounted) {
         PremiumSnackbar.show(
