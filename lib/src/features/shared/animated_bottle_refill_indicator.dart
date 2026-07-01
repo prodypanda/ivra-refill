@@ -9,8 +9,8 @@ class AnimatedBottleRefillIndicator extends StatefulWidget {
     required this.isInteracting,
     this.baseColor,
     this.accentColor,
-    this.width = 150,
-    this.height = 240,
+    this.width = 140,
+    this.height = 200,
     this.existingLabel,
     this.toAddLabel,
   });
@@ -217,13 +217,13 @@ class _BottlePainter extends CustomPainter {
     // Coordinate dimensions based on canvas size
     final xLeft = size.width * 0.22; // Nudge in slightly to leave room for left scale ruler
     final xRight = size.width * 0.88;
-    final yBottom = size.height * 0.93;
-    final yTop = size.height * 0.32; // Shortened neck/mouth (was 0.25/0.18)
-    final yShoulder = size.height * 0.42; // Adjusted shoulder proportion (was 0.42)
-    final yNeckBase = size.height * 0.36; // Adjusted neck base (was 0.32/0.34)
+    final yBottom = size.height * 0.94;
+    final yTop = size.height * 0.08; // Shifted mouth up to minimize padding
+    final yShoulder = size.height * 0.18; // Adjusted shoulder proportion
+    final yNeckBase = size.height * 0.13; // Adjusted neck base
     final xNeckLeft = xLeft + (xRight - xLeft) * 0.34;
     final xNeckRight = xLeft + (xRight - xLeft) * 0.66;
-    const cornerRadius = 18.0; // Balanced rounded corners (was 24.0)
+    const cornerRadius = 14.0; // Balanced rounded corners (was 18.0)
 
     // 1. Draw a soft, premium drop shadow beneath the bottle base
     final shadowPaint = Paint()
@@ -267,8 +267,8 @@ class _BottlePainter extends CustomPainter {
     canvas.save();
     canvas.clipPath(bottlePath);
 
-    final yMaxLiquid = size.height * 0.44; // Lowered liquid top to match shoulder adjustments (was 0.36)
-    final yMinLiquid = size.height * 0.91;
+    final yMaxLiquid = size.height * 0.20; // Match shoulder adjustments to maximize liquid height
+    final yMinLiquid = size.height * 0.92;
     final liquidSpan = yMinLiquid - yMaxLiquid;
 
     // Liquid physical ratios:

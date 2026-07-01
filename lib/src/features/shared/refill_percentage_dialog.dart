@@ -117,24 +117,21 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 56),
+                      const SizedBox(height: 24),
 
                       // Animated Bottle representation with 4-language localized labels inside
-                      Transform.translate(
-                        offset: const Offset(0, -70),
-                        child: AnimatedBottleRefillIndicator(
-                          refillPercentage: _refillPercentage,
-                          bottleVolumeMl: widget.item.product.bottleVolumeMl,
-                          isInteracting: _isSliderInteracting,
-                          baseColor: baseColor,
-                          accentColor: accentColor,
-                          width: 140,
-                          height: 290,
-                          existingLabel: l10n.t('dialogRefillPreExisting').replaceAll(':', '').replaceAll('：', '').trim(),
-                          toAddLabel: l10n.t('dialogRefillAdded').replaceAll(':', '').replaceAll('：', '').trim(),
-                        ),
+                      AnimatedBottleRefillIndicator(
+                        refillPercentage: _refillPercentage,
+                        bottleVolumeMl: widget.item.product.bottleVolumeMl,
+                        isInteracting: _isSliderInteracting,
+                        baseColor: baseColor,
+                        accentColor: accentColor,
+                        width: 140,
+                        height: 200,
+                        existingLabel: l10n.t('dialogRefillPreExisting').replaceAll(':', '').replaceAll('：', '').trim(),
+                        toAddLabel: l10n.t('dialogRefillAdded').replaceAll(':', '').replaceAll('：', '').trim(),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
 
                       // Legends displaying Already Full vs To Add
                       Wrap(
