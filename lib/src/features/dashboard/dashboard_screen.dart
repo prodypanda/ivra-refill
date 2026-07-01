@@ -506,8 +506,8 @@ class _MetricCardState extends State<_MetricCard> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: AlignmentDirectional.topStart,
+              end: AlignmentDirectional.bottomEnd,
               colors: [
                 theme.colorScheme.surface.withValues(alpha: 0.9),
                 theme.colorScheme.surface.withValues(alpha: 0.7),
@@ -617,8 +617,8 @@ class _MobileHeroState extends State<_MobileHero> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(32),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
           colors: [
             theme.colorScheme.primary,
             theme.colorScheme.primary.withRed(220).withGreen(120),
@@ -634,8 +634,8 @@ class _MobileHeroState extends State<_MobileHero> {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: -20,
+          PositionedDirectional(
+            end: -20,
             top: -20,
             child: Icon(
               Icons.spa,
@@ -648,9 +648,10 @@ class _MobileHeroState extends State<_MobileHero> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
+                InkWell(
                   onTap: () => setState(() => _isExpanded = !_isExpanded),
-                  behavior: HitTestBehavior.opaque,
+                  borderRadius: BorderRadius.circular(20),
+                  splashColor: Colors.white.withValues(alpha: 0.1),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -677,9 +678,15 @@ class _MobileHeroState extends State<_MobileHero> {
                           ],
                         ),
                       ),
-                      Icon(
-                        _isExpanded ? Icons.expand_less : Icons.expand_more,
-                        color: Colors.white,
+                      Tooltip(
+                        message: _isExpanded ? l10n.t('roomsCollapseAll') : l10n.t('roomsExpandAll'),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            _isExpanded ? Icons.expand_less : Icons.expand_more,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -889,9 +896,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
           refillEventsAsync.when(
             loading: () => const SizedBox(
               height: 220,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: CardShimmer(),
             ),
             error: (err, stack) => SizedBox(
               height: 220,
@@ -1021,6 +1026,8 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
               return SizedBox(
                 height: 220,
                 child: LineChart(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
                   LineChartData(
                     gridData: FlGridData(
                       show: true,
@@ -1164,7 +1171,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         if (showHotelSelector) ...[
-          _buildDropdown<String?>(
+          _ChartSelectorDropdown<String?>(
             value: selectedHotelId,
             items: [
               DropdownMenuItem(
@@ -1184,7 +1191,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
             theme: theme,
           ),
         ],
-        _buildDropdown<ChartDateRange>(
+        _ChartSelectorDropdown<ChartDateRange>(
           value: _dateRange,
           items: [
             DropdownMenuItem(
@@ -1213,14 +1220,25 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
       ],
     );
   }
+}
 
-  Widget _buildDropdown<T>({
-    required T value,
-    required List<DropdownMenuItem<T>> items,
-    required ValueChanged<T?> onChanged,
-    required IconData icon,
-    required ThemeData theme,
-  }) {
+class _ChartSelectorDropdown<T> extends StatelessWidget {
+  const _ChartSelectorDropdown({
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    required this.icon,
+    required this.theme,
+  });
+
+  final T value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+  final IconData icon;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       height: 38,
       padding: const EdgeInsets.symmetric(horizontal: 10),
