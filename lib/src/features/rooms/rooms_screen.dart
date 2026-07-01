@@ -1782,10 +1782,21 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
   }
 
   Future<void> _performRefillAction(RoomProduct item) async {
-    final result = await RefillPercentageDialog.show(context, item);
-    if (result == null) return; // cancelled or closed
+    final percentageEnabled = ref.read(percentageRefillEnabledProvider);
+    final int refillPercentage;
+    final String notes;
 
-    final structuredNotes = '[Refill: ${result.refillPercentage}%] ${result.notes}'.trim();
+    if (percentageEnabled) {
+      final result = await RefillPercentageDialog.show(context, item);
+      if (result == null) return; // cancelled or closed
+      refillPercentage = result.refillPercentage;
+      notes = result.notes;
+    } else {
+      refillPercentage = 100;
+      notes = '';
+    }
+
+    final structuredNotes = '[Refill: $refillPercentage%] $notes'.trim();
     final l10n = AppLocalizations.of(context);
     try {
       var isOffline = ref.read(offlineModeProvider);
@@ -2533,10 +2544,21 @@ class _RoomCardProductRow extends ConsumerWidget {
     };
 
     Future<void> performRefill() async {
-      final result = await RefillPercentageDialog.show(context, item);
-      if (result == null) return; // cancelled or closed
+      final percentageEnabled = ref.read(percentageRefillEnabledProvider);
+      final int refillPercentage;
+      final String notes;
 
-      final structuredNotes = '[Refill: ${result.refillPercentage}%] ${result.notes}'.trim();
+      if (percentageEnabled) {
+        final result = await RefillPercentageDialog.show(context, item);
+        if (result == null) return; // cancelled or closed
+        refillPercentage = result.refillPercentage;
+        notes = result.notes;
+      } else {
+        refillPercentage = 100;
+        notes = '';
+      }
+
+      final structuredNotes = '[Refill: $refillPercentage%] $notes'.trim();
 
       var isOffline = ref.read(offlineModeProvider);
       if (!isOffline) {
@@ -2569,6 +2591,7 @@ class _RoomCardProductRow extends ConsumerWidget {
       ref.invalidate(roomProductsProvider);
       ref.invalidate(dashboardProvider);
       ref.invalidate(refillEventsProvider);
+      ref.invalidate(inventoryProvider);
       if (context.mounted) {
         HapticFeedback.mediumImpact();
         PremiumSnackbar.show(

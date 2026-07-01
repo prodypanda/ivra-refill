@@ -896,6 +896,9 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                   threshold: widget.item.product.lowBidonThreshold,
                   icon: IvraIcons.fullRefillBottle,
                   color: theme.colorScheme.primary,
+                  valueSuffix: (widget.item.openBidons > 0 && widget.item.openBidonVolumeLeftMl > 0)
+                      ? ' (+${((widget.item.openBidonVolumeLeftMl / widget.item.product.bidonVolumeMl) * 100).round()}%)'
+                      : null,
                 ),
               ],
               const SizedBox(height: 16),
@@ -989,6 +992,7 @@ class _VisualStockBar extends StatelessWidget {
     required this.icon,
     required this.color,
     this.iconSize = 31,
+    this.valueSuffix,
   });
 
   final String label;
@@ -997,6 +1001,7 @@ class _VisualStockBar extends StatelessWidget {
   final IconData icon;
   final Color color;
   final double iconSize;
+  final String? valueSuffix;
 
   @override
   Widget build(BuildContext context) {
@@ -1025,11 +1030,25 @@ class _VisualStockBar extends StatelessWidget {
                 ),
               ),
             ),
-            Text(
-              value.toString(),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: displayColor,
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: value.toString(),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: displayColor,
+                    ),
+                  ),
+                  if (valueSuffix != null)
+                    TextSpan(
+                      text: valueSuffix,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: displayColor.withValues(alpha: 0.8),
+                      ),
+                    ),
+                ],
               ),
             ),
           ],

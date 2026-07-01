@@ -92,6 +92,25 @@ final tapToScanEnabledProvider = StateProvider<bool>((ref) {
   return true;
 });
 
+final percentageRefillEnabledProvider = StateProvider<bool>((ref) {
+  ref.listenSelf((previous, next) async {
+    if (previous != null && previous != next) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('percentage_refill_enabled', next);
+      } catch (e) {
+        debugPrint('Error saving percentage refill enabled selection: $e');
+      }
+    }
+  });
+
+  final prefs = ref.watch(sharedPreferencesProvider);
+  if (prefs != null) {
+    return prefs.getBool('percentage_refill_enabled') ?? true;
+  }
+  return true;
+});
+
 /// Set to true after the invited user successfully sets their password.
 /// This prevents the router from redirecting back to SetPasswordScreen
 /// during the brief window where userMetadata hasn't propagated yet.

@@ -19,6 +19,7 @@ import '../features/inventory/inventory_screen.dart';
 import '../features/products/products_screen.dart';
 import '../features/reports/reports_screen.dart';
 import '../features/rooms/rooms_screen.dart';
+import '../features/settings/app_settings_screen.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/shared/not_found_screen.dart';
 import '../features/shell/app_shell.dart';
@@ -149,7 +150,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       if (!isPublicAuthRoute && currentUser != null) {
-        if (path == HotelsScreen.route) {
+        if (path == AppSettingsScreen.route) {
+          if (currentUser.role != UserRole.appAdmin) {
+            return DashboardScreen.route;
+          }
+        } else if (path == HotelsScreen.route) {
           final hasHotelsAccess =
               ref.read(hasPermissionProvider('manage_hotels')) ||
                   ref.read(hasPermissionProvider('view_approvals'));
@@ -338,6 +343,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: SettingsScreen.route,
             builder: (context, state) => const SettingsScreen(),
+          ),
+          GoRoute(
+            path: AppSettingsScreen.route,
+            builder: (context, state) => const AppSettingsScreen(),
           ),
           GoRoute(
             path: AuditLogsScreen.route,

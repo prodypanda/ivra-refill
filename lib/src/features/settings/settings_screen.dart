@@ -5,12 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/mock_ivra_repository.dart';
 import '../../data/offline/offline_sync_service.dart';
+import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import 'package:go_router/go_router.dart';
 import '../auth/biometric_auth.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/premium_snackbar.dart';
+import 'app_settings_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -27,6 +30,8 @@ class SettingsScreen extends ConsumerWidget {
     final offlineMode = ref.watch(offlineModeProvider);
     final precisionScanWindow = ref.watch(precisionScanWindowEnabledProvider);
     final tapToScan = ref.watch(tapToScanEnabledProvider);
+    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final isAppAdmin = currentUser?.role == UserRole.appAdmin;
 
     return PageScaffold(
       title: l10n.t('settings'),
@@ -156,6 +161,27 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
+            if (isAppAdmin) ...[
+              const SizedBox(height: 20),
+              Card(
+                elevation: isMobile ? 0 : null,
+                shape: isMobile
+                    ? RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        side: BorderSide(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
+                      )
+                    : null,
+                child: ListTile(
+                  leading: const Icon(Icons.admin_panel_settings_outlined),
+                  title: Text(l10n.t('appSettings')),
+                  subtitle: Text(l10n.t('percentageRefillTitle')),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(AppSettingsScreen.route),
+                ),
+              ),
+            ],
             if (useSupabase) ...[
               const SizedBox(height: 20),
               _BiometricSettingTile(isMobile: isMobile),

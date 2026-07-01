@@ -1247,11 +1247,16 @@ class MockIvraRepository implements IvraRepository {
 
         while (currentVolumeLeft <= 0) {
           if (fullBidons > 0) {
+            if (openBidons > 0) {
+              emptyBidons++;
+            }
             fullBidons--;
-            emptyBidons++;
             openBidons = 1;
             currentVolumeLeft += bidonVolume;
           } else {
+            if (openBidons > 0) {
+              emptyBidons++;
+            }
             currentVolumeLeft = 0.0;
             openBidons = 0;
             break; // Out of stock
@@ -1349,7 +1354,7 @@ class MockIvraRepository implements IvraRepository {
         }
 
         if (currentVolumeLeft > bidonVolume) {
-          currentVolumeLeft = bidonVolume; // Cap it if we cannot roll back further
+          currentVolumeLeft = bidonVolume;
         }
 
         _openBidonVolumeLeft[invItem.product.id] = currentVolumeLeft;

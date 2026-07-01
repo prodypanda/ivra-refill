@@ -2292,13 +2292,24 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
   }
 
   Future<void> _executeRefill(BuildContext context, RoomProduct item) async {
-    final result = await RefillPercentageDialog.show(context, item);
-    if (result == null) return; // cancelled or closed
+    final percentageEnabled = ref.read(percentageRefillEnabledProvider);
+    final int refillPercentage;
+    final String notes;
+
+    if (percentageEnabled) {
+      final result = await RefillPercentageDialog.show(context, item);
+      if (result == null) return; // cancelled or closed
+      refillPercentage = result.refillPercentage;
+      notes = result.notes;
+    } else {
+      refillPercentage = 100;
+      notes = '';
+    }
 
     setState(() => _isPerformingAction = true);
     final l10n = AppLocalizations.of(context);
     var isOffline = ref.read(offlineModeProvider);
-    final structuredNotes = '[Refill: ${result.refillPercentage}%] ${result.notes}'.trim();
+    final structuredNotes = '[Refill: $refillPercentage%] $notes'.trim();
 
     try {
       if (!isOffline) {
