@@ -418,6 +418,7 @@ class MockIvraRepository implements IvraRepository {
   final List<InventoryEvent> _inventoryEvents = [];
   final Set<String> _processedClientRequestIds = {};
   final List<AuditLog> _mockAuditLogs = [];
+  final Map<String, double> _openBidonVolumeLeft = {};
 
 
   @override
@@ -1206,6 +1207,58 @@ class MockIvraRepository implements IvraRepository {
       lastRefillAt: event.occurredAt,
       status: status,
     );
+
+    // Dynamic Inventory Refill Container (Bidon) Calculations
+    int percentageVal = 100;
+    if (notes != null) {
+      final percentageMatch = RegExp(r'\[Refill:\s*(\d+)%\]').firstMatch(notes);
+      if (percentageMatch != null) {
+        percentageVal = int.parse(percentageMatch.group(1)!);
+      }
+    }
+
+    final double bottleVol = item.product.bottleVolumeMl > 0 ? item.product.bottleVolumeMl.toDouble() : 1000.0;
+    final double volumeAdded = (percentageVal / 100.0) * bottleVol;
+
+    final invIndex = _inventory.indexWhere(
+      (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+    );
+    if (invIndex != -1) {
+      final invItem = _inventory[invIndex];
+      final double bidonVolume = invItem.product.bidonVolumeMl > 0 ? invItem.product.bidonVolumeMl.toDouble() : 5000.0;
+
+      // Track remaining volume of currently open bidon
+      double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? 
+          (invItem.openBidons > 0 ? bidonVolume * 0.5 : 0.0);
+
+      currentVolumeLeft -= volumeAdded;
+
+      int fullBidons = invItem.fullBidons;
+      int openBidons = invItem.openBidons;
+      int emptyBidons = invItem.emptyBidons;
+
+      while (currentVolumeLeft <= 0) {
+        if (fullBidons > 0) {
+          fullBidons--;
+          emptyBidons++;
+          openBidons = 1;
+          currentVolumeLeft += bidonVolume;
+        } else {
+          currentVolumeLeft = 0.0;
+          openBidons = 0;
+          break; // Out of stock
+        }
+      }
+
+      _openBidonVolumeLeft[invItem.product.id] = currentVolumeLeft;
+
+      _inventory[invIndex] = invItem.copyWith(
+        fullBidons: fullBidons,
+        openBidons: openBidons,
+        emptyBidons: emptyBidons,
+      );
+    }
+
     _markClientRequestProcessed(clientRequestId);
   }
 

@@ -6,6 +6,7 @@ class AnimatedBottleRefillIndicator extends StatefulWidget {
     super.key,
     required this.refillPercentage,
     required this.bottleVolumeMl,
+    required this.isInteracting,
     this.baseColor,
     this.accentColor,
     this.width = 150,
@@ -17,6 +18,9 @@ class AnimatedBottleRefillIndicator extends StatefulWidget {
 
   /// The total volume capacity of the bottle in milliliters
   final int bottleVolumeMl;
+
+  /// Whether the user is currently dragging/holding the slider
+  final bool isInteracting;
 
   /// Color representing pre-existing volume in the bottle
   final Color? baseColor;
@@ -34,8 +38,10 @@ class AnimatedBottleRefillIndicator extends StatefulWidget {
 
 class _AnimatedBottleRefillIndicatorState
     extends State<AnimatedBottleRefillIndicator>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _waveController;
+  late final AnimationController _fillController;
+  late Animation<double> _fillAnimation;
 
   @override
   void initState() {
@@ -44,11 +50,66 @@ class _AnimatedBottleRefillIndicatorState
       vsync: this,
       duration: const Duration(milliseconds: 2500),
     )..repeat();
+
+    _fillController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    // Initial fill is 0.0 if interacting, otherwise target value
+    _fillAnimation = Tween<double>(
+      begin: 0.0,
+      end: widget.isInteracting ? 0.0 : widget.refillPercentage,
+    ).animate(CurvedAnimation(
+      parent: _fillController,
+      curve: Curves.decelerate,
+    ));
+
+    if (!widget.isInteracting) {
+      _fillController.forward(from: 0.0);
+    }
+  }
+
+  @override
+  void didUpdateWidget(AnimatedBottleRefillIndicator oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.isInteracting != widget.isInteracting ||
+        oldWidget.refillPercentage != widget.refillPercentage) {
+      _fillController.stop();
+
+      final double currentVal = _fillAnimation.value;
+
+      if (widget.isInteracting) {
+        // Evaporating down to 0.0 quickly and smoothly when dragging/holding
+        _fillAnimation = Tween<double>(
+          begin: currentVal,
+          end: 0.0,
+        ).animate(CurvedAnimation(
+          parent: _fillController,
+          curve: Curves.easeOutCubic,
+        ));
+        _fillController.duration = const Duration(milliseconds: 350);
+        _fillController.forward(from: 0.0);
+      } else {
+        // Filling up to the target value when released
+        _fillAnimation = Tween<double>(
+          begin: currentVal,
+          end: widget.refillPercentage,
+        ).animate(CurvedAnimation(
+          parent: _fillController,
+          curve: Curves.easeOutBack, // Playful, smooth fill bounce!
+        ));
+        _fillController.duration = const Duration(milliseconds: 1200);
+        _fillController.forward(from: 0.0);
+      }
+    }
   }
 
   @override
   void dispose() {
     _waveController.dispose();
+    _fillController.dispose();
     super.dispose();
   }
 
@@ -63,12 +124,12 @@ class _AnimatedBottleRefillIndicatorState
         (isDark ? Colors.cyanAccent.shade400 : Colors.teal.shade400);
 
     return AnimatedBuilder(
-      animation: _waveController,
+      animation: Listenable.merge([_waveController, _fillController]),
       builder: (context, child) {
         return CustomPaint(
           size: Size(widget.width, widget.height),
           painter: _BottlePainter(
-            refillPercentage: widget.refillPercentage,
+            refillPercentage: _fillAnimation.value,
             bottleVolumeMl: widget.bottleVolumeMl,
             waveValue: _waveController.value,
             baseColor: finalBaseColor,
@@ -104,9 +165,9 @@ class _BottlePainter extends CustomPainter {
     final xLeft = size.width * 0.22; // Nudge in slightly to leave room for left scale ruler
     final xRight = size.width * 0.88;
     final yBottom = size.height * 0.93;
-    final yTop = size.height * 0.08;
-    final yShoulder = size.height * 0.38;
-    final yNeckBase = size.height * 0.28;
+    final yTop = size.height * 0.18; // Shortened neck/mouth (was 0.08)
+    final yShoulder = size.height * 0.42; // Adjusted shoulder proportion (was 0.38)
+    final yNeckBase = size.height * 0.34; // Adjusted neck base (was 0.28)
     final xNeckLeft = xLeft + (xRight - xLeft) * 0.34;
     final xNeckRight = xLeft + (xRight - xLeft) * 0.66;
     const cornerRadius = 16.0;
@@ -124,9 +185,11 @@ class _BottlePainter extends CustomPainter {
     final bottlePath = Path();
     bottlePath.moveTo(xLeft + cornerRadius, yBottom);
     bottlePath.lineTo(xRight - cornerRadius, yBottom);
+    // Draw convex (outward rounded) bottom right corner with clockwise: true
     bottlePath.arcToPoint(
       Offset(xRight, yBottom - cornerRadius),
       radius: const Radius.circular(cornerRadius),
+      clockwise: true,
     );
     bottlePath.lineTo(xRight, yShoulder);
     bottlePath.quadraticBezierTo(xRight, yNeckBase, xNeckRight, yNeckBase);
@@ -135,9 +198,11 @@ class _BottlePainter extends CustomPainter {
     bottlePath.lineTo(xNeckLeft, yNeckBase);
     bottlePath.quadraticBezierTo(xLeft, yNeckBase, xLeft, yShoulder);
     bottlePath.lineTo(xLeft, yBottom - cornerRadius);
+    // Draw convex (outward rounded) bottom left corner with clockwise: true
     bottlePath.arcToPoint(
       Offset(xLeft + cornerRadius, yBottom),
       radius: const Radius.circular(cornerRadius),
+      clockwise: true,
     );
     bottlePath.close();
 
@@ -157,7 +222,7 @@ class _BottlePainter extends CustomPainter {
     canvas.save();
     canvas.clipPath(bottlePath);
 
-    final yMaxLiquid = size.height * 0.32;
+    final yMaxLiquid = size.height * 0.36; // Lowered liquid top to match shoulder adjustments
     final yMinLiquid = size.height * 0.91;
     final liquidSpan = yMinLiquid - yMaxLiquid;
 
@@ -394,7 +459,7 @@ class _BottlePainter extends CustomPainter {
         ],
       ).createShader(Rect.fromLTRB(xLeft + 5, yShoulder, xLeft + 11, yBottom))
       ..style = PaintingStyle.fill;
-    
+
     final glossyPath = Path()
       ..addRRect(RRect.fromRectAndRadius(
         Rect.fromLTRB(xLeft + 4, yShoulder + 12, xLeft + 9, yBottom - 16),
@@ -415,8 +480,8 @@ class _BottlePainter extends CustomPainter {
     final capPath = Path();
     capPath.moveTo(xNeckLeft - 2, yTop);
     capPath.lineTo(xNeckRight + 2, yTop);
-    capPath.lineTo(xNeckRight + 2, yTop - 14);
-    capPath.lineTo(xNeckLeft - 2, yTop - 14);
+    capPath.lineTo(xNeckRight + 2, yTop - 12);
+    capPath.lineTo(xNeckLeft - 2, yTop - 12);
     capPath.close();
 
     final capPaint = Paint()
@@ -443,7 +508,7 @@ class _BottlePainter extends CustomPainter {
       final double yLevel = yMinLiquid - ratio * liquidSpan;
       final bool isMajor = i % 2 == 0 || i == 10;
       final double tickLength = isMajor ? 8.0 : 4.0;
-      
+
       canvas.drawLine(
         Offset(xLeft - tickLength, yLevel),
         Offset(xLeft - 1, yLevel),

@@ -39,6 +39,7 @@ class RefillPercentageDialog extends StatefulWidget {
 
 class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
   double _refillPercentage = 0.1; // Default to 10% (0.1)
+  bool _isSliderInteracting = false;
   late final TextEditingController _notesController;
 
   @override
@@ -122,6 +123,7 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                       AnimatedBottleRefillIndicator(
                         refillPercentage: _refillPercentage,
                         bottleVolumeMl: widget.item.product.bottleVolumeMl,
+                        isInteracting: _isSliderInteracting,
                         baseColor: baseColor,
                         accentColor: accentColor,
                         width: 140,
@@ -212,6 +214,16 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                           max: 1.0,
                           divisions: 9,
                           label: '$refillPercentInt%',
+                          onChangeStart: (_) {
+                            setState(() {
+                              _isSliderInteracting = true;
+                            });
+                          },
+                          onChangeEnd: (_) {
+                            setState(() {
+                              _isSliderInteracting = false;
+                            });
+                          },
                           onChanged: (val) {
                             setState(() {
                               _refillPercentage = val;
