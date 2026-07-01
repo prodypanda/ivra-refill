@@ -121,7 +121,7 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
 
                       // Animated Bottle representation with 4-language localized labels inside
                       Transform.translate(
-                        offset: const Offset(0, -40),
+                        offset: const Offset(0, -70),
                         child: AnimatedBottleRefillIndicator(
                           refillPercentage: _refillPercentage,
                           bottleVolumeMl: widget.item.product.bottleVolumeMl,
@@ -129,7 +129,7 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                           baseColor: baseColor,
                           accentColor: accentColor,
                           width: 140,
-                          height: 260,
+                          height: 290,
                           existingLabel: l10n.t('dialogRefillPreExisting').replaceAll(':', '').replaceAll('：', '').trim(),
                           toAddLabel: l10n.t('dialogRefillAdded').replaceAll(':', '').replaceAll('：', '').trim(),
                         ),

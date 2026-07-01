@@ -223,7 +223,7 @@ class _BottlePainter extends CustomPainter {
     final yNeckBase = size.height * 0.36; // Adjusted neck base (was 0.32/0.34)
     final xNeckLeft = xLeft + (xRight - xLeft) * 0.34;
     final xNeckRight = xLeft + (xRight - xLeft) * 0.66;
-    const cornerRadius = 24.0; // True large rounded premium corners (was 16.0)
+    const cornerRadius = 18.0; // Balanced rounded corners (was 24.0)
 
     // 1. Draw a soft, premium drop shadow beneath the bottle base
     final shadowPaint = Paint()
