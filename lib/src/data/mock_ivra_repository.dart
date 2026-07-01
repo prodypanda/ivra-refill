@@ -1229,7 +1229,7 @@ class MockIvraRepository implements IvraRepository {
 
       // Track remaining volume of currently open bidon
       double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? 
-          (invItem.openBidons > 0 ? bidonVolume * 0.5 : 0.0);
+          (invItem.openBidons > 0 ? bidonVolume * 0.01 : 0.0);
 
       currentVolumeLeft -= volumeAdded;
 

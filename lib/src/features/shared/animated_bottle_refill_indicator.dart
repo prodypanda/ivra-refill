@@ -53,20 +53,22 @@ class _AnimatedBottleRefillIndicatorState
 
     _fillController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1500),
     );
 
-    // Initial fill is 0.0 if interacting, otherwise target value
-    _fillAnimation = Tween<double>(
-      begin: 0.0,
-      end: widget.isInteracting ? 0.0 : widget.refillPercentage,
-    ).animate(CurvedAnimation(
-      parent: _fillController,
-      curve: Curves.decelerate,
-    ));
-
-    if (!widget.isInteracting) {
-      _fillController.forward(from: 0.0);
+    if (widget.isInteracting) {
+      _fillAnimation = const AlwaysStoppedAnimation<double>(0.0);
+    } else {
+      _fillAnimation = Tween<double>(
+        begin: 0.0,
+        end: widget.refillPercentage,
+      ).animate(CurvedAnimation(
+        parent: _fillController,
+        curve: Curves.easeOutCubic,
+      ));
+      if (widget.refillPercentage > 0.0) {
+        _fillController.forward(from: 0.0);
+      }
     }
   }
 
@@ -74,35 +76,32 @@ class _AnimatedBottleRefillIndicatorState
   void didUpdateWidget(AnimatedBottleRefillIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.isInteracting != widget.isInteracting ||
-        oldWidget.refillPercentage != widget.refillPercentage) {
+    if (oldWidget.isInteracting != widget.isInteracting) {
       _fillController.stop();
 
-      final double currentVal = _fillAnimation.value;
-
       if (widget.isInteracting) {
-        // Evaporating down to 0.0 quickly and smoothly when dragging/holding
+        _fillAnimation = const AlwaysStoppedAnimation<double>(0.0);
+      } else {
         _fillAnimation = Tween<double>(
-          begin: currentVal,
-          end: 0.0,
+          begin: 0.0,
+          end: widget.refillPercentage,
         ).animate(CurvedAnimation(
           parent: _fillController,
           curve: Curves.easeOutCubic,
         ));
-        _fillController.duration = const Duration(milliseconds: 350);
-        _fillController.forward(from: 0.0);
-      } else {
-        // Filling up to the target value when released
-        _fillAnimation = Tween<double>(
-          begin: currentVal,
-          end: widget.refillPercentage,
-        ).animate(CurvedAnimation(
-          parent: _fillController,
-          curve: Curves.easeOutBack, // Playful, smooth fill bounce!
-        ));
-        _fillController.duration = const Duration(milliseconds: 1200);
         _fillController.forward(from: 0.0);
       }
+    } else if (!widget.isInteracting &&
+        oldWidget.refillPercentage != widget.refillPercentage) {
+      _fillController.stop();
+      _fillAnimation = Tween<double>(
+        begin: _fillAnimation.value,
+        end: widget.refillPercentage,
+      ).animate(CurvedAnimation(
+        parent: _fillController,
+        curve: Curves.easeOutCubic,
+      ));
+      _fillController.forward(from: 0.0);
     }
   }
 
@@ -130,6 +129,8 @@ class _AnimatedBottleRefillIndicatorState
           size: Size(widget.width, widget.height),
           painter: _BottlePainter(
             refillPercentage: _fillAnimation.value,
+            targetRefillPercentage: widget.refillPercentage,
+            isInteracting: widget.isInteracting,
             bottleVolumeMl: widget.bottleVolumeMl,
             waveValue: _waveController.value,
             baseColor: finalBaseColor,
@@ -145,6 +146,8 @@ class _AnimatedBottleRefillIndicatorState
 class _BottlePainter extends CustomPainter {
   _BottlePainter({
     required this.refillPercentage,
+    required this.targetRefillPercentage,
+    required this.isInteracting,
     required this.bottleVolumeMl,
     required this.waveValue,
     required this.baseColor,
@@ -153,6 +156,8 @@ class _BottlePainter extends CustomPainter {
   });
 
   final double refillPercentage;
+  final double targetRefillPercentage;
+  final bool isInteracting;
   final int bottleVolumeMl;
   final double waveValue;
   final Color baseColor;
@@ -165,9 +170,9 @@ class _BottlePainter extends CustomPainter {
     final xLeft = size.width * 0.22; // Nudge in slightly to leave room for left scale ruler
     final xRight = size.width * 0.88;
     final yBottom = size.height * 0.93;
-    final yTop = size.height * 0.18; // Shortened neck/mouth (was 0.08)
-    final yShoulder = size.height * 0.42; // Adjusted shoulder proportion (was 0.38)
-    final yNeckBase = size.height * 0.34; // Adjusted neck base (was 0.28)
+    final yTop = size.height * 0.25; // Shortened neck/mouth (was 0.18)
+    final yShoulder = size.height * 0.42; // Adjusted shoulder proportion (was 0.42)
+    final yNeckBase = size.height * 0.32; // Adjusted neck base (was 0.34)
     final xNeckLeft = xLeft + (xRight - xLeft) * 0.34;
     final xNeckRight = xLeft + (xRight - xLeft) * 0.66;
     const cornerRadius = 16.0;
@@ -185,12 +190,8 @@ class _BottlePainter extends CustomPainter {
     final bottlePath = Path();
     bottlePath.moveTo(xLeft + cornerRadius, yBottom);
     bottlePath.lineTo(xRight - cornerRadius, yBottom);
-    // Draw convex (outward rounded) bottom right corner with clockwise: true
-    bottlePath.arcToPoint(
-      Offset(xRight, yBottom - cornerRadius),
-      radius: const Radius.circular(cornerRadius),
-      clockwise: true,
-    );
+    // Draw convex (outward rounded) bottom right corner with quadraticBezierTo
+    bottlePath.quadraticBezierTo(xRight, yBottom, xRight, yBottom - cornerRadius);
     bottlePath.lineTo(xRight, yShoulder);
     bottlePath.quadraticBezierTo(xRight, yNeckBase, xNeckRight, yNeckBase);
     bottlePath.lineTo(xNeckRight, yTop);
@@ -198,12 +199,8 @@ class _BottlePainter extends CustomPainter {
     bottlePath.lineTo(xNeckLeft, yNeckBase);
     bottlePath.quadraticBezierTo(xLeft, yNeckBase, xLeft, yShoulder);
     bottlePath.lineTo(xLeft, yBottom - cornerRadius);
-    // Draw convex (outward rounded) bottom left corner with clockwise: true
-    bottlePath.arcToPoint(
-      Offset(xLeft + cornerRadius, yBottom),
-      radius: const Radius.circular(cornerRadius),
-      clockwise: true,
-    );
+    // Draw convex (outward rounded) bottom left corner with quadraticBezierTo
+    bottlePath.quadraticBezierTo(xLeft, yBottom, xLeft + cornerRadius, yBottom);
     bottlePath.close();
 
     // 2. Draw frosted glass textured background gradient inside the bottle
@@ -226,15 +223,22 @@ class _BottlePainter extends CustomPainter {
     final yMinLiquid = size.height * 0.91;
     final liquidSpan = yMinLiquid - yMaxLiquid;
 
+    // Liquid physical ratios:
+    final double r_old = (1.0 - targetRefillPercentage).clamp(0.0, 1.0);
+    final double r_new = (isInteracting ? 0.0 : refillPercentage).clamp(0.0, targetRefillPercentage);
+
+    final double ySplit = yMinLiquid - r_old * liquidSpan;
+    final double yNewSurface = yMinLiquid - (r_old + r_new) * liquidSpan;
+
     // A. Draw newly added liquid (accentColor) at the top
-    if (refillPercentage > 0.001) {
+    if (r_new > 0.001) {
       final addedWavePath = Path();
       const waveAmplitude = 4.5;
       const waveFrequency = 0.055;
 
       addedWavePath.moveTo(0, size.height);
       for (double x = 0; x <= size.width; x += 2.0) {
-        final y = yMaxLiquid +
+        final y = yNewSurface +
             waveAmplitude *
                 math.sin((x * waveFrequency) + (waveValue * 2 * math.pi));
         addedWavePath.lineTo(x, y);
@@ -252,15 +256,12 @@ class _BottlePainter extends CustomPainter {
             accentColor.withOpacity(0.85),
             accentColor,
           ],
-        ).createShader(Rect.fromLTRB(xLeft, yMaxLiquid, xRight, yMinLiquid));
+        ).createShader(Rect.fromLTRB(xLeft, yNewSurface, xRight, yMinLiquid));
       canvas.drawPath(addedWavePath, paintAdded);
     }
 
     // B. Draw pre-existing liquid (baseColor) on top to overlay beautifully
-    final double existingRatio = 1.0 - refillPercentage;
-    final double ySplit = yMinLiquid - existingRatio * liquidSpan;
-
-    if (existingRatio > 0.001) {
+    if (r_old > 0.001) {
       final existingWavePath = Path();
       const waveAmplitude = 3.5;
       const waveFrequency = 0.045;
@@ -289,7 +290,55 @@ class _BottlePainter extends CustomPainter {
       canvas.drawPath(existingWavePath, paintExisting);
     }
 
-    // C. Draw Rising & Swaying Micro-Bubbles inside liquid columns
+    // C. Draw falling liquid stream flowing from the cap down to the rising liquid surface
+    double streamOpacity = 0.0;
+    if (!isInteracting && targetRefillPercentage > 0.001) {
+      final double progress = targetRefillPercentage > 0.001 ? (r_new / targetRefillPercentage) : 0.0;
+      if (progress > 0.0 && progress < 1.0) {
+        if (progress < 0.15) {
+          streamOpacity = progress / 0.15;
+        } else if (progress > 0.85) {
+          streamOpacity = (1.0 - progress) / 0.15;
+        } else {
+          streamOpacity = 1.0;
+        }
+      }
+    }
+
+    if (streamOpacity > 0.01) {
+      final double xCenter = (xNeckLeft + xNeckRight) / 2.0;
+      final double streamWidth = 8.0 * streamOpacity;
+      final streamPath = Path();
+
+      streamPath.moveTo(xCenter - streamWidth / 2, yTop);
+      // Draw down to the liquid surface (yNewSurface) with a slight organic waviness
+      for (double y = yTop; y <= yNewSurface; y += 4.0) {
+        final double sway = math.sin((y * 0.1) - (waveValue * 4 * math.pi)) * 1.5;
+        streamPath.lineTo(xCenter - streamWidth / 2 + sway, y);
+      }
+      streamPath.lineTo(xCenter + streamWidth / 2, yNewSurface);
+      // Draw back up to yTop with matching waviness
+      for (double y = yNewSurface; y >= yTop; y -= 4.0) {
+        final double sway = math.sin((y * 0.1) - (waveValue * 4 * math.pi)) * 1.5;
+        streamPath.lineTo(xCenter + streamWidth / 2 + sway, y);
+      }
+      streamPath.close();
+
+      final streamPaint = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            accentColor.withOpacity(0.95 * streamOpacity),
+            accentColor.withOpacity(0.75 * streamOpacity),
+          ],
+        ).createShader(Rect.fromLTRB(xCenter - streamWidth, yTop, xCenter + streamWidth, yNewSurface))
+        ..style = PaintingStyle.fill;
+
+      canvas.drawPath(streamPath, streamPaint);
+    }
+
+    // D. Draw Rising & Swaying Micro-Bubbles inside liquid columns
     final bubblePaint = Paint()
       ..color = Colors.white.withOpacity(0.25)
       ..style = PaintingStyle.fill;
@@ -309,7 +358,7 @@ class _BottlePainter extends CustomPainter {
       final double yBubble = yMinLiquid - progress * liquidSpan;
 
       // Only paint if the bubble is in the active liquid span
-      if (yBubble >= yMaxLiquid && yBubble <= yMinLiquid) {
+      if (yBubble >= yNewSurface && yBubble <= yMinLiquid) {
         // Dynamic horizontal swaying using sine curve
         final double startX = xLeft + 16 + seedX * (xRight - xLeft - 32);
         final double sway = math.sin(progress * 4 * math.pi + idx) * 4.0;
@@ -321,7 +370,7 @@ class _BottlePainter extends CustomPainter {
       }
     }
 
-    // D. Draw Dynamic Text Labels Inside the liquid columns
+    // E. Draw Dynamic Text Labels Inside the liquid columns
     final double xCenter = (xLeft + xRight) / 2.0;
 
     // Format helper
@@ -383,17 +432,17 @@ class _BottlePainter extends CustomPainter {
     }
 
     // Upper region (To Add, accentColor)
-    final double upperHeight = ySplit - yMaxLiquid;
+    final double upperHeight = ySplit - yNewSurface;
     if (upperHeight >= 32.0) {
       drawInBottleText(
         xCenter,
-        yMaxLiquid + upperHeight / 2.0,
+        yNewSurface + upperHeight / 2.0,
         "To Add",
-        "+${formatVolume(refillPercentage * bottleVolumeMl)}",
+        "+${formatVolume(r_new * bottleVolumeMl)}",
       );
     } else if (upperHeight >= 14.0) {
       final textSpan = TextSpan(
-        text: "To Add: +${formatVolume(refillPercentage * bottleVolumeMl)}",
+        text: "To Add: +${formatVolume(r_new * bottleVolumeMl)}",
         style: TextStyle(
           color: Colors.white,
           fontSize: 8.5,
@@ -410,7 +459,7 @@ class _BottlePainter extends CustomPainter {
       )..layout();
       textPainter.paint(
         canvas,
-        Offset(xCenter - textPainter.width / 2, yMaxLiquid + upperHeight / 2.0 - textPainter.height / 2),
+        Offset(xCenter - textPainter.width / 2, yNewSurface + upperHeight / 2.0 - textPainter.height / 2),
       );
     }
 
@@ -421,11 +470,11 @@ class _BottlePainter extends CustomPainter {
         xCenter,
         ySplit + lowerHeight / 2.0,
         "Existing",
-        formatVolume((1.0 - refillPercentage) * bottleVolumeMl),
+        formatVolume(r_old * bottleVolumeMl),
       );
     } else if (lowerHeight >= 14.0) {
       final textSpan = TextSpan(
-        text: "Existing: ${formatVolume((1.0 - refillPercentage) * bottleVolumeMl)}",
+        text: "Existing: ${formatVolume(r_old * bottleVolumeMl)}",
         style: TextStyle(
           color: Colors.white,
           fontSize: 8.5,
@@ -541,6 +590,8 @@ class _BottlePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _BottlePainter oldDelegate) {
     return oldDelegate.refillPercentage != refillPercentage ||
+        oldDelegate.targetRefillPercentage != targetRefillPercentage ||
+        oldDelegate.isInteracting != isInteracting ||
         oldDelegate.bottleVolumeMl != bottleVolumeMl ||
         oldDelegate.waveValue != waveValue ||
         oldDelegate.baseColor != baseColor ||
