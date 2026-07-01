@@ -433,6 +433,7 @@ class InventoryItem {
     required this.fullBidons,
     required this.openBidons,
     required this.emptyBidons,
+    this.openBidonVolumeLeftMl = 0.0,
   });
 
   final String id;
@@ -443,6 +444,7 @@ class InventoryItem {
   final int fullBidons;
   final int openBidons;
   final int emptyBidons;
+  final double openBidonVolumeLeftMl;
 
   bool get lowBottles => fullBottles <= product.lowBottleThreshold;
   bool get lowBidons => product.isRefillable && fullBidons <= product.lowBidonThreshold;
@@ -454,6 +456,7 @@ class InventoryItem {
     int? fullBidons,
     int? openBidons,
     int? emptyBidons,
+    double? openBidonVolumeLeftMl,
   }) {
     return InventoryItem(
       id: id,
@@ -464,6 +467,7 @@ class InventoryItem {
       fullBidons: fullBidons ?? this.fullBidons,
       openBidons: openBidons ?? this.openBidons,
       emptyBidons: emptyBidons ?? this.emptyBidons,
+      openBidonVolumeLeftMl: openBidonVolumeLeftMl ?? this.openBidonVolumeLeftMl,
     );
   }
 }

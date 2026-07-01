@@ -156,6 +156,7 @@ class MockIvraRepository implements IvraRepository {
         fullBidons: 3,
         openBidons: 1,
         emptyBidons: 5,
+        openBidonVolumeLeftMl: 2500.0,
       ),
       InventoryItem(
         id: 'inv-gel',
@@ -166,8 +167,12 @@ class MockIvraRepository implements IvraRepository {
         fullBidons: 7,
         openBidons: 1,
         emptyBidons: 2,
+        openBidonVolumeLeftMl: 4000.0,
       ),
     ];
+
+    _openBidonVolumeLeft['prod-shampoo'] = 2500.0;
+    _openBidonVolumeLeft['prod-shower-gel'] = 4000.0;
 
     _approvalRequests = [
       ApprovalRequest(
@@ -1209,54 +1214,59 @@ class MockIvraRepository implements IvraRepository {
     );
 
     // Dynamic Inventory Refill Container (Bidon) Calculations
-    int percentageVal = 100;
-    if (notes != null) {
-      final percentageMatch = RegExp(r'\[Refill:\s*(\d+)%\]').firstMatch(notes);
-      if (percentageMatch != null) {
-        percentageVal = int.parse(percentageMatch.group(1)!);
-      }
-    }
-
-    final double bottleVol = item.product.bottleVolumeMl > 0 ? item.product.bottleVolumeMl.toDouble() : 1000.0;
-    final double volumeAdded = (percentageVal / 100.0) * bottleVol;
-
-    final invIndex = _inventory.indexWhere(
-      (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
-    );
-    if (invIndex != -1) {
-      final invItem = _inventory[invIndex];
-      final double bidonVolume = invItem.product.bidonVolumeMl > 0 ? invItem.product.bidonVolumeMl.toDouble() : 5000.0;
-
-      // Track remaining volume of currently open bidon
-      double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? 
-          (invItem.openBidons > 0 ? bidonVolume * 0.01 : 0.0);
-
-      currentVolumeLeft -= volumeAdded;
-
-      int fullBidons = invItem.fullBidons;
-      int openBidons = invItem.openBidons;
-      int emptyBidons = invItem.emptyBidons;
-
-      while (currentVolumeLeft <= 0) {
-        if (fullBidons > 0) {
-          fullBidons--;
-          emptyBidons++;
-          openBidons = 1;
-          currentVolumeLeft += bidonVolume;
-        } else {
-          currentVolumeLeft = 0.0;
-          openBidons = 0;
-          break; // Out of stock
+    if (item.product.refillType == RefillType.refillable) {
+      int percentageVal = 100;
+      if (notes != null) {
+        final percentageMatch = RegExp(r'\[Refill:\s*(\d+)%\]').firstMatch(notes);
+        if (percentageMatch != null) {
+          percentageVal = int.parse(percentageMatch.group(1)!);
         }
       }
 
-      _openBidonVolumeLeft[invItem.product.id] = currentVolumeLeft;
+      final double bottleVol = item.product.bottleVolumeMl > 0 ? item.product.bottleVolumeMl.toDouble() : 1000.0;
+      final double volumeAdded = (percentageVal / 100.0) * bottleVol;
 
-      _inventory[invIndex] = invItem.copyWith(
-        fullBidons: fullBidons,
-        openBidons: openBidons,
-        emptyBidons: emptyBidons,
+      final invIndex = _inventory.indexWhere(
+        (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
       );
+      if (invIndex != -1) {
+        final invItem = _inventory[invIndex];
+        final double bidonVolume = invItem.product.bidonVolumeMl > 0 ? invItem.product.bidonVolumeMl.toDouble() : 5000.0;
+
+        int fullBidons = invItem.fullBidons;
+        int openBidons = invItem.openBidons;
+        int emptyBidons = invItem.emptyBidons;
+
+        // Track remaining volume of currently open bidon
+        double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? invItem.openBidonVolumeLeftMl;
+        if (openBidons > 0 && currentVolumeLeft == 0.0) {
+          currentVolumeLeft = bidonVolume;
+        }
+
+        currentVolumeLeft -= volumeAdded;
+
+        while (currentVolumeLeft <= 0) {
+          if (fullBidons > 0) {
+            fullBidons--;
+            emptyBidons++;
+            openBidons = 1;
+            currentVolumeLeft += bidonVolume;
+          } else {
+            currentVolumeLeft = 0.0;
+            openBidons = 0;
+            break; // Out of stock
+          }
+        }
+
+        _openBidonVolumeLeft[invItem.product.id] = currentVolumeLeft;
+
+        _inventory[invIndex] = invItem.copyWith(
+          fullBidons: fullBidons,
+          openBidons: openBidons,
+          emptyBidons: emptyBidons,
+          openBidonVolumeLeftMl: currentVolumeLeft,
+        );
+      }
     }
 
     _markClientRequestProcessed(clientRequestId);
@@ -1297,6 +1307,62 @@ class MockIvraRepository implements IvraRepository {
       refillCount: event.previousRefillCount,
       status: BottleStatus.active,
     );
+
+    // Restore volume/bidons symmetrically
+    if (item.product.refillType == RefillType.refillable) {
+      int percentageVal = 100;
+      if (event.notes != null) {
+        final percentageMatch = RegExp(r'\[Refill:\s*(\d+)%\]').firstMatch(event.notes!);
+        if (percentageMatch != null) {
+          percentageVal = int.parse(percentageMatch.group(1)!);
+        }
+      }
+
+      final double bottleVol = item.product.bottleVolumeMl > 0 ? item.product.bottleVolumeMl.toDouble() : 1000.0;
+      final double bidonVolume = item.product.bidonVolumeMl > 0 ? item.product.bidonVolumeMl.toDouble() : 5000.0;
+      final double volumeToRestore = (percentageVal / 100.0) * bottleVol;
+
+      final invIndex = _inventory.indexWhere(
+        (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+      );
+      if (invIndex != -1) {
+        final invItem = _inventory[invIndex];
+
+        int fullBidons = invItem.fullBidons;
+        int openBidons = invItem.openBidons;
+        int emptyBidons = invItem.emptyBidons;
+
+        double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? invItem.openBidonVolumeLeftMl;
+
+        if (openBidons == 0 && emptyBidons > 0) {
+          openBidons = 1;
+          emptyBidons--;
+          currentVolumeLeft = 0.0;
+        }
+
+        currentVolumeLeft += volumeToRestore;
+
+        while (currentVolumeLeft > bidonVolume && emptyBidons > 0) {
+          emptyBidons--;
+          fullBidons++;
+          currentVolumeLeft -= bidonVolume;
+        }
+
+        if (currentVolumeLeft > bidonVolume) {
+          currentVolumeLeft = bidonVolume; // Cap it if we cannot roll back further
+        }
+
+        _openBidonVolumeLeft[invItem.product.id] = currentVolumeLeft;
+
+        _inventory[invIndex] = invItem.copyWith(
+          fullBidons: fullBidons,
+          openBidons: openBidons,
+          emptyBidons: emptyBidons,
+          openBidonVolumeLeftMl: currentVolumeLeft,
+        );
+      }
+    }
+
     _markClientRequestProcessed(clientRequestId);
   }
 

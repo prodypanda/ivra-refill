@@ -1037,6 +1037,7 @@ class SupabaseIvraRepository implements IvraRepository {
       fullBidons: asInt(map['full_bidons']),
       openBidons: asInt(map['open_bidons']),
       emptyBidons: asInt(map['empty_bidons']),
+      openBidonVolumeLeftMl: asDouble(map['open_bidon_volume_left_ml']),
     );
   }
 

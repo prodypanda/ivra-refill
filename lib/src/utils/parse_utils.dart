@@ -50,6 +50,24 @@ int? asNullableInt(Object? value) {
   return null;
 }
 
+/// Returns [value] as a [double], or [fallback] when it cannot be parsed.
+/// Accepts doubles, integers, and numeric strings.
+double asDouble(Object? value, {double fallback = 0.0}) {
+  if (value is double) return value;
+  if (value is num) return value.toDouble();
+  if (value is String) return double.tryParse(value) ?? fallback;
+  return fallback;
+}
+
+/// Returns [value] as a nullable [double], or `null` when it cannot be parsed.
+double? asNullableDouble(Object? value) {
+  if (value == null) return null;
+  if (value is double) return value;
+  if (value is num) return value.toDouble();
+  if (value is String) return double.tryParse(value);
+  return null;
+}
+
 /// Returns [value] as a [bool], or [fallback] when it cannot be parsed.
 /// Accepts bools, the strings `'true'`/`'false'` (case-insensitive), and the
 /// numbers `1`/`0`.

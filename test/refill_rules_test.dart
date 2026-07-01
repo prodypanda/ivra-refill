@@ -883,4 +883,71 @@ void main() {
     expect(inventoryPdf.length, greaterThan(100));
     expect(alertsPdf.length, greaterThan(100));
   });
+
+  test('percentage-based refill and undo restore volumes on MockIvraRepository', () async {
+    final repository = MockIvraRepository();
+    
+    // Find the in-memory inventory for shampoo
+    final initialInvList = await repository.inventory(hotelId: 'hotel-seaside');
+    final beforeShampoo = initialInvList.firstWhere((item) => item.product.id == 'prod-shampoo');
+    
+    // Check initial values
+    expect(beforeShampoo.openBidonVolumeLeftMl, 2500.0);
+    expect(beforeShampoo.fullBidons, 3);
+    expect(beforeShampoo.openBidons, 1);
+    expect(beforeShampoo.emptyBidons, 5);
+
+    // Record a 50% refill
+    // rp-101-shampoo is 'prod-shampoo' (bottle volume 1000ml)
+    // 50% refill = 500ml added, which should deduct 500ml from the open bidon (leaving 2000.0ml left)
+    await repository.recordRefill(
+      roomProductId: 'rp-101-shampoo',
+      notes: '[Refill: 50%]',
+    );
+
+    final afterRefill1 = (await repository.inventory(hotelId: 'hotel-seaside'))
+        .firstWhere((item) => item.product.id == 'prod-shampoo');
+    expect(afterRefill1.openBidonVolumeLeftMl, 2000.0);
+    expect(afterRefill1.fullBidons, 3);
+    expect(afterRefill1.openBidons, 1);
+    expect(afterRefill1.emptyBidons, 5);
+
+    // Record three 100% refills to trigger bidon replacement
+    await repository.recordRefill(roomProductId: 'rp-101-shampoo', notes: '[Refill: 100%]'); // leaves 1000ml
+    await repository.recordRefill(roomProductId: 'rp-101-shampoo', notes: '[Refill: 100%]'); // leaves 0ml, triggers new bidon, starts at 5000ml
+    await repository.recordRefill(roomProductId: 'rp-101-shampoo', notes: '[Refill: 100%]'); // leaves 4000ml
+
+    final afterRefill2 = (await repository.inventory(hotelId: 'hotel-seaside'))
+        .firstWhere((item) => item.product.id == 'prod-shampoo');
+    expect(afterRefill2.openBidonVolumeLeftMl, 4000.0);
+    expect(afterRefill2.fullBidons, 2);
+    expect(afterRefill2.openBidons, 1);
+    expect(afterRefill2.emptyBidons, 6);
+
+    // Undo the last refill
+    final recentEvents = await repository.recentRefillEvents();
+    final lastRefillEvent = recentEvents.firstWhere((event) => event.roomProductId == 'rp-101-shampoo' && event.type == RefillEventType.refill);
+    
+    await repository.undoRefill(refillEventId: lastRefillEvent.id);
+
+    final afterUndo = (await repository.inventory(hotelId: 'hotel-seaside'))
+        .firstWhere((item) => item.product.id == 'prod-shampoo');
+    expect(afterUndo.openBidonVolumeLeftMl, 5000.0);
+    expect(afterUndo.fullBidons, 2);
+    expect(afterUndo.openBidons, 1);
+    expect(afterUndo.emptyBidons, 6);
+
+    // Undo the refill before that (which caused a new bidon to open)
+    final updatedEvents = await repository.recentRefillEvents();
+    final prevRefillEvent = updatedEvents.firstWhere((event) => event.roomProductId == 'rp-101-shampoo' && event.type == RefillEventType.refill);
+
+    await repository.undoRefill(refillEventId: prevRefillEvent.id);
+
+    final afterBoundaryUndo = (await repository.inventory(hotelId: 'hotel-seaside'))
+        .firstWhere((item) => item.product.id == 'prod-shampoo');
+    expect(afterBoundaryUndo.openBidonVolumeLeftMl, 1000.0);
+    expect(afterBoundaryUndo.fullBidons, 3);
+    expect(afterBoundaryUndo.openBidons, 1);
+    expect(afterBoundaryUndo.emptyBidons, 5);
+  });
 }
