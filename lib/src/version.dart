@@ -1,3 +1,3 @@
-// GENERATED FILE. DO NOT EDIT.
-const appVersion = '1.1.3';
-
+// GENERATED CODE - DO NOT MODIFY BY HAND
+const appVersion = '1.1.8';
+const buildNumber = '68';

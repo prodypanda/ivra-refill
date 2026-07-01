@@ -59,6 +59,10 @@ Future<void> saveLoginCredentials(String email, String password) async {
   if (prefs.containsKey(AuthPrefs.passwordKey(trimmed))) {
     await prefs.remove(AuthPrefs.passwordKey(trimmed));
   }
+  // Scrub the old global plaintext password.
+  if (prefs.containsKey(AuthPrefs.legacyPassword)) {
+    await prefs.remove(AuthPrefs.legacyPassword);
+  }
 }
 
 /// The saved password for [email], if any.
@@ -73,6 +77,9 @@ Future<String?> savedPasswordFor(String email) async {
 
   final prefs = await SharedPreferences.getInstance();
   password = prefs.getString(AuthPrefs.passwordKey(email));
+  if (password == null || password.isEmpty) {
+    password = prefs.getString(AuthPrefs.legacyPassword);
+  }
   if (password != null && password.isNotEmpty) {
     await saveLoginCredentials(email, password);
   }
@@ -98,7 +105,7 @@ bool isBiometricEnabledForEmail(String? biometricAccount, String? email) {
 /// fix for the "fingerprint prompt keeps reappearing" bug.
 class BiometricAuthService {
   BiometricAuthService([LocalAuthentication? localAuth])
-      : _localAuth = localAuth ?? LocalAuthentication();
+    : _localAuth = localAuth ?? LocalAuthentication();
 
   final LocalAuthentication _localAuth;
 
@@ -136,8 +143,8 @@ final biometricAuthServiceProvider = Provider<BiometricAuthService>((ref) {
 /// opt-in across every account on the device.
 final biometricAccountProvider =
     StateNotifierProvider<BiometricAccountNotifier, String?>((ref) {
-  return BiometricAccountNotifier()..load();
-});
+      return BiometricAccountNotifier()..load();
+    });
 
 class BiometricAccountNotifier extends StateNotifier<String?> {
   BiometricAccountNotifier() : super(null);
