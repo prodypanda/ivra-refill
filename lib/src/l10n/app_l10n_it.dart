@@ -1271,6 +1271,68 @@ class AppL10nIt extends AppL10n {
       'Hai scelto di non assegnare il prodotto. Puoi scansionare un altro codice o tornare alle camere.';
 
   @override
+  String get scanAssignTitle => 'Assegna prodotto alla stanza';
+
+  @override
+  String get scanAssignSuccess => 'Prodotto assegnato con successo';
+
+  @override
+  String get scanAssignFailed => 'Assegnazione fallita';
+
+  @override
+  String scanAssignInStock(String count) {
+    return '$count in stock — verrà dedotto 1 e assegnato alla stanza';
+  }
+
+  @override
+  String get scanAssignOutOfStock =>
+      'Esaurito — 1 unità verrà aggiunta automaticamente all\'inventario e poi assegnata';
+
+  @override
+  String get scanAssignDescription =>
+      'Questo prodotto non è ancora assegnato a questa stanza. Tocca qui sotto per assegnarlo.';
+
+  @override
+  String get scanAssignButton => 'Assegna alla stanza';
+
+  @override
+  String get scanAssignAutoAdd => 'Aggiungi all\'inventario e assegna';
+
+  @override
+  String get scanAssignAutoAddTitle => 'Aggiungere all\'inventario?';
+
+  @override
+  String scanAssignAutoAddMessage(String product) {
+    return 'Il prodotto \"$product\" è esaurito. Vuoi aggiungere automaticamente 1 unità all\'inventario e assegnarla a questa stanza?';
+  }
+
+  @override
+  String get scanAssignConfirm => 'Sì, aggiungi e assegna';
+
+  @override
+  String scanAssignSuccessMessage(String product, String room, String floor) {
+    return 'Il prodotto $product è stato assegnato alla stanza $room (Piano $floor).';
+  }
+
+  @override
+  String get qrMultipleDetected =>
+      'Rilevati più codici QR. Tocca per selezionare:';
+
+  @override
+  String qrUnknownSku(String sku) {
+    return 'Lo SKU \"$sku\" non corrisponde a nessun prodotto noto.';
+  }
+
+  @override
+  String get goToRoom => 'Vai alla stanza';
+
+  @override
+  String get errorLoadingProducts => 'Errore nel caricamento dei prodotti';
+
+  @override
+  String get errorLoadingInventory => 'Errore nel caricamento dell\'inventario';
+
+  @override
   String get qrGenAllRoomProducts =>
       'Tutti i prodotti nella camera selezionata';
 
@@ -2528,4 +2590,23 @@ class AppL10nIt extends AppL10n {
   @override
   String get permViewAuthorizationsDesc =>
       'Accedi e gestisci la schermata delle impostazioni di autorizzazione basata sui ruoli';
+
+  @override
+  String get dialogRefillTitle => 'Ricarica erogatore';
+
+  @override
+  String get dialogRefillSliderLabel =>
+      'Percentuale di ricarica (volume aggiunto):';
+
+  @override
+  String get dialogRefillPreExisting => 'Liquido preesistente:';
+
+  @override
+  String get dialogRefillAdded => 'Liquido appena aggiunto:';
+
+  @override
+  String get dialogRefillNotes => 'Note (opzionale)';
+
+  @override
+  String get dialogRefillConfirm => 'Conferma ricarica';
 }

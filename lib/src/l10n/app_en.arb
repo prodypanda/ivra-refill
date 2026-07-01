@@ -596,6 +596,57 @@
   "qrAssignSuccess": "Product assigned and refilled successfully",
   "qrActionCanceled": "Operation Canceled",
   "qrActionCanceledMessage": "You chose not to assign the product. You can scan another code or return to rooms.",
+  "scanAssignTitle": "Assign Product to Room",
+  "scanAssignSuccess": "Product Assigned Successfully",
+  "scanAssignFailed": "Assignment Failed",
+  "scanAssignInStock": "{count} in stock — will deduct 1 and assign to room",
+  "@scanAssignInStock": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "scanAssignOutOfStock": "Out of stock — 1 unit will be auto-added to inventory then assigned",
+  "scanAssignDescription": "This product is not yet assigned to this room. Tap below to assign it.",
+  "scanAssignButton": "Assign to Room",
+  "scanAssignAutoAdd": "Add to Inventory & Assign",
+  "scanAssignAutoAddTitle": "Add to Inventory?",
+  "scanAssignAutoAddMessage": "Product \"{product}\" is out of stock. Would you like to automatically add 1 unit to inventory and assign it to this room?",
+  "@scanAssignAutoAddMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "scanAssignConfirm": "Yes, add & assign",
+  "scanAssignSuccessMessage": "Product {product} has been assigned to Room {room} (Floor {floor}).",
+  "@scanAssignSuccessMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
+  "qrMultipleDetected": "Multiple QR codes detected. Tap to select:",
+  "qrUnknownSku": "SKU \"{sku}\" does not match any known product.",
+  "@qrUnknownSku": {
+    "placeholders": {
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
+  "goToRoom": "Go to Room",
+  "errorLoadingProducts": "Error loading products",
+  "errorLoadingInventory": "Error loading inventory",
   "qrGenAllRoomProducts": "All products in the selected room",
   "qrGenAllInventoryProducts": "All products in the inventory",
   "qrLabelScanInstructions": "Scan with IVRA app to refill or replace",
@@ -1325,5 +1376,11 @@
   "permViewInventory": "View Inventory",
   "permViewInventoryDesc": "View hotel inventory stock status and suggest orders",
   "permViewAuthorizations": "View Authorizations",
-  "permViewAuthorizationsDesc": "Access and manage role-based permission settings screen"
+  "permViewAuthorizationsDesc": "Access and manage role-based permission settings screen",
+  "dialogRefillTitle": "Refill Dispenser",
+  "dialogRefillSliderLabel": "Refill percentage (added volume):",
+  "dialogRefillPreExisting": "Already Full:",
+  "dialogRefillAdded": "To Add:",
+  "dialogRefillNotes": "Notes (optional)",
+  "dialogRefillConfirm": "Confirm Refill"
 }

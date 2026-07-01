@@ -2423,6 +2423,108 @@ abstract class AppL10n {
   /// **'You chose not to assign the product. You can scan another code or return to rooms.'**
   String get qrActionCanceledMessage;
 
+  /// No description provided for @scanAssignTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Product to Room'**
+  String get scanAssignTitle;
+
+  /// No description provided for @scanAssignSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Assigned Successfully'**
+  String get scanAssignSuccess;
+
+  /// No description provided for @scanAssignFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Failed'**
+  String get scanAssignFailed;
+
+  /// No description provided for @scanAssignInStock.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} in stock — will deduct 1 and assign to room'**
+  String scanAssignInStock(String count);
+
+  /// No description provided for @scanAssignOutOfStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of stock — 1 unit will be auto-added to inventory then assigned'**
+  String get scanAssignOutOfStock;
+
+  /// No description provided for @scanAssignDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'This product is not yet assigned to this room. Tap below to assign it.'**
+  String get scanAssignDescription;
+
+  /// No description provided for @scanAssignButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to Room'**
+  String get scanAssignButton;
+
+  /// No description provided for @scanAssignAutoAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Inventory & Assign'**
+  String get scanAssignAutoAdd;
+
+  /// No description provided for @scanAssignAutoAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Inventory?'**
+  String get scanAssignAutoAddTitle;
+
+  /// No description provided for @scanAssignAutoAddMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Product \"{product}\" is out of stock. Would you like to automatically add 1 unit to inventory and assign it to this room?'**
+  String scanAssignAutoAddMessage(String product);
+
+  /// No description provided for @scanAssignConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, add & assign'**
+  String get scanAssignConfirm;
+
+  /// No description provided for @scanAssignSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Product {product} has been assigned to Room {room} (Floor {floor}).'**
+  String scanAssignSuccessMessage(String product, String room, String floor);
+
+  /// No description provided for @qrMultipleDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple QR codes detected. Tap to select:'**
+  String get qrMultipleDetected;
+
+  /// No description provided for @qrUnknownSku.
+  ///
+  /// In en, this message translates to:
+  /// **'SKU \"{sku}\" does not match any known product.'**
+  String qrUnknownSku(String sku);
+
+  /// No description provided for @goToRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Room'**
+  String get goToRoom;
+
+  /// No description provided for @errorLoadingProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading products'**
+  String get errorLoadingProducts;
+
+  /// No description provided for @errorLoadingInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading inventory'**
+  String get errorLoadingInventory;
+
   /// No description provided for @qrGenAllRoomProducts.
   ///
   /// In en, this message translates to:
@@ -4649,6 +4751,42 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Access and manage role-based permission settings screen'**
   String get permViewAuthorizationsDesc;
+
+  /// No description provided for @dialogRefillTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Dispenser'**
+  String get dialogRefillTitle;
+
+  /// No description provided for @dialogRefillSliderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill percentage (added volume):'**
+  String get dialogRefillSliderLabel;
+
+  /// No description provided for @dialogRefillPreExisting.
+  ///
+  /// In en, this message translates to:
+  /// **'Already Full:'**
+  String get dialogRefillPreExisting;
+
+  /// No description provided for @dialogRefillAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'To Add:'**
+  String get dialogRefillAdded;
+
+  /// No description provided for @dialogRefillNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get dialogRefillNotes;
+
+  /// No description provided for @dialogRefillConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Refill'**
+  String get dialogRefillConfirm;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

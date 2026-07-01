@@ -25,6 +25,7 @@ import '../shared/shimmer_loading.dart';
 import '../shared/premium_loading.dart';
 import '../shared/premium_confirm_dialog.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
+import '../shared/refill_percentage_dialog.dart';
 
 class RoomsScreen extends ConsumerStatefulWidget {
   const RoomsScreen({
@@ -1781,6 +1782,10 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
   }
 
   Future<void> _performRefillAction(RoomProduct item) async {
+    final result = await RefillPercentageDialog.show(context, item);
+    if (result == null) return; // cancelled or closed
+
+    final structuredNotes = '[Refill: ${result.refillPercentage}%] ${result.notes}'.trim();
     final l10n = AppLocalizations.of(context);
     try {
       var isOffline = ref.read(offlineModeProvider);
@@ -1788,6 +1793,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
         try {
           await ref.read(repositoryProvider).recordRefill(
                 roomProductId: item.id,
+                notes: structuredNotes,
               );
         } catch (e) {
           if (e.toString().contains('SocketException') ||
@@ -1806,6 +1812,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
               type: SyncActionType.refill,
               payload: {
                 'roomProductId': item.id,
+                'notes': structuredNotes,
               },
             );
         ref.invalidate(offlineActionsProvider);
@@ -2525,11 +2532,17 @@ class _RoomCardProductRow extends ConsumerWidget {
     };
 
     Future<void> performRefill() async {
+      final result = await RefillPercentageDialog.show(context, item);
+      if (result == null) return; // cancelled or closed
+
+      final structuredNotes = '[Refill: ${result.refillPercentage}%] ${result.notes}'.trim();
+
       var isOffline = ref.read(offlineModeProvider);
       if (!isOffline) {
         try {
           await ref.read(repositoryProvider).recordRefill(
                 roomProductId: item.id,
+                notes: structuredNotes,
               );
         } catch (e) {
           if (e.toString().contains('SocketException') ||
@@ -2545,7 +2558,10 @@ class _RoomCardProductRow extends ConsumerWidget {
       if (isOffline) {
         await ref.read(offlineSyncServiceProvider).enqueue(
           type: SyncActionType.refill,
-          payload: {'roomProductId': item.id},
+          payload: {
+            'roomProductId': item.id,
+            'notes': structuredNotes,
+          },
         );
         ref.invalidate(offlineActionsProvider);
       }
@@ -3856,6 +3872,23 @@ class _RefillHistoryDialog extends ConsumerWidget {
                             event.notes != null &&
                             event.notes!.startsWith('Status changed from ');
 
+                        int? parsedPercentage;
+                        String? parsedUserNotes;
+                        if (event.notes != null) {
+                          if (event.notes!.startsWith('[Refill: ')) {
+                            final match = RegExp(r'^\[Refill:\s*(\d+)%\]\s*(.*)$').firstMatch(event.notes!);
+                            if (match != null) {
+                              parsedPercentage = int.tryParse(match.group(1) ?? '');
+                              final rawNotes = match.group(2)?.trim();
+                              if (rawNotes != null && rawNotes.isNotEmpty) {
+                                parsedUserNotes = rawNotes;
+                              }
+                            }
+                          } else if (!isStatusChange) {
+                            parsedUserNotes = event.notes;
+                          }
+                        }
+
                         String label = _eventLabel(l10n, event.type, isInitialPlacement);
                         Widget subtitleWidget;
 
@@ -3933,6 +3966,16 @@ class _RefillHistoryDialog extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(subtitleText),
+                            if (parsedUserNotes != null && parsedUserNotes.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                parsedUserNotes,
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      fontStyle: FontStyle.italic,
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.85),
+                                    ),
+                              ),
+                            ],
                             if (proofPhotoWidget != null) proofPhotoWidget,
                           ],
                         );
@@ -3944,7 +3987,36 @@ class _RefillHistoryDialog extends ConsumerWidget {
                               : isStatusChange
                                   ? Icons.published_with_changes_outlined
                                   : _eventIcon(event.type)),
-                          title: Text(label),
+                          title: Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Text(label),
+                              if (parsedPercentage != null)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '$parsedPercentage%',
+                                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                            ],
+                          ),
                           subtitle: subtitleWidget,
                           trailing: event.type == RefillEventType.refill
                               ? Wrap(

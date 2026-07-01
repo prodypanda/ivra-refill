@@ -1253,6 +1253,67 @@ class AppL10nAr extends AppL10n {
       'اخترت عدم تخصيص المنتج. يمكنك مسح رمز آخر أو العودة إلى الغرف.';
 
   @override
+  String get scanAssignTitle => 'تعيين المنتج للغرفة';
+
+  @override
+  String get scanAssignSuccess => 'تم تعيين المنتج بنجاح';
+
+  @override
+  String get scanAssignFailed => 'فشل التعيين';
+
+  @override
+  String scanAssignInStock(String count) {
+    return '$count في المخزون — سيتم خصم 1 وتعيينه للغرفة';
+  }
+
+  @override
+  String get scanAssignOutOfStock =>
+      'نفد المخزون — ستتم إضافة وحدة واحدة تلقائياً ثم تعيينها';
+
+  @override
+  String get scanAssignDescription =>
+      'هذا المنتج غير معيّن لهذه الغرفة بعد. انقر أدناه لتعيينه.';
+
+  @override
+  String get scanAssignButton => 'تعيين للغرفة';
+
+  @override
+  String get scanAssignAutoAdd => 'إضافة للمخزون وتعيين';
+
+  @override
+  String get scanAssignAutoAddTitle => 'إضافة للمخزون؟';
+
+  @override
+  String scanAssignAutoAddMessage(String product) {
+    return 'المنتج \"$product\" نفد من المخزون. هل تريد إضافة وحدة واحدة تلقائياً وتعيينها لهذه الغرفة؟';
+  }
+
+  @override
+  String get scanAssignConfirm => 'نعم، أضف وعيّن';
+
+  @override
+  String scanAssignSuccessMessage(String product, String room, String floor) {
+    return 'تم تعيين المنتج $product للغرفة $room (الطابق $floor).';
+  }
+
+  @override
+  String get qrMultipleDetected => 'تم اكتشاف عدة رموز QR. انقر للاختيار:';
+
+  @override
+  String qrUnknownSku(String sku) {
+    return 'رمز SKU \"$sku\" لا يتطابق مع أي منتج معروف.';
+  }
+
+  @override
+  String get goToRoom => 'الذهاب إلى الغرفة';
+
+  @override
+  String get errorLoadingProducts => 'خطأ في تحميل المنتجات';
+
+  @override
+  String get errorLoadingInventory => 'خطأ في تحميل المخزون';
+
+  @override
   String get qrGenAllRoomProducts => 'جميع المنتجات في الغرفة المحددة';
 
   @override
@@ -2485,4 +2546,22 @@ class AppL10nAr extends AppL10n {
   @override
   String get permViewAuthorizationsDesc =>
       'الوصول إلى شاشة إعدادات صلاحيات الأدوار وإدارتها';
+
+  @override
+  String get dialogRefillTitle => 'إعادة ملء الموزع';
+
+  @override
+  String get dialogRefillSliderLabel => 'نسبة إعادة التعبئة (الحجم المضاف):';
+
+  @override
+  String get dialogRefillPreExisting => 'السائل الموجود مسبقًا:';
+
+  @override
+  String get dialogRefillAdded => 'السائل المضاف حديثًا:';
+
+  @override
+  String get dialogRefillNotes => 'ملاحظات (اختياري)';
+
+  @override
+  String get dialogRefillConfirm => 'تأكيد إعادة التعبئة';
 }

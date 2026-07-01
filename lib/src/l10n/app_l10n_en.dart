@@ -1260,6 +1260,67 @@ class AppL10nEn extends AppL10n {
       'You chose not to assign the product. You can scan another code or return to rooms.';
 
   @override
+  String get scanAssignTitle => 'Assign Product to Room';
+
+  @override
+  String get scanAssignSuccess => 'Product Assigned Successfully';
+
+  @override
+  String get scanAssignFailed => 'Assignment Failed';
+
+  @override
+  String scanAssignInStock(String count) {
+    return '$count in stock — will deduct 1 and assign to room';
+  }
+
+  @override
+  String get scanAssignOutOfStock =>
+      'Out of stock — 1 unit will be auto-added to inventory then assigned';
+
+  @override
+  String get scanAssignDescription =>
+      'This product is not yet assigned to this room. Tap below to assign it.';
+
+  @override
+  String get scanAssignButton => 'Assign to Room';
+
+  @override
+  String get scanAssignAutoAdd => 'Add to Inventory & Assign';
+
+  @override
+  String get scanAssignAutoAddTitle => 'Add to Inventory?';
+
+  @override
+  String scanAssignAutoAddMessage(String product) {
+    return 'Product \"$product\" is out of stock. Would you like to automatically add 1 unit to inventory and assign it to this room?';
+  }
+
+  @override
+  String get scanAssignConfirm => 'Yes, add & assign';
+
+  @override
+  String scanAssignSuccessMessage(String product, String room, String floor) {
+    return 'Product $product has been assigned to Room $room (Floor $floor).';
+  }
+
+  @override
+  String get qrMultipleDetected => 'Multiple QR codes detected. Tap to select:';
+
+  @override
+  String qrUnknownSku(String sku) {
+    return 'SKU \"$sku\" does not match any known product.';
+  }
+
+  @override
+  String get goToRoom => 'Go to Room';
+
+  @override
+  String get errorLoadingProducts => 'Error loading products';
+
+  @override
+  String get errorLoadingInventory => 'Error loading inventory';
+
+  @override
   String get qrGenAllRoomProducts => 'All products in the selected room';
 
   @override
@@ -2499,4 +2560,22 @@ class AppL10nEn extends AppL10n {
   @override
   String get permViewAuthorizationsDesc =>
       'Access and manage role-based permission settings screen';
+
+  @override
+  String get dialogRefillTitle => 'Refill Dispenser';
+
+  @override
+  String get dialogRefillSliderLabel => 'Refill percentage (added volume):';
+
+  @override
+  String get dialogRefillPreExisting => 'Already Full:';
+
+  @override
+  String get dialogRefillAdded => 'To Add:';
+
+  @override
+  String get dialogRefillNotes => 'Notes (optional)';
+
+  @override
+  String get dialogRefillConfirm => 'Confirm Refill';
 }

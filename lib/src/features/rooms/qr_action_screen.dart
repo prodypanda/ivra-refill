@@ -18,6 +18,7 @@ import '../shared/async_value_view.dart';
 import '../shared/product_image.dart';
 import '../shared/glass_card.dart';
 import '../shared/premium_snackbar.dart';
+import '../shared/refill_percentage_dialog.dart';
 import '../../ui/ivra_icons.dart';
 import 'rooms_screen.dart'; // Reuses exposed dialog functions: showRefillHistory, showMarkDamagedDialog, showMarkLostDialog, replaceBottle
 import '../../services/qr_code_pdf_service.dart';
@@ -2291,15 +2292,20 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
   }
 
   Future<void> _executeRefill(BuildContext context, RoomProduct item) async {
+    final result = await RefillPercentageDialog.show(context, item);
+    if (result == null) return; // cancelled or closed
+
     setState(() => _isPerformingAction = true);
     final l10n = AppLocalizations.of(context);
     var isOffline = ref.read(offlineModeProvider);
+    final structuredNotes = '[Refill: ${result.refillPercentage}%] ${result.notes}'.trim();
 
     try {
       if (!isOffline) {
         try {
           await ref.read(repositoryProvider).recordRefill(
                 roomProductId: item.id,
+                notes: structuredNotes,
               );
         } catch (e) {
           if (e.toString().contains('SocketException') ||
@@ -2316,7 +2322,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       if (isOffline) {
         await ref.read(offlineSyncServiceProvider).enqueue(
               type: SyncActionType.refill,
-              payload: {'roomProductId': item.id},
+              payload: {
+                'roomProductId': item.id,
+                'notes': structuredNotes,
+              },
             );
         ref.invalidate(offlineActionsProvider);
       }
