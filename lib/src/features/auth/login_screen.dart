@@ -505,6 +505,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final hasCreds = await hasBiometricCredentials();
       if (mounted) setState(() => _hasSavedCredentials = hasCreds);
 
+      ref.invalidate(realCurrentUserProvider);
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);
       if (mounted) {
@@ -561,6 +562,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // called `signInWithPassword`, which fails without a network and left the
       // user stuck re-trying the fingerprint prompt.
       if (hasSession) {
+        ref.invalidate(realCurrentUserProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(dashboardProvider);
         if (mounted) context.go(DashboardScreen.route);
@@ -589,6 +591,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _retryProfileLoad() {
     setState(() => _error = null);
+    ref.invalidate(realCurrentUserProvider);
     ref.invalidate(currentUserProvider);
   }
 
@@ -604,6 +607,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // Drop the offline read-cache so a different account signing in next
       // can't be served this user's cached data.
       await ref.read(repositoryProvider).clearCachedData();
+      ref.invalidate(realCurrentUserProvider);
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);
     } catch (error) {

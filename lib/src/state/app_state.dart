@@ -162,6 +162,10 @@ final impersonatedUserProvider = StateProvider<UserProfile?>((ref) => null);
 /// Use this (not [currentUserProvider]) when you need to know who is actually
 /// signed in, e.g. to decide whether the "View as" feature is available.
 final realCurrentUserProvider = FutureProvider<UserProfile>((ref) {
+  final useSupabase = ref.watch(useSupabaseProvider);
+  if (useSupabase) {
+    ref.watch(supabaseAuthStateProvider);
+  }
   return ref.watch(repositoryProvider).currentUser();
 });
 

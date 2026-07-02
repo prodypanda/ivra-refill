@@ -55,6 +55,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     return PageScaffold(
       title: l10n.t('account'),
       onRefresh: () async {
+        ref.invalidate(realCurrentUserProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(teamMembersProvider);
         await Future.wait([
@@ -64,7 +65,10 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       },
       child: AsyncValueView(
         value: ref.watch(currentUserProvider),
-        onRetry: () => ref.invalidate(currentUserProvider),
+        onRetry: () {
+          ref.invalidate(realCurrentUserProvider);
+          ref.invalidate(currentUserProvider);
+        },
         builder: (user) {
           _hydrateProfile(user);
           return ConstrainedBox(
@@ -120,6 +124,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       await ref.read(repositoryProvider).updateCurrentUserProfile(
             fullName: _fullNameController.text.trim(),
           );
+      ref.invalidate(realCurrentUserProvider);
       ref.invalidate(currentUserProvider);
       ref.invalidate(teamMembersProvider);
       if (!mounted) return;
@@ -180,6 +185,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     try {
       ref.read(auditServiceProvider).logAction('User logged off');
       await Supabase.instance.client.auth.signOut();
+      ref.invalidate(realCurrentUserProvider);
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);
       ref.invalidate(hotelsProvider);
