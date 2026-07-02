@@ -130,6 +130,8 @@ class AppLocalizations {
         return t('userRoleHotelManager');
       case UserRole.hotelStaff:
         return t('userRoleHotelStaff');
+      case UserRole.housekeeper:
+        return t('userRoleHousekeeper');
     }
   }
 

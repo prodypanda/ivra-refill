@@ -2,7 +2,8 @@ enum UserRole {
   appAdmin('app_admin'),
   appManager('app_manager'),
   hotelManager('hotel_manager'),
-  hotelStaff('hotel_staff');
+  hotelStaff('hotel_staff'),
+  housekeeper('housekeeper');
 
   const UserRole(this.value);
   final String value;

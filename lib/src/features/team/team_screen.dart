@@ -412,7 +412,7 @@ class _InviteTeamMemberDialogState
     final l10n = AppLocalizations.of(context);
     final availableRoles = _invitableRoles(widget.currentUser.role);
     final needsHotel =
-        _role == UserRole.hotelManager || _role == UserRole.hotelStaff;
+        _role == UserRole.hotelManager || _role == UserRole.hotelStaff || _role == UserRole.housekeeper;
 
     return AlertDialog(
       title: Text(l10n.t('teamInviteTitle')),
@@ -552,7 +552,7 @@ class _InviteTeamMemberDialogState
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     final needsHotel =
-        _role == UserRole.hotelManager || _role == UserRole.hotelStaff;
+        _role == UserRole.hotelManager || _role == UserRole.hotelStaff || _role == UserRole.housekeeper;
     if (needsHotel && _selectedHotelIds.isEmpty) return;
 
     setState(() => _isSaving = true);
@@ -1207,9 +1207,14 @@ List<UserRole> _invitableRoles(UserRole role) {
     UserRole.appManager => const [
         UserRole.hotelManager,
         UserRole.hotelStaff,
+        UserRole.housekeeper,
       ],
-    UserRole.hotelManager => [UserRole.hotelStaff],
-    UserRole.hotelStaff => [],
+    UserRole.hotelManager => const [
+        UserRole.hotelStaff,
+        UserRole.housekeeper,
+      ],
+    UserRole.hotelStaff => const [],
+    UserRole.housekeeper => const [],
   };
 }
 
@@ -1321,10 +1326,11 @@ bool _canManageMember(UserProfile? currentUser, UserProfile member) {
   return switch (currentUser.role) {
     UserRole.appAdmin => true,
     UserRole.appManager => member.role != UserRole.appAdmin,
-    UserRole.hotelManager => member.role == UserRole.hotelStaff &&
+    UserRole.hotelManager => (member.role == UserRole.hotelStaff || member.role == UserRole.housekeeper) &&
         member.hotelId != null &&
         member.hotelId == currentUser.hotelId,
     UserRole.hotelStaff => false,
+    UserRole.housekeeper => false,
   };
 }
 
@@ -1342,10 +1348,12 @@ bool _canManageInvitation(
   return switch (currentUser.role) {
     UserRole.appAdmin => true,
     UserRole.appManager => invitation.role == UserRole.hotelManager ||
-        invitation.role == UserRole.hotelStaff,
-    UserRole.hotelManager => invitation.role == UserRole.hotelStaff &&
+        invitation.role == UserRole.hotelStaff ||
+        invitation.role == UserRole.housekeeper,
+    UserRole.hotelManager => (invitation.role == UserRole.hotelStaff || invitation.role == UserRole.housekeeper) &&
         invitation.hotelId != null &&
         invitation.hotelId == currentUser.hotelId,
     UserRole.hotelStaff => false,
+    UserRole.housekeeper => false,
   };
 }

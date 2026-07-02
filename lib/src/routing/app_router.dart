@@ -16,6 +16,7 @@ import '../features/approvals/approvals_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/hotels/hotels_screen.dart';
 import '../features/inventory/inventory_screen.dart';
+import '../features/inventory/femme_de_chambre_screen.dart';
 import '../features/products/products_screen.dart';
 import '../features/reports/reports_screen.dart';
 import '../features/rooms/rooms_screen.dart';
@@ -311,6 +312,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             },
           ),
           GoRoute(
+            path: FemmeDeChambreScreen.route,
+            builder: (context, state) => const FemmeDeChambreScreen(),
+          ),
+          GoRoute(
             path: ProductsScreen.route,
             builder: (context, state) => const ProductsScreen(),
           ),
@@ -365,6 +370,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 String? _permissionForPath(String path) {
   if (path == RoomsScreen.route) return 'view_rooms';
   if (path == InventoryScreen.route) return 'view_inventory';
+  if (path == FemmeDeChambreScreen.route) return 'view_inventory';
   if (path == ProductsScreen.route) return 'manage_products';
   if (path == TeamScreen.route) return 'manage_team';
   if (path == ApprovalsScreen.route) return 'view_approvals';

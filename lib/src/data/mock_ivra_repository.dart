@@ -424,6 +424,7 @@ class MockIvraRepository implements IvraRepository {
   final Set<String> _processedClientRequestIds = {};
   final List<AuditLog> _mockAuditLogs = [];
   final Map<String, double> _openBidonVolumeLeft = {};
+  final List<HousekeeperAllocation> _housekeeperAllocations = [];
 
 
   @override
@@ -568,6 +569,173 @@ class MockIvraRepository implements IvraRepository {
     return _inventory
         .where((item) => hotelId == null || item.hotelId == hotelId)
         .toList();
+  }
+
+  @override
+  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({String? housekeeperId, String? hotelId}) async {
+    return _housekeeperAllocations.where((alloc) {
+      final matchHousekeeper = housekeeperId == null || alloc.housekeeperId == housekeeperId;
+      final matchHotel = hotelId == null || alloc.hotelId == hotelId;
+      return matchHousekeeper && matchHotel;
+    }).toList();
+  }
+
+  @override
+  Future<void> checkoutHousekeeperStock({
+    required String housekeeperId,
+    required String productId,
+    required int fullBottles,
+    required int fullBidons,
+  }) async {
+    if (fullBottles < 0 || fullBidons < 0) {
+      throw ArgumentError('Invalid quantities');
+    }
+
+    final profiles = _teamMembers.where((u) => u.id == housekeeperId).toList();
+    if (profiles.isEmpty) {
+      throw Exception('Housekeeper profile not found');
+    }
+    final hotelId = profiles.first.hotelId;
+    if (hotelId == null) {
+      throw Exception('Housekeeper is not assigned to a hotel');
+    }
+
+    final invIndex = _inventory.indexWhere((item) => item.hotelId == hotelId && item.product.id == productId);
+    if (invIndex == -1) {
+      throw Exception('Product inventory not found');
+    }
+    final centralInv = _inventory[invIndex];
+    if (centralInv.fullBottles < fullBottles || centralInv.fullBidons < fullBidons) {
+      throw Exception('Insufficient central stock');
+    }
+
+    _inventory[invIndex] = centralInv.copyWith(
+      fullBottles: centralInv.fullBottles - fullBottles,
+      fullBidons: centralInv.fullBidons - fullBidons,
+    );
+
+    _mockAuditLogs.insert(0, AuditLog(
+      id: DateTime.now().toIso8601String(),
+      createdAt: DateTime.now(),
+      action: 'Checked out housekeeper stock',
+      userId: housekeeperId,
+      details: {
+        'housekeeper_id': housekeeperId,
+        'product_id': productId,
+        'full_bottles': fullBottles,
+        'full_bidons': fullBidons,
+      },
+    ));
+
+    final product = centralInv.product;
+    final allocIndex = _housekeeperAllocations.indexWhere((alloc) => alloc.housekeeperId == housekeeperId && alloc.product.id == productId);
+    if (allocIndex == -1) {
+      _housekeeperAllocations.add(HousekeeperAllocation(
+        id: DateTime.now().toIso8601String(),
+        housekeeperId: housekeeperId,
+        hotelId: hotelId,
+        product: product,
+        fullBottles: fullBottles,
+        emptyBottles: 0,
+        fullBidons: fullBidons,
+        openBidons: 0,
+        emptyBidons: 0,
+        openBidonVolumeLeftMl: 0.0,
+      ));
+    } else {
+      final existing = _housekeeperAllocations[allocIndex];
+      _housekeeperAllocations[allocIndex] = existing.copyWith(
+        fullBottles: existing.fullBottles + fullBottles,
+        fullBidons: existing.fullBidons + fullBidons,
+      );
+    }
+  }
+
+  @override
+  Future<void> returnHousekeeperStock({
+    required String housekeeperId,
+    required String productId,
+    required int fullBottles,
+    required int emptyBottles,
+    required int fullBidons,
+    required int openBidons,
+    required int emptyBidons,
+    required double openBidonVolumeLeftMl,
+  }) async {
+    final profiles = _teamMembers.where((u) => u.id == housekeeperId).toList();
+    if (profiles.isEmpty) {
+      throw Exception('Housekeeper profile not found');
+    }
+    final hotelId = profiles.first.hotelId;
+    if (hotelId == null) {
+      throw Exception('Housekeeper is not assigned to a hotel');
+    }
+
+    final allocIndex = _housekeeperAllocations.indexWhere((alloc) => alloc.housekeeperId == housekeeperId && alloc.product.id == productId);
+    if (allocIndex == -1) {
+      throw Exception('Allocation not found');
+    }
+    final alloc = _housekeeperAllocations[allocIndex];
+
+    if (alloc.fullBottles < fullBottles ||
+        alloc.emptyBottles < emptyBottles ||
+        alloc.fullBidons < fullBidons ||
+        alloc.openBidons < openBidons ||
+        alloc.emptyBidons < emptyBidons ||
+        alloc.openBidonVolumeLeftMl < openBidonVolumeLeftMl) {
+      throw Exception('Insufficient housekeeper allocation to return');
+    }
+
+    _housekeeperAllocations[allocIndex] = alloc.copyWith(
+      fullBottles: alloc.fullBottles - fullBottles,
+      emptyBottles: alloc.emptyBottles - emptyBottles,
+      fullBidons: alloc.fullBidons - fullBidons,
+      openBidons: alloc.openBidons - openBidons,
+      emptyBidons: alloc.emptyBidons - emptyBidons,
+      openBidonVolumeLeftMl: alloc.openBidonVolumeLeftMl - openBidonVolumeLeftMl,
+    );
+
+    final invIndex = _inventory.indexWhere((item) => item.hotelId == hotelId && item.product.id == productId);
+    if (invIndex == -1) {
+      throw Exception('Central inventory item not found');
+    }
+    final centralInv = _inventory[invIndex];
+
+    double newCentralOpenVolume = centralInv.openBidonVolumeLeftMl + openBidonVolumeLeftMl;
+    int additionalFullBidons = 0;
+    final int capacity = centralInv.product.bidonVolumeMl;
+
+    if (newCentralOpenVolume >= capacity) {
+      int extraFull = (newCentralOpenVolume / capacity).floor();
+      additionalFullBidons += extraFull;
+      newCentralOpenVolume = newCentralOpenVolume - (extraFull * capacity);
+    }
+
+    _inventory[invIndex] = centralInv.copyWith(
+      fullBottles: centralInv.fullBottles + fullBottles,
+      emptyBottles: centralInv.emptyBottles + emptyBottles,
+      fullBidons: centralInv.fullBidons + fullBidons + additionalFullBidons,
+      openBidons: newCentralOpenVolume > 0 ? 1 : 0,
+      emptyBidons: centralInv.emptyBidons + emptyBidons,
+      openBidonVolumeLeftMl: newCentralOpenVolume,
+    );
+
+    _mockAuditLogs.insert(0, AuditLog(
+      id: DateTime.now().toIso8601String(),
+      createdAt: DateTime.now(),
+      action: 'Returned housekeeper stock',
+      userId: housekeeperId,
+      details: {
+        'housekeeper_id': housekeeperId,
+        'product_id': productId,
+        'full_bottles': fullBottles,
+        'empty_bottles': emptyBottles,
+        'full_bidons': fullBidons,
+        'open_bidons': openBidons,
+        'empty_bidons': emptyBidons,
+        'open_bidon_volume_left_ml': openBidonVolumeLeftMl,
+      },
+    ));
   }
 
   @override
@@ -1226,51 +1394,97 @@ class MockIvraRepository implements IvraRepository {
       final double bottleVol = item.product.bottleVolumeMl > 0 ? item.product.bottleVolumeMl.toDouble() : 1000.0;
       final double volumeAdded = (percentageVal / 100.0) * bottleVol;
 
-      final invIndex = _inventory.indexWhere(
-        (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
-      );
-      if (invIndex != -1) {
-        final invItem = _inventory[invIndex];
-        final double bidonVolume = invItem.product.bidonVolumeMl > 0 ? invItem.product.bidonVolumeMl.toDouble() : 5000.0;
-
-        int fullBidons = invItem.fullBidons;
-        int openBidons = invItem.openBidons;
-        int emptyBidons = invItem.emptyBidons;
-
-        // Track remaining volume of currently open bidon
-        double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? invItem.openBidonVolumeLeftMl;
-        if (openBidons > 0 && currentVolumeLeft == 0.0) {
-          currentVolumeLeft = bidonVolume;
-        }
-
-        currentVolumeLeft -= volumeAdded;
-
-        while (currentVolumeLeft <= 0) {
-          if (fullBidons > 0) {
-            if (openBidons > 0) {
-              emptyBidons++;
-            }
-            fullBidons--;
-            openBidons = 1;
-            currentVolumeLeft += bidonVolume;
-          } else {
-            if (openBidons > 0) {
-              emptyBidons++;
-            }
-            currentVolumeLeft = 0.0;
-            openBidons = 0;
-            break; // Out of stock
-          }
-        }
-
-        _openBidonVolumeLeft[invItem.product.id] = currentVolumeLeft;
-
-        _inventory[invIndex] = invItem.copyWith(
-          fullBidons: fullBidons,
-          openBidons: openBidons,
-          emptyBidons: emptyBidons,
-          openBidonVolumeLeftMl: currentVolumeLeft,
+      if (_currentUser.role == UserRole.housekeeper) {
+        final allocIndex = _housekeeperAllocations.indexWhere(
+          (alloc) => alloc.housekeeperId == _currentUser.id && alloc.product.id == item.product.id,
         );
+        if (allocIndex != -1) {
+          final alloc = _housekeeperAllocations[allocIndex];
+          final double bidonVolume = alloc.product.bidonVolumeMl > 0 ? alloc.product.bidonVolumeMl.toDouble() : 5000.0;
+
+          int fullBidons = alloc.fullBidons;
+          int openBidons = alloc.openBidons;
+          int emptyBidons = alloc.emptyBidons;
+
+          double currentVolumeLeft = alloc.openBidonVolumeLeftMl;
+          if (openBidons > 0 && currentVolumeLeft == 0.0) {
+            currentVolumeLeft = bidonVolume;
+          }
+
+          currentVolumeLeft -= volumeAdded;
+
+          while (currentVolumeLeft <= 0) {
+            if (fullBidons > 0) {
+              if (openBidons > 0) {
+                emptyBidons++;
+              }
+              fullBidons--;
+              openBidons = 1;
+              currentVolumeLeft += bidonVolume;
+            } else {
+              if (openBidons > 0) {
+                emptyBidons++;
+              }
+              currentVolumeLeft = 0.0;
+              openBidons = 0;
+              break; // Out of stock
+            }
+          }
+
+          _housekeeperAllocations[allocIndex] = alloc.copyWith(
+            fullBidons: fullBidons,
+            openBidons: openBidons,
+            emptyBidons: emptyBidons,
+            openBidonVolumeLeftMl: currentVolumeLeft,
+          );
+        }
+      } else {
+        final invIndex = _inventory.indexWhere(
+          (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+        );
+        if (invIndex != -1) {
+          final invItem = _inventory[invIndex];
+          final double bidonVolume = invItem.product.bidonVolumeMl > 0 ? invItem.product.bidonVolumeMl.toDouble() : 5000.0;
+
+          int fullBidons = invItem.fullBidons;
+          int openBidons = invItem.openBidons;
+          int emptyBidons = invItem.emptyBidons;
+
+          // Track remaining volume of currently open bidon
+          double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? invItem.openBidonVolumeLeftMl;
+          if (openBidons > 0 && currentVolumeLeft == 0.0) {
+            currentVolumeLeft = bidonVolume;
+          }
+
+          currentVolumeLeft -= volumeAdded;
+
+          while (currentVolumeLeft <= 0) {
+            if (fullBidons > 0) {
+              if (openBidons > 0) {
+                emptyBidons++;
+              }
+              fullBidons--;
+              openBidons = 1;
+              currentVolumeLeft += bidonVolume;
+            } else {
+              if (openBidons > 0) {
+                emptyBidons++;
+              }
+              currentVolumeLeft = 0.0;
+              openBidons = 0;
+              break; // Out of stock
+            }
+          }
+
+          _openBidonVolumeLeft[invItem.product.id] = currentVolumeLeft;
+
+          _inventory[invIndex] = invItem.copyWith(
+            fullBidons: fullBidons,
+            openBidons: openBidons,
+            emptyBidons: emptyBidons,
+            openBidonVolumeLeftMl: currentVolumeLeft,
+          );
+        }
       }
     }
 
@@ -1327,44 +1541,83 @@ class MockIvraRepository implements IvraRepository {
       final double bidonVolume = item.product.bidonVolumeMl > 0 ? item.product.bidonVolumeMl.toDouble() : 5000.0;
       final double volumeToRestore = (percentageVal / 100.0) * bottleVol;
 
-      final invIndex = _inventory.indexWhere(
-        (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
-      );
-      if (invIndex != -1) {
-        final invItem = _inventory[invIndex];
-
-        int fullBidons = invItem.fullBidons;
-        int openBidons = invItem.openBidons;
-        int emptyBidons = invItem.emptyBidons;
-
-        double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? invItem.openBidonVolumeLeftMl;
-
-        if (openBidons == 0 && emptyBidons > 0) {
-          openBidons = 1;
-          emptyBidons--;
-          currentVolumeLeft = 0.0;
-        }
-
-        currentVolumeLeft += volumeToRestore;
-
-        while (currentVolumeLeft > bidonVolume && emptyBidons > 0) {
-          emptyBidons--;
-          fullBidons++;
-          currentVolumeLeft -= bidonVolume;
-        }
-
-        if (currentVolumeLeft > bidonVolume) {
-          currentVolumeLeft = bidonVolume;
-        }
-
-        _openBidonVolumeLeft[invItem.product.id] = currentVolumeLeft;
-
-        _inventory[invIndex] = invItem.copyWith(
-          fullBidons: fullBidons,
-          openBidons: openBidons,
-          emptyBidons: emptyBidons,
-          openBidonVolumeLeftMl: currentVolumeLeft,
+      if (_currentUser.role == UserRole.housekeeper) {
+        final allocIndex = _housekeeperAllocations.indexWhere(
+          (alloc) => alloc.housekeeperId == _currentUser.id && alloc.product.id == item.product.id,
         );
+        if (allocIndex != -1) {
+          final alloc = _housekeeperAllocations[allocIndex];
+          int fullBidons = alloc.fullBidons;
+          int openBidons = alloc.openBidons;
+          int emptyBidons = alloc.emptyBidons;
+
+          double currentVolumeLeft = alloc.openBidonVolumeLeftMl;
+
+          if (openBidons == 0 && emptyBidons > 0) {
+            openBidons = 1;
+            emptyBidons--;
+            currentVolumeLeft = 0.0;
+          }
+
+          currentVolumeLeft += volumeToRestore;
+
+          while (currentVolumeLeft > bidonVolume && emptyBidons > 0) {
+            emptyBidons--;
+            fullBidons++;
+            currentVolumeLeft -= bidonVolume;
+          }
+
+          if (currentVolumeLeft > bidonVolume) {
+            currentVolumeLeft = bidonVolume;
+          }
+
+          _housekeeperAllocations[allocIndex] = alloc.copyWith(
+            fullBidons: fullBidons,
+            openBidons: openBidons,
+            emptyBidons: emptyBidons,
+            openBidonVolumeLeftMl: currentVolumeLeft,
+          );
+        }
+      } else {
+        final invIndex = _inventory.indexWhere(
+          (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+        );
+        if (invIndex != -1) {
+          final invItem = _inventory[invIndex];
+
+          int fullBidons = invItem.fullBidons;
+          int openBidons = invItem.openBidons;
+          int emptyBidons = invItem.emptyBidons;
+
+          double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? invItem.openBidonVolumeLeftMl;
+
+          if (openBidons == 0 && emptyBidons > 0) {
+            openBidons = 1;
+            emptyBidons--;
+            currentVolumeLeft = 0.0;
+          }
+
+          currentVolumeLeft += volumeToRestore;
+
+          while (currentVolumeLeft > bidonVolume && emptyBidons > 0) {
+            emptyBidons--;
+            fullBidons++;
+            currentVolumeLeft -= bidonVolume;
+          }
+
+          if (currentVolumeLeft > bidonVolume) {
+            currentVolumeLeft = bidonVolume;
+          }
+
+          _openBidonVolumeLeft[invItem.product.id] = currentVolumeLeft;
+
+          _inventory[invIndex] = invItem.copyWith(
+            fullBidons: fullBidons,
+            openBidons: openBidons,
+            emptyBidons: emptyBidons,
+            openBidonVolumeLeftMl: currentVolumeLeft,
+          );
+        }
       }
     }
 
@@ -1416,93 +1669,172 @@ class MockIvraRepository implements IvraRepository {
 
     final item = _roomProducts[index];
 
-    // Enforce inventory check first
-    final inventoryIndex = _inventory.indexWhere(
-      (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
-    );
-    final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
-    if (currentStock == 0) {
-      if (!autoAdjustInventory) {
-        throw StateError('Insufficient inventory for replacement.');
-      } else {
-        // Auto adjust: add 1 full bottle
-        if (inventoryIndex != -1) {
-          final stock = _inventory[inventoryIndex];
-          _inventory[inventoryIndex] = stock.copyWith(
-            fullBottles: stock.fullBottles + 1,
-          );
+    if (_currentUser.role == UserRole.housekeeper) {
+      final allocIndex = _housekeeperAllocations.indexWhere(
+        (alloc) => alloc.housekeeperId == _currentUser.id && alloc.product.id == item.product.id,
+      );
+      int availableBottles = 0;
+      if (allocIndex != -1) {
+        availableBottles = _housekeeperAllocations[allocIndex].fullBottles;
+      }
+
+      if (availableBottles == 0) {
+        if (!autoAdjustInventory) {
+          throw StateError('Insufficient checked-out allocation for product ${item.product.nameEn}. Stock is 0.');
         } else {
-          _inventory.add(InventoryItem(
-            id: _uuid.v4(),
-            hotelId: item.hotelId,
-            product: item.product,
-            fullBottles: 1,
-            emptyBottles: 0,
-            fullBidons: 0,
-            openBidons: 0,
-            emptyBidons: 0,
-          ));
+          // Auto adjust
+          if (allocIndex != -1) {
+            final existing = _housekeeperAllocations[allocIndex];
+            _housekeeperAllocations[allocIndex] = existing.copyWith(
+              fullBottles: existing.fullBottles + 1,
+            );
+          } else {
+            _housekeeperAllocations.add(HousekeeperAllocation(
+              id: _uuid.v4(),
+              housekeeperId: _currentUser.id,
+              hotelId: item.hotelId,
+              product: item.product,
+              fullBottles: 1,
+              emptyBottles: 0,
+              fullBidons: 0,
+              openBidons: 0,
+              emptyBidons: 0,
+              openBidonVolumeLeftMl: 0.0,
+            ));
+          }
         }
-        // Log event
-        _inventoryEvents.insert(
-          0,
-          InventoryEvent(
-            id: _uuid.v4(),
-            hotelId: item.hotelId,
-            productId: item.product.id,
-            fullBottlesDelta: 1,
-            emptyBottlesDelta: 0,
-            fullBidonsDelta: 0,
-            openBidonsDelta: 0,
-            emptyBidonsDelta: 0,
-            reason: 'Auto-adjusted for replacement',
-            performedBy: _currentUser.id,
-            occurredAt: DateTime.now(),
-          ),
+      }
+
+      final now = DateTime.now();
+      _events.insert(
+        0,
+        RefillEvent(
+          id: _uuid.v4(),
+          roomProductId: item.id,
+          type: RefillEventType.bottleReplaced,
+          previousRefillCount: item.refillCount,
+          newRefillCount: 0,
+          occurredAt: now,
+          performedBy: _currentUser.id,
+          performedByName: _currentUser.fullName,
+          notes: notes,
+          clientRequestId: clientRequestId,
+        ),
+      );
+      _roomProducts[index] = RoomProduct(
+        id: item.id,
+        hotelId: item.hotelId,
+        roomId: item.roomId,
+        roomNumber: item.roomNumber,
+        floorNumber: item.floorNumber,
+        product: item.product,
+        refillCount: 0,
+        lastRefillAt: null,
+        bottleStartedAt: now,
+        status: BottleStatus.active,
+      );
+
+      final finalAllocIndex = _housekeeperAllocations.indexWhere(
+        (alloc) => alloc.housekeeperId == _currentUser.id && alloc.product.id == item.product.id,
+      );
+      if (finalAllocIndex != -1) {
+        final existing = _housekeeperAllocations[finalAllocIndex];
+        _housekeeperAllocations[finalAllocIndex] = existing.copyWith(
+          fullBottles: max(existing.fullBottles - 1, 0),
+          emptyBottles: existing.emptyBottles + 1,
+        );
+      }
+
+    } else {
+      // Enforce inventory check first
+      final inventoryIndex = _inventory.indexWhere(
+        (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+      );
+      final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
+      if (currentStock == 0) {
+        if (!autoAdjustInventory) {
+          throw StateError('Insufficient inventory for replacement.');
+        } else {
+          // Auto adjust: add 1 full bottle
+          if (inventoryIndex != -1) {
+            final stock = _inventory[inventoryIndex];
+            _inventory[inventoryIndex] = stock.copyWith(
+              fullBottles: stock.fullBottles + 1,
+            );
+          } else {
+            _inventory.add(InventoryItem(
+              id: _uuid.v4(),
+              hotelId: item.hotelId,
+              product: item.product,
+              fullBottles: 1,
+              emptyBottles: 0,
+              fullBidons: 0,
+              openBidons: 0,
+              emptyBidons: 0,
+            ));
+          }
+          // Log event
+          _inventoryEvents.insert(
+            0,
+            InventoryEvent(
+              id: _uuid.v4(),
+              hotelId: item.hotelId,
+              productId: item.product.id,
+              fullBottlesDelta: 1,
+              emptyBottlesDelta: 0,
+              fullBidonsDelta: 0,
+              openBidonsDelta: 0,
+              emptyBidonsDelta: 0,
+              reason: 'Auto-adjusted for replacement',
+              performedBy: _currentUser.id,
+              occurredAt: DateTime.now(),
+            ),
+          );
+        }
+      }
+
+      final now = DateTime.now();
+      _events.insert(
+        0,
+        RefillEvent(
+          id: _uuid.v4(),
+          roomProductId: item.id,
+          type: RefillEventType.bottleReplaced,
+          previousRefillCount: item.refillCount,
+          newRefillCount: 0,
+          occurredAt: now,
+          performedBy: _currentUser.id,
+          performedByName: _currentUser.fullName,
+          notes: notes,
+          clientRequestId: clientRequestId,
+        ),
+      );
+      _roomProducts[index] = RoomProduct(
+        id: item.id,
+        hotelId: item.hotelId,
+        roomId: item.roomId,
+        roomNumber: item.roomNumber,
+        floorNumber: item.floorNumber,
+        product: item.product,
+        refillCount: 0,
+        lastRefillAt: null,
+        bottleStartedAt: now,
+        status: BottleStatus.active,
+      );
+
+      // Re-fetch index in case it was added
+      final finalInventoryIndex = _inventory.indexWhere(
+        (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+      );
+      if (finalInventoryIndex != -1) {
+        final stock = _inventory[finalInventoryIndex];
+        _inventory[finalInventoryIndex] = stock.copyWith(
+          fullBottles: max(stock.fullBottles - 1, 0),
+          emptyBottles: stock.emptyBottles + 1,
         );
       }
     }
 
-    final now = DateTime.now();
-    _events.insert(
-      0,
-      RefillEvent(
-        id: _uuid.v4(),
-        roomProductId: item.id,
-        type: RefillEventType.bottleReplaced,
-        previousRefillCount: item.refillCount,
-        newRefillCount: 0,
-        occurredAt: now,
-        performedBy: _currentUser.id,
-        performedByName: _currentUser.fullName,
-        notes: notes,
-        clientRequestId: clientRequestId,
-      ),
-    );
-    _roomProducts[index] = RoomProduct(
-      id: item.id,
-      hotelId: item.hotelId,
-      roomId: item.roomId,
-      roomNumber: item.roomNumber,
-      floorNumber: item.floorNumber,
-      product: item.product,
-      refillCount: 0,
-      lastRefillAt: null,
-      bottleStartedAt: now,
-      status: BottleStatus.active,
-    );
-
-    // Re-fetch index in case it was added
-    final finalInventoryIndex = _inventory.indexWhere(
-      (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
-    );
-    if (finalInventoryIndex != -1) {
-      final stock = _inventory[finalInventoryIndex];
-      _inventory[finalInventoryIndex] = stock.copyWith(
-        fullBottles: max(stock.fullBottles - 1, 0),
-        emptyBottles: stock.emptyBottles + 1,
-      );
-    }
     _markClientRequestProcessed(clientRequestId);
   }
 

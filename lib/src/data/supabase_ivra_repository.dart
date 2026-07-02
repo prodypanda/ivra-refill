@@ -444,6 +444,95 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({String? housekeeperId, String? hotelId}) async {
+    var query = _client.from('housekeeper_allocations').select('*, products(*)');
+    if (housekeeperId != null) {
+      query = query.eq('housekeeper_id', housekeeperId);
+    }
+    if (hotelId != null) {
+      query = query.eq('hotel_id', hotelId);
+    }
+    final rows = await query;
+    return rows.map<HousekeeperAllocation>((row) {
+      final productMap = row['products'] as Map<String, dynamic>? ?? {};
+      final flattened = Map<String, dynamic>.from(row);
+      productMap.forEach((key, val) {
+        if (key == 'id') {
+          flattened['product_id'] = val;
+        } else {
+          flattened[key] = val;
+        }
+      });
+      return HousekeeperAllocation(
+        id: asString(flattened['id']),
+        housekeeperId: asString(flattened['housekeeper_id']),
+        hotelId: asString(flattened['hotel_id']),
+        product: _joinedProductFromMap(flattened),
+        fullBottles: asInt(flattened['full_bottles']),
+        emptyBottles: asInt(flattened['empty_bottles']),
+        fullBidons: asInt(flattened['full_bidons']),
+        openBidons: asInt(flattened['open_bidons']),
+        emptyBidons: asInt(flattened['empty_bidons']),
+        openBidonVolumeLeftMl: asDouble(flattened['open_bidon_volume_left_ml']),
+      );
+    }).toList();
+  }
+
+  @override
+  Future<void> checkoutHousekeeperStock({
+    required String housekeeperId,
+    required String productId,
+    required int fullBottles,
+    required int fullBidons,
+  }) async {
+    await _client.rpc('checkout_housekeeper_stock', params: {
+      'p_housekeeper_id': housekeeperId,
+      'p_product_id': productId,
+      'p_full_bottles': fullBottles,
+      'p_full_bidons': fullBidons,
+    });
+    await _auditService.logAction('Checked out housekeeper stock', details: {
+      'housekeeper_id': housekeeperId,
+      'product_id': productId,
+      'full_bottles': fullBottles,
+      'full_bidons': fullBidons,
+    });
+  }
+
+  @override
+  Future<void> returnHousekeeperStock({
+    required String housekeeperId,
+    required String productId,
+    required int fullBottles,
+    required int emptyBottles,
+    required int fullBidons,
+    required int openBidons,
+    required int emptyBidons,
+    required double openBidonVolumeLeftMl,
+  }) async {
+    await _client.rpc('return_housekeeper_stock', params: {
+      'p_housekeeper_id': housekeeperId,
+      'p_product_id': productId,
+      'p_full_bottles': fullBottles,
+      'p_empty_bottles': emptyBottles,
+      'p_full_bidons': fullBidons,
+      'p_open_bidons': openBidons,
+      'p_empty_bidons': emptyBidons,
+      'p_open_bidon_volume_left_ml': openBidonVolumeLeftMl,
+    });
+    await _auditService.logAction('Returned housekeeper stock', details: {
+      'housekeeper_id': housekeeperId,
+      'product_id': productId,
+      'full_bottles': fullBottles,
+      'empty_bottles': emptyBottles,
+      'full_bidons': fullBidons,
+      'open_bidons': openBidons,
+      'empty_bidons': emptyBidons,
+      'open_bidon_volume_left_ml': openBidonVolumeLeftMl,
+    });
+  }
+
+  @override
   Future<List<SuggestedOrder>> suggestedOrders({String? hotelId}) async {
     var query = _client.from('suggested_order_quantities').select();
     if (hotelId != null) query = query.eq('hotel_id', hotelId);

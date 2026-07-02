@@ -787,3 +787,52 @@ class DailyRefillProgress {
   final String? nextPriorityRoomNumber;
 }
 
+class HousekeeperAllocation {
+  const HousekeeperAllocation({
+    required this.id,
+    required this.housekeeperId,
+    required this.hotelId,
+    required this.product,
+    required this.fullBottles,
+    required this.emptyBottles,
+    required this.fullBidons,
+    required this.openBidons,
+    required this.emptyBidons,
+    required this.openBidonVolumeLeftMl,
+  });
+
+  final String id;
+  final String housekeeperId;
+  final String hotelId;
+  final Product product;
+  final int fullBottles;
+  final int emptyBottles;
+  final int fullBidons;
+  final int openBidons;
+  final int emptyBidons;
+  final double openBidonVolumeLeftMl;
+
+  HousekeeperAllocation copyWith({
+    Product? product,
+    int? fullBottles,
+    int? emptyBottles,
+    int? fullBidons,
+    int? openBidons,
+    int? emptyBidons,
+    double? openBidonVolumeLeftMl,
+  }) {
+    return HousekeeperAllocation(
+      id: id,
+      housekeeperId: housekeeperId,
+      hotelId: hotelId,
+      product: product ?? this.product,
+      fullBottles: fullBottles ?? this.fullBottles,
+      emptyBottles: emptyBottles ?? this.emptyBottles,
+      fullBidons: fullBidons ?? this.fullBidons,
+      openBidons: openBidons ?? this.openBidons,
+      emptyBidons: emptyBidons ?? this.emptyBidons,
+      openBidonVolumeLeftMl: openBidonVolumeLeftMl ?? this.openBidonVolumeLeftMl,
+    );
+  }
+}
+

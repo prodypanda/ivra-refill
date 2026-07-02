@@ -26,6 +26,18 @@ abstract class IvraRepository {
   Future<List<RoomInfo>> rooms({String? hotelId});
   Future<List<RoomProduct>> roomProducts({String? hotelId, String? roomId});
   Future<List<InventoryItem>> inventory({String? hotelId});
+  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({String? housekeeperId, String? hotelId});
+  Future<void> checkoutHousekeeperStock({required String housekeeperId, required String productId, required int fullBottles, required int fullBidons});
+  Future<void> returnHousekeeperStock({
+    required String housekeeperId,
+    required String productId,
+    required int fullBottles,
+    required int emptyBottles,
+    required int fullBidons,
+    required int openBidons,
+    required int emptyBidons,
+    required double openBidonVolumeLeftMl,
+  });
   Future<List<SuggestedOrder>> suggestedOrders({String? hotelId});
   Future<List<ApprovalRequest>> approvalRequests({String? hotelId});
   Future<List<AlertItem>> alerts({String? hotelId});

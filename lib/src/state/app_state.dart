@@ -690,6 +690,7 @@ final hasPermissionProvider = Provider.family<bool, String>((ref, permission) {
             permission != 'view_audit_logs' &&
             permission != 'view_authorizations';
       case UserRole.hotelStaff:
+      case UserRole.housekeeper:
         return permission == 'view_alerts' ||
             permission == 'view_rooms' ||
             permission == 'view_inventory';
@@ -698,5 +699,16 @@ final hasPermissionProvider = Provider.family<bool, String>((ref, permission) {
 
   final rolePermissions = matrix[userProfile.roleString];
   return rolePermissions?.contains(permission) ?? false;
+});
+
+final housekeeperAllocationsProvider = FutureProvider<List<HousekeeperAllocation>>((ref) async {
+  final hotelId = ref.watch(selectedHotelIdProvider);
+  final repository = ref.watch(repositoryProvider);
+  final currentUser = ref.watch(currentUserProvider).valueOrNull;
+  if (currentUser == null) return const [];
+  return repository.fetchHousekeeperAllocations(
+    housekeeperId: currentUser.id,
+    hotelId: hotelId,
+  );
 });
 

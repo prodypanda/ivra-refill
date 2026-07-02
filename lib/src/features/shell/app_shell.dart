@@ -12,6 +12,7 @@ import '../audit/audit_logs_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../hotels/hotels_screen.dart';
 import '../inventory/inventory_screen.dart';
+import '../inventory/femme_de_chambre_screen.dart';
 import '../products/products_screen.dart';
 import '../reports/reports_screen.dart';
 import '../rooms/rooms_screen.dart';
@@ -157,6 +158,12 @@ class _AppShellState extends ConsumerState<AppShell> {
         l10n.t('inventory'),
         Icons.inventory_2_outlined,
         InventoryScreen.route,
+        permission: 'view_inventory',
+      ),
+      _NavItem(
+        l10n.t('femmeDeChambre'),
+        Icons.shopping_cart_outlined,
+        FemmeDeChambreScreen.route,
         permission: 'view_inventory',
       ),
       _NavItem(
