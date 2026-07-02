@@ -14,6 +14,7 @@ import '../../state/app_state.dart';
 import '../auth/auth_validation.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/shimmer_loading.dart';
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -33,10 +34,19 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final events = ref.watch(refillEventsProvider).valueOrNull ?? const [];
-    final roomProducts = ref.watch(roomProductsProvider).valueOrNull ?? const [];
-    final hotels = ref.watch(hotelsProvider).valueOrNull ?? const [];
-    final products = ref.watch(productsProvider).valueOrNull ?? const [];
+
+    final eventsState = ref.watch(refillEventsProvider);
+    final roomProductsState = ref.watch(roomProductsProvider);
+    final hotelsState = ref.watch(hotelsProvider);
+    final productsState = ref.watch(productsProvider);
+
+    final isLoading = eventsState.isLoading || roomProductsState.isLoading || hotelsState.isLoading || productsState.isLoading;
+    final hasError = eventsState.hasError || roomProductsState.hasError || hotelsState.hasError || productsState.hasError;
+
+    final events = eventsState.valueOrNull ?? const [];
+    final roomProducts = roomProductsState.valueOrNull ?? const [];
+    final hotels = hotelsState.valueOrNull ?? const [];
+    final products = productsState.valueOrNull ?? const [];
     final filteredEvents = _filteredEvents(events, roomProducts);
 
     return PageScaffold(
@@ -53,11 +63,29 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           ref.read(productsProvider.future),
         ]);
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _ReportFilters(
-            dateRange: _dateRange,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: isLoading
+            ? Column(
+                key: const ValueKey('loading'),
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: const [
+                  CardShimmer(),
+                  SizedBox(height: 16),
+                  CardShimmer(),
+                ],
+              )
+            : hasError
+                ? Center(
+                    key: const ValueKey('error'),
+                    child: Text(l10n.t('errorLoadingData') ?? 'Error loading data'),
+                  )
+                : Column(
+                    key: const ValueKey('content'),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _ReportFilters(
+                        dateRange: _dateRange,
             hotelId: _hotelId,
             productId: _productId,
             roomId: _roomId,
@@ -299,9 +327,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
           ),
         ],
       ),
-    ],
-  ),
-);
+                    ],
+                  ),
+      ),
+    );
   }
 
   List<RefillEvent> _filteredEvents(
@@ -797,6 +826,8 @@ class _TrendChart extends StatelessWidget {
             SizedBox(
               height: 200,
               child: BarChart(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
                 BarChartData(
                   maxY: maxY,
                   minY: 0,
@@ -896,9 +927,8 @@ class _TrendChart extends StatelessWidget {
                               end: Alignment.topCenter,
                             ),
                             width: 14,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(6),
-                              topRight: Radius.circular(6),
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(6),
                             ),
                             backDrawRodData: BackgroundBarChartRodData(
                               show: true,
@@ -1034,9 +1064,8 @@ class _ReportActionState extends State<_ReportAction> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
                       ),
                     ),
                     child: Row(
