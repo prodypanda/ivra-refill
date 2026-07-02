@@ -485,7 +485,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                             if (context.mounted) {
                               PremiumSnackbar.show(
                                 context,
-                                l10n.t('roomsRefillRecorded'), // Succesfully checked out
+                                l10n.t('housekeeperStockCheckedOut'),
                                 icon: Icons.check_circle_outline,
                               );
                             }
@@ -657,7 +657,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                         const SizedBox(height: 20),
                         // Slider for Open Bidon Volume
                         Text(
-                          '${l10n.t('inventoryTableOpenBidons')} ${l10n.t('roomsLabelAge')} (${openBidonVolume.toInt()} ml):',
+                          '${l10n.t('openBidonVolumeLeft')} (${openBidonVolume.toInt()} ml):',
                           style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         Slider(
@@ -709,7 +709,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                             if (context.mounted) {
                               PremiumSnackbar.show(
                                 context,
-                                l10n.t('auditResolvedToast'), // Succesfully returned
+                                l10n.t('housekeeperStockReturned'),
                                 icon: Icons.check_circle_outline,
                               );
                             }

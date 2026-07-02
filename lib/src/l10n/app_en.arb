@@ -1382,5 +1382,15 @@
   "dialogRefillPreExisting": "Already Full:",
   "dialogRefillAdded": "To Add:",
   "dialogRefillNotes": "Notes (optional)",
-  "dialogRefillConfirm": "Confirm Refill"
+  "dialogRefillConfirm": "Confirm Refill",
+  "femmeDeChambre": "Housekeeper",
+  "checkoutStock": "Checkout Stock",
+  "returnStock": "Return Stock",
+  "housekeeperCart": "My Cart",
+  "noAllocations": "No active allocations. Check out stock to start.",
+  "fullBottles": "Full Bottles",
+  "openBidonVolumeLeft": "Remaining Volume",
+  "housekeeperStockCheckedOut": "Stock checked out successfully!",
+  "housekeeperStockReturned": "Stock returned successfully!",
+  "userRoleHousekeeper": "Housekeeper"
 }

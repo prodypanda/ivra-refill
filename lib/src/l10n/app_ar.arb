@@ -780,5 +780,15 @@
   "dialogRefillPreExisting": "السائل الموجود مسبقًا:",
   "dialogRefillAdded": "السائل المضاف حديثًا:",
   "dialogRefillNotes": "ملاحظات (اختياري)",
-  "dialogRefillConfirm": "تأكيد إعادة التعبئة"
+  "dialogRefillConfirm": "تأكيد إعادة التعبئة",
+  "femmeDeChambre": "عاملة الغرف",
+  "checkoutStock": "صرف مخزون",
+  "returnStock": "إرجاع مخزون",
+  "housekeeperCart": "عربتي",
+  "noAllocations": "لا توجد حصص نشطة. قم بصرف مخزون للبدء.",
+  "fullBottles": "زجاجات كاملة",
+  "openBidonVolumeLeft": "الحجم المتبقي",
+  "housekeeperStockCheckedOut": "تم صرف المخزون بنجاح!",
+  "housekeeperStockReturned": "تم إرجاع المخزون بنجاح!",
+  "userRoleHousekeeper": "عاملة الغرف"
 }

@@ -780,5 +780,15 @@
   "dialogRefillPreExisting": "Liquido preesistente:",
   "dialogRefillAdded": "Liquido appena aggiunto:",
   "dialogRefillNotes": "Note (opzionale)",
-  "dialogRefillConfirm": "Conferma ricarica"
+  "dialogRefillConfirm": "Conferma ricarica",
+  "femmeDeChambre": "Cameriera",
+  "checkoutStock": "Preleva stock",
+  "returnStock": "Ritorna stock",
+  "housekeeperCart": "Mio carrello",
+  "noAllocations": "Nessuna allocazione attiva. Preleva stock per iniziare.",
+  "fullBottles": "Bottiglie piene",
+  "openBidonVolumeLeft": "Volume rimanente",
+  "housekeeperStockCheckedOut": "Stock prelevato con successo!",
+  "housekeeperStockReturned": "Stock ritornato con successo!",
+  "userRoleHousekeeper": "Cameriera ai piani"
 }
