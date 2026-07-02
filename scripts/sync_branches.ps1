@@ -14,15 +14,6 @@ $ErrorActionPreference = "Stop"
 $currentBranch = (git branch --show-current).Trim()
 Write-Host "Current branch: $currentBranch"
 
-if ($currentBranch -ne "resume-unfinished-devin-session") {
-  Write-Warning "You are not on 'resume-unfinished-devin-session'. You are on '$currentBranch'."
-  $confirm = Read-Host "Do you want to continue? (y/n)"
-  if ($confirm -ne "y" -and $confirm -ne "Y") {
-    Write-Error "Sync aborted by user."
-    exit 1
-  }
-}
-
 # 1. Stage and commit changes if there are any
 if (-not $PushOnly) {
   $gitStatus = git status --porcelain
@@ -36,21 +27,45 @@ if (-not $PushOnly) {
   }
 }
 
-# 2. Sync to main
-Write-Host "Switching to main branch..."
-git checkout main
+# 2. Find where the 'main' branch is checked out
+$worktrees = git worktree list
+$mainWorktreeLine = $worktrees | Where-Object { $_ -match '\[main\]' }
 
-try {
-  Write-Host "Merging $currentBranch into main..."
-  # Merge with fast-forward or standard merge to keep them identical
-  git merge $currentBranch --no-edit
+if ($mainWorktreeLine) {
+  # 'main' is checked out in another worktree
+  $mainPath = ($mainWorktreeLine -split '\s+')[0]
+  Write-Host "Branch 'main' is checked out in another worktree at: $mainPath"
+  Write-Host "Performing merge and push in that worktree..."
+  
+  # Run merge in the main worktree
+  $currentLocation = Get-Location
+  try {
+    Set-Location $mainPath
+    Write-Host "Merging $currentBranch into main..."
+    git merge $currentBranch --no-edit
+    
+    Write-Host "Pushing main to origin..."
+    git push origin main
+  }
+  finally {
+    Set-Location $currentLocation
+  }
+} else {
+  # 'main' is not checked out in another worktree, we can checkout and merge here
+  Write-Host "Switching to main branch..."
+  git checkout main
 
-  Write-Host "Pushing main to origin..."
-  git push origin main
-}
-finally {
-  Write-Host "Switching back to $currentBranch..."
-  git checkout $currentBranch
+  try {
+    Write-Host "Merging $currentBranch into main..."
+    git merge $currentBranch --no-edit
+
+    Write-Host "Pushing main to origin..."
+    git push origin main
+  }
+  finally {
+    Write-Host "Switching back to $currentBranch..."
+    git checkout $currentBranch
+  }
 }
 
 # 3. Push development branch to origin
