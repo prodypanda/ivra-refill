@@ -890,16 +890,41 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
               ),
               if (widget.item.product.isRefillable) ...[
                 const SizedBox(height: 12),
-                _VisualStockBar(
-                  label: l10n.tParams('inventoryTableFullBidons', {'size': _getFormattedVolume(widget.item.product.bidonVolumeMl, language)}),
-                  value: widget.item.fullBidons,
-                  threshold: widget.item.product.lowBidonThreshold,
-                  icon: IvraIcons.fullRefillBottle,
-                  color: theme.colorScheme.primary,
-                  valueSuffix: (widget.item.openBidons > 0 && widget.item.product.bidonVolumeMl > 0)
-                      ? ' (+${(((widget.item.openBidonVolumeLeftMl == 0.0 ? widget.item.product.bidonVolumeMl : widget.item.openBidonVolumeLeftMl) / widget.item.product.bidonVolumeMl) * 100).round()}%)'
-                      : null,
-                ),
+                (() {
+                  final bidonVolume = widget.item.product.bidonVolumeMl;
+                  final openVolume = widget.item.openBidonVolumeLeftMl;
+                  final openBidons = widget.item.openBidons;
+                  final fullBidons = widget.item.fullBidons;
+
+                  int displayValue = fullBidons;
+                  String? displaySuffix;
+
+                  if (openBidons > 0 && bidonVolume > 0) {
+                    final double volumeLeft = (openVolume == 0.0) ? bidonVolume.toDouble() : openVolume;
+                    final double percent = (volumeLeft / bidonVolume) * 100;
+                    final int percentRound = percent.round();
+
+                    if (percentRound < 100) {
+                      displayValue = fullBidons;
+                      displaySuffix = ' (+$percentRound%)';
+                    } else {
+                      displayValue = fullBidons + openBidons;
+                      displaySuffix = null;
+                    }
+                  } else {
+                    displayValue = fullBidons;
+                    displaySuffix = null;
+                  }
+
+                  return _VisualStockBar(
+                    label: l10n.tParams('inventoryTableFullBidons', {'size': _getFormattedVolume(bidonVolume, language)}),
+                    value: displayValue,
+                    threshold: widget.item.product.lowBidonThreshold,
+                    icon: IvraIcons.fullRefillBottle,
+                    color: theme.colorScheme.primary,
+                    valueSuffix: displaySuffix,
+                  );
+                })(),
               ],
               const SizedBox(height: 16),
               InkWell(
@@ -956,15 +981,6 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                             ),
                           ),
                           if (widget.item.product.isRefillable) ...[
-                            Container(width: 1, height: 24, color: theme.dividerColor),
-                            Expanded(
-                              child: _MiniStat(
-                                label: l10n.t('inventoryTableOpenBidons'),
-                                value: widget.item.openBidons,
-                                icon: IvraIcons.emptyRefillBottle,
-                                color: Colors.indigo,
-                              ),
-                            ),
                             Container(width: 1, height: 24, color: theme.dividerColor),
                             Expanded(
                               child: _MiniStat(
@@ -1351,11 +1367,6 @@ class _StockAdjustmentDialogState
                       ),
                       if (_showAdvanced) ...[
                         const SizedBox(height: 8),
-                        _DeltaField(
-                          controller: _openBidons,
-                          label: l10n.t('inventoryTableOpenBidons'),
-                        ),
-                        const SizedBox(height: 12),
                         _DeltaField(
                           controller: _emptyBidons,
                           label: emptyBidonsLabel,
@@ -1934,11 +1945,6 @@ class _BulkStockAdjustmentDialogState
                           ),
                           if (_showAdvanced) ...[
                             const SizedBox(height: 8),
-                            _DeltaField(
-                              controller: _openBidons,
-                              label: l10n.t('inventoryTableOpenBidons'),
-                            ),
-                            const SizedBox(height: 12),
                             _DeltaField(
                               controller: _emptyBidons,
                               label: emptyBidonsLabel,
