@@ -358,6 +358,18 @@ final inventoryProvider = FutureProvider<List<InventoryItem>>((ref) async {
 
   if (pendingActions.isEmpty) return items;
 
+  // Fetch room products to map roomProductId to product/productId
+  final roomProducts = await repository.roomProducts(hotelId: hotelId);
+  final Map<String, Product> roomProductMap = {
+    for (final rp in roomProducts) rp.id: rp.product
+  };
+
+  // Local tracker for active volume left of the open bidon per product
+  final Map<String, double> localVolumeLeft = {};
+  for (final item in items) {
+    localVolumeLeft[item.product.id] = item.openBidonVolumeLeftMl;
+  }
+
   return items.map((item) {
     var updated = item;
     for (final action in pendingActions) {
@@ -375,6 +387,59 @@ final inventoryProvider = FutureProvider<List<InventoryItem>>((ref) async {
           emptyBidons: updated.emptyBidons +
               (action.payload['emptyBidonsDelta'] as int? ?? 0),
         );
+      } else if (action.type == SyncActionType.refill) {
+        final roomProductId = action.payload['roomProductId'] as String?;
+        final product = roomProductMap[roomProductId];
+        if (product != null && product.id == updated.product.id && product.isRefillable) {
+          final notes = action.payload['notes'] as String?;
+          int percentageVal = 100;
+          if (notes != null) {
+            final percentageMatch = RegExp(r'\[Refill:\s*(\d+)%\]').firstMatch(notes);
+            if (percentageMatch != null) {
+              percentageVal = int.parse(percentageMatch.group(1)!);
+            }
+          }
+          final double bottleVol = product.bottleVolumeMl > 0 ? product.bottleVolumeMl.toDouble() : 1000.0;
+          final double bidonVolume = product.bidonVolumeMl > 0 ? product.bidonVolumeMl.toDouble() : 5000.0;
+          final double volumeAdded = (percentageVal / 100.0) * bottleVol;
+
+          int fullBidons = updated.fullBidons;
+          int openBidons = updated.openBidons;
+          int emptyBidons = updated.emptyBidons;
+          double currentVolumeLeft = localVolumeLeft[updated.product.id] ?? updated.openBidonVolumeLeftMl;
+
+          if (openBidons > 0 && currentVolumeLeft == 0.0) {
+            currentVolumeLeft = bidonVolume;
+          }
+
+          currentVolumeLeft -= volumeAdded;
+
+          while (currentVolumeLeft <= 0) {
+            if (fullBidons > 0) {
+              if (openBidons > 0) {
+                emptyBidons++;
+              }
+              fullBidons--;
+              openBidons = 1;
+              currentVolumeLeft += bidonVolume;
+            } else {
+              if (openBidons > 0) {
+                emptyBidons++;
+              }
+              currentVolumeLeft = 0.0;
+              openBidons = 0;
+              break;
+            }
+          }
+
+          localVolumeLeft[updated.product.id] = currentVolumeLeft;
+          updated = updated.copyWith(
+            fullBidons: fullBidons,
+            openBidons: openBidons,
+            emptyBidons: emptyBidons,
+            openBidonVolumeLeftMl: currentVolumeLeft,
+          );
+        }
       }
     }
     return updated;

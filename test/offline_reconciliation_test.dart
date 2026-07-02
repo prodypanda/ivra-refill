@@ -143,4 +143,37 @@ void main() {
 
     expect(await repository.appliedClientRequestIds(), contains('crid-123'));
   });
+
+  test('pending refill offline adjusts open bidon volume and counts in inventoryProvider', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = MockIvraRepository();
+    final service = OfflineSyncService();
+    final container = makeContainer(repository);
+
+    // Initial inventory for shampoo (hotel-seaside)
+    final initialShampoo = (await repository.inventory(hotelId: 'hotel-seaside'))
+        .firstWhere((item) => item.product.id == 'prod-shampoo');
+
+    expect(initialShampoo.openBidonVolumeLeftMl, 2500.0);
+    expect(initialShampoo.fullBidons, 3);
+    expect(initialShampoo.emptyBidons, 5);
+
+    // Queue a 100% refill for rp-101-shampoo (prod-shampoo) which has bottle volume of 1000ml.
+    // 100% refill of 1000ml bottle. This should subtract 1000ml from active open bidon volume.
+    await service.enqueue(
+      type: SyncActionType.refill,
+      payload: {
+        'roomProductId': 'rp-101-shampoo',
+        'notes': '[Refill: 100%]',
+      },
+    );
+
+    final result = await container.read(inventoryProvider.future);
+    final reconciledShampoo = result.firstWhere((item) => item.product.id == 'prod-shampoo');
+
+    // Should deduct 1000ml from 2500ml, leaving 1500ml
+    expect(reconciledShampoo.openBidonVolumeLeftMl, 1500.0);
+    expect(reconciledShampoo.fullBidons, 3);
+    expect(reconciledShampoo.emptyBidons, 5);
+  });
 }

@@ -4069,6 +4069,11 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                                 .undoRefill(
                                                     refillEventId: event.id);
                                           }
+                                          ref.invalidate(roomProductsProvider);
+                                          ref.invalidate(refillEventsProvider);
+                                          ref.invalidate(approvalsProvider);
+                                          ref.invalidate(dashboardProvider);
+                                          ref.invalidate(inventoryProvider);
                                           if (context.mounted) {
                                             Navigator.of(context).pop();
                                             ScaffoldMessenger.of(context)

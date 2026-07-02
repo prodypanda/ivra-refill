@@ -896,8 +896,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                   threshold: widget.item.product.lowBidonThreshold,
                   icon: IvraIcons.fullRefillBottle,
                   color: theme.colorScheme.primary,
-                  valueSuffix: (widget.item.openBidons > 0 && widget.item.openBidonVolumeLeftMl > 0)
-                      ? ' (+${((widget.item.openBidonVolumeLeftMl / widget.item.product.bidonVolumeMl) * 100).round()}%)'
+                  valueSuffix: (widget.item.openBidons > 0 && widget.item.product.bidonVolumeMl > 0)
+                      ? ' (+${(((widget.item.openBidonVolumeLeftMl == 0.0 ? widget.item.product.bidonVolumeMl : widget.item.openBidonVolumeLeftMl) / widget.item.product.bidonVolumeMl) * 100).round()}%)'
                       : null,
                 ),
               ],
@@ -963,6 +963,15 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                                 value: widget.item.openBidons,
                                 icon: IvraIcons.emptyRefillBottle,
                                 color: Colors.indigo,
+                              ),
+                            ),
+                            Container(width: 1, height: 24, color: theme.dividerColor),
+                            Expanded(
+                              child: _MiniStat(
+                                label: l10n.t('inventoryTableEmptyBidons'),
+                                value: widget.item.emptyBidons,
+                                icon: IvraIcons.emptyRefillBottle,
+                                color: Colors.blueGrey,
                               ),
                             ),
                           ],
