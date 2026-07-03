@@ -4404,6 +4404,25 @@ abstract class AppL10n {
   /// **'Replacing the bottle of {product} in Room {room} requires 1 full bottle. Store Stock has 0. Would you like to automatically add 1 bottle to the store stock and proceed?'**
   String inventoryEnforceReplaceContent(String product, String room);
 
+  /// No description provided for @housekeeperReplaceGetFromHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory. However, {count} bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?'**
+  String housekeeperReplaceGetFromHotel(
+      String product, String room, String count);
+
+  /// No description provided for @housekeeperReplaceNotifyManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.'**
+  String housekeeperReplaceNotifyManager(String product, String room);
+
+  /// No description provided for @btnOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get btnOk;
+
   /// No description provided for @inventoryEnforceBtnProceed.
   ///
   /// In en, this message translates to:

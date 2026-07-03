@@ -2372,6 +2372,20 @@ class AppL10nEn extends AppL10n {
   }
 
   @override
+  String housekeeperReplaceGetFromHotel(
+      String product, String room, String count) {
+    return 'Replacing $product in Room $room requires 1 full bottle, but you do not have it in your inventory. However, $count bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?';
+  }
+
+  @override
+  String housekeeperReplaceNotifyManager(String product, String room) {
+    return 'Replacing $product in Room $room requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.';
+  }
+
+  @override
+  String get btnOk => 'OK';
+
+  @override
   String get inventoryEnforceBtnProceed => 'Auto-Adjust & Proceed';
 
   @override
