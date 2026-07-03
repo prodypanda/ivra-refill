@@ -272,9 +272,10 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   bool _isRetriableProfileError(Object error) {
-    // A genuine "no profile row" (PGRST116) is not retriable.
     if (error is PostgrestException && error.code == 'PGRST116') {
-      return false;
+      // If a user is logged in, a temporary RLS propagation delay can make the profile query
+      // return 0 rows (PGRST116) right after login. Allowing a single retry solves this race condition.
+      return _client.auth.currentUser != null;
     }
     return NetworkErrorClassifier.isRetriable(error);
   }

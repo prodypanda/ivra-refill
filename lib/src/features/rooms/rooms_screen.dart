@@ -1647,7 +1647,13 @@ Future<void> replaceBottle(
   var autoAdjust = false;
 
   if (isHousekeeper) {
-    final allocations = ref.read(housekeeperAllocationsProvider).valueOrNull ?? [];
+    List<HousekeeperAllocation> allocations = [];
+    try {
+      allocations = await ref.read(housekeeperAllocationsProvider.future);
+    } catch (_) {
+      allocations = ref.read(housekeeperAllocationsProvider).valueOrNull ?? [];
+    }
+
     final housekeeperAllocation = allocations.firstWhere(
       (a) => a.product.id == item.product.id,
       orElse: () => HousekeeperAllocation(
@@ -1665,7 +1671,13 @@ Future<void> replaceBottle(
     );
 
     if (housekeeperAllocation.fullBottles == 0) {
-      final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+      List<InventoryItem> inventory = [];
+      try {
+        inventory = await ref.read(inventoryProvider.future);
+      } catch (_) {
+        inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+      }
+
       final hotelStockItem = inventory.firstWhere(
         (stock) => stock.product.id == item.product.id,
         orElse: () => InventoryItem(
@@ -1708,7 +1720,13 @@ Future<void> replaceBottle(
       }
     }
   } else {
-    final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+    List<InventoryItem> inventory = [];
+    try {
+      inventory = await ref.read(inventoryProvider.future);
+    } catch (_) {
+      inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+    }
+
     final stockItem = inventory.firstWhere(
       (stock) => stock.product.id == item.product.id,
       orElse: () => InventoryItem(
