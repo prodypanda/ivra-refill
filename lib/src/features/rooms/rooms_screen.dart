@@ -1594,6 +1594,44 @@ Future<bool?> _showInsufficientStockDialog({
   );
 }
 
+Future<bool?> _showHousekeeperStockDialog({
+  required BuildContext context,
+  required String message,
+  required bool showProceedAction,
+}) {
+  final l10n = AppLocalizations.of(context);
+  return showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.error),
+          const SizedBox(width: 8),
+          Text(l10n.t('inventoryEnforceTitle')),
+        ],
+      ),
+      content: Text(message),
+      actions: [
+        if (showProceedAction) ...[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnCancel')),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.t('btnConfirm')),
+          ),
+        ] else ...[
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.t('btnOk')),
+          ),
+        ],
+      ],
+    ),
+  );
+}
+
 Future<void> replaceBottle(
   BuildContext context,
   WidgetRef ref,
@@ -1603,34 +1641,101 @@ Future<void> replaceBottle(
   var isOffline = ref.read(offlineModeProvider);
 
   // Check inventory stock
-  final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
-  final stockItem = inventory.firstWhere(
-    (stock) => stock.product.id == item.product.id,
-    orElse: () => InventoryItem(
-      id: '',
-      hotelId: item.hotelId,
-      product: item.product,
-      fullBottles: 0,
-      emptyBottles: 0,
-      fullBidons: 0,
-      openBidons: 0,
-      emptyBidons: 0,
-    ),
-  );
+  final currentUser = ref.read(currentUserProvider).valueOrNull;
+  final isHousekeeper = currentUser?.role == UserRole.housekeeper;
 
   var autoAdjust = false;
-  if (stockItem.fullBottles == 0) {
-    final language = Localizations.localeOf(context).languageCode;
-    final proceed = await _showInsufficientStockDialog(
-      context: context,
-      productName: item.product.label(language),
-      message: l10n.tParams('inventoryEnforceReplaceContent', {
-        'product': item.product.label(language),
-        'room': item.roomNumber,
-      }),
+
+  if (isHousekeeper) {
+    final allocations = ref.read(housekeeperAllocationsProvider).valueOrNull ?? [];
+    final housekeeperAllocation = allocations.firstWhere(
+      (a) => a.product.id == item.product.id,
+      orElse: () => HousekeeperAllocation(
+        id: '',
+        housekeeperId: currentUser?.id ?? '',
+        hotelId: item.hotelId,
+        product: item.product,
+        fullBottles: 0,
+        emptyBottles: 0,
+        fullBidons: 0,
+        openBidons: 0,
+        emptyBidons: 0,
+        openBidonVolumeLeftMl: 0,
+      ),
     );
-    if (proceed != true) return;
-    autoAdjust = true;
+
+    if (housekeeperAllocation.fullBottles == 0) {
+      final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+      final hotelStockItem = inventory.firstWhere(
+        (stock) => stock.product.id == item.product.id,
+        orElse: () => InventoryItem(
+          id: '',
+          hotelId: item.hotelId,
+          product: item.product,
+          fullBottles: 0,
+          emptyBottles: 0,
+          fullBidons: 0,
+          openBidons: 0,
+          emptyBidons: 0,
+        ),
+      );
+      final hotelBottles = hotelStockItem.fullBottles;
+      final language = Localizations.localeOf(context).languageCode;
+      final productName = item.product.label(language);
+
+      if (hotelBottles > 0) {
+        final proceed = await _showHousekeeperStockDialog(
+          context: context,
+          message: l10n.tParams('housekeeperReplaceGetFromHotel', {
+            'product': productName,
+            'room': item.roomNumber,
+            'count': hotelBottles.toString(),
+          }),
+          showProceedAction: true,
+        );
+        if (proceed != true) return;
+        autoAdjust = true;
+      } else {
+        await _showHousekeeperStockDialog(
+          context: context,
+          message: l10n.tParams('housekeeperReplaceNotifyManager', {
+            'product': productName,
+            'room': item.roomNumber,
+          }),
+          showProceedAction: false,
+        );
+        return; // Cannot proceed
+      }
+    }
+  } else {
+    final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+    final stockItem = inventory.firstWhere(
+      (stock) => stock.product.id == item.product.id,
+      orElse: () => InventoryItem(
+        id: '',
+        hotelId: item.hotelId,
+        product: item.product,
+        fullBottles: 0,
+        emptyBottles: 0,
+        fullBidons: 0,
+        openBidons: 0,
+        emptyBidons: 0,
+      ),
+    );
+
+    if (stockItem.fullBottles == 0) {
+      final language = Localizations.localeOf(context).languageCode;
+      final proceed = await _showInsufficientStockDialog(
+        context: context,
+        productName: item.product.label(language),
+        message: l10n.tParams('inventoryEnforceReplaceContent', {
+          'product': item.product.label(language),
+          'room': item.roomNumber,
+        }),
+      );
+      if (proceed != true) return;
+      autoAdjust = true;
+    }
   }
 
   if (!isOffline) {

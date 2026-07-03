@@ -59,9 +59,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoggedIn = ref.read(isLoggedInProvider);
       final currentUserValue = isLoggedIn ? ref.read(currentUserProvider) : null;
       final currentUser = currentUserValue?.valueOrNull;
+
+      final profileErrorObj = currentUserValue?.error;
+      final isNoUserError = profileErrorObj is StateError &&
+          profileErrorObj.message.contains('No authenticated user');
+
       final hasProfileError = useSupabase &&
           isLoggedIn &&
           (currentUserValue?.hasError ?? false) &&
+          !isNoUserError &&
           !(currentUserValue?.isLoading ?? false);
 
       final path = state.uri.path;
