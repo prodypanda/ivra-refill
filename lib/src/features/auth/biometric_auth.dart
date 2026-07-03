@@ -59,6 +59,10 @@ Future<void> saveLoginCredentials(String email, String password) async {
   if (prefs.containsKey(AuthPrefs.passwordKey(trimmed))) {
     await prefs.remove(AuthPrefs.passwordKey(trimmed));
   }
+  // Also scrub the old global plaintext password, if it exists.
+  if (prefs.containsKey(AuthPrefs.legacyPassword)) {
+    await prefs.remove(AuthPrefs.legacyPassword);
+  }
 }
 
 /// The saved password for [email], if any.
