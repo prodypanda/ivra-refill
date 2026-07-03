@@ -4404,6 +4404,25 @@ abstract class AppL10n {
   /// **'Replacing the bottle of {product} in Room {room} requires 1 full bottle. Store Stock has 0. Would you like to automatically add 1 bottle to the store stock and proceed?'**
   String inventoryEnforceReplaceContent(String product, String room);
 
+  /// No description provided for @housekeeperReplaceGetFromHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory. However, {count} bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?'**
+  String housekeeperReplaceGetFromHotel(
+      String product, String room, String count);
+
+  /// No description provided for @housekeeperReplaceNotifyManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.'**
+  String housekeeperReplaceNotifyManager(String product, String room);
+
+  /// No description provided for @btnOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get btnOk;
+
   /// No description provided for @inventoryEnforceBtnProceed.
   ///
   /// In en, this message translates to:
@@ -4787,6 +4806,66 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Confirm Refill'**
   String get dialogRefillConfirm;
+
+  /// No description provided for @femmeDeChambre.
+  ///
+  /// In en, this message translates to:
+  /// **'Housekeeper'**
+  String get femmeDeChambre;
+
+  /// No description provided for @checkoutStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout Stock'**
+  String get checkoutStock;
+
+  /// No description provided for @returnStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Return Stock'**
+  String get returnStock;
+
+  /// No description provided for @housekeeperCart.
+  ///
+  /// In en, this message translates to:
+  /// **'My Cart'**
+  String get housekeeperCart;
+
+  /// No description provided for @noAllocations.
+  ///
+  /// In en, this message translates to:
+  /// **'No active allocations. Check out stock to start.'**
+  String get noAllocations;
+
+  /// No description provided for @fullBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Bottles'**
+  String get fullBottles;
+
+  /// No description provided for @openBidonVolumeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Volume'**
+  String get openBidonVolumeLeft;
+
+  /// No description provided for @housekeeperStockCheckedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock checked out successfully!'**
+  String get housekeeperStockCheckedOut;
+
+  /// No description provided for @housekeeperStockReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock returned successfully!'**
+  String get housekeeperStockReturned;
+
+  /// No description provided for @userRoleHousekeeper.
+  ///
+  /// In en, this message translates to:
+  /// **'Housekeeper'**
+  String get userRoleHousekeeper;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

@@ -2361,6 +2361,20 @@ class AppL10nAr extends AppL10n {
   }
 
   @override
+  String housekeeperReplaceGetFromHotel(
+      String product, String room, String count) {
+    return 'استبدال $product في الغرفة $room يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك. ومع ذلك، تتوفر $count زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة من مخزون الفندق والمتابعة؟';
+  }
+
+  @override
+  String housekeeperReplaceNotifyManager(String product, String room) {
+    return 'استبدال $product في الغرفة $room يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.';
+  }
+
+  @override
+  String get btnOk => 'موافق';
+
+  @override
   String get inventoryEnforceBtnProceed => 'التعديل التلقائي والمتابعة';
 
   @override
@@ -2564,4 +2578,34 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get dialogRefillConfirm => 'تأكيد إعادة التعبئة';
+
+  @override
+  String get femmeDeChambre => 'عاملة الغرف';
+
+  @override
+  String get checkoutStock => 'صرف مخزون';
+
+  @override
+  String get returnStock => 'إرجاع مخزون';
+
+  @override
+  String get housekeeperCart => 'عربتي';
+
+  @override
+  String get noAllocations => 'لا توجد حصص نشطة. قم بصرف مخزون للبدء.';
+
+  @override
+  String get fullBottles => 'زجاجات كاملة';
+
+  @override
+  String get openBidonVolumeLeft => 'الحجم المتبقي';
+
+  @override
+  String get housekeeperStockCheckedOut => 'تم صرف المخزون بنجاح!';
+
+  @override
+  String get housekeeperStockReturned => 'تم إرجاع المخزون بنجاح!';
+
+  @override
+  String get userRoleHousekeeper => 'عاملة الغرف';
 }

@@ -2406,6 +2406,20 @@ class AppL10nFr extends AppL10n {
   }
 
   @override
+  String housekeeperReplaceGetFromHotel(
+      String product, String room, String count) {
+    return 'Remplacer $product dans la chambre $room nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire. Cependant, $count bouteilles sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bouteille de l\'inventaire de l\'hôtel et continuer ?';
+  }
+
+  @override
+  String housekeeperReplaceNotifyManager(String product, String room) {
+    return 'Remplacer $product dans la chambre $room nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire et elle n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.';
+  }
+
+  @override
+  String get btnOk => 'OK';
+
+  @override
   String get inventoryEnforceBtnProceed => 'Ajuster et continuer';
 
   @override
@@ -2620,4 +2634,35 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get dialogRefillConfirm => 'Confirmer la recharge';
+
+  @override
+  String get femmeDeChambre => 'Femme de chambre';
+
+  @override
+  String get checkoutStock => 'Sortie de stock';
+
+  @override
+  String get returnStock => 'Retour de stock';
+
+  @override
+  String get housekeeperCart => 'Mon chariot';
+
+  @override
+  String get noAllocations =>
+      'Aucune allocation active. Sortez du stock pour commencer.';
+
+  @override
+  String get fullBottles => 'Bouteilles pleines';
+
+  @override
+  String get openBidonVolumeLeft => 'Volume restant';
+
+  @override
+  String get housekeeperStockCheckedOut => 'Stock sorti avec succès !';
+
+  @override
+  String get housekeeperStockReturned => 'Stock retourné avec succès !';
+
+  @override
+  String get userRoleHousekeeper => 'Femme de chambre';
 }

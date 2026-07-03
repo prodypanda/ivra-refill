@@ -2396,6 +2396,20 @@ class AppL10nIt extends AppL10n {
   }
 
   @override
+  String housekeeperReplaceGetFromHotel(
+      String product, String room, String count) {
+    return 'Sostituire $product in Camera $room richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario. Tuttavia, sono disponibili $count bottiglie nell\'inventario dell\'hotel. Vuoi prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?';
+  }
+
+  @override
+  String housekeeperReplaceNotifyManager(String product, String room) {
+    return 'Sostituire $product in Camera $room richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.';
+  }
+
+  @override
+  String get btnOk => 'OK';
+
+  @override
   String get inventoryEnforceBtnProceed => 'Regola e procedi';
 
   @override
@@ -2609,4 +2623,35 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get dialogRefillConfirm => 'Conferma ricarica';
+
+  @override
+  String get femmeDeChambre => 'Cameriera';
+
+  @override
+  String get checkoutStock => 'Preleva stock';
+
+  @override
+  String get returnStock => 'Ritorna stock';
+
+  @override
+  String get housekeeperCart => 'Mio carrello';
+
+  @override
+  String get noAllocations =>
+      'Nessuna allocazione attiva. Preleva stock per iniziare.';
+
+  @override
+  String get fullBottles => 'Bottiglie piene';
+
+  @override
+  String get openBidonVolumeLeft => 'Volume rimanente';
+
+  @override
+  String get housekeeperStockCheckedOut => 'Stock prelevato con successo!';
+
+  @override
+  String get housekeeperStockReturned => 'Stock ritornato con successo!';
+
+  @override
+  String get userRoleHousekeeper => 'Cameriera ai piani';
 }
