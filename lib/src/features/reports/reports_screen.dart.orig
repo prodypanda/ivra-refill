@@ -982,7 +982,7 @@ class _TopList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final maxVal = (rows.isEmpty || rows.first.value == 0) ? 1 : rows.first.value;
+    final maxVal = rows.isEmpty ? 1 : rows.first.value;
 
     return Card(
       child: Padding(

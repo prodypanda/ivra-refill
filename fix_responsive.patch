@@ -1,0 +1,68 @@
+--- a/lib/src/features/reports/reports_screen.dart
++++ b/lib/src/features/reports/reports_screen.dart
+@@ -653,13 +653,19 @@
+           ),
+           const SizedBox(height: 16),
+-          Wrap(
+-            spacing: 12,
+-            runSpacing: 12,
+-            children: [
+-              _KpiTile(label: l10n.t('reportKpiRefills'), value: refills.length.toString(), icon: IvraIcons.refillAction),
+-              _KpiTile(label: l10n.t('reportKpiCorrections'), value: corrections.toString(), icon: Icons.assignment_late_outlined),
+-              _KpiTile(label: l10n.t('reportKpiReplacements'), value: replacements.toString(), icon: IvraIcons.replaceAction),
+-              _KpiTile(label: l10n.t('reportKpiActiveRooms'), value: usageByRoom.length.toString(), icon: Icons.meeting_room_outlined),
+-            ],
++          LayoutBuilder(
++            builder: (context, constraints) {
++              final wide = constraints.maxWidth >= 900;
++              final tiles = [
++                _KpiTile(label: l10n.t('reportKpiRefills'), value: refills.length.toString(), icon: IvraIcons.refillAction),
++                _KpiTile(label: l10n.t('reportKpiCorrections'), value: corrections.toString(), icon: Icons.assignment_late_outlined),
++                _KpiTile(label: l10n.t('reportKpiReplacements'), value: replacements.toString(), icon: IvraIcons.replaceAction),
++                _KpiTile(label: l10n.t('reportKpiActiveRooms'), value: usageByRoom.length.toString(), icon: Icons.meeting_room_outlined),
++              ];
++              if (wide) {
++                return Row(
++                  children: tiles.map((t) => Expanded(child: Padding(padding: const EdgeInsets.only(right: 12), child: t))).toList(),
++                );
++              }
++              return Wrap(
++                spacing: 12,
++                runSpacing: 12,
++                children: tiles.map((t) => SizedBox(width: (constraints.maxWidth - 12) / 2, child: t)).toList(),
++              );
++            },
+           ),
+           const SizedBox(height: 16),
+@@ -714,7 +720,6 @@
+   Widget build(BuildContext context) {
+     final theme = Theme.of(context);
+     return Container(
+-      width: 190,
+       padding: const EdgeInsets.all(14),
+       decoration: BoxDecoration(
+@@ -829,4 +834,6 @@
+             SizedBox(
+               height: 200,
+               child: BarChart(
++                swapAnimationDuration: const Duration(milliseconds: 250),
++                swapAnimationCurve: Curves.easeInOut,
+                 BarChartData(
+@@ -931,9 +938,9 @@
+                             gradient: LinearGradient(
+                               colors: [
+                                 theme.colorScheme.primary,
+                                 theme.colorScheme.primary.withValues(alpha: 0.7),
+                               ],
+                               begin: Alignment.bottomCenter,
+                               end: Alignment.topCenter,
+                             ),
+                             width: 14,
+-                            borderRadius: const BorderRadius.only(
+-                              topLeft: Radius.circular(6),
+-                              topRight: Radius.circular(6),
+-                            ),
++                            borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                             backDrawRodData: BackgroundBarChartRodData(
+                               show: true,
+                               toY: maxY,
