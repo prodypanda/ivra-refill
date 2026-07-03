@@ -2564,4 +2564,34 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get dialogRefillConfirm => 'تأكيد إعادة التعبئة';
+
+  @override
+  String get femmeDeChambre => 'عاملة الغرف';
+
+  @override
+  String get checkoutStock => 'صرف مخزون';
+
+  @override
+  String get returnStock => 'إرجاع مخزون';
+
+  @override
+  String get housekeeperCart => 'عربتي';
+
+  @override
+  String get noAllocations => 'لا توجد حصص نشطة. قم بصرف مخزون للبدء.';
+
+  @override
+  String get fullBottles => 'زجاجات كاملة';
+
+  @override
+  String get openBidonVolumeLeft => 'الحجم المتبقي';
+
+  @override
+  String get housekeeperStockCheckedOut => 'تم صرف المخزون بنجاح!';
+
+  @override
+  String get housekeeperStockReturned => 'تم إرجاع المخزون بنجاح!';
+
+  @override
+  String get userRoleHousekeeper => 'عاملة الغرف';
 }

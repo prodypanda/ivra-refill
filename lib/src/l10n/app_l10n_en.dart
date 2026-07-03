@@ -2578,4 +2578,35 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get dialogRefillConfirm => 'Confirm Refill';
+
+  @override
+  String get femmeDeChambre => 'Housekeeper';
+
+  @override
+  String get checkoutStock => 'Checkout Stock';
+
+  @override
+  String get returnStock => 'Return Stock';
+
+  @override
+  String get housekeeperCart => 'My Cart';
+
+  @override
+  String get noAllocations =>
+      'No active allocations. Check out stock to start.';
+
+  @override
+  String get fullBottles => 'Full Bottles';
+
+  @override
+  String get openBidonVolumeLeft => 'Remaining Volume';
+
+  @override
+  String get housekeeperStockCheckedOut => 'Stock checked out successfully!';
+
+  @override
+  String get housekeeperStockReturned => 'Stock returned successfully!';
+
+  @override
+  String get userRoleHousekeeper => 'Housekeeper';
 }

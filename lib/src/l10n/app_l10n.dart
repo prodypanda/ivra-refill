@@ -4787,6 +4787,66 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Confirm Refill'**
   String get dialogRefillConfirm;
+
+  /// No description provided for @femmeDeChambre.
+  ///
+  /// In en, this message translates to:
+  /// **'Housekeeper'**
+  String get femmeDeChambre;
+
+  /// No description provided for @checkoutStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout Stock'**
+  String get checkoutStock;
+
+  /// No description provided for @returnStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Return Stock'**
+  String get returnStock;
+
+  /// No description provided for @housekeeperCart.
+  ///
+  /// In en, this message translates to:
+  /// **'My Cart'**
+  String get housekeeperCart;
+
+  /// No description provided for @noAllocations.
+  ///
+  /// In en, this message translates to:
+  /// **'No active allocations. Check out stock to start.'**
+  String get noAllocations;
+
+  /// No description provided for @fullBottles.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Bottles'**
+  String get fullBottles;
+
+  /// No description provided for @openBidonVolumeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Volume'**
+  String get openBidonVolumeLeft;
+
+  /// No description provided for @housekeeperStockCheckedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock checked out successfully!'**
+  String get housekeeperStockCheckedOut;
+
+  /// No description provided for @housekeeperStockReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock returned successfully!'**
+  String get housekeeperStockReturned;
+
+  /// No description provided for @userRoleHousekeeper.
+  ///
+  /// In en, this message translates to:
+  /// **'Housekeeper'**
+  String get userRoleHousekeeper;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
