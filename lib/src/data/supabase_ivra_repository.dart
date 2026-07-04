@@ -1392,20 +1392,22 @@ class SupabaseIvraRepository implements IvraRepository {
 
     // 4. Check inventory or housekeeper allocation
     if (deductFromHousekeeperId != null) {
-      final allocResult = await _client.from('housekeeper_allocations')
-          .select('id, full_bottles')
-          .eq('housekeeper_id', deductFromHousekeeperId)
-          .eq('product_id', product.id)
-          .maybeSingle();
-      
-      final currentFullBottles = allocResult != null ? asInt(allocResult['full_bottles']) : 0;
-      if (currentFullBottles <= 0) {
-        throw StateError('Product not in housekeeper allocation');
+      // Deduct atomically via SECURITY DEFINER RPC. A direct client-side
+      // UPDATE on housekeeper_allocations is silently blocked by RLS
+      // (only a SELECT policy exists), which left phantom stock in the cart.
+      try {
+        await _client.rpc('use_housekeeper_stock_for_room', params: {
+          'p_housekeeper_id': deductFromHousekeeperId,
+          'p_product_id': product.id,
+          'p_full_bottles': 1,
+        });
+      } on PostgrestException catch (e) {
+        if (e.message.contains('No housekeeper allocation') ||
+            e.message.contains('Insufficient full bottles')) {
+          throw StateError('Product not in housekeeper allocation');
+        }
+        rethrow;
       }
-
-      await _client.from('housekeeper_allocations').update({
-        'full_bottles': currentFullBottles - 1,
-      }).eq('id', asString(allocResult!['id']));
       
       await _auditService.logAction('Used housekeeper stock for room placement', details: {
         'housekeeper_id': deductFromHousekeeperId,
