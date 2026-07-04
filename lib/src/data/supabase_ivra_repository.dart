@@ -228,6 +228,18 @@ class SupabaseIvraRepository implements IvraRepository {
     }
   }
 
+  Future<void> _clearRoomProductsCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys().where((k) =>
+      k.startsWith('cache_room_products_') ||
+      k.startsWith('cache_rooms_') ||
+      k.startsWith('cache_dashboard_metrics_')
+    ).toList();
+    for (final key in keys) {
+      await prefs.remove(key);
+    }
+  }
+
   @override
   Future<UserProfile> currentUser() async {
     final user = _client.auth.currentUser;
@@ -1435,5 +1447,47 @@ class SupabaseIvraRepository implements IvraRepository {
     });
 
     await _clearRefillEventsCache();
+    await _clearInventoryCache();
+    await _clearRoomProductsCache();
+  }
+
+  @override
+  Future<void> removeProductFromRoom({required String roomProductId}) async {
+    // 1. Fetch room product record to get hotelId/roomNumber/nameEn for logging & audit
+    final roomProd = await _client
+        .from('room_product_summaries')
+        .select('hotel_id, room_number, name_en, sku')
+        .eq('id', roomProductId)
+        .maybeSingle();
+
+    String? hotelId;
+    String? roomNumber;
+    String? productName;
+    String? sku;
+    if (roomProd != null) {
+      hotelId = roomProd['hotel_id'] != null ? asString(roomProd['hotel_id']) : null;
+      roomNumber = roomProd['room_number'] != null ? asString(roomProd['room_number']) : null;
+      productName = roomProd['name_en'] != null ? asString(roomProd['name_en']) : null;
+      sku = roomProd['sku'] != null ? asString(roomProd['sku']) : null;
+    }
+
+    // 2. Perform DELETE query on `room_products` table
+    await _client.from('room_products').delete().eq('id', roomProductId);
+
+    // 3. Clear all relevant caches
+    await _clearRefillEventsCache();
+    await _clearRoomProductsCache();
+
+    // 4. Log audit action
+    await _auditService.logAction(
+      'Removed product from room',
+      details: {
+        'roomProductId': roomProductId,
+        if (hotelId != null) 'hotel_id': hotelId,
+        if (roomNumber != null) 'room_number': roomNumber,
+        if (productName != null) 'product_name': productName,
+        if (sku != null) 'sku': sku,
+      },
+    );
   }
 }

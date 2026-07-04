@@ -793,5 +793,11 @@
   "openBidonVolumeLeft": "Volume rimanente",
   "housekeeperStockCheckedOut": "Stock prelevato con successo!",
   "housekeeperStockReturned": "Stock ritornato con successo!",
-  "userRoleHousekeeper": "Cameriera ai piani"
+  "userRoleHousekeeper": "Cameriera ai piani",
+  "roomsBtnAddProduct": "Aggiungi prodotto",
+  "roomsConfirmRemoveProduct": "Sei sicuro di voler rimuovere il prodotto '{productName}' dalla camera '{roomNumber}'?",
+  "roomsProductRemoved": "Prodotto rimosso",
+  "roomsProductAdded": "Prodotto aggiunto",
+  "roomsAddProductTitle": "Aggiungi prodotto alla camera",
+  "roomsSelectProduct": "Seleziona Prodotto"
 }

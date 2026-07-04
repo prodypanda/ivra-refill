@@ -1418,5 +1418,21 @@
   "openBidonVolumeLeft": "Remaining Volume",
   "housekeeperStockCheckedOut": "Stock checked out successfully!",
   "housekeeperStockReturned": "Stock returned successfully!",
-  "userRoleHousekeeper": "Housekeeper"
+  "userRoleHousekeeper": "Housekeeper",
+  "roomsBtnAddProduct": "Add product",
+  "roomsConfirmRemoveProduct": "Are you sure you want to remove the product '{productName}' from room '{roomNumber}'?",
+  "@roomsConfirmRemoveProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "roomsProductRemoved": "Product removed",
+  "roomsProductAdded": "Product added",
+  "roomsAddProductTitle": "Add product to room",
+  "roomsSelectProduct": "Select Product"
 }

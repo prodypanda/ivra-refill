@@ -2654,4 +2654,24 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get userRoleHousekeeper => 'Cameriera ai piani';
+
+  @override
+  String get roomsBtnAddProduct => 'Aggiungi prodotto';
+
+  @override
+  String roomsConfirmRemoveProduct(String productName, String roomNumber) {
+    return 'Sei sicuro di voler rimuovere il prodotto \'$productName\' dalla camera \'$roomNumber\'?';
+  }
+
+  @override
+  String get roomsProductRemoved => 'Prodotto rimosso';
+
+  @override
+  String get roomsProductAdded => 'Prodotto aggiunto';
+
+  @override
+  String get roomsAddProductTitle => 'Aggiungi prodotto alla camera';
+
+  @override
+  String get roomsSelectProduct => 'Seleziona Prodotto';
 }

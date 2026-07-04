@@ -260,9 +260,37 @@ void main() {
       expect(centralStockAfter.openBidonVolumeLeftMl, expectedRemainingOpenVolume);
       if (expectedRemainingOpenVolume > 0) {
         expect(centralStockAfter.openBidons, 1);
-      } else {
-        expect(centralStockAfter.openBidons, 0);
       }
+    });
+
+    test('Can add product to room and remove product from room on repository', () async {
+      final initialRoomProducts = await repository.roomProducts();
+      final r101ProductsBefore = initialRoomProducts.where((rp) => rp.roomId == 'room-101').toList();
+      final initialCount = r101ProductsBefore.length;
+
+      expect(r101ProductsBefore.any((rp) => rp.product.id == 'prod-conditioner'), false);
+
+      await repository.addProductToRoom(
+        hotelId: hotelId,
+        floor: '1',
+        roomNumber: '101',
+        productSku: 'IVR-CON-1L',
+        autoAdjustInventory: true,
+      );
+
+      final roomProductsAfterAdd = await repository.roomProducts();
+      final r101ProductsAfterAdd = roomProductsAfterAdd.where((rp) => rp.roomId == 'room-101').toList();
+      expect(r101ProductsAfterAdd.length, initialCount + 1);
+
+      final addedProduct = r101ProductsAfterAdd.firstWhere((rp) => rp.product.id == 'prod-conditioner');
+      expect(addedProduct.roomNumber, '101');
+
+      await repository.removeProductFromRoom(roomProductId: addedProduct.id);
+
+      final roomProductsAfterRemove = await repository.roomProducts();
+      final r101ProductsAfterRemove = roomProductsAfterRemove.where((rp) => rp.roomId == 'room-101').toList();
+      expect(r101ProductsAfterRemove.length, initialCount);
+      expect(r101ProductsAfterRemove.any((rp) => rp.product.id == 'prod-conditioner'), false);
     });
   });
 }

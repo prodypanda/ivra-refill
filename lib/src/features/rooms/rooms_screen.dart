@@ -1812,6 +1812,144 @@ Future<void> replaceBottle(
   );
 }
 
+class _AddProductToRoomDialog extends ConsumerStatefulWidget {
+  const _AddProductToRoomDialog({
+    required this.hotelId,
+    required this.floorNumber,
+    required this.roomNumber,
+    required this.existingProductIds,
+  });
+
+  final String hotelId;
+  final int floorNumber;
+  final String roomNumber;
+  final Set<String> existingProductIds;
+
+  @override
+  ConsumerState<_AddProductToRoomDialog> createState() => _AddProductToRoomDialogState();
+}
+
+class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog> {
+  String? _selectedSku;
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+    final theme = Theme.of(context);
+    final productsAsync = ref.watch(productsProvider);
+
+    return AlertDialog(
+      title: Row(
+        children: [
+          Icon(Icons.add_circle_outline, color: theme.colorScheme.primary),
+          const SizedBox(width: 8),
+          Text(l10n.t('roomsAddProductTitle')),
+        ],
+      ),
+      content: productsAsync.when(
+        data: (products) {
+          final availableProducts = products
+              .where((p) => !widget.existingProductIds.contains(p.id))
+              .toList();
+
+          if (availableProducts.isEmpty) {
+            return Text(l10n.t('roomsNoRoomsFound'));
+          }
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  labelText: l10n.t('roomsSelectProduct'),
+                  border: const OutlineInputBorder(),
+                ),
+                value: _selectedSku,
+                items: availableProducts.map((p) {
+                  return DropdownMenuItem<String>(
+                    value: p.sku,
+                    child: Text('${p.label(language)} (${p.sku})'),
+                  );
+                }).toList(),
+                onChanged: _isLoading
+                    ? null
+                    : (val) {
+                        setState(() {
+                          _selectedSku = val;
+                        });
+                      },
+              ),
+            ],
+          );
+        },
+        loading: () => const SizedBox(
+          height: 100,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        error: (e, s) => Text(e.toString()),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+          child: Text(l10n.t('btnCancel')),
+        ),
+        FilledButton(
+          onPressed: _selectedSku == null || _isLoading
+              ? null
+              : () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  try {
+                    await ref.read(repositoryProvider).addProductToRoom(
+                          hotelId: widget.hotelId,
+                          floor: widget.floorNumber.toString(),
+                          roomNumber: widget.roomNumber,
+                          productSku: _selectedSku!,
+                          autoAdjustInventory: true,
+                        );
+
+                    ref.invalidate(roomProductsProvider);
+                    ref.invalidate(dashboardProvider);
+                    ref.invalidate(roomsProvider);
+
+                    if (context.mounted) {
+                      HapticFeedback.mediumImpact();
+                      PremiumSnackbar.show(
+                        context,
+                        l10n.t('roomsProductAdded'),
+                        icon: Icons.check_circle_outline,
+                      );
+                      Navigator.of(context).pop();
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      PremiumSnackbar.showError(context, e);
+                    }
+                  } finally {
+                    if (mounted) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    }
+                  }
+                },
+          child: _isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                )
+              : Text(l10n.t('btnConfirm')),
+        ),
+      ],
+    );
+  }
+}
+
 // Room-Centric Grouped Card Widget
 class _RoomCard extends ConsumerStatefulWidget {
   const _RoomCard({
@@ -1983,6 +2121,18 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     }
   }
 
+  void _showAddProductDialog(BuildContext context, List<RoomProduct> currentProducts) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => _AddProductToRoomDialog(
+        hotelId: widget.hotelId,
+        floorNumber: widget.floorNumber,
+        roomNumber: widget.roomNumber,
+        existingProductIds: currentProducts.map((p) => p.product.id).toSet(),
+      ),
+    );
+  }
+
   Future<void> _showEditRoomLocal(BuildContext context) async {
     await showCenteredFormSheet<void>(
       context: context,
@@ -2042,6 +2192,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final canManageRooms = ref.watch(hasPermissionProvider('manage_rooms')) &&
         (currentUser?.isIvraUser == true || currentUser?.hotelId == selectedHotelId);
+    final isHousekeeper = currentUser?.role == UserRole.housekeeper && currentUser?.hotelId == widget.hotelId;
+    final canEditRoomProducts = isHousekeeper || canManageRooms;
 
     var overallStatus = l10n.t('roomsStatusAllOk');
     var overallColor = Colors.orange.shade700;
@@ -2349,6 +2501,22 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                   if (i > 0) Divider(height: isMobile ? 18 : 24),
                                   _RoomCardProductRow(item: displayedProducts[i]),
                                 ],
+                              if (canEditRoomProducts) ...[
+                                const SizedBox(height: 16),
+                                Center(
+                                  child: FilledButton.icon(
+                                    style: FilledButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      minimumSize: const Size(120, 40),
+                                      backgroundColor: theme.colorScheme.primary,
+                                      foregroundColor: theme.colorScheme.onPrimary,
+                                    ),
+                                    onPressed: () => _showAddProductDialog(context, roomProducts),
+                                    icon: const Icon(Icons.add, size: 18),
+                                    label: Text(l10n.t('roomsBtnAddProduct')),
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -2379,6 +2547,22 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                             if (i > 0) Divider(height: isMobile ? 18 : 24),
                             _RoomCardProductRow(item: displayedProducts[i]),
                           ],
+                        if (canEditRoomProducts) ...[
+                          const SizedBox(height: 16),
+                          Center(
+                            child: FilledButton.icon(
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                minimumSize: const Size(120, 40),
+                                backgroundColor: theme.colorScheme.primary,
+                                foregroundColor: theme.colorScheme.onPrimary,
+                              ),
+                              onPressed: () => _showAddProductDialog(context, roomProducts),
+                              icon: const Icon(Icons.add, size: 18),
+                              label: Text(l10n.t('roomsBtnAddProduct')),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -2663,6 +2847,44 @@ class _RoomCardProductRow extends ConsumerWidget {
     final theme = Theme.of(context);
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
     final canSubmitEditRequests = ref.watch(hasPermissionProvider('submit_edit_requests'));
+    final isHousekeeper = currentUser?.role == UserRole.housekeeper && currentUser?.hotelId == item.hotelId;
+    final selectedHotelId = ref.watch(selectedHotelIdProvider);
+    final canManageRooms = ref.watch(hasPermissionProvider('manage_rooms')) &&
+        (currentUser?.isIvraUser == true || currentUser?.hotelId == selectedHotelId);
+    final canEditRoomProducts = isHousekeeper || canManageRooms;
+
+    Future<void> confirmRemoveProduct() async {
+      final confirmed = await PremiumConfirmDialog.show(
+        context,
+        title: l10n.t('delete'),
+        message: l10n.tParams('roomsConfirmRemoveProduct', {
+          'productName': item.product.label(language),
+          'roomNumber': item.roomNumber,
+        }),
+      );
+
+      if (confirmed && context.mounted) {
+        try {
+          await ref.read(repositoryProvider).removeProductFromRoom(roomProductId: item.id);
+          ref.invalidate(roomProductsProvider);
+          ref.invalidate(dashboardProvider);
+          ref.invalidate(roomsProvider);
+
+          if (context.mounted) {
+            HapticFeedback.mediumImpact();
+            PremiumSnackbar.show(
+              context,
+              l10n.t('roomsProductRemoved'),
+              icon: Icons.delete_outline,
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            PremiumSnackbar.showError(context, e);
+          }
+        }
+      }
+    }
 
     final statusColor = switch (item.status) {
       BottleStatus.refillLimitReached ||
@@ -2945,6 +3167,15 @@ class _RoomCardProductRow extends ConsumerWidget {
                 icon: const Icon(Icons.search_off_outlined, size: 20),
                 color: theme.colorScheme.onSurfaceVariant,
                 onPressed: () => showMarkLostDialog(context, ref, item),
+              ),
+            ],
+            if (canEditRoomProducts) ...[
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                tooltip: l10n.t('delete'),
+                icon: const Icon(Icons.delete_outline, size: 20),
+                color: theme.colorScheme.error,
+                onPressed: confirmRemoveProduct,
               ),
             ],
           ],

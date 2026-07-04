@@ -57,6 +57,11 @@ class MockIvraRepository implements IvraRepository {
         'view_rooms',
         'view_inventory',
       },
+      'housekeeper': {
+        'view_alerts',
+        'view_rooms',
+        'view_inventory',
+      },
     };
     _hotels = [
       const Hotel(
@@ -2294,6 +2299,30 @@ class MockIvraRepository implements IvraRepository {
         createdAt: DateTime.now(),
       ),
     );
+  }
+
+  @override
+  Future<void> removeProductFromRoom({required String roomProductId}) async {
+    final roomProductIndex = _roomProducts.indexWhere((rp) => rp.id == roomProductId);
+    if (roomProductIndex == -1) {
+      throw Exception('RoomProduct ID $roomProductId not found');
+    }
+    final roomProduct = _roomProducts[roomProductIndex];
+    _roomProducts.removeAt(roomProductIndex);
+
+    // Decrement productCount for the room
+    final roomIndex = _rooms.indexWhere((r) => r.id == roomProduct.roomId);
+    if (roomIndex != -1) {
+      final room = _rooms[roomIndex];
+      _rooms[roomIndex] = RoomInfo(
+        id: room.id,
+        hotelId: room.hotelId,
+        floorId: room.floorId,
+        roomNumber: room.roomNumber,
+        floorNumber: room.floorNumber,
+        productCount: max(room.productCount - 1, 0),
+      );
+    }
   }
 
   @override

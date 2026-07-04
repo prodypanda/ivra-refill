@@ -2665,4 +2665,24 @@ class AppL10nFr extends AppL10n {
 
   @override
   String get userRoleHousekeeper => 'Femme de chambre';
+
+  @override
+  String get roomsBtnAddProduct => 'Ajouter un produit';
+
+  @override
+  String roomsConfirmRemoveProduct(String productName, String roomNumber) {
+    return 'Êtes-vous sûr de vouloir retirer le produit \'$productName\' de la chambre \'$roomNumber\' ?';
+  }
+
+  @override
+  String get roomsProductRemoved => 'Produit retiré';
+
+  @override
+  String get roomsProductAdded => 'Produit ajouté';
+
+  @override
+  String get roomsAddProductTitle => 'Ajouter un produit à la chambre';
+
+  @override
+  String get roomsSelectProduct => 'Sélectionner un produit';
 }

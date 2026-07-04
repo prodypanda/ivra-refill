@@ -793,5 +793,11 @@
   "openBidonVolumeLeft": "الحجم المتبقي",
   "housekeeperStockCheckedOut": "تم صرف المخزون بنجاح!",
   "housekeeperStockReturned": "تم إرجاع المخزون بنجاح!",
-  "userRoleHousekeeper": "عاملة الغرف"
+  "userRoleHousekeeper": "عاملة الغرف",
+  "roomsBtnAddProduct": "إضافة منتج",
+  "roomsConfirmRemoveProduct": "هل أنت متأكد من رغبتك في إزالة المنتج '{productName}' من الغرفة '{roomNumber}'؟",
+  "roomsProductRemoved": "تمت إزالة المنتج",
+  "roomsProductAdded": "تمت إضافة المنتج",
+  "roomsAddProductTitle": "إضافة منتج إلى الغرفة",
+  "roomsSelectProduct": "اختر المنتج"
 }

@@ -2608,4 +2608,24 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get userRoleHousekeeper => 'عاملة الغرف';
+
+  @override
+  String get roomsBtnAddProduct => 'إضافة منتج';
+
+  @override
+  String roomsConfirmRemoveProduct(String productName, String roomNumber) {
+    return 'هل أنت متأكد من رغبتك في إزالة المنتج \'$productName\' من الغرفة \'$roomNumber\'؟';
+  }
+
+  @override
+  String get roomsProductRemoved => 'تمت إزالة المنتج';
+
+  @override
+  String get roomsProductAdded => 'تمت إضافة المنتج';
+
+  @override
+  String get roomsAddProductTitle => 'إضافة منتج إلى الغرفة';
+
+  @override
+  String get roomsSelectProduct => 'اختر المنتج';
 }

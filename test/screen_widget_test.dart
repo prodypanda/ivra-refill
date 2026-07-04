@@ -17,6 +17,7 @@ import 'package:ivra_refill/src/features/rooms/rooms_screen.dart';
 import 'package:ivra_refill/src/features/settings/settings_screen.dart';
 import 'package:ivra_refill/src/features/account/account_screen.dart';
 import 'package:ivra_refill/src/features/shared/offline_banner.dart';
+import 'package:ivra_refill/src/features/shared/premium_confirm_dialog.dart';
 import 'package:ivra_refill/src/features/team/team_screen.dart';
 import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
@@ -376,6 +377,93 @@ void main() {
       expect(find.text('تعبئة مطلوبة'), findsWidgets);
       expect(find.text('كل شيء سليم'), findsWidgets);
       expect(find.textContaining('غرفة '), findsWidgets);
+    });
+
+    testWidgets('housekeeper can add and remove room products',
+        (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.housekeeper),
+      );
+
+      GoRouter.of(tester.element(find.text('Dashboard').first))
+          .go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      // Switch to detailed view and expand floors
+      await tester.tap(find.text('Detailed View'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Expand all'));
+      await tester.pumpAndSettle();
+
+      // Verify "Add product" button is visible
+      final addBtn = find.text('Add product').first;
+      expect(addBtn, findsOneWidget);
+
+      // Tap on "Add product" button
+      await tester.tap(addBtn);
+      await tester.pumpAndSettle();
+
+      // Dialog is open
+      expect(find.byType(AlertDialog), findsOneWidget);
+
+      // Tap on DropdownButtonFormField to show items
+      await tester.tap(find.byType(DropdownButtonFormField<String>));
+      await tester.pumpAndSettle();
+
+      // Find the option Conditioner
+      final conditionerOption = find.text('Conditioner (IVR-CON-1L)').last;
+      await tester.tap(conditionerOption);
+      await tester.pumpAndSettle();
+
+      // Click Confirm button
+      final confirmAddBtn = find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.byType(FilledButton),
+      );
+      expect(confirmAddBtn, findsOneWidget);
+      await tester.tap(confirmAddBtn);
+      await tester.pumpAndSettle();
+
+      // Toast or snackbar should be displayed and dialog should close
+      expect(find.text('Product added'), findsOneWidget);
+
+      // The conditioner product should now be visible in the list
+      expect(find.text('Conditioner'), findsWidgets);
+
+      // Scroll the Conditioner widget into view first
+      await tester.ensureVisible(find.text('Conditioner').first);
+      await tester.pumpAndSettle();
+
+      // Now remove the product using the trash icon
+      // Find the delete button next to the "Conditioner" product
+      final conditionerRow = find.ancestor(
+        of: find.text('Conditioner').first,
+        matching: find.byType(Row),
+      ).first;
+      final deleteBtn = find.descendant(
+        of: conditionerRow,
+        matching: find.byIcon(Icons.delete_outline),
+      );
+      expect(deleteBtn, findsOneWidget);
+      await tester.tap(deleteBtn);
+      await tester.pumpAndSettle();
+
+      // Deletion confirmation dialog is open
+      expect(find.byType(PremiumConfirmDialog), findsOneWidget);
+
+      // Tap confirm on the dialog
+      final confirmDeleteBtn = find.descendant(
+        of: find.byType(PremiumConfirmDialog),
+        matching: find.byType(FilledButton),
+      );
+      expect(confirmDeleteBtn, findsOneWidget);
+      await tester.tap(confirmDeleteBtn);
+      await tester.pumpAndSettle();
+
+      // Check success snackbar
+      expect(find.text('Product removed'), findsOneWidget);
     });
   });
 
@@ -985,7 +1073,7 @@ UserProfile _userForRole(UserRole role) {
     email: '${role.value}@ivra.test',
     role: role,
     roleString: role.value,
-    hotelId: role == UserRole.hotelManager || role == UserRole.hotelStaff
+    hotelId: role == UserRole.hotelManager || role == UserRole.hotelStaff || role == UserRole.housekeeper
         ? 'hotel-seaside'
         : null,
   );

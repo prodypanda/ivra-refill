@@ -2623,4 +2623,24 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get userRoleHousekeeper => 'Housekeeper';
+
+  @override
+  String get roomsBtnAddProduct => 'Add product';
+
+  @override
+  String roomsConfirmRemoveProduct(String productName, String roomNumber) {
+    return 'Are you sure you want to remove the product \'$productName\' from room \'$roomNumber\'?';
+  }
+
+  @override
+  String get roomsProductRemoved => 'Product removed';
+
+  @override
+  String get roomsProductAdded => 'Product added';
+
+  @override
+  String get roomsAddProductTitle => 'Add product to room';
+
+  @override
+  String get roomsSelectProduct => 'Select Product';
 }

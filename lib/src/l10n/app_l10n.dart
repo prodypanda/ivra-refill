@@ -4866,6 +4866,42 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Housekeeper'**
   String get userRoleHousekeeper;
+
+  /// No description provided for @roomsBtnAddProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Add product'**
+  String get roomsBtnAddProduct;
+
+  /// No description provided for @roomsConfirmRemoveProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove the product \'{productName}\' from room \'{roomNumber}\'?'**
+  String roomsConfirmRemoveProduct(String productName, String roomNumber);
+
+  /// No description provided for @roomsProductRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Product removed'**
+  String get roomsProductRemoved;
+
+  /// No description provided for @roomsProductAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Product added'**
+  String get roomsProductAdded;
+
+  /// No description provided for @roomsAddProductTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add product to room'**
+  String get roomsAddProductTitle;
+
+  /// No description provided for @roomsSelectProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Product'**
+  String get roomsSelectProduct;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
