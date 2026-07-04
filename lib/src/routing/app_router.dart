@@ -156,6 +156,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         if (isLoggedIn && isLogin && !hasProfileError && !needsPassword) {
           return DashboardScreen.route;
         }
+      } else {
+        if (isLoggedIn && isLogin) {
+          return DashboardScreen.route;
+        }
       }
 
       if (!isPublicAuthRoute && currentUser != null) {

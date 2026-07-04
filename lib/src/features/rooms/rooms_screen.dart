@@ -1706,7 +1706,15 @@ Future<void> replaceBottle(
           showProceedAction: true,
         );
         if (proceed != true) return;
-        autoAdjust = true;
+        
+        // Deduct 1 full bottle from hotel central inventory and add to housekeeper allocation/cart
+        await ref.read(repositoryProvider).checkoutHousekeeperStock(
+          housekeeperId: currentUser!.id,
+          productId: item.product.id,
+          fullBottles: 1,
+          fullBidons: 0,
+        );
+        autoAdjust = false;
       } else {
         await _showHousekeeperStockDialog(
           context: context,
@@ -1789,6 +1797,7 @@ Future<void> replaceBottle(
   ref.invalidate(roomProductsProvider);
   ref.invalidate(refillEventsProvider);
   ref.invalidate(inventoryProvider);
+  ref.invalidate(housekeeperAllocationsProvider);
   ref.invalidate(suggestedOrdersProvider);
   ref.invalidate(alertsProvider);
   ref.invalidate(dashboardProvider);

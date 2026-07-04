@@ -45,6 +45,15 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    if (!isLoggedIn) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     final useSupabase = ref.watch(useSupabaseProvider);
 
     final l10n = AppLocalizations.of(context);
@@ -198,7 +207,6 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       ref.invalidate(refillEventsProvider);
       ref.invalidate(teamMembersProvider);
       ref.invalidate(teamInvitationsProvider);
-      if (mounted) context.go(LoginScreen.route);
     } catch (error) {
       if (!mounted) return;
       PremiumSnackbar.showError(context, localizeAuthError(

@@ -508,9 +508,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ref.invalidate(realCurrentUserProvider);
       ref.invalidate(currentUserProvider);
       ref.invalidate(dashboardProvider);
-      if (mounted) {
-        context.go(DashboardScreen.route);
-      }
     } catch (error) {
       if (mounted) setState(() => _error = localizeAuthError(l10n, error));
     } finally {
@@ -565,7 +562,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ref.invalidate(realCurrentUserProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(dashboardProvider);
-        if (mounted) context.go(DashboardScreen.route);
         return;
       }
 

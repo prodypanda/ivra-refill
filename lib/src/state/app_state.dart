@@ -178,6 +178,7 @@ final currentUserProvider = FutureProvider<UserProfile>((ref) async {
 final isLoggedInProvider = Provider<bool>((ref) {
   final useSupabase = ref.watch(useSupabaseProvider);
   if (useSupabase) {
+    ref.watch(supabaseAuthStateProvider);
     return Supabase.instance.client.auth.currentSession != null;
   }
   final userAsync = ref.watch(currentUserProvider);
