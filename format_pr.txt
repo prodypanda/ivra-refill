@@ -1,0 +1,18 @@
+<threat_model>
+The attack surface involves the `profiles` table in Supabase. The `profiles` table stores critical user metadata, including their system `role` (`app_admin`, `app_manager`, `hotel_manager`, `hotel_staff`) and their assigned `hotel_id`. A malicious user or a compromised account (e.g., a `hotel_staff` member) could attempt to send an API request to modify these fields, aiming to elevate their privileges to `app_admin` or gain access to another hotel's data.
+
+<vulnerability_assessment>
+The current Supabase Row Level Security (RLS) policy for the `profiles` table is defined as:
+```sql
+CREATE POLICY "Users can update their own profile"
+ON profiles FOR UPDATE
+USING (id = auth.uid());
+```
+This policy contains a critical flaw: it lacks a `WITH CHECK` clause. While the `USING` clause correctly restricts users to only updating rows where the `id` matches their authentication UID, the absence of a `WITH CHECK` clause means there are no restrictions on *what* data they can update within that row. Consequently, any authenticated user can update their own `role` column to `'app_admin'` or change their `hotel_id` to an arbitrary UUID, effectively bypassing all hierarchical RBAC controls.
+
+<remediation_strategy>
+To implement a defense-in-depth approach, we must drop the overly permissive policy and enforce strict column-level immutability for sensitive fields. While a `WITH CHECK` clause could be used, comparing old and new values within RLS policies can be complex and less explicit.
+The most robust strategy is to employ a PostgreSQL `BEFORE UPDATE` trigger on the `profiles` table. This trigger will explicitly compare the `OLD` and `NEW` states of the `role`, `hotel_id`, and `is_active` columns. If a non-administrative user attempts to modify any of these fields, the trigger will immediately raise an exception, blocking the transaction. `app_admin` and `app_manager` roles will be exempted from this restriction to allow them to manage user profiles.
+
+<security_posture_impact>
+By enforcing strict column-level immutability via a `BEFORE UPDATE` trigger, the vulnerability is completely closed. The Flutter client (or any other client-side tool) is now physically incapable of escalating privileges or modifying hotel assignments, regardless of the API requests it sends. This solidifies the "zero-trust" philosophy by ensuring that all role and access control enforcement happens strictly within the Postgres layer.
