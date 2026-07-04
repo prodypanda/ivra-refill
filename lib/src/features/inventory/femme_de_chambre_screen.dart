@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
@@ -262,6 +263,12 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                     ],
                   ),
                 ),
+                IconButton(
+                  tooltip: AppLocalizations.of(context).t('housekeeperStockHistory'),
+                  icon: Icon(Icons.history_rounded, color: theme.colorScheme.primary),
+                  onPressed: () => _showProductHistoryDialog(context, allocation.product),
+                  visualDensity: VisualDensity.compact,
+                ),
               ],
             ),
             const Divider(height: 24),
@@ -394,12 +401,27 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     int fullBottles = 0;
     int fullBidons = 0;
 
+    // Hotel inventory is used to show available stock and clamp quantities
+    // so the housekeeper can't request more than the hotel actually has.
+    final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+    InventoryItem? hotelStockFor(Product product) {
+      for (final item in inventory) {
+        if (item.product.id == product.id && (hotelId == null || item.hotelId == hotelId)) {
+          return item;
+        }
+      }
+      return null;
+    }
+
     await showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             final theme = Theme.of(context);
+            final hotelStock = hotelStockFor(selectedProduct);
+            final maxBottles = hotelStock?.fullBottles ?? 0;
+            final maxBidons = hotelStock?.fullBidons ?? 0;
             return AlertDialog(
               title: Row(
                 children: [
@@ -435,26 +457,63 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                       }).toList(),
                       onChanged: (val) {
                         if (val != null) {
-                          setDialogState(() => selectedProduct = val);
+                          setDialogState(() {
+                            selectedProduct = val;
+                            // Re-clamp quantities to the new product's hotel stock.
+                            final stock = hotelStockFor(val);
+                            fullBottles = fullBottles.clamp(0, stock?.fullBottles ?? 0);
+                            fullBidons = fullBidons.clamp(0, stock?.fullBidons ?? 0);
+                          });
                         }
                       },
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
 
-                    // Full Bottles Counter
+                    // Available hotel stock for the selected product
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withOpacity(0.06),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.inventory_2_outlined,
+                              size: 18, color: theme.colorScheme.primary),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              l10n.tParams('housekeeperHotelStockAvailable', {
+                                'bottles': maxBottles.toString(),
+                                'bidons': maxBidons.toString(),
+                              }),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Full Bottles Counter (clamped to hotel stock)
                     _buildCounterRow(
                       context,
                       title: l10n.t('fullBottles'),
                       value: fullBottles,
+                      max: maxBottles,
                       onChanged: (val) => setDialogState(() => fullBottles = val),
                     ),
                     const SizedBox(height: 16),
 
-                    // Full Bidons Counter
+                    // Full Bidons Counter (clamped to hotel stock)
                     _buildCounterRow(
                       context,
                       title: l10n.t('inventoryTableFullBidonsGeneric'),
                       value: fullBidons,
+                      max: maxBidons,
                       onChanged: (val) => setDialogState(() => fullBidons = val),
                     ),
                   ],
@@ -482,6 +541,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                                   fullBidons: fullBidons,
                                 );
                             ref.invalidate(housekeeperAllocationsProvider);
+                            ref.invalidate(inventoryProvider);
+                            ref.invalidate(housekeeperStockEventsProvider);
                             if (context.mounted) {
                               PremiumSnackbar.show(
                                 context,
@@ -491,11 +552,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                             }
                           } catch (e) {
                             if (context.mounted) {
-                              PremiumSnackbar.show(
-                                context,
-                                l10n.t('errorGeneric'),
-                                isError: true,
-                              );
+                              PremiumSnackbar.showError(context, e);
                             }
                           }
                         },
@@ -706,6 +763,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                                 );
                             ref.invalidate(housekeeperAllocationsProvider);
                             ref.invalidate(inventoryProvider);
+                            ref.invalidate(housekeeperStockEventsProvider);
                             if (context.mounted) {
                               PremiumSnackbar.show(
                                 context,
@@ -715,11 +773,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                             }
                           } catch (e) {
                             if (context.mounted) {
-                              PremiumSnackbar.show(
-                                context,
-                                l10n.t('errorGeneric'),
-                                isError: true,
-                              );
+                              PremiumSnackbar.showError(context, e);
                             }
                           }
                         },
@@ -769,5 +823,171 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
         ),
       ],
     );
+  }
+
+  // ============================================================
+  // PER-PRODUCT STOCK MOVEMENT HISTORY DIALOG
+  // ============================================================
+  Future<void> _showProductHistoryDialog(BuildContext context, Product product) async {
+    final l10n = AppLocalizations.of(context);
+    final language = Localizations.localeOf(context).languageCode;
+    final productName = product.label(language);
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        final theme = Theme.of(dialogContext);
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.history_rounded, color: theme.colorScheme.primary),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  '${l10n.t('housekeeperStockHistory')} — $productName',
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: 480,
+            height: 420,
+            child: Consumer(
+              builder: (context, ref, _) {
+                final eventsAsync = ref.watch(housekeeperStockEventsProvider(product.id));
+                return eventsAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Center(
+                    child: Text(e.toString(), style: theme.textTheme.bodySmall),
+                  ),
+                  data: (events) {
+                    if (events.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.inbox_outlined,
+                                size: 48, color: theme.colorScheme.onSurfaceVariant),
+                            const SizedBox(height: 12),
+                            Text(
+                              l10n.t('housekeeperStockHistoryEmpty'),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return ListView.separated(
+                      itemCount: events.length,
+                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final event = events[index];
+                        final meta = _stockEventMeta(l10n, event);
+                        final deltas = _stockEventDeltas(l10n, event);
+                        final dateStr =
+                            DateFormat('yyyy-MM-dd HH:mm').format(event.createdAt.toLocal());
+                        return ListTile(
+                          dense: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 4),
+                          leading: CircleAvatar(
+                            radius: 18,
+                            backgroundColor: meta.color.withOpacity(0.12),
+                            child: Icon(meta.icon, size: 18, color: meta.color),
+                          ),
+                          title: Text(
+                            event.roomNumber != null
+                                ? '${meta.label} — ${l10n.t('roomsLabelRoom')} ${event.roomNumber}'
+                                : meta.label,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (deltas.isNotEmpty)
+                                Text(deltas, style: theme.textTheme.bodySmall),
+                              Text(
+                                dateStr,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.t('btnOk')),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  ({IconData icon, Color color, String label}) _stockEventMeta(
+    AppLocalizations l10n,
+    HousekeeperStockEvent event,
+  ) {
+    return switch (event.eventType) {
+      HousekeeperStockEventType.checkout => (
+          icon: Icons.add_shopping_cart_rounded,
+          color: const Color(0xFFF2A900),
+          label: l10n.t('stockEventCheckout'),
+        ),
+      HousekeeperStockEventType.returned => (
+          icon: Icons.assignment_return_outlined,
+          color: Colors.blueAccent,
+          label: l10n.t('stockEventReturn'),
+        ),
+      HousekeeperStockEventType.roomPlacement => (
+          icon: Icons.meeting_room_outlined,
+          color: Colors.green,
+          label: l10n.t('stockEventRoomPlacement'),
+        ),
+      HousekeeperStockEventType.refillUse => (
+          icon: Icons.water_drop_outlined,
+          color: Colors.teal,
+          label: l10n.t('stockEventRefillUse'),
+        ),
+      HousekeeperStockEventType.replaceUse => (
+          icon: Icons.swap_horiz_rounded,
+          color: Colors.deepOrange,
+          label: l10n.t('stockEventReplaceUse'),
+        ),
+    };
+  }
+
+  String _stockEventDeltas(AppLocalizations l10n, HousekeeperStockEvent event) {
+    String signed(int v) => v > 0 ? '+$v' : '$v';
+    final parts = <String>[
+      if (event.fullBottlesDelta != 0)
+        '${l10n.t('fullBottles')}: ${signed(event.fullBottlesDelta)}',
+      if (event.emptyBottlesDelta != 0)
+        '${l10n.t('inventoryTableEmptyBottlesGeneric')}: ${signed(event.emptyBottlesDelta)}',
+      if (event.fullBidonsDelta != 0)
+        '${l10n.t('inventoryTableFullBidonsGeneric')}: ${signed(event.fullBidonsDelta)}',
+      if (event.openBidonsDelta != 0)
+        '${l10n.t('inventoryTableOpenBidons')}: ${signed(event.openBidonsDelta)}',
+      if (event.emptyBidonsDelta != 0)
+        '${l10n.t('inventoryTableEmptyBidons')}: ${signed(event.emptyBidonsDelta)}',
+      if (event.volumeDeltaMl != 0)
+        '${l10n.t('openBidonVolumeLeft')}: ${event.volumeDeltaMl > 0 ? '+' : ''}${event.volumeDeltaMl.toInt()} ml',
+    ];
+    return parts.join(' · ');
   }
 }

@@ -717,3 +717,16 @@ final housekeeperAllocationsProvider = FutureProvider<List<HousekeeperAllocation
   );
 });
 
+/// Movement history of the current housekeeper's cart for one product
+/// (checkouts, returns, room placements, refill/replace usages).
+final housekeeperStockEventsProvider =
+    FutureProvider.family<List<HousekeeperStockEvent>, String>((ref, productId) async {
+  final repository = ref.watch(repositoryProvider);
+  final currentUser = ref.watch(currentUserProvider).valueOrNull;
+  if (currentUser == null) return const [];
+  return repository.fetchHousekeeperStockEvents(
+    housekeeperId: currentUser.id,
+    productId: productId,
+  );
+});
+

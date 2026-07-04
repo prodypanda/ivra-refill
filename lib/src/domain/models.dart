@@ -813,26 +813,93 @@ class HousekeeperAllocation {
   final double openBidonVolumeLeftMl;
 
   HousekeeperAllocation copyWith({
-    Product? product,
-    int? fullBottles,
-    int? emptyBottles,
-    int? fullBidons,
-    int? openBidons,
-    int? emptyBidons,
-    double? openBidonVolumeLeftMl,
+  Product? product,
+  int? fullBottles,
+  int? emptyBottles,
+  int? fullBidons,
+  int? openBidons,
+  int? emptyBidons,
+  double? openBidonVolumeLeftMl,
   }) {
-    return HousekeeperAllocation(
-      id: id,
-      housekeeperId: housekeeperId,
-      hotelId: hotelId,
-      product: product ?? this.product,
-      fullBottles: fullBottles ?? this.fullBottles,
-      emptyBottles: emptyBottles ?? this.emptyBottles,
-      fullBidons: fullBidons ?? this.fullBidons,
-      openBidons: openBidons ?? this.openBidons,
-      emptyBidons: emptyBidons ?? this.emptyBidons,
-      openBidonVolumeLeftMl: openBidonVolumeLeftMl ?? this.openBidonVolumeLeftMl,
-    );
+  return HousekeeperAllocation(
+  id: id,
+  housekeeperId: housekeeperId,
+  hotelId: hotelId,
+  product: product ?? this.product,
+  fullBottles: fullBottles ?? this.fullBottles,
+  emptyBottles: emptyBottles ?? this.emptyBottles,
+  fullBidons: fullBidons ?? this.fullBidons,
+  openBidons: openBidons ?? this.openBidons,
+  emptyBidons: emptyBidons ?? this.emptyBidons,
+  openBidonVolumeLeftMl: openBidonVolumeLeftMl ?? this.openBidonVolumeLeftMl,
+  );
   }
+  }
+
+/// Type of movement in a housekeeper's personal stock (cart).
+enum HousekeeperStockEventType {
+  /// Stock transferred from the hotel inventory into the housekeeper cart.
+  checkout,
+
+  /// Stock returned from the housekeeper cart back to the hotel inventory.
+  returned,
+
+  /// A full bottle placed from the cart into a room.
+  roomPlacement,
+
+  /// Bidon volume used from the cart to refill a room bottle.
+  refillUse,
+
+  /// A full bottle used from the cart to replace a room bottle.
+  replaceUse,
+}
+
+HousekeeperStockEventType housekeeperStockEventTypeFromDb(String value) {
+  return switch (value) {
+    'checkout' => HousekeeperStockEventType.checkout,
+    'return' => HousekeeperStockEventType.returned,
+    'room_placement' => HousekeeperStockEventType.roomPlacement,
+    'refill_use' => HousekeeperStockEventType.refillUse,
+    'replace_use' => HousekeeperStockEventType.replaceUse,
+    _ => HousekeeperStockEventType.checkout,
+  };
+}
+
+/// A single movement in a housekeeper's personal stock (cart), used to build
+/// a per-product history of everything the housekeeper did.
+class HousekeeperStockEvent {
+  const HousekeeperStockEvent({
+    required this.id,
+    required this.hotelId,
+    required this.housekeeperId,
+    required this.product,
+    required this.eventType,
+    required this.fullBottlesDelta,
+    required this.emptyBottlesDelta,
+    required this.fullBidonsDelta,
+    required this.openBidonsDelta,
+    required this.emptyBidonsDelta,
+    required this.volumeDeltaMl,
+    required this.createdAt,
+    this.roomProductId,
+    this.roomNumber,
+    this.notes,
+  });
+
+  final String id;
+  final String hotelId;
+  final String housekeeperId;
+  final Product product;
+  final HousekeeperStockEventType eventType;
+  final int fullBottlesDelta;
+  final int emptyBottlesDelta;
+  final int fullBidonsDelta;
+  final int openBidonsDelta;
+  final int emptyBidonsDelta;
+  final double volumeDeltaMl;
+  final DateTime createdAt;
+  final String? roomProductId;
+  final String? roomNumber;
+  final String? notes;
 }
 
