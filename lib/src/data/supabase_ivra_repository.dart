@@ -500,7 +500,8 @@ class SupabaseIvraRepository implements IvraRepository {
   }) async {
     var query = _client
         .from('housekeeper_stock_events')
-        .select('*, products(*), room_products(room_number)');
+        // room_number lives on rooms, reached through room_products.room_id.
+        .select('*, products(*), room_products(rooms(room_number))');
     if (housekeeperId != null) {
       query = query.eq('housekeeper_id', housekeeperId);
     }
@@ -522,6 +523,7 @@ class SupabaseIvraRepository implements IvraRepository {
         }
       });
       final roomProductMap = row['room_products'] as Map<String, dynamic>?;
+      final roomMap = roomProductMap?['rooms'] as Map<String, dynamic>?;
       return HousekeeperStockEvent(
         id: asString(flattened['id']),
         hotelId: asString(flattened['hotel_id']),
@@ -536,7 +538,7 @@ class SupabaseIvraRepository implements IvraRepository {
         volumeDeltaMl: asDouble(flattened['volume_delta_ml']),
         createdAt: DateTime.tryParse(asString(flattened['created_at']))?.toLocal() ?? DateTime.now(),
         roomProductId: flattened['room_product_id'] == null ? null : asString(flattened['room_product_id']),
-        roomNumber: roomProductMap == null ? null : asString(roomProductMap['room_number']),
+        roomNumber: roomMap == null ? null : asString(roomMap['room_number']),
         notes: flattened['notes'] == null ? null : asString(flattened['notes']),
       );
     }).toList();

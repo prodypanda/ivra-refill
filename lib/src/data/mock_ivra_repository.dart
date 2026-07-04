@@ -1528,6 +1528,19 @@ class MockIvraRepository implements IvraRepository {
             emptyBidons: emptyBidons,
             openBidonVolumeLeftMl: currentVolumeLeft,
           );
+
+          _logHousekeeperStockEvent(
+            hotelId: item.hotelId,
+            housekeeperId: _currentUser.id,
+            product: item.product,
+            eventType: HousekeeperStockEventType.refillUse,
+            fullBidonsDelta: fullBidons - alloc.fullBidons,
+            openBidonsDelta: openBidons - alloc.openBidons,
+            emptyBidonsDelta: emptyBidons - alloc.emptyBidons,
+            volumeDeltaMl: -volumeAdded,
+            roomProductId: roomProductId,
+            roomNumber: item.roomNumber,
+          );
         }
       } else {
         final invIndex = _inventory.indexWhere(
@@ -1833,6 +1846,17 @@ class MockIvraRepository implements IvraRepository {
         _housekeeperAllocations[finalAllocIndex] = existing.copyWith(
           fullBottles: max(existing.fullBottles - 1, 0),
           emptyBottles: existing.emptyBottles + 1,
+        );
+
+        _logHousekeeperStockEvent(
+          hotelId: item.hotelId,
+          housekeeperId: _currentUser.id,
+          product: item.product,
+          eventType: HousekeeperStockEventType.replaceUse,
+          fullBottlesDelta: -1,
+          emptyBottlesDelta: 1,
+          roomProductId: item.id,
+          roomNumber: item.roomNumber,
         );
       }
 
