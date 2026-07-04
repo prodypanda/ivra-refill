@@ -27,6 +27,15 @@ abstract class IvraRepository {
   Future<List<RoomProduct>> roomProducts({String? hotelId, String? roomId});
   Future<List<InventoryItem>> inventory({String? hotelId});
   Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({String? housekeeperId, String? hotelId});
+
+  /// Per-product movement history for a housekeeper's cart (checkouts,
+  /// returns, room placements, refill/replace usages).
+  Future<List<HousekeeperStockEvent>> fetchHousekeeperStockEvents({
+    String? housekeeperId,
+    String? productId,
+    String? hotelId,
+    int limit = 100,
+  });
   Future<void> checkoutHousekeeperStock({required String housekeeperId, required String productId, required int fullBottles, required int fullBidons});
   Future<void> returnHousekeeperStock({
     required String housekeeperId,

@@ -492,6 +492,57 @@ class SupabaseIvraRepository implements IvraRepository {
   }
 
   @override
+  Future<List<HousekeeperStockEvent>> fetchHousekeeperStockEvents({
+    String? housekeeperId,
+    String? productId,
+    String? hotelId,
+    int limit = 100,
+  }) async {
+    var query = _client
+        .from('housekeeper_stock_events')
+        .select('*, products(*), room_products(room_number)');
+    if (housekeeperId != null) {
+      query = query.eq('housekeeper_id', housekeeperId);
+    }
+    if (productId != null) {
+      query = query.eq('product_id', productId);
+    }
+    if (hotelId != null) {
+      query = query.eq('hotel_id', hotelId);
+    }
+    final rows = await query.order('created_at', ascending: false).limit(limit);
+    return rows.map<HousekeeperStockEvent>((row) {
+      final productMap = row['products'] as Map<String, dynamic>? ?? {};
+      final flattened = Map<String, dynamic>.from(row);
+      productMap.forEach((key, val) {
+        if (key == 'id') {
+          flattened['product_id'] = val;
+        } else {
+          flattened[key] = val;
+        }
+      });
+      final roomProductMap = row['room_products'] as Map<String, dynamic>?;
+      return HousekeeperStockEvent(
+        id: asString(flattened['id']),
+        hotelId: asString(flattened['hotel_id']),
+        housekeeperId: asString(flattened['housekeeper_id']),
+        product: _joinedProductFromMap(flattened),
+        eventType: housekeeperStockEventTypeFromDb(asString(flattened['event_type'])),
+        fullBottlesDelta: asInt(flattened['full_bottles_delta']),
+        emptyBottlesDelta: asInt(flattened['empty_bottles_delta']),
+        fullBidonsDelta: asInt(flattened['full_bidons_delta']),
+        openBidonsDelta: asInt(flattened['open_bidons_delta']),
+        emptyBidonsDelta: asInt(flattened['empty_bidons_delta']),
+        volumeDeltaMl: asDouble(flattened['volume_delta_ml']),
+        createdAt: DateTime.tryParse(asString(flattened['created_at']))?.toLocal() ?? DateTime.now(),
+        roomProductId: flattened['room_product_id'] == null ? null : asString(flattened['room_product_id']),
+        roomNumber: roomProductMap == null ? null : asString(roomProductMap['room_number']),
+        notes: flattened['notes'] == null ? null : asString(flattened['notes']),
+      );
+    }).toList();
+  }
+
+  @override
   Future<void> checkoutHousekeeperStock({
     required String housekeeperId,
     required String productId,

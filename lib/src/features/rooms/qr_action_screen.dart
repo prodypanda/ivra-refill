@@ -2159,20 +2159,99 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     required String productSku,
     required bool autoAdjustInventory,
   }) async {
-    setState(() => _isPerformingAction = true);
     final l10n = AppLocalizations.of(context);
+    final currentUser = ref.read(currentUserProvider).valueOrNull;
+    final isHousekeeper = currentUser?.role == UserRole.housekeeper;
+    var effectiveAutoAdjust = autoAdjustInventory;
+
+    // Housekeepers place products from their own cart. If the product is not
+    // in the cart, offer to transfer 1 full bottle from the hotel inventory
+    // to the cart first; if the hotel has none either, block and notify.
+    if (isHousekeeper) {
+      try {
+        final products = await ref.read(productsProvider.future);
+        final selectedProduct = products.firstWhereOrNull((p) => p.sku == productSku);
+        if (selectedProduct == null) {
+          throw StateError('Unknown product SKU: $productSku');
+        }
+        final language = mounted ? Localizations.localeOf(context).languageCode : 'en';
+        final productName = selectedProduct.label(language);
+
+        final allocations = await ref.read(housekeeperAllocationsProvider.future);
+        final allocation = allocations.firstWhereOrNull(
+          (a) => a.product.id == selectedProduct.id,
+        );
+        final cartBottles = allocation?.fullBottles ?? 0;
+
+        if (cartBottles <= 0) {
+          final inventory = await ref.read(inventoryProvider.future);
+          final hotelStockItem = inventory.firstWhereOrNull(
+            (stock) => stock.product.id == selectedProduct.id,
+          );
+          final hotelBottles = hotelStockItem?.fullBottles ?? 0;
+
+          if (hotelBottles > 0) {
+            if (!mounted) return;
+            final proceed = await showHousekeeperStockDialog(
+              context: context,
+              message: l10n.tParams('housekeeperAddGetFromHotel', {
+                'product': productName,
+                'room': room,
+                'count': hotelBottles.toString(),
+              }),
+              showProceedAction: true,
+            );
+            if (proceed != true) return;
+
+            await ref.read(repositoryProvider).checkoutHousekeeperStock(
+                  housekeeperId: currentUser!.id,
+                  productId: selectedProduct.id,
+                  fullBottles: 1,
+                  fullBidons: 0,
+                );
+          } else {
+            if (!mounted) return;
+            await showHousekeeperStockDialog(
+              context: context,
+              message: l10n.tParams('housekeeperAddNotifyManager', {
+                'product': productName,
+                'room': room,
+              }),
+              showProceedAction: false,
+            );
+            return;
+          }
+        }
+        // Placement always comes from the housekeeper cart, never directly
+        // from the hotel inventory.
+        effectiveAutoAdjust = false;
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _actionResult = ActionResult.failure;
+            _actionMessage = e.toString();
+          });
+        }
+        return;
+      }
+    }
+
+    if (!mounted) return;
+    setState(() => _isPerformingAction = true);
     try {
       await ref.read(repositoryProvider).addProductToRoom(
             hotelId: hotelId,
             floor: floor,
             roomNumber: room,
             productSku: productSku,
-            autoAdjustInventory: autoAdjustInventory,
+            autoAdjustInventory: effectiveAutoAdjust,
+            deductFromHousekeeperId: isHousekeeper ? currentUser?.id : null,
           );
 
       ref.invalidate(allRoomProductsProvider);
       ref.invalidate(roomProductsProvider);
       ref.invalidate(inventoryProvider);
+      ref.invalidate(housekeeperAllocationsProvider);
       ref.invalidate(dashboardProvider);
 
       if (mounted) {
@@ -2306,6 +2385,13 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       notes = '';
     }
 
+    // Housekeepers use their own cart stock first; if empty, they are asked
+    // to transfer a bidon from the hotel inventory to their cart before refilling.
+    if (!mounted) return;
+    final canProceed = await checkAndCheckoutHousekeeperRefillStock(context, ref, item);
+    if (!canProceed) return;
+    if (!mounted) return;
+
     setState(() => _isPerformingAction = true);
     final l10n = AppLocalizations.of(context);
     var isOffline = ref.read(offlineModeProvider);
@@ -2346,6 +2432,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       ref.invalidate(dashboardProvider);
       ref.invalidate(refillEventsProvider);
       ref.invalidate(inventoryProvider);
+      ref.invalidate(housekeeperAllocationsProvider);
 
       if (mounted) {
         HapticFeedback.mediumImpact();

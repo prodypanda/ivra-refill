@@ -1470,6 +1470,22 @@ Future<void> showRefillHistory(
       .where((event) => event.roomProductId == item.id)
       .toList(growable: false);
 
+  // Collect housekeeper user ids so each history entry can show whether the
+  // stock came from a housekeeper cart or directly from the hotel inventory.
+  final housekeeperIds = <String>{};
+  if (user.role == UserRole.housekeeper) {
+    housekeeperIds.add(user.id);
+  }
+  try {
+    final members = await ref.read(teamMembersProvider.future);
+    housekeeperIds.addAll(
+      members.where((m) => m.role == UserRole.housekeeper).map((m) => m.id),
+    );
+  } catch (_) {
+    // Housekeepers may not be allowed to list team members; fall back to
+    // only marking their own events.
+  }
+
   if (!context.mounted) return;
 
   await showCenteredFormSheet<void>(
@@ -1478,6 +1494,7 @@ Future<void> showRefillHistory(
       item: item,
       events: itemEvents,
       currentUser: user,
+      housekeeperIds: housekeeperIds,
     ),
   );
 
@@ -1594,7 +1611,7 @@ Future<bool?> _showInsufficientStockDialog({
   );
 }
 
-Future<bool?> _showHousekeeperStockDialog({
+Future<bool?> showHousekeeperStockDialog({
   required BuildContext context,
   required String message,
   required bool showProceedAction,
@@ -1686,7 +1703,7 @@ Future<void> replaceBottle(
       final productName = item.product.label(language);
 
       if (hotelBottles > 0) {
-        final proceed = await _showHousekeeperStockDialog(
+        final proceed = await showHousekeeperStockDialog(
           context: context,
           message: l10n.tParams('housekeeperReplaceGetFromHotel', {
             'product': productName,
@@ -1706,7 +1723,7 @@ Future<void> replaceBottle(
         );
         autoAdjust = false;
       } else {
-        await _showHousekeeperStockDialog(
+        await showHousekeeperStockDialog(
           context: context,
           message: l10n.tParams('housekeeperReplaceNotifyManager', {
             'product': productName,
@@ -1797,7 +1814,7 @@ Future<void> replaceBottle(
   );
 }
 
-Future<bool> _checkAndCheckoutHousekeeperRefillStock(
+Future<bool> checkAndCheckoutHousekeeperRefillStock(
   BuildContext context,
   WidgetRef ref,
   RoomProduct item,
@@ -1859,7 +1876,7 @@ Future<bool> _checkAndCheckoutHousekeeperRefillStock(
 
   if (hotelBidons > 0) {
     if (context.mounted) {
-      final proceed = await _showHousekeeperStockDialog(
+      final proceed = await showHousekeeperStockDialog(
         context: context,
         message: l10n.tParams('housekeeperRefillGetFromHotel', {
           'product': productName,
@@ -1884,7 +1901,7 @@ Future<bool> _checkAndCheckoutHousekeeperRefillStock(
     return true;
   } else {
     if (context.mounted) {
-      await _showHousekeeperStockDialog(
+      await showHousekeeperStockDialog(
         context: context,
         message: l10n.tParams('housekeeperRefillNotifyManager', {
           'product': productName,
@@ -2036,7 +2053,7 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
 
                         if (hotelBottles > 0) {
                           if (context.mounted) {
-                            final proceed = await _showHousekeeperStockDialog(
+                            final proceed = await showHousekeeperStockDialog(
                               context: context,
                               message: l10n.tParams('housekeeperAddGetFromHotel', {
                                 'product': productName,
@@ -2062,7 +2079,7 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                           autoAdjust = false;
                         } else {
                           if (context.mounted) {
-                            await _showHousekeeperStockDialog(
+                            await showHousekeeperStockDialog(
                               context: context,
                               message: l10n.tParams('housekeeperAddNotifyManager', {
                                 'product': productName,
@@ -2249,7 +2266,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     final structuredNotes = '[Refill: $refillPercentage%] $notes'.trim();
     final l10n = AppLocalizations.of(context);
 
-    final canProceed = await _checkAndCheckoutHousekeeperRefillStock(context, ref, item);
+    final canProceed = await checkAndCheckoutHousekeeperRefillStock(context, ref, item);
     if (!canProceed) return;
 
     try {
@@ -3098,7 +3115,7 @@ class _RoomCardProductRow extends ConsumerWidget {
 
       final structuredNotes = '[Refill: $refillPercentage%] $notes'.trim();
 
-      final canProceed = await _checkAndCheckoutHousekeeperRefillStock(context, ref, item);
+      final canProceed = await checkAndCheckoutHousekeeperRefillStock(context, ref, item);
       if (!canProceed) return;
 
       var isOffline = ref.read(offlineModeProvider);
@@ -4321,11 +4338,16 @@ class _RefillHistoryDialog extends ConsumerWidget {
     required this.item,
     required this.events,
     required this.currentUser,
+    this.housekeeperIds = const {},
   });
 
   final RoomProduct item;
   final List<RefillEvent> events;
   final UserProfile currentUser;
+
+  /// User ids known to be housekeepers, used to tag each stock-moving event
+  /// with its source (housekeeper cart vs hotel inventory).
+  final Set<String> housekeeperIds;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -4567,6 +4589,55 @@ class _RefillHistoryDialog extends ConsumerWidget {
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               Text(label),
+                              // Source of the stock used for this event:
+                              // housekeeper cart or hotel inventory directly.
+                              if (!isStatusChange &&
+                                  (event.type == RefillEventType.refill ||
+                                      event.type == RefillEventType.bottleReplaced))
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: housekeeperIds.contains(event.performedBy)
+                                        ? const Color(0xFFF2A900).withValues(alpha: 0.15)
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .secondaryContainer
+                                            .withValues(alpha: 0.5),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        housekeeperIds.contains(event.performedBy)
+                                            ? Icons.shopping_bag_outlined
+                                            : Icons.warehouse_outlined,
+                                        size: 12,
+                                        color: housekeeperIds.contains(event.performedBy)
+                                            ? const Color(0xFFB47E00)
+                                            : Theme.of(context).colorScheme.onSecondaryContainer,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        housekeeperIds.contains(event.performedBy)
+                                            ? l10n.t('sourceHousekeeperCart')
+                                            : l10n.t('sourceHotelInventory'),
+                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w600,
+                                              color: housekeeperIds.contains(event.performedBy)
+                                                  ? const Color(0xFFB47E00)
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .onSecondaryContainer,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               if (parsedPercentage != null)
                                 Container(
                                   padding: const EdgeInsets.symmetric(
