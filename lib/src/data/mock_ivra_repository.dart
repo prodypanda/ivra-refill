@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'dart:io' show Platform;
+import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 
 
@@ -485,6 +486,42 @@ class MockIvraRepository implements IvraRepository {
     if (password.length < 8) {
       throw ArgumentError('Password must be at least 8 characters.');
     }
+  }
+
+  @override
+  Future<String> updateUserAvatar({
+    required String userId,
+    required List<int> imageBytes,
+    required String fileExtension,
+  }) async {
+    // Mock permission check mirroring the server-side RPC: self, hotel
+    // manager of the same hotel, or app admin/manager.
+    final target = _teamMembers.firstWhereOrNull((m) => m.id == userId) ??
+        (_currentUser.id == userId ? _currentUser : null);
+    if (target == null) {
+      throw StateError('User not found');
+    }
+    final isSelf = _currentUser.id == userId;
+    final isAppLevel = _currentUser.role == UserRole.appAdmin ||
+        _currentUser.role == UserRole.appManager;
+    final isHotelManagerSameHotel =
+        _currentUser.role == UserRole.hotelManager &&
+            _currentUser.hotelId != null &&
+            _currentUser.hotelId == target.hotelId;
+    if (!isSelf && !isAppLevel && !isHotelManagerSameHotel) {
+      throw StateError('Not allowed to update this user\'s picture');
+    }
+
+    final url =
+        'https://mock.local/avatars/$userId-${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+    final index = _teamMembers.indexWhere((member) => member.id == userId);
+    if (index != -1) {
+      _teamMembers[index] = _teamMembers[index].copyWith(avatarUrl: url);
+    }
+    if (_currentUser.id == userId) {
+      _currentUser = _currentUser.copyWith(avatarUrl: url);
+    }
+    return url;
   }
 
   /// Demo-only: switch the active demo user. This is intentionally NOT part of

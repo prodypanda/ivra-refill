@@ -114,6 +114,15 @@ abstract class IvraRepository {
     String? hotelId,
   });
 
+  /// Uploads a new profile picture for [userId] and returns its public URL.
+  /// Permission checks (self, hotel manager of same hotel, app admin/manager)
+  /// are enforced server-side.
+  Future<String> updateUserAvatar({
+    required String userId,
+    required List<int> imageBytes,
+    required String fileExtension,
+  });
+
   Future<TeamInvitation?> invitationByToken({required String token});
 
   Future<void> acceptTeamInvitation({required String token});

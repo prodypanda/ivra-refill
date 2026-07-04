@@ -10,6 +10,7 @@ class UserProfile {
     required this.roleString,
     this.isActive = true,
     this.hotelId,
+    this.avatarUrl,
   });
 
   final String id;
@@ -19,6 +20,7 @@ class UserProfile {
   final String roleString;
   final bool isActive;
   final String? hotelId;
+  final String? avatarUrl;
 
   bool get isIvraUser =>
       role == UserRole.appAdmin || role == UserRole.appManager;
@@ -33,6 +35,7 @@ class UserProfile {
       roleString: roleStr,
       isActive: asBool(map['is_active'], fallback: true),
       hotelId: asNullableString(map['hotel_id']),
+      avatarUrl: asNullableString(map['avatar_url']),
     );
   }
 
@@ -43,6 +46,7 @@ class UserProfile {
     String? roleString,
     bool? isActive,
     String? hotelId,
+    String? avatarUrl,
   }) {
     return UserProfile(
       id: id,
@@ -52,6 +56,7 @@ class UserProfile {
       roleString: roleString ?? (role != null ? role.value : this.roleString),
       isActive: isActive ?? this.isActive,
       hotelId: hotelId ?? this.hotelId,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
     );
   }
 }

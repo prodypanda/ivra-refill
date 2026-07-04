@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -318,6 +319,40 @@ class SupabaseIvraRepository implements IvraRepository {
   Future<void> changeCurrentUserPassword({required String password}) async {
     await _client.auth.updateUser(UserAttributes(password: password));
     await _auditService.logAction('Changed current user password');
+  }
+
+  @override
+  Future<String> updateUserAvatar({
+    required String userId,
+    required List<int> imageBytes,
+    required String fileExtension,
+  }) async {
+    final ext = fileExtension.replaceAll('.', '').toLowerCase();
+    final path = '$userId/avatar-${DateTime.now().millisecondsSinceEpoch}.$ext';
+
+    await _client.storage.from('avatars').uploadBinary(
+          path,
+          Uint8List.fromList(imageBytes),
+          fileOptions: FileOptions(
+            contentType: ext == 'png' ? 'image/png' : 'image/jpeg',
+            upsert: true,
+          ),
+        );
+
+    final publicUrl = _client.storage.from('avatars').getPublicUrl(path);
+
+    // Permission enforcement (self / hotel manager same hotel / app admin or
+    // manager) happens inside this SECURITY DEFINER RPC.
+    await _client.rpc('update_user_avatar', params: {
+      'p_user_id': userId,
+      'p_avatar_url': publicUrl,
+    });
+
+    await _auditService.logAction(
+      'Updated user avatar',
+      details: {'user_id': userId},
+    );
+    return publicUrl;
   }
 
   @override

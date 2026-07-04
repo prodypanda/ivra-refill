@@ -730,3 +730,49 @@ final housekeeperStockEventsProvider =
   );
 });
 
+/// Full movement history of the current housekeeper's cart across ALL
+/// products (used by the "All history" button on the My Basket page).
+final housekeeperAllStockEventsProvider =
+    FutureProvider<List<HousekeeperStockEvent>>((ref) async {
+  final repository = ref.watch(repositoryProvider);
+  final currentUser = ref.watch(currentUserProvider).valueOrNull;
+  if (currentUser == null) return const [];
+  return repository.fetchHousekeeperStockEvents(
+    housekeeperId: currentUser.id,
+    limit: 200,
+  );
+});
+
+/// All housekeeper users of the selected hotel, for managers/staff/admins.
+final hotelHousekeepersProvider = FutureProvider<List<UserProfile>>((ref) async {
+  final hotelId = ref.watch(selectedHotelIdProvider);
+  final repository = ref.watch(repositoryProvider);
+  final members = await repository.teamMembers(hotelId: hotelId);
+  return members
+      .where((m) =>
+          m.role == UserRole.housekeeper &&
+          (hotelId == null || m.hotelId == hotelId))
+      .toList();
+});
+
+/// Basket (allocations) of a specific housekeeper, viewed by managers.
+final housekeeperBasketProvider = FutureProvider.family<List<HousekeeperAllocation>, String>(
+    (ref, housekeeperId) async {
+  final hotelId = ref.watch(selectedHotelIdProvider);
+  final repository = ref.watch(repositoryProvider);
+  return repository.fetchHousekeeperAllocations(
+    housekeeperId: housekeeperId,
+    hotelId: hotelId,
+  );
+});
+
+/// Full stock movement history of a specific housekeeper, viewed by managers.
+final housekeeperHistoryProvider = FutureProvider.family<List<HousekeeperStockEvent>, String>(
+    (ref, housekeeperId) async {
+  final repository = ref.watch(repositoryProvider);
+  return repository.fetchHousekeeperStockEvents(
+    housekeeperId: housekeeperId,
+    limit: 200,
+  );
+});
+
