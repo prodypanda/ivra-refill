@@ -2087,6 +2087,7 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                           roomNumber: widget.roomNumber,
                           productSku: _selectedSku!,
                           autoAdjustInventory: autoAdjust,
+                          deductFromHousekeeperId: isHousekeeper ? currentUser?.id : null,
                         );
 
                     ref.invalidate(roomProductsProvider);

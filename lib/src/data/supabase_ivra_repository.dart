@@ -1352,6 +1352,7 @@ class SupabaseIvraRepository implements IvraRepository {
     required String roomNumber,
     required String productSku,
     bool autoAdjustInventory = false,
+    String? deductFromHousekeeperId,
   }) async {
     // 1. Fetch products to find the target product ID
     final prodList = await products();
@@ -1389,41 +1390,65 @@ class SupabaseIvraRepository implements IvraRepository {
       roomId = asString(roomResult['id']);
     }
 
-    // 4. Check inventory
-    final invResult = await _client.from('hotel_inventory').select('full_bottles').eq('hotel_id', hotelId).eq('product_id', product.id).maybeSingle();
-    final currentStock = invResult != null ? asInt(invResult['full_bottles']) : 0;
-
-    if (currentStock <= 0) {
-      if (!autoAdjustInventory) {
-        throw StateError('Product not in inventory');
-      } else {
-        // Automatically add 1 piece to inventory
-        await _client.from('hotel_inventory').upsert({
-          'hotel_id': hotelId,
-          'product_id': product.id,
-          'full_bottles': 1,
-          'empty_bottles': 0,
-        }, onConflict: 'hotel_id,product_id');
-
-        // Log inventory event
-        await _client.from('inventory_events').insert({
-          'hotel_id': hotelId,
-          'product_id': product.id,
-          'full_bottles_delta': 1,
-          'empty_bottles_delta': 0,
-          'reason': 'Auto-added to inventory for single room placement',
-          'performed_by': _client.auth.currentUser?.id,
-        });
+    // 4. Check inventory or housekeeper allocation
+    if (deductFromHousekeeperId != null) {
+      final allocResult = await _client.from('housekeeper_allocations')
+          .select('id, full_bottles')
+          .eq('housekeeper_id', deductFromHousekeeperId)
+          .eq('product_id', product.id)
+          .maybeSingle();
+      
+      final currentFullBottles = allocResult != null ? asInt(allocResult['full_bottles']) : 0;
+      if (currentFullBottles <= 0) {
+        throw StateError('Product not in housekeeper allocation');
       }
-    }
 
-    // 5. Decrement inventory by 1
-    await _client.rpc('record_stock_adjustment', params: {
-      'p_hotel_id': hotelId,
-      'p_product_id': product.id,
-      'p_full_bottles_delta': -1,
-      'p_reason': 'Deducted for room placement',
-    });
+      await _client.from('housekeeper_allocations').update({
+        'full_bottles': currentFullBottles - 1,
+      }).eq('id', asString(allocResult!['id']));
+      
+      await _auditService.logAction('Used housekeeper stock for room placement', details: {
+        'housekeeper_id': deductFromHousekeeperId,
+        'product_id': product.id,
+        'room_id': roomId,
+        'full_bottles_deducted': 1,
+      });
+    } else {
+      final invResult = await _client.from('hotel_inventory').select('full_bottles').eq('hotel_id', hotelId).eq('product_id', product.id).maybeSingle();
+      final currentStock = invResult != null ? asInt(invResult['full_bottles']) : 0;
+
+      if (currentStock <= 0) {
+        if (!autoAdjustInventory) {
+          throw StateError('Product not in inventory');
+        } else {
+          // Automatically add 1 piece to inventory
+          await _client.from('hotel_inventory').upsert({
+            'hotel_id': hotelId,
+            'product_id': product.id,
+            'full_bottles': 1,
+            'empty_bottles': 0,
+          }, onConflict: 'hotel_id,product_id');
+
+          // Log inventory event
+          await _client.from('inventory_events').insert({
+            'hotel_id': hotelId,
+            'product_id': product.id,
+            'full_bottles_delta': 1,
+            'empty_bottles_delta': 0,
+            'reason': 'Auto-added to inventory for single room placement',
+            'performed_by': _client.auth.currentUser?.id,
+          });
+        }
+      }
+
+      // 5. Decrement central inventory by 1
+      await _client.rpc('record_stock_adjustment', params: {
+        'p_hotel_id': hotelId,
+        'p_product_id': product.id,
+        'p_full_bottles_delta': -1,
+        'p_reason': 'Deducted for room placement',
+      });
+    }
 
     // 6. Insert room product
     final roomProductResult = await _client.from('room_products').insert({

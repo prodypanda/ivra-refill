@@ -2341,6 +2341,7 @@ class MockIvraRepository implements IvraRepository {
     required String roomNumber,
     required String productSku,
     bool autoAdjustInventory = false,
+    String? deductFromHousekeeperId,
   }) async {
     final product = _products.where((p) => p.sku.toLowerCase() == productSku.toLowerCase()).firstOrNull;
     if (product == null) {
@@ -2373,64 +2374,81 @@ class MockIvraRepository implements IvraRepository {
       );
     }
 
-    // Check inventory
-    final inventoryIndex = _inventory.indexWhere(
-      (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
-    );
-    final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
-
-    if (currentStock <= 0) {
-      if (!autoAdjustInventory) {
-        throw StateError('Product not in inventory');
-      } else {
-        // Automatically add 1 piece to the inventory first (by adding to stock)
-        if (inventoryIndex != -1) {
-          final stock = _inventory[inventoryIndex];
-          _inventory[inventoryIndex] = stock.copyWith(
-            fullBottles: stock.fullBottles + 1,
-          );
-        } else {
-          _inventory.add(InventoryItem(
-            id: _uuid.v4(),
-            hotelId: hotelId,
-            product: product,
-            fullBottles: 1,
-            emptyBottles: 0,
-            fullBidons: 0,
-            openBidons: 0,
-            emptyBidons: 0,
-          ));
+    // Check inventory or housekeeper allocation
+    if (deductFromHousekeeperId != null) {
+      final allocIndex = _housekeeperAllocations.indexWhere(
+        (alloc) => alloc.housekeeperId == deductFromHousekeeperId && alloc.product.id == product.id,
+      );
+      if (allocIndex != -1) {
+        final existing = _housekeeperAllocations[allocIndex];
+        if (existing.fullBottles <= 0) {
+          throw StateError('Product not in housekeeper allocation');
         }
+        _housekeeperAllocations[allocIndex] = existing.copyWith(
+          fullBottles: max(existing.fullBottles - 1, 0),
+        );
+      } else {
+        throw StateError('Housekeeper allocation not found');
+      }
+    } else {
+      final inventoryIndex = _inventory.indexWhere(
+        (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
+      );
+      final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
 
-        // Log adjustment event (+1 bottle)
-        _inventoryEvents.insert(
-          0,
-          InventoryEvent(
-            id: _uuid.v4(),
-            hotelId: hotelId,
-            productId: product.id,
-            fullBottlesDelta: 1,
-            emptyBottlesDelta: 0,
-            fullBidonsDelta: 0,
-            openBidonsDelta: 0,
-            emptyBidonsDelta: 0,
-            reason: 'Auto-added to inventory for single room placement',
-            performedBy: _currentUser.id,
-            occurredAt: DateTime.now(),
-          ),
+      if (currentStock <= 0) {
+        if (!autoAdjustInventory) {
+          throw StateError('Product not in inventory');
+        } else {
+          // Automatically add 1 piece to the inventory first (by adding to stock)
+          if (inventoryIndex != -1) {
+            final stock = _inventory[inventoryIndex];
+            _inventory[inventoryIndex] = stock.copyWith(
+              fullBottles: stock.fullBottles + 1,
+            );
+          } else {
+            _inventory.add(InventoryItem(
+              id: _uuid.v4(),
+              hotelId: hotelId,
+              product: product,
+              fullBottles: 1,
+              emptyBottles: 0,
+              fullBidons: 0,
+              openBidons: 0,
+              emptyBidons: 0,
+            ));
+          }
+
+          // Log adjustment event (+1 bottle)
+          _inventoryEvents.insert(
+            0,
+            InventoryEvent(
+              id: _uuid.v4(),
+              hotelId: hotelId,
+              productId: product.id,
+              fullBottlesDelta: 1,
+              emptyBottlesDelta: 0,
+              fullBidonsDelta: 0,
+              openBidonsDelta: 0,
+              emptyBidonsDelta: 0,
+              reason: 'Auto-added to inventory for single room placement',
+              performedBy: _currentUser.id,
+              occurredAt: DateTime.now(),
+            ),
+          );
+        }
+      }
+
+      // Now decrement the central stock by 1
+      final updatedInventoryIndex = _inventory.indexWhere(
+        (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
+      );
+      if (updatedInventoryIndex != -1) {
+        final stock = _inventory[updatedInventoryIndex];
+        _inventory[updatedInventoryIndex] = stock.copyWith(
+          fullBottles: max(stock.fullBottles - 1, 0),
         );
       }
-    }
-
-    // Now decrement the stock by 1
-    final updatedInventoryIndex = _inventory.indexWhere(
-      (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
-    );
-    if (updatedInventoryIndex != -1) {
-      final stock = _inventory[updatedInventoryIndex];
-      _inventory[updatedInventoryIndex] = stock.copyWith(
-        fullBottles: max(stock.fullBottles - 1, 0),
-      );
     }
 
     // Insert into room products

@@ -231,6 +231,7 @@ abstract class IvraRepository {
     required String roomNumber,
     required String productSku,
     bool autoAdjustInventory = false,
+    String? deductFromHousekeeperId,
   });
 
   Future<void> removeProductFromRoom({required String roomProductId});
