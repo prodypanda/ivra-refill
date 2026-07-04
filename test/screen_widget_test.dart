@@ -18,6 +18,7 @@ import 'package:ivra_refill/src/features/settings/settings_screen.dart';
 import 'package:ivra_refill/src/features/account/account_screen.dart';
 import 'package:ivra_refill/src/features/shared/offline_banner.dart';
 import 'package:ivra_refill/src/features/shared/premium_confirm_dialog.dart';
+import 'package:ivra_refill/src/features/shared/refill_percentage_dialog.dart';
 import 'package:ivra_refill/src/features/team/team_screen.dart';
 import 'package:ivra_refill/src/l10n/app_localizations.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
@@ -412,9 +413,9 @@ void main() {
       await tester.tap(find.byType(DropdownButtonFormField<String>));
       await tester.pumpAndSettle();
 
-      // Find the option Conditioner
-      final conditionerOption = find.text('Conditioner (IVR-CON-1L)').last;
-      await tester.tap(conditionerOption);
+      // Find the option Shower Gel
+      final showerGelOption = find.text('Shower Gel (IVR-GEL-1L)').last;
+      await tester.tap(showerGelOption);
       await tester.pumpAndSettle();
 
       // Click Confirm button
@@ -424,26 +425,40 @@ void main() {
       );
       expect(confirmAddBtn, findsOneWidget);
       await tester.tap(confirmAddBtn);
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Our new logic checks housekeeper inventory and central stock, opening the transfer prompt
+      expect(find.byType(AlertDialog), findsNWidgets(2));
+      expect(find.textContaining('requires 1 full bottle'), findsOneWidget);
+
+      final confirmTransferBtn = find.descendant(
+        of: find.byType(AlertDialog).last,
+        matching: find.byType(FilledButton),
+      );
+      expect(confirmTransferBtn, findsOneWidget);
+      await tester.tap(confirmTransferBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Toast or snackbar should be displayed and dialog should close
       expect(find.text('Product added'), findsOneWidget);
 
-      // The conditioner product should now be visible in the list
-      expect(find.text('Conditioner'), findsWidgets);
+      // The Shower Gel product should now be visible in the list
+      expect(find.text('Shower Gel'), findsWidgets);
 
-      // Scroll the Conditioner widget into view first
-      await tester.ensureVisible(find.text('Conditioner').first);
+      // Scroll the Shower Gel widget into view first
+      await tester.ensureVisible(find.text('Shower Gel').first);
       await tester.pumpAndSettle();
 
       // Now remove the product using the trash icon
-      // Find the delete button next to the "Conditioner" product
-      final conditionerRow = find.ancestor(
-        of: find.text('Conditioner').first,
+      // Find the delete button next to the "Shower Gel" product
+      final showerGelRow = find.ancestor(
+        of: find.text('Shower Gel').first,
         matching: find.byType(Row),
       ).first;
       final deleteBtn = find.descendant(
-        of: conditionerRow,
+        of: showerGelRow,
         matching: find.byIcon(Icons.delete_outline),
       );
       expect(deleteBtn, findsOneWidget);
@@ -464,6 +479,260 @@ void main() {
 
       // Check success snackbar
       expect(find.text('Product removed'), findsOneWidget);
+    });
+
+    testWidgets('housekeeper refill succeeds immediately when housekeeper has stock', (tester) async {
+      final repo = _CustomStockMockRepository(
+        mockAllocations: [
+          HousekeeperAllocation(
+            id: 'alloc-1',
+            housekeeperId: 'user-housekeeper',
+            hotelId: 'hotel-seaside',
+            product: const Product(
+              id: 'prod-shower-gel',
+              sku: 'IVR-GEL-1L',
+              nameEn: 'Shower Gel',
+              nameFr: 'Gel douche',
+              nameAr: 'جل الاستحمام',
+              nameIt: 'Bagnoschiuma',
+              maxRefillCount: 10,
+              maxBottleAgeDays: 240,
+              lowBottleThreshold: 12,
+              lowBidonThreshold: 4,
+            ),
+            fullBottles: 0,
+            emptyBottles: 0,
+            fullBidons: 1, // Has stock
+            openBidons: 0,
+            emptyBidons: 0,
+            openBidonVolumeLeftMl: 0.0,
+          ),
+        ],
+        mockInventory: [],
+      );
+
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.housekeeper),
+        repository: repo,
+      );
+
+      GoRouter.of(tester.element(find.text('Dashboard').first))
+          .go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      // Switch to detailed view and expand floors
+      await tester.tap(find.text('Detailed View'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Expand all'));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Shower Gel').first);
+      await tester.pumpAndSettle();
+
+      final showerGelRow = find.ancestor(
+        of: find.text('Shower Gel').first,
+        matching: find.byWidgetPredicate((widget) => widget.runtimeType.toString() == '_RoomCardProductRow'),
+      );
+      expect(showerGelRow, findsOneWidget);
+      final refillBtn = find.descendant(
+        of: showerGelRow,
+        matching: find.text('Refill bottle'),
+      );
+      expect(refillBtn, findsOneWidget);
+      await tester.tap(refillBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // RefillPercentageDialog should appear. Tap "Confirm"
+      final confirmBtn = find.descendant(
+        of: find.byType(RefillPercentageDialog),
+        matching: find.byType(FilledButton),
+      );
+      expect(confirmBtn, findsOneWidget);
+      await tester.tap(confirmBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Expect immediate success snackbar without showing transfer dialog
+      expect(find.textContaining('Refill recorded'), findsOneWidget);
+    });
+
+    testWidgets('housekeeper refill prompts for checkout when housekeeper is empty but hotel has central stock', (tester) async {
+      final repo = _CustomStockMockRepository(
+        mockAllocations: [], // empty housekeeper stock
+        mockInventory: [
+          InventoryItem(
+            id: 'inv-gel',
+            hotelId: 'hotel-seaside',
+            product: const Product(
+              id: 'prod-shower-gel',
+              sku: 'IVR-GEL-1L',
+              nameEn: 'Shower Gel',
+              nameFr: 'Gel douche',
+              nameAr: 'جل الاستحمام',
+              nameIt: 'Bagnoschiuma',
+              maxRefillCount: 10,
+              maxBottleAgeDays: 240,
+              lowBottleThreshold: 12,
+              lowBidonThreshold: 4,
+            ),
+            fullBottles: 0,
+            emptyBottles: 0,
+            fullBidons: 5, // Hotel has 5 bidons
+            openBidons: 0,
+            emptyBidons: 0,
+          ),
+        ],
+      );
+
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.housekeeper),
+        repository: repo,
+      );
+
+      GoRouter.of(tester.element(find.text('Dashboard').first))
+          .go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      // Switch to detailed view and expand floors
+      await tester.tap(find.text('Detailed View'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Expand all'));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Shower Gel').first);
+      await tester.pumpAndSettle();
+
+      final showerGelRow = find.ancestor(
+        of: find.text('Shower Gel').first,
+        matching: find.byWidgetPredicate((widget) => widget.runtimeType.toString() == '_RoomCardProductRow'),
+      );
+      expect(showerGelRow, findsOneWidget);
+      final refillBtn = find.descendant(
+        of: showerGelRow,
+        matching: find.text('Refill bottle'),
+      );
+      expect(refillBtn, findsOneWidget);
+      await tester.tap(refillBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Confirm RefillPercentageDialog
+      final confirmBtn = find.descendant(
+        of: find.byType(RefillPercentageDialog),
+        matching: find.byType(FilledButton),
+      );
+      await tester.tap(confirmBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Expect a stock warning/transfer prompt dialog to appear
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.textContaining('requires 1 full bidon'), findsOneWidget);
+
+      // Tap the confirm checkout button (which is FilledButton inside the AlertDialog)
+      final confirmCheckoutBtn = find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.byType(FilledButton),
+      );
+      await tester.tap(confirmCheckoutBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Now the refill should be recorded
+      expect(find.textContaining('Refill recorded'), findsOneWidget);
+    });
+
+    testWidgets('housekeeper refill aborts with warning when neither has stock', (tester) async {
+      final repo = _CustomStockMockRepository(
+        mockAllocations: [],
+        mockInventory: [
+          InventoryItem(
+            id: 'inv-gel',
+            hotelId: 'hotel-seaside',
+            product: const Product(
+              id: 'prod-shower-gel',
+              sku: 'IVR-GEL-1L',
+              nameEn: 'Shower Gel',
+              nameFr: 'Gel douche',
+              nameAr: 'جل الاستحمام',
+              nameIt: 'Bagnoschiuma',
+              maxRefillCount: 10,
+              maxBottleAgeDays: 240,
+              lowBottleThreshold: 12,
+              lowBidonThreshold: 4,
+            ),
+            fullBottles: 0,
+            emptyBottles: 0,
+            fullBidons: 0, // No hotel stock
+            openBidons: 0,
+            emptyBidons: 0,
+          ),
+        ],
+      );
+
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.housekeeper),
+        repository: repo,
+      );
+
+      GoRouter.of(tester.element(find.text('Dashboard').first))
+          .go(RoomsScreen.route);
+      await tester.pumpAndSettle();
+
+      // Switch to detailed view and expand floors
+      await tester.tap(find.text('Detailed View'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Expand all'));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Shower Gel').first);
+      await tester.pumpAndSettle();
+
+      final showerGelRow = find.ancestor(
+        of: find.text('Shower Gel').first,
+        matching: find.byWidgetPredicate((widget) => widget.runtimeType.toString() == '_RoomCardProductRow'),
+      );
+      expect(showerGelRow, findsOneWidget);
+      final refillBtn = find.descendant(
+        of: showerGelRow,
+        matching: find.text('Refill bottle'),
+      );
+      expect(refillBtn, findsOneWidget);
+      await tester.tap(refillBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Confirm RefillPercentageDialog
+      final confirmBtn = find.descendant(
+        of: find.byType(RefillPercentageDialog),
+        matching: find.byType(FilledButton),
+      );
+      await tester.tap(confirmBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Expect a warning dialog instructing to contact the hotel manager
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.textContaining('Please inform the hotel manager'), findsOneWidget);
+
+      // Tap the close/dismiss button on the alert dialog
+      final dismissBtn = find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.byType(FilledButton),
+      );
+      await tester.tap(dismissBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // No success message should appear
+      expect(find.textContaining('Refill recorded'), findsNothing);
     });
   });
 
@@ -1085,5 +1354,64 @@ class _FakeNotificationService extends NotificationService {
   @override
   Future<void> initialize() async {
     // No-op for widget tests
+  }
+}
+
+class _CustomStockMockRepository extends MockIvraRepository {
+  _CustomStockMockRepository({
+    required this.mockAllocations,
+    required this.mockInventory,
+  });
+
+  final List<HousekeeperAllocation> mockAllocations;
+  final List<InventoryItem> mockInventory;
+
+  @override
+  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({String? housekeeperId, String? hotelId}) async {
+    return mockAllocations;
+  }
+
+  @override
+  Future<List<InventoryItem>> inventory({String? hotelId}) async {
+    return mockInventory;
+  }
+
+  @override
+  Future<void> checkoutHousekeeperStock({
+    required String housekeeperId,
+    required String productId,
+    required int fullBottles,
+    required int fullBidons,
+  }) async {
+    final invIndex = mockInventory.indexWhere((item) => item.product.id == productId);
+    if (invIndex != -1) {
+      final central = mockInventory[invIndex];
+      mockInventory[invIndex] = central.copyWith(
+        fullBottles: central.fullBottles - fullBottles,
+        fullBidons: central.fullBidons - fullBidons,
+      );
+    }
+    final allocIndex = mockAllocations.indexWhere((a) => a.product.id == productId);
+    if (allocIndex != -1) {
+      final alloc = mockAllocations[allocIndex];
+      mockAllocations[allocIndex] = alloc.copyWith(
+        fullBottles: alloc.fullBottles + fullBottles,
+        fullBidons: alloc.fullBidons + fullBidons,
+      );
+    } else {
+      final product = mockInventory.firstWhere((item) => item.product.id == productId).product;
+      mockAllocations.add(HousekeeperAllocation(
+        id: 'new-alloc',
+        housekeeperId: housekeeperId,
+        hotelId: 'hotel-seaside',
+        product: product,
+        fullBottles: fullBottles,
+        emptyBottles: 0,
+        fullBidons: fullBidons,
+        openBidons: 0,
+        emptyBidons: 0,
+        openBidonVolumeLeftMl: 0.0,
+      ));
+    }
   }
 }

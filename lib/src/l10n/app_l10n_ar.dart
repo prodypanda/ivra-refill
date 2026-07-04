@@ -2372,6 +2372,27 @@ class AppL10nAr extends AppL10n {
   }
 
   @override
+  String housekeeperAddGetFromHotel(String product, String room, String count) {
+    return 'إضافة $product في الغرفة $room يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك. ومع ذلك، تتوفر $count زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة من مخزون الفندق والمتابعة؟';
+  }
+
+  @override
+  String housekeeperAddNotifyManager(String product, String room) {
+    return 'إضافة $product في الغرفة $room يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.';
+  }
+
+  @override
+  String housekeeperRefillGetFromHotel(
+      String product, String room, String count) {
+    return 'إعادة تعبئة $product في الغرفة $room يتطلب عبوة ممتلئة واحدة، ولكن ليس لديك أي عبوة مفتوحة أو ممتلئة في مخزونك. ومع ذلك، تتوفر $count عبوة في مخزون الفندق. هل ترغب في أخذ عبوة واحدة من مخزون الفندق والمتابعة؟';
+  }
+
+  @override
+  String housekeeperRefillNotifyManager(String product, String room) {
+    return 'إعادة تعبئة $product في الغرفة $room يتطلب عبوة ممتلئة واحدة، ولكن ليس لديك أي عبوة مفتوحة أو ممتلئة في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.';
+  }
+
+  @override
   String get btnOk => 'موافق';
 
   @override

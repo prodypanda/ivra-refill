@@ -4417,6 +4417,31 @@ abstract class AppL10n {
   /// **'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.'**
   String housekeeperReplaceNotifyManager(String product, String room);
 
+  /// No description provided for @housekeeperAddGetFromHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding {product} to Room {room} requires 1 full bottle, but you do not have it in your inventory. However, {count} bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?'**
+  String housekeeperAddGetFromHotel(String product, String room, String count);
+
+  /// No description provided for @housekeeperAddNotifyManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding {product} to Room {room} requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.'**
+  String housekeeperAddNotifyManager(String product, String room);
+
+  /// No description provided for @housekeeperRefillGetFromHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Refilling {product} in Room {room} requires 1 full bidon, but you do not have any open or full bidon in your inventory. However, {count} bidons are available in the hotel inventory. Would you like to take 1 bidon from the hotel inventory and proceed?'**
+  String housekeeperRefillGetFromHotel(
+      String product, String room, String count);
+
+  /// No description provided for @housekeeperRefillNotifyManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Refilling {product} in Room {room} requires 1 full bidon, but you do not have any open or full bidon in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.'**
+  String housekeeperRefillNotifyManager(String product, String room);
+
   /// No description provided for @btnOk.
   ///
   /// In en, this message translates to:

@@ -1337,6 +1337,56 @@
       }
     }
   },
+  "housekeeperAddGetFromHotel": "Adding {product} to Room {room} requires 1 full bottle, but you do not have it in your inventory. However, {count} bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?",
+  "@housekeeperAddGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "housekeeperAddNotifyManager": "Adding {product} to Room {room} requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.",
+  "@housekeeperAddNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "housekeeperRefillGetFromHotel": "Refilling {product} in Room {room} requires 1 full bidon, but you do not have any open or full bidon in your inventory. However, {count} bidons are available in the hotel inventory. Would you like to take 1 bidon from the hotel inventory and proceed?",
+  "@housekeeperRefillGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "housekeeperRefillNotifyManager": "Refilling {product} in Room {room} requires 1 full bidon, but you do not have any open or full bidon in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.",
+  "@housekeeperRefillNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "btnOk": "OK",
   "inventoryEnforceBtnProceed": "Auto-Adjust & Proceed",
   "inventoryEnforceReasonTemplate": "Auto-adjusted for room creation template",

@@ -2417,6 +2417,27 @@ class AppL10nFr extends AppL10n {
   }
 
   @override
+  String housekeeperAddGetFromHotel(String product, String room, String count) {
+    return 'Ajouter $product dans la chambre $room nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire. Cependant, $count bouteilles sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bouteille de l\'inventaire de l\'hôtel et continuer ?';
+  }
+
+  @override
+  String housekeeperAddNotifyManager(String product, String room) {
+    return 'Ajouter $product dans la chambre $room nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire et elle n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.';
+  }
+
+  @override
+  String housekeeperRefillGetFromHotel(
+      String product, String room, String count) {
+    return 'Remplir $product dans la chambre $room nécessite 1 bidon plein, mais vous n\'avez pas de bidon ouvert ou plein dans votre inventaire. Cependant, $count bidons sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bidon de l\'inventaire de l\'hôtel et continuer ?';
+  }
+
+  @override
+  String housekeeperRefillNotifyManager(String product, String room) {
+    return 'Remplir $product dans la chambre $room nécessite 1 bidon plein, mais vous n\'avez pas de bidon ouvert ou plein dans votre inventaire et il n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.';
+  }
+
+  @override
   String get btnOk => 'OK';
 
   @override

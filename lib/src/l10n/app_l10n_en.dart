@@ -2383,6 +2383,27 @@ class AppL10nEn extends AppL10n {
   }
 
   @override
+  String housekeeperAddGetFromHotel(String product, String room, String count) {
+    return 'Adding $product to Room $room requires 1 full bottle, but you do not have it in your inventory. However, $count bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?';
+  }
+
+  @override
+  String housekeeperAddNotifyManager(String product, String room) {
+    return 'Adding $product to Room $room requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.';
+  }
+
+  @override
+  String housekeeperRefillGetFromHotel(
+      String product, String room, String count) {
+    return 'Refilling $product in Room $room requires 1 full bidon, but you do not have any open or full bidon in your inventory. However, $count bidons are available in the hotel inventory. Would you like to take 1 bidon from the hotel inventory and proceed?';
+  }
+
+  @override
+  String housekeeperRefillNotifyManager(String product, String room) {
+    return 'Refilling $product in Room $room requires 1 full bidon, but you do not have any open or full bidon in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.';
+  }
+
+  @override
   String get btnOk => 'OK';
 
   @override

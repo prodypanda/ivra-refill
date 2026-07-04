@@ -1647,12 +1647,7 @@ Future<void> replaceBottle(
   var autoAdjust = false;
 
   if (isHousekeeper) {
-    List<HousekeeperAllocation> allocations = [];
-    try {
-      allocations = await ref.read(housekeeperAllocationsProvider.future);
-    } catch (_) {
-      allocations = ref.read(housekeeperAllocationsProvider).valueOrNull ?? [];
-    }
+    final allocations = await ref.read(housekeeperAllocationsProvider.future);
 
     final housekeeperAllocation = allocations.firstWhere(
       (a) => a.product.id == item.product.id,
@@ -1671,12 +1666,7 @@ Future<void> replaceBottle(
     );
 
     if (housekeeperAllocation.fullBottles == 0) {
-      List<InventoryItem> inventory = [];
-      try {
-        inventory = await ref.read(inventoryProvider.future);
-      } catch (_) {
-        inventory = ref.read(inventoryProvider).valueOrNull ?? [];
-      }
+      final inventory = await ref.read(inventoryProvider.future);
 
       final hotelStockItem = inventory.firstWhere(
         (stock) => stock.product.id == item.product.id,
@@ -1728,12 +1718,7 @@ Future<void> replaceBottle(
       }
     }
   } else {
-    List<InventoryItem> inventory = [];
-    try {
-      inventory = await ref.read(inventoryProvider.future);
-    } catch (_) {
-      inventory = ref.read(inventoryProvider).valueOrNull ?? [];
-    }
+    final inventory = await ref.read(inventoryProvider.future);
 
     final stockItem = inventory.firstWhere(
       (stock) => stock.product.id == item.product.id,
@@ -1810,6 +1795,106 @@ Future<void> replaceBottle(
         : '${l10n.t('roomsReplacementRecorded')} ${item.roomNumber}',
     icon: IvraIcons.replaceAction,
   );
+}
+
+Future<bool> _checkAndCheckoutHousekeeperRefillStock(
+  BuildContext context,
+  WidgetRef ref,
+  RoomProduct item,
+) async {
+  final currentUser = ref.read(currentUserProvider).valueOrNull;
+  final isHousekeeper = currentUser?.role == UserRole.housekeeper;
+
+  if (!isHousekeeper) {
+    return true; // Non-housekeepers don't need housekeeper stock checks
+  }
+
+  final allocations = await ref.read(housekeeperAllocationsProvider.future);
+
+  final housekeeperAllocation = allocations.firstWhere(
+    (a) => a.product.id == item.product.id,
+    orElse: () => HousekeeperAllocation(
+      id: '',
+      housekeeperId: currentUser?.id ?? '',
+      hotelId: item.hotelId,
+      product: item.product,
+      fullBottles: 0,
+      emptyBottles: 0,
+      fullBidons: 0,
+      openBidons: 0,
+      emptyBidons: 0,
+      openBidonVolumeLeftMl: 0,
+    ),
+  );
+
+  // A housekeeper has refill stock if:
+  // - They have an open bidon: openBidons > 0
+  // - Or they have a full bidon: fullBidons > 0
+  if (housekeeperAllocation.openBidons > 0 || housekeeperAllocation.fullBidons > 0) {
+    return true; // Has stock, can proceed
+  }
+
+  // If housekeeper has no bidons, check hotel stock
+  final inventory = await ref.read(inventoryProvider.future);
+
+  final hotelStockItem = inventory.firstWhere(
+    (stock) => stock.product.id == item.product.id,
+    orElse: () => InventoryItem(
+      id: '',
+      hotelId: item.hotelId,
+      product: item.product,
+      fullBottles: 0,
+      emptyBottles: 0,
+      fullBidons: 0,
+      openBidons: 0,
+      emptyBidons: 0,
+    ),
+  );
+
+  final hotelBidons = hotelStockItem.fullBidons;
+  final language = Localizations.localeOf(context).languageCode;
+  final productName = item.product.label(language);
+
+  final l10n = AppLocalizations.of(context);
+
+  if (hotelBidons > 0) {
+    if (context.mounted) {
+      final proceed = await _showHousekeeperStockDialog(
+        context: context,
+        message: l10n.tParams('housekeeperRefillGetFromHotel', {
+          'product': productName,
+          'room': item.roomNumber,
+          'count': hotelBidons.toString(),
+        }),
+        showProceedAction: true,
+      );
+      if (proceed != true) return false;
+    }
+
+    // Deduct 1 full bidon from hotel central inventory and add to housekeeper allocation/cart
+    await ref.read(repositoryProvider).checkoutHousekeeperStock(
+      housekeeperId: currentUser!.id,
+      productId: item.product.id,
+      fullBottles: 0,
+      fullBidons: 1,
+    );
+    
+    // Invalidate housekeeper allocations provider to let UI / providers update
+    ref.invalidate(housekeeperAllocationsProvider);
+    return true;
+  } else {
+    if (context.mounted) {
+      await _showHousekeeperStockDialog(
+        context: context,
+        message: l10n.tParams('housekeeperRefillNotifyManager', {
+          'product': productName,
+          'room': item.roomNumber,
+        }),
+        showProceedAction: false,
+      );
+    }
+    return false; // Cannot proceed
+  }
 }
 
 class _AddProductToRoomDialog extends ConsumerStatefulWidget {
@@ -1904,17 +1989,111 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                     _isLoading = true;
                   });
                   try {
+                    final currentUser = ref.read(currentUserProvider).valueOrNull;
+                    final isHousekeeper = currentUser?.role == UserRole.housekeeper;
+                    var autoAdjust = true;
+
+                    if (isHousekeeper) {
+                      final products = await ref.read(productsProvider.future);
+                      final selectedProduct = products.firstWhere((p) => p.sku == _selectedSku!);
+
+                      final allocations = await ref.read(housekeeperAllocationsProvider.future);
+
+                      final housekeeperAllocation = allocations.firstWhere(
+                        (a) => a.product.sku == _selectedSku!,
+                        orElse: () => HousekeeperAllocation(
+                          id: '',
+                          housekeeperId: currentUser?.id ?? '',
+                          hotelId: widget.hotelId,
+                          product: selectedProduct,
+                          fullBottles: 0,
+                          emptyBottles: 0,
+                          fullBidons: 0,
+                          openBidons: 0,
+                          emptyBidons: 0,
+                          openBidonVolumeLeftMl: 0,
+                        ),
+                      );
+
+                      if (housekeeperAllocation.fullBottles == 0) {
+                        final inventory = await ref.read(inventoryProvider.future);
+
+                        final hotelStockItem = inventory.firstWhere(
+                          (stock) => stock.product.sku == _selectedSku!,
+                          orElse: () => InventoryItem(
+                            id: '',
+                            hotelId: widget.hotelId,
+                            product: selectedProduct,
+                            fullBottles: 0,
+                            emptyBottles: 0,
+                            fullBidons: 0,
+                            openBidons: 0,
+                            emptyBidons: 0,
+                          ),
+                        );
+                        final hotelBottles = hotelStockItem.fullBottles;
+                        final productName = selectedProduct.label(language);
+
+                        if (hotelBottles > 0) {
+                          if (context.mounted) {
+                            final proceed = await _showHousekeeperStockDialog(
+                              context: context,
+                              message: l10n.tParams('housekeeperAddGetFromHotel', {
+                                'product': productName,
+                                'room': widget.roomNumber,
+                                'count': hotelBottles.toString(),
+                              }),
+                              showProceedAction: true,
+                            );
+                            if (proceed != true) {
+                              setState(() {
+                                _isLoading = false;
+                              });
+                              return;
+                            }
+                          }
+
+                          await ref.read(repositoryProvider).checkoutHousekeeperStock(
+                            housekeeperId: currentUser!.id,
+                            productId: selectedProduct.id,
+                            fullBottles: 1,
+                            fullBidons: 0,
+                          );
+                          autoAdjust = false;
+                        } else {
+                          if (context.mounted) {
+                            await _showHousekeeperStockDialog(
+                              context: context,
+                              message: l10n.tParams('housekeeperAddNotifyManager', {
+                                'product': productName,
+                                'room': widget.roomNumber,
+                              }),
+                              showProceedAction: false,
+                            );
+                          }
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          return;
+                        }
+                      } else {
+                        autoAdjust = false;
+                      }
+                    }
+
                     await ref.read(repositoryProvider).addProductToRoom(
                           hotelId: widget.hotelId,
                           floor: widget.floorNumber.toString(),
                           roomNumber: widget.roomNumber,
                           productSku: _selectedSku!,
-                          autoAdjustInventory: true,
+                          autoAdjustInventory: autoAdjust,
                         );
 
                     ref.invalidate(roomProductsProvider);
                     ref.invalidate(dashboardProvider);
                     ref.invalidate(roomsProvider);
+                    ref.invalidate(inventoryProvider);
+                    ref.invalidate(housekeeperAllocationsProvider);
 
                     if (context.mounted) {
                       HapticFeedback.mediumImpact();
@@ -2068,6 +2247,10 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
 
     final structuredNotes = '[Refill: $refillPercentage%] $notes'.trim();
     final l10n = AppLocalizations.of(context);
+
+    final canProceed = await _checkAndCheckoutHousekeeperRefillStock(context, ref, item);
+    if (!canProceed) return;
+
     try {
       var isOffline = ref.read(offlineModeProvider);
       if (!isOffline) {
@@ -2913,6 +3096,9 @@ class _RoomCardProductRow extends ConsumerWidget {
       }
 
       final structuredNotes = '[Refill: $refillPercentage%] $notes'.trim();
+
+      final canProceed = await _checkAndCheckoutHousekeeperRefillStock(context, ref, item);
+      if (!canProceed) return;
 
       var isOffline = ref.read(offlineModeProvider);
       if (!isOffline) {

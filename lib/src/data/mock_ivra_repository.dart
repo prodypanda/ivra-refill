@@ -596,9 +596,18 @@ class MockIvraRepository implements IvraRepository {
       throw ArgumentError('Invalid quantities');
     }
 
-    final profiles = _teamMembers.where((u) => u.id == housekeeperId).toList();
+    var profiles = _teamMembers.where((u) => u.id == housekeeperId).toList();
     if (profiles.isEmpty) {
-      throw Exception('Housekeeper profile not found');
+      final tempProfile = UserProfile(
+        id: housekeeperId,
+        fullName: 'Mock Housekeeper',
+        email: 'housekeeper@mock.example',
+        role: UserRole.housekeeper,
+        roleString: 'housekeeper',
+        hotelId: 'hotel-seaside',
+      );
+      _teamMembers.add(tempProfile);
+      profiles = [tempProfile];
     }
     final hotelId = profiles.first.hotelId;
     if (hotelId == null) {
