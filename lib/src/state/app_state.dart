@@ -548,8 +548,8 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
     return null;
   }
 
-  final products = roomProductsAsync.value ?? [];
-  final events = refillEventsAsync.value ?? [];
+  final products = roomProductsAsync.valueOrNull ?? [];
+  final events = refillEventsAsync.valueOrNull ?? [];
 
   if (products.isEmpty) {
     return const DailyRefillProgress(
