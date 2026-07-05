@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/app_enums.dart';
@@ -34,6 +35,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
   var _isSavingProfile = false;
   var _isChangingPassword = false;
   var _isSigningOut = false;
+  var _isUploadingAvatar = false;
 
   @override
   void dispose() {
@@ -90,7 +92,9 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
                   user: user,
                   fullNameController: _fullNameController,
                   isSaving: _isSavingProfile,
+                  isUploadingAvatar: _isUploadingAvatar,
                   onSave: _saveProfile,
+                  onAvatarTap: _pickAvatar,
                 ),
                 const SizedBox(height: 20),
                 _PasswordCard(
@@ -218,6 +222,46 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       if (mounted) setState(() => _isSigningOut = false);
     }
   }
+
+  Future<void> _pickAvatar() async {
+    final l10n = AppLocalizations.of(context);
+    try {
+      final picker = ImagePicker();
+      XFile? image;
+      try {
+        image = await picker.pickImage(source: ImageSource.gallery);
+      } catch (_) {
+        image = await picker.pickMedia();
+      }
+      
+      if (image == null) return;
+      
+      setState(() => _isUploadingAvatar = true);
+      
+      final bytes = await image.readAsBytes();
+      final ext = image.name.split('.').last;
+      
+      final currentUser = ref.read(currentUserProvider).valueOrNull;
+      if (currentUser != null) {
+        await ref.read(repositoryProvider).updateUserAvatar(
+          userId: currentUser.id,
+          imageBytes: bytes,
+          fileExtension: ext,
+        );
+        ref.invalidate(realCurrentUserProvider);
+        ref.invalidate(currentUserProvider);
+        ref.invalidate(teamMembersProvider);
+      }
+    } catch (e) {
+      if (mounted) {
+        PremiumSnackbar.showError(context, e);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUploadingAvatar = false);
+      }
+    }
+  }
 }
 
 class _ProfileCard extends ConsumerWidget {
@@ -226,14 +270,18 @@ class _ProfileCard extends ConsumerWidget {
     required this.user,
     required this.fullNameController,
     required this.isSaving,
+    required this.isUploadingAvatar,
     required this.onSave,
+    required this.onAvatarTap,
   });
 
   final GlobalKey<FormState> formKey;
   final UserProfile user;
   final TextEditingController fullNameController;
   final bool isSaving;
+  final bool isUploadingAvatar;
   final VoidCallback onSave;
+  final VoidCallback onAvatarTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -253,8 +301,42 @@ class _ProfileCard extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.badge_outlined),
-                  const SizedBox(width: 12),
+                  GestureDetector(
+                    onTap: isUploadingAvatar ? null : onAvatarTap,
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 32,
+                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                          backgroundImage: user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
+                          child: user.avatarUrl == null
+                              ? Icon(Icons.person, size: 32, color: Theme.of(context).colorScheme.onPrimaryContainer)
+                              : null,
+                        ),
+                        if (isUploadingAvatar)
+                          const Positioned.fill(
+                            child: CircularProgressIndicator(),
+                          ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.camera_alt,
+                              size: 14,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Text(
                       AppLocalizations.of(context).t('accountProfile'),

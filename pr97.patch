@@ -1,0 +1,364 @@
+From e0dc7e4b1d8f4ed6fc6b7b01ff2be1359767c152 Mon Sep 17 00:00:00 2001
+From: v0 <it+v0agent@vercel.com>
+Date: Sat, 4 Jul 2026 23:47:32 +0000
+Subject: [PATCH 1/2] feat: add profile avatars feature with storage and RPC
+
+Co-authored-by: ProdyPanda <49824171+prodypanda@users.noreply.github.com>
+---
+ .../20260705090000_profile_avatars.sql        | 107 ++++++++++++++++++
+ 1 file changed, 107 insertions(+)
+ create mode 100644 supabase/migrations/20260705090000_profile_avatars.sql
+
+diff --git a/supabase/migrations/20260705090000_profile_avatars.sql b/supabase/migrations/20260705090000_profile_avatars.sql
+new file mode 100644
+index 0000000..9963e34
+--- /dev/null
++++ b/supabase/migrations/20260705090000_profile_avatars.sql
+@@ -0,0 +1,107 @@
++-- ============================================================
++-- Profile avatars: avatar_url column, avatars storage bucket,
++-- and a permission-checked RPC to update a user's avatar.
++--
++-- Permissions for changing a user's avatar:
++--   - the user themself
++--   - a hotel_manager of the same hotel
++--   - app_admin / app_manager (full access)
++-- ============================================================
++
++-- 1) Avatar column on profiles
++ALTER TABLE public.profiles
++  ADD COLUMN IF NOT EXISTS avatar_url text;
++
++-- 2) Public avatars bucket
++INSERT INTO storage.buckets (id, name, public)
++VALUES ('avatars', 'avatars', true)
++ON CONFLICT (id) DO NOTHING;
++
++-- Storage policies for the avatars bucket.
++-- Reads are public (bucket is public); writes are limited to
++-- authenticated users. Fine-grained "who may change whose avatar"
++-- is enforced by the update_user_avatar RPC which is the only
++-- thing that persists the URL onto the profile.
++DROP POLICY IF EXISTS avatars_bucket_public_read ON storage.objects;
++CREATE POLICY avatars_bucket_public_read
++  ON storage.objects FOR SELECT
++  USING (bucket_id = 'avatars');
++
++DROP POLICY IF EXISTS avatars_bucket_insert_auth ON storage.objects;
++CREATE POLICY avatars_bucket_insert_auth
++  ON storage.objects FOR INSERT
++  TO authenticated
++  WITH CHECK (bucket_id = 'avatars');
++
++DROP POLICY IF EXISTS avatars_bucket_update_auth ON storage.objects;
++CREATE POLICY avatars_bucket_update_auth
++  ON storage.objects FOR UPDATE
++  TO authenticated
++  USING (bucket_id = 'avatars');
++
++DROP POLICY IF EXISTS avatars_bucket_delete_auth ON storage.objects;
++CREATE POLICY avatars_bucket_delete_auth
++  ON storage.objects FOR DELETE
++  TO authenticated
++  USING (bucket_id = 'avatars');
++
++-- 3) Permission-checked RPC to set a user's avatar_url
++CREATE OR REPLACE FUNCTION public.update_user_avatar(
++  p_user_id uuid,
++  p_avatar_url text
++)
++RETURNS void
++LANGUAGE plpgsql
++SECURITY DEFINER
++SET search_path = public
++AS $$
++DECLARE
++  v_caller uuid := auth.uid();
++  v_caller_role text;
++  v_allowed boolean := false;
++BEGIN
++  IF v_caller IS NULL THEN
++    RAISE EXCEPTION 'Not authenticated';
++  END IF;
++
++  SELECT role INTO v_caller_role FROM profiles WHERE id = v_caller;
++
++  -- Self-service: anyone may change their own picture.
++  IF v_caller = p_user_id THEN
++    v_allowed := true;
++  -- App admin / app manager: full access.
++  ELSIF v_caller_role IN ('app_admin', 'app_manager') THEN
++    v_allowed := true;
++  -- Hotel manager: may change avatars of users in a hotel they manage.
++  ELSIF v_caller_role = 'hotel_manager' THEN
++    v_allowed := EXISTS (
++      -- Shared hotel via profiles.hotel_id
++      SELECT 1
++      FROM profiles target
++      WHERE target.id = p_user_id
++        AND target.hotel_id IS NOT NULL
++        AND has_hotel_access(target.hotel_id)
++    ) OR EXISTS (
++      -- Shared hotel via user_hotels join table
++      SELECT 1
++      FROM user_hotels uh_target
++      WHERE uh_target.user_id = p_user_id
++        AND has_hotel_access(uh_target.hotel_id)
++    );
++  END IF;
++
++  IF NOT v_allowed THEN
++    RAISE EXCEPTION 'Not authorized to update this user''s avatar';
++  END IF;
++
++  UPDATE profiles
++  SET avatar_url = p_avatar_url
++  WHERE id = p_user_id;
++
++  IF NOT FOUND THEN
++    RAISE EXCEPTION 'Profile not found: %', p_user_id;
++  END IF;
++END;
++$$;
++
++GRANT EXECUTE ON FUNCTION public.update_user_avatar(uuid, text) TO authenticated;
+
+From 5fe5f6cbd9c7082d6cd0ef17b479cd661c7a7d3e Mon Sep 17 00:00:00 2001
+From: v0 <it+v0agent@vercel.com>
+Date: Sat, 4 Jul 2026 23:51:47 +0000
+Subject: [PATCH 2/2] feat: add updateUserAvatar method for user profile
+ picture upload and enforce permissions
+
+Co-authored-by: ProdyPanda <49824171+prodypanda@users.noreply.github.com>
+---
+ lib/src/data/ivra_repository.dart          |  9 +++++
+ lib/src/data/mock_ivra_repository.dart     | 37 +++++++++++++++++
+ lib/src/data/supabase_ivra_repository.dart | 35 ++++++++++++++++
+ lib/src/domain/models.dart                 |  5 +++
+ lib/src/state/app_state.dart               | 46 ++++++++++++++++++++++
+ 5 files changed, 132 insertions(+)
+
+diff --git a/lib/src/data/ivra_repository.dart b/lib/src/data/ivra_repository.dart
+index 4894197..144d8a8 100644
+--- a/lib/src/data/ivra_repository.dart
++++ b/lib/src/data/ivra_repository.dart
+@@ -114,6 +114,15 @@ abstract class IvraRepository {
+     String? hotelId,
+   });
+ 
++  /// Uploads a new profile picture for [userId] and returns its public URL.
++  /// Permission checks (self, hotel manager of same hotel, app admin/manager)
++  /// are enforced server-side.
++  Future<String> updateUserAvatar({
++    required String userId,
++    required List<int> imageBytes,
++    required String fileExtension,
++  });
++
+   Future<TeamInvitation?> invitationByToken({required String token});
+ 
+   Future<void> acceptTeamInvitation({required String token});
+diff --git a/lib/src/data/mock_ivra_repository.dart b/lib/src/data/mock_ivra_repository.dart
+index 1132cc2..6aa2bac 100644
+--- a/lib/src/data/mock_ivra_repository.dart
++++ b/lib/src/data/mock_ivra_repository.dart
+@@ -1,6 +1,7 @@
+ import 'dart:math';
+ 
+ import 'dart:io' show Platform;
++import 'package:collection/collection.dart';
+ import 'package:uuid/uuid.dart';
+ 
+ 
+@@ -487,6 +488,42 @@ class MockIvraRepository implements IvraRepository {
+     }
+   }
+ 
++  @override
++  Future<String> updateUserAvatar({
++    required String userId,
++    required List<int> imageBytes,
++    required String fileExtension,
++  }) async {
++    // Mock permission check mirroring the server-side RPC: self, hotel
++    // manager of the same hotel, or app admin/manager.
++    final target = _teamMembers.firstWhereOrNull((m) => m.id == userId) ??
++        (_currentUser.id == userId ? _currentUser : null);
++    if (target == null) {
++      throw StateError('User not found');
++    }
++    final isSelf = _currentUser.id == userId;
++    final isAppLevel = _currentUser.role == UserRole.appAdmin ||
++        _currentUser.role == UserRole.appManager;
++    final isHotelManagerSameHotel =
++        _currentUser.role == UserRole.hotelManager &&
++            _currentUser.hotelId != null &&
++            _currentUser.hotelId == target.hotelId;
++    if (!isSelf && !isAppLevel && !isHotelManagerSameHotel) {
++      throw StateError('Not allowed to update this user\'s picture');
++    }
++
++    final url =
++        'https://mock.local/avatars/$userId-${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
++    final index = _teamMembers.indexWhere((member) => member.id == userId);
++    if (index != -1) {
++      _teamMembers[index] = _teamMembers[index].copyWith(avatarUrl: url);
++    }
++    if (_currentUser.id == userId) {
++      _currentUser = _currentUser.copyWith(avatarUrl: url);
++    }
++    return url;
++  }
++
+   /// Demo-only: switch the active demo user. This is intentionally NOT part of
+   /// the [IvraRepository] interface — it only exists on the in-memory mock used
+   /// in demo mode and tests. Production code must narrow to [MockIvraRepository]
+diff --git a/lib/src/data/supabase_ivra_repository.dart b/lib/src/data/supabase_ivra_repository.dart
+index 08e83e2..a4f9ce5 100644
+--- a/lib/src/data/supabase_ivra_repository.dart
++++ b/lib/src/data/supabase_ivra_repository.dart
+@@ -1,4 +1,5 @@
+ import 'dart:convert';
++import 'dart:typed_data';
+ 
+ import 'package:flutter/foundation.dart' show visibleForTesting;
+ import 'package:shared_preferences/shared_preferences.dart';
+@@ -320,6 +321,40 @@ class SupabaseIvraRepository implements IvraRepository {
+     await _auditService.logAction('Changed current user password');
+   }
+ 
++  @override
++  Future<String> updateUserAvatar({
++    required String userId,
++    required List<int> imageBytes,
++    required String fileExtension,
++  }) async {
++    final ext = fileExtension.replaceAll('.', '').toLowerCase();
++    final path = '$userId/avatar-${DateTime.now().millisecondsSinceEpoch}.$ext';
++
++    await _client.storage.from('avatars').uploadBinary(
++          path,
++          Uint8List.fromList(imageBytes),
++          fileOptions: FileOptions(
++            contentType: ext == 'png' ? 'image/png' : 'image/jpeg',
++            upsert: true,
++          ),
++        );
++
++    final publicUrl = _client.storage.from('avatars').getPublicUrl(path);
++
++    // Permission enforcement (self / hotel manager same hotel / app admin or
++    // manager) happens inside this SECURITY DEFINER RPC.
++    await _client.rpc('update_user_avatar', params: {
++      'p_user_id': userId,
++      'p_avatar_url': publicUrl,
++    });
++
++    await _auditService.logAction(
++      'Updated user avatar',
++      details: {'user_id': userId},
++    );
++    return publicUrl;
++  }
++
+   @override
+   Future<DashboardMetrics> dashboardMetrics({String? hotelId}) async {
+     final Map<String, dynamic> params = {};
+diff --git a/lib/src/domain/models.dart b/lib/src/domain/models.dart
+index d86cc36..f6cf4ff 100644
+--- a/lib/src/domain/models.dart
++++ b/lib/src/domain/models.dart
+@@ -10,6 +10,7 @@ class UserProfile {
+     required this.roleString,
+     this.isActive = true,
+     this.hotelId,
++    this.avatarUrl,
+   });
+ 
+   final String id;
+@@ -19,6 +20,7 @@ class UserProfile {
+   final String roleString;
+   final bool isActive;
+   final String? hotelId;
++  final String? avatarUrl;
+ 
+   bool get isIvraUser =>
+       role == UserRole.appAdmin || role == UserRole.appManager;
+@@ -33,6 +35,7 @@ class UserProfile {
+       roleString: roleStr,
+       isActive: asBool(map['is_active'], fallback: true),
+       hotelId: asNullableString(map['hotel_id']),
++      avatarUrl: asNullableString(map['avatar_url']),
+     );
+   }
+ 
+@@ -43,6 +46,7 @@ class UserProfile {
+     String? roleString,
+     bool? isActive,
+     String? hotelId,
++    String? avatarUrl,
+   }) {
+     return UserProfile(
+       id: id,
+@@ -52,6 +56,7 @@ class UserProfile {
+       roleString: roleString ?? (role != null ? role.value : this.roleString),
+       isActive: isActive ?? this.isActive,
+       hotelId: hotelId ?? this.hotelId,
++      avatarUrl: avatarUrl ?? this.avatarUrl,
+     );
+   }
+ }
+diff --git a/lib/src/state/app_state.dart b/lib/src/state/app_state.dart
+index c24a21c..e147a37 100644
+--- a/lib/src/state/app_state.dart
++++ b/lib/src/state/app_state.dart
+@@ -730,3 +730,49 @@ final housekeeperStockEventsProvider =
+   );
+ });
+ 
++/// Full movement history of the current housekeeper's cart across ALL
++/// products (used by the "All history" button on the My Basket page).
++final housekeeperAllStockEventsProvider =
++    FutureProvider<List<HousekeeperStockEvent>>((ref) async {
++  final repository = ref.watch(repositoryProvider);
++  final currentUser = ref.watch(currentUserProvider).valueOrNull;
++  if (currentUser == null) return const [];
++  return repository.fetchHousekeeperStockEvents(
++    housekeeperId: currentUser.id,
++    limit: 200,
++  );
++});
++
++/// All housekeeper users of the selected hotel, for managers/staff/admins.
++final hotelHousekeepersProvider = FutureProvider<List<UserProfile>>((ref) async {
++  final hotelId = ref.watch(selectedHotelIdProvider);
++  final repository = ref.watch(repositoryProvider);
++  final members = await repository.teamMembers(hotelId: hotelId);
++  return members
++      .where((m) =>
++          m.role == UserRole.housekeeper &&
++          (hotelId == null || m.hotelId == hotelId))
++      .toList();
++});
++
++/// Basket (allocations) of a specific housekeeper, viewed by managers.
++final housekeeperBasketProvider = FutureProvider.family<List<HousekeeperAllocation>, String>(
++    (ref, housekeeperId) async {
++  final hotelId = ref.watch(selectedHotelIdProvider);
++  final repository = ref.watch(repositoryProvider);
++  return repository.fetchHousekeeperAllocations(
++    housekeeperId: housekeeperId,
++    hotelId: hotelId,
++  );
++});
++
++/// Full stock movement history of a specific housekeeper, viewed by managers.
++final housekeeperHistoryProvider = FutureProvider.family<List<HousekeeperStockEvent>, String>(
++    (ref, housekeeperId) async {
++  final repository = ref.watch(repositoryProvider);
++  return repository.fetchHousekeeperStockEvents(
++    housekeeperId: housekeeperId,
++    limit: 200,
++  );
++});
++

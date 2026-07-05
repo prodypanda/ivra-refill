@@ -1,8 +1,35 @@
 {
   "missing": {
-    "fr": [],
-    "ar": [],
-    "it": []
+    "fr": [
+      "myBasket",
+      "housekeepersTitle",
+      "allHistory",
+      "changePicture",
+      "inviteHousekeeper",
+      "removeHousekeeper",
+      "basketContent",
+      "noHousekeepers"
+    ],
+    "ar": [
+      "myBasket",
+      "housekeepersTitle",
+      "allHistory",
+      "changePicture",
+      "inviteHousekeeper",
+      "removeHousekeeper",
+      "basketContent",
+      "noHousekeepers"
+    ],
+    "it": [
+      "myBasket",
+      "housekeepersTitle",
+      "allHistory",
+      "changePicture",
+      "inviteHousekeeper",
+      "removeHousekeeper",
+      "basketContent",
+      "noHousekeepers"
+    ]
   },
   "extras": {
     "fr": [],

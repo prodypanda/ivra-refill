@@ -98,7 +98,7 @@ class AppL10nAr extends AppL10n {
   String get actionAndRouting => 'الإجراءات والتوجيه';
 
   @override
-  String get openSpecificPage => 'فتح صفحة محددة (اختياري)';
+  String get openSpecificPage => 'فتح صفحة محددة (اختيا��ي)';
 
   @override
   String get defaultNoPage => 'الافتراضي (لا توجد صفحة)';
@@ -128,7 +128,7 @@ class AppL10nAr extends AppL10n {
   String get dashboardProductUsage => 'استخدام المنتج';
 
   @override
-  String get dashboardUsageByFloor => 'الاستخدام حسب الطابق';
+  String get dashboardUsageByFloor => 'الاست��دام حسب الطابق';
 
   @override
   String get dashboardStockForecast => 'توقعات نفاد مخزون المتجر';
@@ -542,7 +542,7 @@ class AppL10nAr extends AppL10n {
   String get inventoryTableEmptyBottlesGeneric => 'العبوات المستبدلة (مستعملة)';
 
   @override
-  String get inventoryTableEmptyBidons => 'قوارير إعادة التعبئة الفارغة';
+  String get inventoryTableEmptyBidons => 'قوارير إعادة التعبئة الفار��ة';
 
   @override
   String inventoryTableFullBidons(String size) {
@@ -1699,7 +1699,7 @@ class AppL10nAr extends AppL10n {
   String get approvalsReject => 'رفض';
 
   @override
-  String get approvalsActionFailed => 'فشل الإجراء. حاول مرة أخرى.';
+  String get approvalsActionFailed => 'فشل الإجراء. حاول مر�� أخرى.';
 
   @override
   String get approvalsApproved => 'تمت الموافقة على الطلب.';
@@ -2628,6 +2628,39 @@ class AppL10nAr extends AppL10n {
   String get housekeeperStockReturned => 'تم إرجاع المخزون بنجاح!';
 
   @override
+  String get housekeeperStockHistory => 'السجل';
+
+  @override
+  String get housekeeperStockHistoryEmpty =>
+      'لا توجد حركات مسجلة لهذا المنتج بعد.';
+
+  @override
+  String get stockEventCheckout => 'مأخوذ من مخزون الفندق';
+
+  @override
+  String get stockEventReturn => 'أُعيد إلى مخزون الفندق';
+
+  @override
+  String get stockEventRoomPlacement => 'وُضع في الغرفة';
+
+  @override
+  String get stockEventRefillUse => 'استُخدم لإعادة التعبئة';
+
+  @override
+  String get stockEventReplaceUse => 'استُخدم لاستبدال الزجاجة';
+
+  @override
+  String housekeeperHotelStockAvailable(String bottles, String bidons) {
+    return 'مخزون الفندق: $bottles زجاجة ممتلئة، $bidons عبوة ممتلئة متاحة';
+  }
+
+  @override
+  String get sourceHousekeeperCart => 'من عربة عاملة النظافة';
+
+  @override
+  String get sourceHotelInventory => 'من مخزون الفندق';
+
+  @override
   String get userRoleHousekeeper => 'عاملة الغرف';
 
   @override
@@ -2649,4 +2682,28 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get roomsSelectProduct => 'اختر المنتج';
+
+  @override
+  String get myBasket => 'My Basket';
+
+  @override
+  String get housekeepersTitle => 'Housekeepers';
+
+  @override
+  String get allHistory => 'All history';
+
+  @override
+  String get changePicture => 'Change picture';
+
+  @override
+  String get inviteHousekeeper => 'Invite housekeeper';
+
+  @override
+  String get removeHousekeeper => 'Remove housekeeper';
+
+  @override
+  String get basketContent => 'Basket content';
+
+  @override
+  String get noHousekeepers => 'No housekeepers found';
 }

@@ -1468,6 +1468,26 @@
   "openBidonVolumeLeft": "Remaining Volume",
   "housekeeperStockCheckedOut": "Stock checked out successfully!",
   "housekeeperStockReturned": "Stock returned successfully!",
+  "housekeeperStockHistory": "History",
+  "housekeeperStockHistoryEmpty": "No movements recorded yet for this product.",
+  "stockEventCheckout": "Taken from hotel inventory",
+  "stockEventReturn": "Returned to hotel inventory",
+  "stockEventRoomPlacement": "Placed in room",
+  "stockEventRefillUse": "Used for refill",
+  "stockEventReplaceUse": "Used for bottle replacement",
+  "housekeeperHotelStockAvailable": "Hotel inventory: {bottles} full bottles, {bidons} full bidons available",
+  "@housekeeperHotelStockAvailable": {
+    "placeholders": {
+      "bottles": {
+        "type": "String"
+      },
+      "bidons": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceHousekeeperCart": "From housekeeper cart",
+  "sourceHotelInventory": "From hotel inventory",
   "userRoleHousekeeper": "Housekeeper",
   "roomsBtnAddProduct": "Add product",
   "roomsConfirmRemoveProduct": "Are you sure you want to remove the product '{productName}' from room '{roomNumber}'?",
@@ -1484,5 +1504,13 @@
   "roomsProductRemoved": "Product removed",
   "roomsProductAdded": "Product added",
   "roomsAddProductTitle": "Add product to room",
-  "roomsSelectProduct": "Select Product"
+  "roomsSelectProduct": "Select Product",
+  "myBasket": "My Basket",
+  "housekeepersTitle": "Housekeepers",
+  "allHistory": "All history",
+  "changePicture": "Change picture",
+  "inviteHousekeeper": "Invite housekeeper",
+  "removeHousekeeper": "Remove housekeeper",
+  "basketContent": "Basket content",
+  "noHousekeepers": "No housekeepers found"
 }

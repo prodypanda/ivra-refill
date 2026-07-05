@@ -2643,6 +2643,39 @@ class AppL10nEn extends AppL10n {
   String get housekeeperStockReturned => 'Stock returned successfully!';
 
   @override
+  String get housekeeperStockHistory => 'History';
+
+  @override
+  String get housekeeperStockHistoryEmpty =>
+      'No movements recorded yet for this product.';
+
+  @override
+  String get stockEventCheckout => 'Taken from hotel inventory';
+
+  @override
+  String get stockEventReturn => 'Returned to hotel inventory';
+
+  @override
+  String get stockEventRoomPlacement => 'Placed in room';
+
+  @override
+  String get stockEventRefillUse => 'Used for refill';
+
+  @override
+  String get stockEventReplaceUse => 'Used for bottle replacement';
+
+  @override
+  String housekeeperHotelStockAvailable(String bottles, String bidons) {
+    return 'Hotel inventory: $bottles full bottles, $bidons full bidons available';
+  }
+
+  @override
+  String get sourceHousekeeperCart => 'From housekeeper cart';
+
+  @override
+  String get sourceHotelInventory => 'From hotel inventory';
+
+  @override
   String get userRoleHousekeeper => 'Housekeeper';
 
   @override
@@ -2664,4 +2697,28 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get roomsSelectProduct => 'Select Product';
+
+  @override
+  String get myBasket => 'My Basket';
+
+  @override
+  String get housekeepersTitle => 'Housekeepers';
+
+  @override
+  String get allHistory => 'All history';
+
+  @override
+  String get changePicture => 'Change picture';
+
+  @override
+  String get inviteHousekeeper => 'Invite housekeeper';
+
+  @override
+  String get removeHousekeeper => 'Remove housekeeper';
+
+  @override
+  String get basketContent => 'Basket content';
+
+  @override
+  String get noHousekeepers => 'No housekeepers found';
 }

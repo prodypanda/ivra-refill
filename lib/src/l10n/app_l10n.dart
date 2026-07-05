@@ -4886,6 +4886,66 @@ abstract class AppL10n {
   /// **'Stock returned successfully!'**
   String get housekeeperStockReturned;
 
+  /// No description provided for @housekeeperStockHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get housekeeperStockHistory;
+
+  /// No description provided for @housekeeperStockHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No movements recorded yet for this product.'**
+  String get housekeeperStockHistoryEmpty;
+
+  /// No description provided for @stockEventCheckout.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken from hotel inventory'**
+  String get stockEventCheckout;
+
+  /// No description provided for @stockEventReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned to hotel inventory'**
+  String get stockEventReturn;
+
+  /// No description provided for @stockEventRoomPlacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Placed in room'**
+  String get stockEventRoomPlacement;
+
+  /// No description provided for @stockEventRefillUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Used for refill'**
+  String get stockEventRefillUse;
+
+  /// No description provided for @stockEventReplaceUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Used for bottle replacement'**
+  String get stockEventReplaceUse;
+
+  /// No description provided for @housekeeperHotelStockAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Hotel inventory: {bottles} full bottles, {bidons} full bidons available'**
+  String housekeeperHotelStockAvailable(String bottles, String bidons);
+
+  /// No description provided for @sourceHousekeeperCart.
+  ///
+  /// In en, this message translates to:
+  /// **'From housekeeper cart'**
+  String get sourceHousekeeperCart;
+
+  /// No description provided for @sourceHotelInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'From hotel inventory'**
+  String get sourceHotelInventory;
+
   /// No description provided for @userRoleHousekeeper.
   ///
   /// In en, this message translates to:
@@ -4927,6 +4987,54 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Select Product'**
   String get roomsSelectProduct;
+
+  /// No description provided for @myBasket.
+  ///
+  /// In en, this message translates to:
+  /// **'My Basket'**
+  String get myBasket;
+
+  /// No description provided for @housekeepersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Housekeepers'**
+  String get housekeepersTitle;
+
+  /// No description provided for @allHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'All history'**
+  String get allHistory;
+
+  /// No description provided for @changePicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Change picture'**
+  String get changePicture;
+
+  /// No description provided for @inviteHousekeeper.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite housekeeper'**
+  String get inviteHousekeeper;
+
+  /// No description provided for @removeHousekeeper.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove housekeeper'**
+  String get removeHousekeeper;
+
+  /// No description provided for @basketContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Basket content'**
+  String get basketContent;
+
+  /// No description provided for @noHousekeepers.
+  ///
+  /// In en, this message translates to:
+  /// **'No housekeepers found'**
+  String get noHousekeepers;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
