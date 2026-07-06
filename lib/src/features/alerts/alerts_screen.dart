@@ -522,8 +522,8 @@ class _AlertFilterBar extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
 
-    final hotels = ref.watch(hotelsProvider).valueOrNull ?? const [];
-    final products = ref.watch(productsProvider).valueOrNull ?? const [];
+    final hotels = ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const []));
+    final products = ref.watch(productsProvider.select((s) => s.valueOrNull ?? const []));
 
     // Only offer filter options that actually occur in the current alert set,
     // so the dropdowns never list empty categories.

@@ -30,7 +30,7 @@ class SettingsScreen extends ConsumerWidget {
     final offlineMode = ref.watch(offlineModeProvider);
     final precisionScanWindow = ref.watch(precisionScanWindowEnabledProvider);
     final tapToScan = ref.watch(tapToScanEnabledProvider);
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final isAppAdmin = currentUser?.role == UserRole.appAdmin;
 
     return PageScaffold(
@@ -487,7 +487,7 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final biometricAccount = ref.watch(biometricAccountProvider);
-    final currentEmail = ref.watch(currentUserProvider).valueOrNull?.email;
+    final currentEmail = ref.watch(currentUserProvider.select((s) => s.valueOrNull?.email));
     final enabled = isBiometricEnabledForEmail(biometricAccount, currentEmail);
     final available = _available ?? false;
 
@@ -628,7 +628,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final isMobile = MediaQuery.sizeOf(context).width < 720;
 
     return AsyncValueView(

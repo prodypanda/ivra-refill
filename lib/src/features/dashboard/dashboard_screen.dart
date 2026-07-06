@@ -147,7 +147,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           builder: (context, constraints) {
             final isMobile = MediaQuery.sizeOf(context).width < 720;
             
-            final currentUser = ref.watch(currentUserProvider).valueOrNull;
+            final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
             final isStaff = currentUser?.role == UserRole.hotelStaff;
             final isManager = currentUser?.role == UserRole.hotelManager || currentUser?.role == UserRole.appManager;
             final isAdmin = currentUser?.role == UserRole.appAdmin;
@@ -273,9 +273,9 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final refillEvents = ref.watch(refillEventsProvider).valueOrNull ?? const <RefillEvent>[];
-    final roomProducts = ref.watch(roomProductsProvider).valueOrNull ?? const <RoomProduct>[];
-    final inventory = ref.watch(inventoryProvider).valueOrNull ?? const <InventoryItem>[];
+    final refillEvents = ref.watch(refillEventsProvider.select((state) => state.valueOrNull ?? const <RefillEvent>[]));
+    final roomProducts = ref.watch(roomProductsProvider.select((state) => state.valueOrNull ?? const <RoomProduct>[]));
+    final inventory = ref.watch(inventoryProvider.select((state) => state.valueOrNull ?? const <InventoryItem>[]));
     final now = DateTime.now();
     final visibleEvents = isStaff && currentUserId != null
         ? refillEvents.where((e) => e.performedBy == currentUserId).toList()
@@ -811,7 +811,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     
-    final hotels = ref.watch(hotelsProvider).valueOrNull ?? [];
+    final hotels = ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? []));
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final refillEventsAsync = ref.watch(refillEventsProvider);
 
@@ -889,16 +889,21 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
           refillEventsAsync.when(
             loading: () => const SizedBox(
               height: 220,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: CardShimmer(),
             ),
             error: (err, stack) => SizedBox(
               height: 220,
               child: Center(
-                child: Text(
-                  'Error: $err',
-                  style: TextStyle(color: theme.colorScheme.error),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, color: theme.colorScheme.error, size: 48),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.t('genericError'),
+                      style: TextStyle(color: theme.colorScheme.error),
+                    ),
+                  ],
                 ),
               ),
             ),

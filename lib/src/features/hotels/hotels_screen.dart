@@ -20,7 +20,7 @@ class HotelsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final canCreateHotel = currentUser?.isIvraUser ?? false;
     return PageScaffold(
       title: l10n.t('hotels'),
@@ -454,7 +454,7 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final products = ref.watch(productsProvider).valueOrNull ?? const <Product>[];
+    final products = ref.watch(productsProvider.select((s) => s.valueOrNull ?? const <Product>[]));
     if (!_didInitializeProducts && products.isNotEmpty) {
       _selectedProductIds.addAll(products.take(3).map((p) => p.id));
       _didInitializeProducts = true;

@@ -59,7 +59,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     final useSupabase = ref.watch(useSupabaseProvider);
 
     final l10n = AppLocalizations.of(context);
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final canViewTeam =
         currentUser != null && currentUser.role != UserRole.hotelStaff;
 
@@ -287,7 +287,7 @@ class _ProfileCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hotelName = user.hotelId == null
         ? null
-        : (ref.watch(hotelsProvider).valueOrNull ?? const <Hotel>[])
+        : (ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const <Hotel>[])))
             .where((hotel) => hotel.id == user.hotelId)
             .map((hotel) => hotel.name)
             .firstOrNull;
@@ -576,7 +576,7 @@ class _TeamAccountsCard extends ConsumerWidget {
 
     final hotelsById = <String, String>{
       for (final hotel
-          in ref.watch(hotelsProvider).valueOrNull ?? const <Hotel>[])
+          in ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const <Hotel>[])))
         hotel.id: hotel.name,
     };
 
