@@ -241,7 +241,7 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                         decoration: InputDecoration(
                           labelText: l10n.t('dialogRefillNotes'),
                           labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-                          hintText: 'e.g. standard refill...',
+                          hintText: l10n.t('dialogRefillNotesHint'),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

@@ -948,7 +948,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                         for (final r in rooms)
                           DropdownMenuItem(
                             value: r,
-                            child: Text('Room $r'),
+                            child: Text(l10n.tParams('roomNumberLabel', {'number': r.toString()})),
                           ),
                       ],
                       onChanged: (val) {
@@ -986,7 +986,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                           for (final p in sortedMasterProducts)
                             DropdownMenuItem(
                               value: p.sku,
-                              child: Text('${p.sku} - ${p.label(language)}'),
+                              child: Text(l10n.tParams('productSkuLabelReverse', {'sku': p.sku, 'label': p.label(language)})),
                             ),
                         ],
                         onChanged: (val) {

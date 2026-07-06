@@ -2733,4 +2733,45 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get event_replaceUse => 'استُخدم لاستبدال الزجاجة';
+
+  @override
+  String get dialogRefillNotesHint => 'مثال: تعبئة قياسية...';
+
+  @override
+  String get dateFormatHint => 'يوم-شهر-سنة';
+
+  @override
+  String errorWithArgs(String error) {
+    return 'خطأ: $error';
+  }
+
+  @override
+  String teamHotelSubtitle(String city, String country) {
+    return '$city، $country';
+  }
+
+  @override
+  String productEventTitle(String productName, String eventLabel) {
+    return '$productName - $eventLabel';
+  }
+
+  @override
+  String chipLabelValue(String label, String value) {
+    return '$label: $value';
+  }
+
+  @override
+  String productSkuLabel(String label, String sku) {
+    return '$label ($sku)';
+  }
+
+  @override
+  String productSkuLabelReverse(String label, String sku) {
+    return '$sku - $label';
+  }
+
+  @override
+  String roomNumberLabel(String number) {
+    return 'غرفة $number';
+  }
 }

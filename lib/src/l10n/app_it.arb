@@ -830,5 +830,14 @@
   "event_returned": "Stock Returned",
   "event_roomPlacement": "Placed in Room",
   "event_refillUse": "Refill Used",
-  "event_replaceUse": "Bottle Replaced"
+  "event_replaceUse": "Bottle Replaced",
+  "dialogRefillNotesHint": "es: ricarica standard...",
+  "dateFormatHint": "AAAA-MM-GG",
+  "errorWithArgs": "Errore: {error}",
+  "teamHotelSubtitle": "{city}, {country}",
+  "productEventTitle": "{productName} - {eventLabel}",
+  "chipLabelValue": "{label}: {value}",
+  "productSkuLabel": "{label} ({sku})",
+  "productSkuLabelReverse": "{sku} - {label}",
+  "roomNumberLabel": "Camera {number}"
 }

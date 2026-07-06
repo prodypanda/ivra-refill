@@ -713,7 +713,7 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
                   for (final hotel in widget.allHotels)
                     CheckboxListTile(
                       title: Text(hotel.name),
-                      subtitle: Text('${hotel.city}, ${hotel.country}'),
+                      subtitle: Text(l10n.tParams('teamHotelSubtitle', {'city': hotel.city, 'country': hotel.country})),
                       secondary: Icon(
                         Icons.hotel_outlined,
                         color: _selectedIds.contains(hotel.id)

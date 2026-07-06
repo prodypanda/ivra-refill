@@ -830,5 +830,14 @@
   "event_returned": "Stock Retourné",
   "event_roomPlacement": "Placé en Chambre",
   "event_refillUse": "Utilisé pour Recharger",
-  "event_replaceUse": "Bouteille Remplacée"
+  "event_replaceUse": "Bouteille Remplacée",
+  "dialogRefillNotesHint": "ex: recharge standard...",
+  "dateFormatHint": "AAAA-MM-JJ",
+  "errorWithArgs": "Erreur : {error}",
+  "teamHotelSubtitle": "{city}, {country}",
+  "productEventTitle": "{productName} - {eventLabel}",
+  "chipLabelValue": "{label} : {value}",
+  "productSkuLabel": "{label} ({sku})",
+  "productSkuLabelReverse": "{sku} - {label}",
+  "roomNumberLabel": "Chambre {number}"
 }

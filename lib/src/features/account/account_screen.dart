@@ -559,7 +559,7 @@ class _InfoChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Chip(
       avatar: Icon(icon, size: 18),
-      label: Text('$label: $value'),
+      label: Text(AppLocalizations.of(context).tParams('chipLabelValue', {'label': label, 'value': value})),
     );
   }
 }

@@ -2748,4 +2748,45 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get event_replaceUse => 'Bottle Replaced';
+
+  @override
+  String get dialogRefillNotesHint => 'e.g. standard refill...';
+
+  @override
+  String get dateFormatHint => 'YYYY-MM-DD';
+
+  @override
+  String errorWithArgs(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String teamHotelSubtitle(String city, String country) {
+    return '$city, $country';
+  }
+
+  @override
+  String productEventTitle(String productName, String eventLabel) {
+    return '$productName - $eventLabel';
+  }
+
+  @override
+  String chipLabelValue(String label, String value) {
+    return '$label: $value';
+  }
+
+  @override
+  String productSkuLabel(String label, String sku) {
+    return '$label ($sku)';
+  }
+
+  @override
+  String productSkuLabelReverse(String label, String sku) {
+    return '$sku - $label';
+  }
+
+  @override
+  String roomNumberLabel(String number) {
+    return 'Room $number';
+  }
 }

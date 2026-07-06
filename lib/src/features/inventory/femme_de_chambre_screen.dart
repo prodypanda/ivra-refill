@@ -564,7 +564,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                     final basketAsync = ref.watch(housekeeperBasketProvider(hk.id));
                     return basketAsync.when(
                       loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (e, _) => Text('Error: $e'),
+                      error: (e, _) => Text(l10n.tParams('errorWithArgs', {'error': e.toString()})),
                       data: (basket) {
                         if (basket.isEmpty) {
                           return Text(l10n.t('noAllocations'), style: const TextStyle(fontStyle: FontStyle.italic));
@@ -710,7 +710,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 final targetEventsAsync = ref.watch(housekeeperHistoryProvider(housekeeperId));
                 return targetEventsAsync.when(
                   loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) => Text('Error: $error'),
+                  error: (error, stack) => Text(l10n.tParams('errorWithArgs', {'error': error.toString()})),
                   data: (targetEvents) {
                     if (targetEvents.isEmpty) {
                       return Padding(
@@ -735,7 +735,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                         final meta = _stockEventMeta(l10n, event);
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: Text('$pName - ${meta.label}'),
+                          title: Text(l10n.tParams('productEventTitle', {'productName': pName, 'eventLabel': meta.label})),
                           subtitle: Text(dateFormat.format(event.createdAt.toLocal())),
                           trailing: Text(
                             _stockEventDeltas(l10n, event),

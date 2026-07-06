@@ -1973,7 +1973,7 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                 items: availableProducts.map((p) {
                   return DropdownMenuItem<String>(
                     value: p.sku,
-                    child: Text('${p.label(language)} (${p.sku})'),
+                    child: Text(l10n.tParams('productSkuLabel', {'label': p.label(language), 'sku': p.sku})),
                   );
                 }).toList(),
                 onChanged: _isLoading
@@ -3916,7 +3916,7 @@ class _BottleLifecycleEditDialogState
                     controller: _bottleStartedAt,
                     decoration: InputDecoration(
                       labelText: l10n.t('roomsLabelBottleStartDate'),
-                      hintText: 'YYYY-MM-DD',
+                      hintText: l10n.t('dateFormatHint'),
                     ),
                     validator: (value) {
                       final parsed = DateTime.tryParse(value?.trim() ?? '');

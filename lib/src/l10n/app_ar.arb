@@ -830,5 +830,14 @@
   "event_returned": "إرجاع مخزون",
   "event_roomPlacement": "وُضع في الغرفة",
   "event_refillUse": "استُخدم لإعادة التعبئة",
-  "event_replaceUse": "استُخدم لاستبدال الزجاجة"
+  "event_replaceUse": "استُخدم لاستبدال الزجاجة",
+  "dialogRefillNotesHint": "مثال: تعبئة قياسية...",
+  "dateFormatHint": "سنة-شهر-يوم",
+  "errorWithArgs": "خطأ: {error}",
+  "teamHotelSubtitle": "{city}، {country}",
+  "productEventTitle": "{productName} - {eventLabel}",
+  "chipLabelValue": "{label}: {value}",
+  "productSkuLabel": "{label} ({sku})",
+  "productSkuLabelReverse": "{sku} - {label}",
+  "roomNumberLabel": "غرفة {number}"
 }

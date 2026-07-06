@@ -5089,6 +5089,60 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Bottle Replaced'**
   String get event_replaceUse;
+
+  /// No description provided for @dialogRefillNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. standard refill...'**
+  String get dialogRefillNotesHint;
+
+  /// No description provided for @dateFormatHint.
+  ///
+  /// In en, this message translates to:
+  /// **'YYYY-MM-DD'**
+  String get dateFormatHint;
+
+  /// No description provided for @errorWithArgs.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String errorWithArgs(String error);
+
+  /// No description provided for @teamHotelSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{city}, {country}'**
+  String teamHotelSubtitle(String city, String country);
+
+  /// No description provided for @productEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{productName} - {eventLabel}'**
+  String productEventTitle(String productName, String eventLabel);
+
+  /// No description provided for @chipLabelValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}: {value}'**
+  String chipLabelValue(String label, String value);
+
+  /// No description provided for @productSkuLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} ({sku})'**
+  String productSkuLabel(String label, String sku);
+
+  /// No description provided for @productSkuLabelReverse.
+  ///
+  /// In en, this message translates to:
+  /// **'{sku} - {label}'**
+  String productSkuLabelReverse(String label, String sku);
+
+  /// No description provided for @roomNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Room {number}'**
+  String roomNumberLabel(String number);
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

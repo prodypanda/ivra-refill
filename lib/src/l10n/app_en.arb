@@ -1521,5 +1521,78 @@
   "event_returned": "Stock Returned",
   "event_roomPlacement": "Placed in Room",
   "event_refillUse": "Refill Used",
-  "event_replaceUse": "Bottle Replaced"
+  "event_replaceUse": "Bottle Replaced",
+  "dialogRefillNotesHint": "e.g. standard refill...",
+  "dateFormatHint": "YYYY-MM-DD",
+  "errorWithArgs": "Error: {error}",
+  "@errorWithArgs": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "teamHotelSubtitle": "{city}, {country}",
+  "@teamHotelSubtitle": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "country": {
+        "type": "String"
+      }
+    }
+  },
+  "productEventTitle": "{productName} - {eventLabel}",
+  "@productEventTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "eventLabel": {
+        "type": "String"
+      }
+    }
+  },
+  "chipLabelValue": "{label}: {value}",
+  "@chipLabelValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "productSkuLabel": "{label} ({sku})",
+  "@productSkuLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
+  "productSkuLabelReverse": "{sku} - {label}",
+  "@productSkuLabelReverse": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
+  "roomNumberLabel": "Room {number}",
+  "@roomNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  }
 }
