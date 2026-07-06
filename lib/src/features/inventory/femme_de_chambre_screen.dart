@@ -370,16 +370,15 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
         ),
 
         // Content section
-        Expanded(
-          child: selectedHotelId == null
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 40),
-                  child: Center(
-                    child: PremiumLoadingWidget(),
-                  ),
-                )
-              : _buildHousekeepersList(context, currentUser),
-        ),
+        if (selectedHotelId == null)
+          Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: Center(
+              child: PremiumLoadingWidget(),
+            ),
+          )
+        else
+          _buildHousekeepersList(context, currentUser),
       ],
     );
   }
@@ -410,6 +409,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
         }
 
         return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16.0),
           itemCount: housekeepers.length,
           separatorBuilder: (_, __) => const SizedBox(height: 16),
@@ -419,11 +420,17 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
           },
         );
       },
-      loading: () => const Center(child: PremiumLoadingWidget()),
-      error: (error, _) => Center(
-        child: Text(
-          error.toString(),
-          style: TextStyle(color: Theme.of(context).colorScheme.error),
+      loading: () => const Padding(
+        padding: EdgeInsets.only(top: 40),
+        child: Center(child: PremiumLoadingWidget()),
+      ),
+      error: (error, _) => Padding(
+        padding: const EdgeInsets.only(top: 40),
+        child: Center(
+          child: Text(
+            error.toString(),
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ),
       ),
     );
