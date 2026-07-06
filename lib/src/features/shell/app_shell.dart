@@ -135,6 +135,7 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   List<_NavItem> _navItems(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final userProfile = ref.watch(currentUserProvider).valueOrNull;
     final items = [
       _NavItem(
         l10n.t('dashboard'),
@@ -161,8 +162,8 @@ class _AppShellState extends ConsumerState<AppShell> {
         permission: 'view_inventory',
       ),
       _NavItem(
-        l10n.t('femmeDeChambre'),
-        Icons.shopping_cart_outlined,
+        userProfile?.role == UserRole.housekeeper ? l10n.t('myBasket') : l10n.t('housekeepersTitle'),
+        userProfile?.role == UserRole.housekeeper ? Icons.shopping_basket_outlined : Icons.people_outline,
         FemmeDeChambreScreen.route,
         permission: 'view_inventory',
       ),
@@ -221,7 +222,6 @@ class _AppShellState extends ConsumerState<AppShell> {
       ),
     ];
 
-    final userProfile = ref.watch(currentUserProvider).valueOrNull;
     if (userProfile == null) {
       return items
           .where((item) => item.route == DashboardScreen.route)

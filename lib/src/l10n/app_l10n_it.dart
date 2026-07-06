@@ -2731,26 +2731,26 @@ class AppL10nIt extends AppL10n {
   String get roomsSelectProduct => 'Seleziona Prodotto';
 
   @override
-  String get myBasket => 'My Basket';
+  String get myBasket => 'Il mio Cestino';
 
   @override
-  String get housekeepersTitle => 'Housekeepers';
+  String get housekeepersTitle => 'Goveranti';
 
   @override
-  String get allHistory => 'All history';
+  String get allHistory => 'Tutta la cronologia';
 
   @override
-  String get changePicture => 'Change picture';
+  String get changePicture => 'Cambia foto';
 
   @override
-  String get inviteHousekeeper => 'Invite housekeeper';
+  String get inviteHousekeeper => 'Invita governante';
 
   @override
-  String get removeHousekeeper => 'Remove housekeeper';
+  String get removeHousekeeper => 'Rimuovi';
 
   @override
-  String get basketContent => 'Basket content';
+  String get basketContent => 'Contenuto del cestino';
 
   @override
-  String get noHousekeepers => 'No housekeepers found';
+  String get noHousekeepers => 'Nessuna governante trovata';
 }

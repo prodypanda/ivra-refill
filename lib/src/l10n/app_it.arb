@@ -814,12 +814,12 @@
   "roomsProductAdded": "Prodotto aggiunto",
   "roomsAddProductTitle": "Aggiungi prodotto alla camera",
   "roomsSelectProduct": "Seleziona Prodotto",
-  "myBasket": "My Basket",
-  "housekeepersTitle": "Housekeepers",
-  "allHistory": "All history",
-  "changePicture": "Change picture",
-  "inviteHousekeeper": "Invite housekeeper",
-  "removeHousekeeper": "Remove housekeeper",
-  "basketContent": "Basket content",
-  "noHousekeepers": "No housekeepers found"
+  "myBasket": "Il mio Cestino",
+  "housekeepersTitle": "Goveranti",
+  "allHistory": "Tutta la cronologia",
+  "changePicture": "Cambia foto",
+  "inviteHousekeeper": "Invita governante",
+  "removeHousekeeper": "Rimuovi",
+  "basketContent": "Contenuto del cestino",
+  "noHousekeepers": "Nessuna governante trovata"
 }

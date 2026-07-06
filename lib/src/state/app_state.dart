@@ -743,15 +743,12 @@ final housekeeperAllStockEventsProvider =
   );
 });
 
-/// All housekeeper users of the selected hotel, for managers/staff/admins.
 final hotelHousekeepersProvider = FutureProvider<List<UserProfile>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
   final repository = ref.watch(repositoryProvider);
   final members = await repository.teamMembers(hotelId: hotelId);
   return members
-      .where((m) =>
-          m.role == UserRole.housekeeper &&
-          (hotelId == null || m.hotelId == hotelId))
+      .where((m) => m.role == UserRole.housekeeper)
       .toList();
 });
 

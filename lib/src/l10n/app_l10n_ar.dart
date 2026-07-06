@@ -2684,26 +2684,26 @@ class AppL10nAr extends AppL10n {
   String get roomsSelectProduct => 'اختر المنتج';
 
   @override
-  String get myBasket => 'My Basket';
+  String get myBasket => 'سلتي';
 
   @override
-  String get housekeepersTitle => 'Housekeepers';
+  String get housekeepersTitle => 'عاملات النظافة';
 
   @override
-  String get allHistory => 'All history';
+  String get allHistory => 'كل السجل';
 
   @override
-  String get changePicture => 'Change picture';
+  String get changePicture => 'تغيير الصورة';
 
   @override
-  String get inviteHousekeeper => 'Invite housekeeper';
+  String get inviteHousekeeper => 'دعوة عاملة نظافة';
 
   @override
-  String get removeHousekeeper => 'Remove housekeeper';
+  String get removeHousekeeper => 'حذف';
 
   @override
-  String get basketContent => 'Basket content';
+  String get basketContent => 'محتوى السلة';
 
   @override
-  String get noHousekeepers => 'No housekeepers found';
+  String get noHousekeepers => 'لم يتم العثور على عاملات نظافة';
 }

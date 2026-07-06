@@ -814,12 +814,12 @@
   "roomsProductAdded": "تمت إضافة المنتج",
   "roomsAddProductTitle": "إضافة منتج إلى الغرفة",
   "roomsSelectProduct": "اختر المنتج",
-  "myBasket": "My Basket",
-  "housekeepersTitle": "Housekeepers",
-  "allHistory": "All history",
-  "changePicture": "Change picture",
-  "inviteHousekeeper": "Invite housekeeper",
-  "removeHousekeeper": "Remove housekeeper",
-  "basketContent": "Basket content",
-  "noHousekeepers": "No housekeepers found"
+  "myBasket": "سلتي",
+  "housekeepersTitle": "عاملات النظافة",
+  "allHistory": "كل السجل",
+  "changePicture": "تغيير الصورة",
+  "inviteHousekeeper": "دعوة عاملة نظافة",
+  "removeHousekeeper": "حذف",
+  "basketContent": "محتوى السلة",
+  "noHousekeepers": "لم يتم العثور على عاملات نظافة"
 }

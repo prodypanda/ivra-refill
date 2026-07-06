@@ -2742,26 +2742,26 @@ class AppL10nFr extends AppL10n {
   String get roomsSelectProduct => 'Sélectionner un produit';
 
   @override
-  String get myBasket => 'My Basket';
+  String get myBasket => 'Mon Panier';
 
   @override
-  String get housekeepersTitle => 'Housekeepers';
+  String get housekeepersTitle => 'Femmes de Chambre';
 
   @override
-  String get allHistory => 'All history';
+  String get allHistory => 'Tout l\'historique';
 
   @override
-  String get changePicture => 'Change picture';
+  String get changePicture => 'Changer la photo';
 
   @override
-  String get inviteHousekeeper => 'Invite housekeeper';
+  String get inviteHousekeeper => 'Inviter une femme de chambre';
 
   @override
-  String get removeHousekeeper => 'Remove housekeeper';
+  String get removeHousekeeper => 'Supprimer';
 
   @override
-  String get basketContent => 'Basket content';
+  String get basketContent => 'Contenu du panier';
 
   @override
-  String get noHousekeepers => 'No housekeepers found';
+  String get noHousekeepers => 'Aucune femme de chambre trouvée';
 }
