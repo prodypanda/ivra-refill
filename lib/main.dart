@@ -62,7 +62,9 @@ Future<void> main() async {
 
   try {
     await Firebase.initializeApp();
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    if (!kIsWeb) {
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    }
   } catch (e, stack) {
     // Firebase is optional: the app must still start when no Firebase config
     // is bundled (e.g. local/demo builds). Distinguish that expected case

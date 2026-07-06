@@ -35,12 +35,13 @@ class AppLocalizations {
       _AppLocalizationsDelegate();
 
   static AppLocalizations of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+    return Localizations.of<AppLocalizations>(context, AppLocalizations) ??
+        const AppLocalizations(Locale('en'));
   }
 
   String t(String key) {
     return kL10nValues[locale.languageCode]?[key] ??
-        kL10nValues['en']![key] ??
+        kL10nValues['en']?[key] ??
         key;
   }
 
@@ -54,7 +55,7 @@ class AppLocalizations {
   /// are never hardcoded English.
   static String tStatic(String key) {
     final code = _resolveDeviceLanguageCode();
-    return kL10nValues[code]?[key] ?? kL10nValues['en']![key] ?? key;
+    return kL10nValues[code]?[key] ?? kL10nValues['en']?[key] ?? key;
   }
 
   static String _resolveDeviceLanguageCode() {

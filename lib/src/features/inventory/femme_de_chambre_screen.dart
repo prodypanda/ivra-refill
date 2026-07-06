@@ -227,8 +227,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 CircleAvatar(
                   radius: 40,
                   backgroundColor: theme.colorScheme.primaryContainer,
-                  backgroundImage: user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
-                  child: user.avatarUrl == null
+                  backgroundImage: (user.avatarUrl != null && user.avatarUrl!.isNotEmpty && user.avatarUrl!.startsWith('http')) ? NetworkImage(user.avatarUrl!) : null,
+                  child: (user.avatarUrl == null || user.avatarUrl!.isEmpty || !user.avatarUrl!.startsWith('http'))
                       ? Icon(Icons.person, size: 40, color: theme.colorScheme.onPrimaryContainer)
                       : null,
                 ),
@@ -426,8 +426,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
             children: [
               CircleAvatar(
                 backgroundColor: theme.colorScheme.primaryContainer,
-                backgroundImage: hk.avatarUrl != null ? NetworkImage(hk.avatarUrl!) : null,
-                child: hk.avatarUrl == null
+                backgroundImage: (hk.avatarUrl != null && hk.avatarUrl!.isNotEmpty && hk.avatarUrl!.startsWith('http')) ? NetworkImage(hk.avatarUrl!) : null,
+                child: (hk.avatarUrl == null || hk.avatarUrl!.isEmpty || !hk.avatarUrl!.startsWith('http'))
                     ? Icon(Icons.person, color: theme.colorScheme.onPrimaryContainer)
                     : null,
               ),

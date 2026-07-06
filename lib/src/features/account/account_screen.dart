@@ -308,8 +308,8 @@ class _ProfileCard extends ConsumerWidget {
                         CircleAvatar(
                           radius: 32,
                           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                          backgroundImage: user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
-                          child: user.avatarUrl == null
+                          backgroundImage: (user.avatarUrl != null && user.avatarUrl!.isNotEmpty && user.avatarUrl!.startsWith('http')) ? NetworkImage(user.avatarUrl!) : null,
+                          child: (user.avatarUrl == null || user.avatarUrl!.isEmpty || !user.avatarUrl!.startsWith('http'))
                               ? Icon(Icons.person, size: 32, color: Theme.of(context).colorScheme.onPrimaryContainer)
                               : null,
                         ),
