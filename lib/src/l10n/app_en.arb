@@ -1512,5 +1512,14 @@
   "inviteHousekeeper": "Invite housekeeper",
   "removeHousekeeper": "Remove housekeeper",
   "basketContent": "Basket content",
-  "noHousekeepers": "No housekeepers found"
+  "noHousekeepers": "No housekeepers found",
+  "btnClose": "Close",
+  "deleteGeneric": "Delete",
+  "teamDeactivate": "Deactivate",
+  "teamReactivate": "Reactivate",
+  "event_checkout": "Stock Checked Out",
+  "event_returned": "Stock Returned",
+  "event_roomPlacement": "Placed in Room",
+  "event_refillUse": "Refill Used",
+  "event_replaceUse": "Bottle Replaced"
 }

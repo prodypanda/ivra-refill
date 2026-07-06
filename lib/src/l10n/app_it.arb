@@ -821,5 +821,14 @@
   "inviteHousekeeper": "Invita governante",
   "removeHousekeeper": "Rimuovi",
   "basketContent": "Contenuto del cestino",
-  "noHousekeepers": "Nessuna governante trovata"
+  "noHousekeepers": "Nessuna governante trovata",
+  "btnClose": "Close",
+  "deleteGeneric": "Delete",
+  "teamDeactivate": "Deactivate",
+  "teamReactivate": "Reactivate",
+  "event_checkout": "Stock Checked Out",
+  "event_returned": "Stock Returned",
+  "event_roomPlacement": "Placed in Room",
+  "event_refillUse": "Refill Used",
+  "event_replaceUse": "Bottle Replaced"
 }

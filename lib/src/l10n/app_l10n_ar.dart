@@ -2684,7 +2684,7 @@ class AppL10nAr extends AppL10n {
   String get roomsSelectProduct => 'اختر المنتج';
 
   @override
-  String get myBasket => 'سلتي';
+  String get myBasket => 'عربتي';
 
   @override
   String get housekeepersTitle => 'عاملات النظافة';
@@ -2702,8 +2702,35 @@ class AppL10nAr extends AppL10n {
   String get removeHousekeeper => 'حذف';
 
   @override
-  String get basketContent => 'محتوى السلة';
+  String get basketContent => 'محتوى العربة';
 
   @override
   String get noHousekeepers => 'لم يتم العثور على عاملات نظافة';
+
+  @override
+  String get btnClose => 'إغلاق';
+
+  @override
+  String get deleteGeneric => 'حذف';
+
+  @override
+  String get teamDeactivate => 'تعطيل';
+
+  @override
+  String get teamReactivate => 'تفعيل';
+
+  @override
+  String get event_checkout => 'صرف مخزون';
+
+  @override
+  String get event_returned => 'إرجاع مخزون';
+
+  @override
+  String get event_roomPlacement => 'وُضع في الغرفة';
+
+  @override
+  String get event_refillUse => 'استُخدم لإعادة التعبئة';
+
+  @override
+  String get event_replaceUse => 'استُخدم لاستبدال الزجاجة';
 }

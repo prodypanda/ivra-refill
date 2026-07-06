@@ -81,7 +81,6 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
           onPressed: () => _showReturnDialog(context),
         ),
         IconButton(
-          tooltip: l10n.t('allHistory'),
           icon: const Icon(Icons.history),
           onPressed: () => _showAllHistoryDialog(context, currentUser.id),
         ),
@@ -204,7 +203,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 separatorBuilder: (_, __) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
                   final allocation = allocations[index];
-                  return _buildAllocationCard(context, allocation);
+                  return _buildAllocationCard(context, allocation, currentUser.id);
                 },
               ),
             ],
@@ -475,7 +474,38 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
           ),
         ),
         title: Text(hk.fullName, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(hk.email),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(hk.email),
+            const SizedBox(height: 4),
+            Consumer(
+              builder: (context, ref, _) {
+                final basketAsync = ref.watch(housekeeperBasketProvider(hk.id));
+                return basketAsync.when(
+                  loading: () => Text('...', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+                  error: (_, __) => const SizedBox(),
+                  data: (basket) {
+                    if (basket.isEmpty) return const SizedBox();
+                    final items = basket.map((a) {
+                      final total = a.fullBottles + a.emptyBottles + a.fullBidons + a.openBidons;
+                      return '${a.product.nameEn} ($total)';
+                    }).join(', ');
+                    return Text(
+                      items,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -539,7 +569,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                           return Text(l10n.t('noAllocations'), style: const TextStyle(fontStyle: FontStyle.italic));
                         }
                         return Column(
-                          children: basket.map((a) => _buildAllocationCard(context, a)).toList(),
+                          children: basket.map((a) => _buildAllocationCard(context, a, hk.id)).toList(),
                         );
                       },
                     );
@@ -701,9 +731,10 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                                 ? event.product.nameFr
                                 : event.product.nameEn);
 
+                        final meta = _stockEventMeta(l10n, event);
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: Text('$pName - ${event.eventType.name}'),
+                          title: Text('$pName - ${meta.label}'),
                           subtitle: Text(dateFormat.format(event.createdAt.toLocal())),
                           trailing: Text(
                             _stockEventDeltas(l10n, event),
@@ -785,7 +816,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     );
   }
 
-  Widget _buildAllocationCard(BuildContext context, HousekeeperAllocation allocation) {
+  Widget _buildAllocationCard(BuildContext context, HousekeeperAllocation allocation, String housekeeperId) {
     final theme = Theme.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final pName = isAr
@@ -809,7 +840,12 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
               children: [
                 CircleAvatar(
                   backgroundColor: const Color(0xFFF2A900).withOpacity(0.1),
-                  child: const Icon(Icons.local_shipping_outlined, color: Color(0xFFF2A900)),
+                  backgroundImage: allocation.product.imageUrl != null && allocation.product.imageUrl!.isNotEmpty 
+                      ? NetworkImage(allocation.product.imageUrl!) 
+                      : null,
+                  child: allocation.product.imageUrl == null || allocation.product.imageUrl!.isEmpty
+                      ? const Icon(Icons.inventory_2_outlined, color: Color(0xFFF2A900))
+                      : null,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -832,7 +868,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 IconButton(
                   tooltip: AppLocalizations.of(context).t('housekeeperStockHistory'),
                   icon: Icon(Icons.history_rounded, color: theme.colorScheme.primary),
-                  onPressed: () => _showProductHistoryDialog(context, allocation.product),
+                  onPressed: () => _showProductHistoryDialog(context, allocation.product, housekeeperId),
                   visualDensity: VisualDensity.compact,
                 ),
               ],
@@ -1394,7 +1430,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
   // ============================================================
   // PER-PRODUCT STOCK MOVEMENT HISTORY DIALOG
   // ============================================================
-  Future<void> _showProductHistoryDialog(BuildContext context, Product product) async {
+  Future<void> _showProductHistoryDialog(BuildContext context, Product product, String housekeeperId) async {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final productName = product.label(language);
@@ -1422,7 +1458,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
             height: 420,
             child: Consumer(
               builder: (context, ref, _) {
-                final eventsAsync = ref.watch(housekeeperStockEventsProvider(product.id));
+                final eventsAsync = ref.watch(housekeeperStockEventsProvider((housekeeperId: housekeeperId, productId: product.id)));
                 return eventsAsync.when(
                   loading: () => const Center(child: CircularProgressIndicator()),
                   error: (e, _) => Center(

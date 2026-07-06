@@ -2742,7 +2742,7 @@ class AppL10nFr extends AppL10n {
   String get roomsSelectProduct => 'Sélectionner un produit';
 
   @override
-  String get myBasket => 'Mon Panier';
+  String get myBasket => 'Mon Chariot';
 
   @override
   String get housekeepersTitle => 'Femmes de Chambre';
@@ -2760,8 +2760,35 @@ class AppL10nFr extends AppL10n {
   String get removeHousekeeper => 'Supprimer';
 
   @override
-  String get basketContent => 'Contenu du panier';
+  String get basketContent => 'Contenu du chariot';
 
   @override
   String get noHousekeepers => 'Aucune femme de chambre trouvée';
+
+  @override
+  String get btnClose => 'Fermer';
+
+  @override
+  String get deleteGeneric => 'Supprimer';
+
+  @override
+  String get teamDeactivate => 'Désactiver';
+
+  @override
+  String get teamReactivate => 'Réactiver';
+
+  @override
+  String get event_checkout => 'Stock Récupéré';
+
+  @override
+  String get event_returned => 'Stock Retourné';
+
+  @override
+  String get event_roomPlacement => 'Placé en Chambre';
+
+  @override
+  String get event_refillUse => 'Utilisé pour Recharger';
+
+  @override
+  String get event_replaceUse => 'Bouteille Remplacée';
 }

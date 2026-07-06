@@ -719,26 +719,24 @@ final housekeeperAllocationsProvider = FutureProvider<List<HousekeeperAllocation
 
 /// Movement history of the current housekeeper's cart for one product
 /// (checkouts, returns, room placements, refill/replace usages).
+typedef HousekeeperProductParams = ({String housekeeperId, String productId});
+
 final housekeeperStockEventsProvider =
-    FutureProvider.family<List<HousekeeperStockEvent>, String>((ref, productId) async {
+    FutureProvider.family<List<HousekeeperStockEvent>, HousekeeperProductParams>((ref, params) async {
   final repository = ref.watch(repositoryProvider);
-  final currentUser = ref.watch(currentUserProvider).valueOrNull;
-  if (currentUser == null) return const [];
   return repository.fetchHousekeeperStockEvents(
-    housekeeperId: currentUser.id,
-    productId: productId,
+    housekeeperId: params.housekeeperId,
+    productId: params.productId,
   );
 });
 
 /// Full movement history of the current housekeeper's cart across ALL
 /// products (used by the "All history" button on the My Basket page).
 final housekeeperAllStockEventsProvider =
-    FutureProvider<List<HousekeeperStockEvent>>((ref) async {
+    FutureProvider.family<List<HousekeeperStockEvent>, String>((ref, housekeeperId) async {
   final repository = ref.watch(repositoryProvider);
-  final currentUser = ref.watch(currentUserProvider).valueOrNull;
-  if (currentUser == null) return const [];
   return repository.fetchHousekeeperStockEvents(
-    housekeeperId: currentUser.id,
+    housekeeperId: housekeeperId,
     limit: 200,
   );
 });

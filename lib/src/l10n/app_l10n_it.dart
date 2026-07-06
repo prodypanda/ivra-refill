@@ -2753,4 +2753,31 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get noHousekeepers => 'Nessuna governante trovata';
+
+  @override
+  String get btnClose => 'Close';
+
+  @override
+  String get deleteGeneric => 'Delete';
+
+  @override
+  String get teamDeactivate => 'Deactivate';
+
+  @override
+  String get teamReactivate => 'Reactivate';
+
+  @override
+  String get event_checkout => 'Stock Checked Out';
+
+  @override
+  String get event_returned => 'Stock Returned';
+
+  @override
+  String get event_roomPlacement => 'Placed in Room';
+
+  @override
+  String get event_refillUse => 'Refill Used';
+
+  @override
+  String get event_replaceUse => 'Bottle Replaced';
 }

@@ -5035,6 +5035,60 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'No housekeepers found'**
   String get noHousekeepers;
+
+  /// No description provided for @btnClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get btnClose;
+
+  /// No description provided for @deleteGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteGeneric;
+
+  /// No description provided for @teamDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate'**
+  String get teamDeactivate;
+
+  /// No description provided for @teamReactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate'**
+  String get teamReactivate;
+
+  /// No description provided for @event_checkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Checked Out'**
+  String get event_checkout;
+
+  /// No description provided for @event_returned.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Returned'**
+  String get event_returned;
+
+  /// No description provided for @event_roomPlacement.
+  ///
+  /// In en, this message translates to:
+  /// **'Placed in Room'**
+  String get event_roomPlacement;
+
+  /// No description provided for @event_refillUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill Used'**
+  String get event_refillUse;
+
+  /// No description provided for @event_replaceUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottle Replaced'**
+  String get event_replaceUse;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
