@@ -1042,9 +1042,9 @@ void main() {
           .go(TeamScreen.route);
       await tester.pumpAndSettle();
 
-      // Demo data has one pending invitation for the auto-selected hotel
-      expect(find.text('Seaside New Staff'), findsWidgets);
-      expect(find.text('newstaff@seaside.example'), findsWidgets);
+      // Demo data has one pending invitation
+      expect(find.text('Palms Ops Lead'), findsWidgets);
+      expect(find.text('opslead@palms.example'), findsWidgets);
     });
 
     testWidgets('invitation management actions visible for admin',

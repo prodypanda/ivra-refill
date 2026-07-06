@@ -279,127 +279,153 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
   Widget _buildManagementView(BuildContext context, UserProfile currentUser) {
     final hotelsAsync = ref.watch(hotelsProvider);
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
-    final housekeepersAsync = ref.watch(hotelHousekeepersProvider);
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final primaryColor = const Color(0xFFF2A900); // Golden yellow/orange
 
-    return AsyncValueView(
-      value: hotelsAsync,
-      builder: (hotels) {
-        if (hotels.isEmpty) {
+    final hotels = hotelsAsync.valueOrNull ?? const <Hotel>[];
+
+    // Show a spinner until hotels have loaded at least once.
+    if (hotelsAsync is AsyncLoading && hotels.isEmpty) {
+      return const Center(child: PremiumLoadingWidget());
+    }
+
+    if (hotels.isEmpty) {
+      return EmptyState(
+        icon: Icons.hotel_outlined,
+        title: l10n.t('inventoryNoHotels'),
+        message: l10n.t('inventoryAddHotelHint'),
+      );
+    }
+
+    // Auto-select first hotel for users with no hotel scope (App Admin/Manager)
+    if (selectedHotelId == null && hotels.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(selectedHotelIdProvider.notifier).state = hotels.first.id;
+        }
+      });
+    }
+
+    final userHotelId = currentUser.hotelId;
+    final userIsHotelScoped =
+        userHotelId != null && hotels.any((hotel) => hotel.id == userHotelId);
+    final isScoped = userIsHotelScoped || hotels.length == 1;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Control panel with hotel selection dropdown — always visible
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: GlassCard(
+            padding: const EdgeInsets.all(16),
+            color: theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.4),
+            child: Row(
+              children: [
+                Icon(Icons.business_outlined, color: primaryColor),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: isScoped
+                      ? Text(
+                          hotels
+                              .firstWhere(
+                                (h) => h.id == (selectedHotelId ?? userHotelId ?? hotels.first.id),
+                                orElse: () => hotels.first,
+                              )
+                              .name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: selectedHotelId != null &&
+                                    hotels.any((h) => h.id == selectedHotelId)
+                                ? selectedHotelId
+                                : null,
+                            hint: Text(l10n.t('roomsSelectHotelFirst')),
+                            icon: Icon(Icons.arrow_drop_down, color: primaryColor),
+                            items: [
+                              for (final hotel in hotels)
+                                DropdownMenuItem(
+                                  value: hotel.id,
+                                  child: Text(
+                                    hotel.name,
+                                    style: const TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) {
+                                ref.read(selectedHotelIdProvider.notifier).state = val;
+                              }
+                            },
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Content section
+        Expanded(
+          child: selectedHotelId == null
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 40),
+                  child: Center(
+                    child: PremiumLoadingWidget(),
+                  ),
+                )
+              : _buildHousekeepersList(context, currentUser),
+        ),
+      ],
+    );
+  }
+
+  /// Renders the housekeepers list for the currently selected hotel.
+  /// Separated from the hotel picker so that the dropdown stays visible
+  /// while the list reloads.
+  Widget _buildHousekeepersList(BuildContext context, UserProfile currentUser) {
+    final housekeepersAsync = ref.watch(hotelHousekeepersProvider);
+    final l10n = AppLocalizations.of(context);
+
+    // Use .when but keep previous data visible during refresh to avoid flicker
+    return housekeepersAsync.when(
+      skipLoadingOnRefresh: true,
+      data: (housekeepers) {
+        if (housekeepers.isEmpty) {
           return EmptyState(
-            icon: Icons.hotel_outlined,
-            title: l10n.t('inventoryNoHotels'),
-            message: l10n.t('inventoryAddHotelHint'),
+            icon: Icons.people_outline,
+            title: l10n.t('housekeepersTitle'),
+            message: l10n.t('noHousekeepers'),
+            actionLabel: currentUser.role != UserRole.hotelStaff
+                ? l10n.t('inviteHousekeeper')
+                : null,
+            onAction: currentUser.role != UserRole.hotelStaff
+                ? () => _showInviteHousekeeperDialog(context)
+                : null,
           );
         }
 
-
-        // Hotel auto-selection is handled by selectedHotelIdProvider itself.
-
-
-        final userHotelId = currentUser.hotelId;
-        final userIsHotelScoped =
-            userHotelId != null && hotels.any((hotel) => hotel.id == userHotelId);
-        final isScoped = userIsHotelScoped || hotels.length == 1;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Control panel with hotel selection dropdown
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: GlassCard(
-                padding: const EdgeInsets.all(16),
-                color: theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.4),
-                child: Row(
-                  children: [
-                    Icon(Icons.business_outlined, color: primaryColor),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: isScoped
-                          ? Text(
-                              hotels
-                                  .firstWhere(
-                                    (h) => h.id == selectedHotelId,
-                                    orElse: () => hotels.first,
-                                  )
-                                  .name,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: selectedHotelId,
-                                hint: Text(l10n.t('roomsSelectHotelFirst')),
-                                icon: Icon(Icons.arrow_drop_down, color: primaryColor),
-                                items: [
-                                  for (final hotel in hotels)
-                                    DropdownMenuItem(
-                                      value: hotel.id,
-                                      child: Text(
-                                        hotel.name,
-                                        style: const TextStyle(fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                ],
-                                onChanged: (val) {
-                                  if (val != null) {
-                                    ref.read(selectedHotelIdProvider.notifier).state = val;
-                                  }
-                                },
-                              ),
-                            ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Content section
-            Expanded(
-              child: selectedHotelId == null
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 40),
-                      child: Center(
-                        child: Text(
-                          l10n.t('roomsSelectHotelFirst'),
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                    )
-                  : AsyncValueView(
-                      value: housekeepersAsync,
-                      builder: (housekeepers) {
-                        if (housekeepers.isEmpty) {
-                          return EmptyState(
-                            icon: Icons.people_outline,
-                            title: l10n.t('housekeepersTitle'),
-                            message: l10n.t('noHousekeepers'),
-                            actionLabel: currentUser.role != UserRole.hotelStaff ? l10n.t('inviteHousekeeper') : null,
-                            onAction: currentUser.role != UserRole.hotelStaff ? () => _showInviteHousekeeperDialog(context) : null,
-                          );
-                        }
-
-                        return ListView.separated(
-                          padding: const EdgeInsets.all(16.0),
-                          itemCount: housekeepers.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 16),
-                          itemBuilder: (context, index) {
-                            final hk = housekeepers[index];
-                            return _buildHousekeeperExpandableCard(context, hk, currentUser);
-                          },
-                        );
-                      },
-                    ),
-            ),
-          ],
+        return ListView.separated(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: housekeepers.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          itemBuilder: (context, index) {
+            final hk = housekeepers[index];
+            return _buildHousekeeperExpandableCard(context, hk, currentUser);
+          },
         );
       },
+      loading: () => const Center(child: PremiumLoadingWidget()),
+      error: (error, _) => Center(
+        child: Text(
+          error.toString(),
+          style: TextStyle(color: Theme.of(context).colorScheme.error),
+        ),
+      ),
     );
   }
 
