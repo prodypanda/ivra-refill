@@ -68,6 +68,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final primaryColor = const Color(0xFFF2A900); // Golden yellow/orange
 
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final canManage = currentUser?.role != UserRole.housekeeper;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final hotelsAsync = ref.watch(hotelsProvider);
     final inventoryAsync = ref.watch(inventoryProvider);
@@ -85,18 +86,20 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           ref.read(suggestedOrdersProvider.future),
         ]);
       },
-      actions: [
-        IconButton(
-          tooltip: l10n.t('adjustStockTitle'),
-          icon: const Icon(Icons.add_box_outlined),
-          onPressed: () => _showStockAdjustmentDialog(context),
-        ),
-        IconButton(
-          tooltip: l10n.t('bulkAdjustStockTitle'),
-          icon: const Icon(Icons.playlist_add_check_outlined),
-          onPressed: () => _showBulkStockAdjustmentDialog(context),
-        ),
-      ],
+      actions: canManage
+          ? [
+              IconButton(
+                tooltip: l10n.t('adjustStockTitle'),
+                icon: const Icon(Icons.add_box_outlined),
+                onPressed: () => _showStockAdjustmentDialog(context),
+              ),
+              IconButton(
+                tooltip: l10n.t('bulkAdjustStockTitle'),
+                icon: const Icon(Icons.playlist_add_check_outlined),
+                onPressed: () => _showBulkStockAdjustmentDialog(context),
+              ),
+            ]
+          : [],
       child: AsyncValueView(
         value: hotelsAsync,
         onRetry: () {
@@ -754,6 +757,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final canManage = currentUser?.role != UserRole.housekeeper;
     final language = Localizations.localeOf(context).languageCode;
     final lowStock = widget.item.lowBottles || widget.item.lowBidons;
     final statusColor =
@@ -856,18 +861,20 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                               minimumSize: const Size(36, 36),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: const Icon(Icons.edit_outlined, size: 20),
-                            tooltip: l10n.t('adjustStockTitle'),
-                            onPressed: () => _adjustStock(context),
-                            style: IconButton.styleFrom(
-                              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.08),
-                              foregroundColor: theme.colorScheme.primary,
-                              padding: const EdgeInsets.all(8),
-                              minimumSize: const Size(36, 36),
+                          if (canManage) ...[
+                            const SizedBox(width: 8),
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined, size: 20),
+                              tooltip: l10n.t('adjustStockTitle'),
+                              onPressed: () => _adjustStock(context),
+                              style: IconButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.08),
+                                foregroundColor: theme.colorScheme.primary,
+                                padding: const EdgeInsets.all(8),
+                                minimumSize: const Size(36, 36),
+                              ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ],

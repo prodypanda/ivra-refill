@@ -489,7 +489,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                     if (basket.isEmpty) return const SizedBox();
                     final items = basket.map((a) {
                       final total = a.fullBottles + a.emptyBottles + a.fullBidons + a.openBidons;
-                      return '${a.product.nameEn} ($total)';
+                      final lang = Localizations.localeOf(context).languageCode;
+                      return '${a.product.label(lang)} ($total)';
                     }).join(', ');
                     return Text(
                       items,
