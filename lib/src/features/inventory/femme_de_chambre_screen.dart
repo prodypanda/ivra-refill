@@ -590,13 +590,13 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 TextFormField(
                   controller: nameController,
                   decoration: InputDecoration(labelText: l10n.t('accountFullName')),
-                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: emailController,
                   decoration: InputDecoration(labelText: l10n.t('accountEmail')),
-                  validator: (v) => v!.isEmpty || !v.contains('@') ? 'Invalid email' : null,
+                  validator: (v) => (v == null || v.isEmpty || !v.contains('@')) ? 'Invalid email' : null,
                 ),
               ],
             ),

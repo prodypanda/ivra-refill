@@ -484,6 +484,14 @@ class NotificationService {
   }
 
   static Future<void> showLocalNotification(RemoteMessage message) async {
+    if (kIsWeb) {
+      // The local notifications plugin is not supported or required on the web foreground,
+      // and calling it can throw platform-channel or null check errors. FCM handles
+      // background notifications on web natively.
+      AppLogger.debug('Skipping local notification on Web.');
+      return;
+    }
+
     final data = message.data;
     final title = data['title'] ??
         message.notification?.title ??
@@ -543,7 +551,7 @@ class NotificationService {
     );
     
     await flutterLocalNotificationsPlugin.show(
-      id: message.messageId.hashCode,
+      id: message.messageId?.hashCode ?? 0,
       title: title,
       body: body,
       notificationDetails: platformChannelSpecifics,
@@ -572,7 +580,7 @@ class NotificationService {
         AppLogger.debug('SupabaseClient is null, skipping token registration.');
         return;
       }
-      await _supabase!.rpc('register_fcm_token', params: {
+      await _supabase.rpc('register_fcm_token', params: {
         'p_token': token,
         'p_device_type': deviceType,
       });

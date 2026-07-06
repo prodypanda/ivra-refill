@@ -501,7 +501,11 @@ class SupabaseIvraRepository implements IvraRepository {
       query = query.eq('hotel_id', hotelId);
     }
     final rows = await query;
-    return rows.map<HousekeeperAllocation>((row) {
+    return rows.map<HousekeeperAllocation?>((row) {
+      if (row['products'] == null) {
+        AppLogger.error('Missing product in housekeeper allocation row: $row');
+        return null;
+      }
       final productMap = row['products'] as Map<String, dynamic>? ?? {};
       final flattened = Map<String, dynamic>.from(row);
       productMap.forEach((key, val) {
@@ -523,7 +527,7 @@ class SupabaseIvraRepository implements IvraRepository {
         emptyBidons: asInt(flattened['empty_bidons']),
         openBidonVolumeLeftMl: asDouble(flattened['open_bidon_volume_left_ml']),
       );
-    }).toList();
+    }).whereType<HousekeeperAllocation>().toList();
   }
 
   @override
@@ -547,7 +551,11 @@ class SupabaseIvraRepository implements IvraRepository {
       query = query.eq('hotel_id', hotelId);
     }
     final rows = await query.order('created_at', ascending: false).limit(limit);
-    return rows.map<HousekeeperStockEvent>((row) {
+    return rows.map<HousekeeperStockEvent?>((row) {
+      if (row['products'] == null) {
+        AppLogger.error('Missing product in housekeeper stock event row: $row');
+        return null;
+      }
       final productMap = row['products'] as Map<String, dynamic>? ?? {};
       final flattened = Map<String, dynamic>.from(row);
       productMap.forEach((key, val) {
@@ -576,7 +584,7 @@ class SupabaseIvraRepository implements IvraRepository {
         roomNumber: roomMap == null ? null : asString(roomMap['room_number']),
         notes: flattened['notes'] == null ? null : asString(flattened['notes']),
       );
-    }).toList();
+    }).whereType<HousekeeperStockEvent>().toList();
   }
 
   @override
