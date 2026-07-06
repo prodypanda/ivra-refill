@@ -295,19 +295,9 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
           );
         }
 
-        // Auto-select hotel if selectedHotelId is null
-        if (selectedHotelId == null) {
-          final userHotelId = currentUser.hotelId;
-          final autoSelectId = userHotelId != null &&
-                  hotels.any((hotel) => hotel.id == userHotelId)
-              ? userHotelId
-              : (hotels.isNotEmpty ? hotels.first.id : null);
-          if (autoSelectId != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              ref.read(selectedHotelIdProvider.notifier).state = autoSelectId;
-            });
-          }
-        }
+
+        // Hotel auto-selection is handled by selectedHotelIdProvider itself.
+
 
         final userHotelId = currentUser.hotelId;
         final userIsHotelScoped =

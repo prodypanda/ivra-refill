@@ -146,7 +146,12 @@ final offlineActionsProvider = FutureProvider<List<OfflineAction>>((ref) {
 
 final selectedHotelIdProvider = StateProvider<String?>((ref) {
   final user = ref.watch(currentUserProvider).valueOrNull;
-  return user?.hotelId;
+  final userHotelId = user?.hotelId;
+  if (userHotelId != null) return userHotelId;
+  // App Admins / App Managers have no hotel scope – auto-select the first
+  // available hotel so screens never start on an empty "Select a hotel" state.
+  final hotels = ref.watch(hotelsProvider).valueOrNull ?? const [];
+  return hotels.isNotEmpty ? hotels.first.id : null;
 });
 
 /// When an app admin chooses "View as" another user, the target's profile is

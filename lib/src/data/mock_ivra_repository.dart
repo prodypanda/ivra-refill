@@ -270,6 +270,17 @@ class MockIvraRepository implements IvraRepository {
         hotelId: 'hotel-palms',
         hotelName: 'Palms Residence',
       ),
+      TeamInvitation(
+        id: 'invite-seaside-staff',
+        email: 'newstaff@seaside.example',
+        fullName: 'Seaside New Staff',
+        role: UserRole.hotelStaff,
+        status: 'pending',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        inviteToken: 'demo-seaside-invite',
+        hotelId: 'hotel-seaside',
+        hotelName: 'Seaside Hotel',
+      ),
     ];
 
     bool isTest = false;
