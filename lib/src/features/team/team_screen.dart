@@ -23,7 +23,7 @@ class TeamScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final canInvite =
         currentUser != null && currentUser.role != UserRole.hotelStaff;
 
@@ -300,7 +300,7 @@ class _MembersTable extends ConsumerWidget {
 
     final hotelsById = <String, String>{
       for (final hotel
-          in ref.watch(hotelsProvider).valueOrNull ?? const <Hotel>[])
+          in ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const <Hotel>[])))
         hotel.id: hotel.name,
     };
 

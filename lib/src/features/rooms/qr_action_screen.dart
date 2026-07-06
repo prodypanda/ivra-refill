@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../shared/shimmer_loading.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -779,7 +780,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
 
     final hotelsAsync = ref.watch(hotelsProvider);
     final roomProductsAsync = ref.watch(allRoomProductsProvider);
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final isSpecialUser = currentUser?.role == UserRole.appAdmin || currentUser?.role == UserRole.appManager;
 
     return Column(
@@ -1229,7 +1230,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           }
 
           // 2. Security Check (Gate hotel access)
-          final currentUser = ref.watch(currentUserProvider).valueOrNull;
+          final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
           final isAuthorized = currentUser != null &&
               (currentUser.isIvraUser == true ||
                   currentUser.role == UserRole.hotelManager ||
@@ -1877,7 +1878,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     }
 
     return productsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Padding(padding: EdgeInsets.all(16.0), child: ShimmerLoading(width: double.infinity, height: 100)),
       error: (e, _) => _buildErrorCard(
         context,
         title: l10n.t('errorLoadingProducts') ?? 'Error',
@@ -1900,7 +1901,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         final productName = product.label(language);
 
         return inventoryAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Padding(padding: EdgeInsets.all(16.0), child: ShimmerLoading(width: double.infinity, height: 100)),
           error: (e, _) => _buildErrorCard(
             context,
             title: l10n.t('errorLoadingInventory') ?? 'Error',

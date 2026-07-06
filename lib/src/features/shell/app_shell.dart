@@ -133,7 +133,7 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   List<_NavItem> _navItems(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final userProfile = ref.watch(currentUserProvider).valueOrNull;
+    final userProfile = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final items = [
       _NavItem(
         l10n.t('dashboard'),

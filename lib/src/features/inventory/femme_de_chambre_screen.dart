@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../shared/shimmer_loading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -41,7 +42,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
           : [const Color(0xFFF9FAFB), const Color(0xFFF3F4F6), const Color(0xFFE5E7EB)],
     );
 
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     if (currentUser == null) {
       return PageScaffold(
         title: l10n.t('housekeepersTitle'),
@@ -563,8 +564,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                   builder: (context, ref, _) {
                     final basketAsync = ref.watch(housekeeperBasketProvider(hk.id));
                     return basketAsync.when(
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (e, _) => Text(l10n.tParams('errorWithArgs', {'error': e.toString()})),
+                      loading: () => const Padding(padding: EdgeInsets.all(16.0), child: ShimmerLoading(width: double.infinity, height: 100)),
+                      error: (e, _) => Center(child: Text(l10n.tParams('errorWithArgs', {'error': e.toString()}), style: TextStyle(color: theme.colorScheme.error))),
                       data: (basket) {
                         if (basket.isEmpty) {
                           return Text(l10n.t('noAllocations'), style: const TextStyle(fontStyle: FontStyle.italic));
@@ -709,8 +710,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
               builder: (context, ref, child) {
                 final targetEventsAsync = ref.watch(housekeeperHistoryProvider(housekeeperId));
                 return targetEventsAsync.when(
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (error, stack) => Text(l10n.tParams('errorWithArgs', {'error': error.toString()})),
+                  loading: () => const Padding(padding: EdgeInsets.all(16.0), child: ShimmerLoading(width: double.infinity, height: 100)),
+                  error: (error, stack) => Center(child: Text(l10n.tParams('errorWithArgs', {'error': error.toString()}), style: TextStyle(color: theme.colorScheme.error))),
                   data: (targetEvents) {
                     if (targetEvents.isEmpty) {
                       return Padding(
@@ -1461,7 +1462,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
               builder: (context, ref, _) {
                 final eventsAsync = ref.watch(housekeeperStockEventsProvider((housekeeperId: housekeeperId, productId: product.id)));
                 return eventsAsync.when(
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () => Padding(padding: EdgeInsets.all(16.0), child: ShimmerLoading(width: double.infinity, height: 100)),
                   error: (e, _) => Center(
                     child: Text(e.toString(), style: theme.textTheme.bodySmall),
                   ),

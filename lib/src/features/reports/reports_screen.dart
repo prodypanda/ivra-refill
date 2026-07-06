@@ -33,10 +33,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final events = ref.watch(refillEventsProvider).valueOrNull ?? const [];
-    final roomProducts = ref.watch(roomProductsProvider).valueOrNull ?? const [];
-    final hotels = ref.watch(hotelsProvider).valueOrNull ?? const [];
-    final products = ref.watch(productsProvider).valueOrNull ?? const [];
+    final events = ref.watch(refillEventsProvider.select((s) => s.valueOrNull ?? const []));
+    final roomProducts = ref.watch(roomProductsProvider.select((s) => s.valueOrNull ?? const []));
+    final hotels = ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const []));
+    final products = ref.watch(productsProvider.select((s) => s.valueOrNull ?? const []));
     final filteredEvents = _filteredEvents(events, roomProducts);
 
     return PageScaffold(

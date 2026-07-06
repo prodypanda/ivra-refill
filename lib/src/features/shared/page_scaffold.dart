@@ -21,7 +21,7 @@ class PageScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(currentUserProvider).valueOrNull;
+    final user = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     String initials = '';
     if (user != null) {
       final parts = user.fullName.trim().split(RegExp(r'\s+'));

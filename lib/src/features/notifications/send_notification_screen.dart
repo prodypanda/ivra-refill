@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../shared/shimmer_loading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -251,7 +252,7 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                             onChanged: (val) => setState(() => _targetValue = val),
                           );
                         },
-                        loading: () => const CircularProgressIndicator(),
+                        loading: () => Padding(padding: EdgeInsets.symmetric(vertical: 8), child: ShimmerLoading(width: 200, height: 48)),
                         error: (err, stack) => Text('${loc.t('errorLoadingHotels')}: $err'),
                       ),
                     ] else if (_targetType == 'user') ...[

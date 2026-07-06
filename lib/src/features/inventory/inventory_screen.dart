@@ -67,7 +67,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final theme = Theme.of(context);
     final primaryColor = const Color(0xFFF2A900); // Golden yellow/orange
 
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final canManage = currentUser?.role != UserRole.housekeeper;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final hotelsAsync = ref.watch(hotelsProvider);
@@ -167,14 +167,13 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 AsyncValueView(
                   value: inventoryAsync,
                   onRetry: () => ref.invalidate(inventoryProvider),
-                  loadingWidget: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    itemCount: 3,
-                    itemBuilder: (context, index) => const Padding(
-                      padding: EdgeInsets.only(bottom: 12),
-                      child: CardShimmer(),
+                  loadingWidget: Column(
+                    children: List.generate(
+                      3,
+                      (index) => const Padding(
+                        padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
+                        child: CardShimmer(),
+                      ),
                     ),
                   ),
                   builder: (items) {
@@ -757,7 +756,7 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final canManage = currentUser?.role != UserRole.housekeeper;
     final language = Localizations.localeOf(context).languageCode;
     final lowStock = widget.item.lowBottles || widget.item.lowBidons;

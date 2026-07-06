@@ -131,7 +131,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final primaryColor = theme.colorScheme.primary;
     final isCompact = MediaQuery.of(context).size.width < 600;
 
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final canCreateRoomsFromTemplate = (currentUser?.isIvraUser == true) ||
         (currentUser?.role == UserRole.hotelManager && currentUser?.hotelId == selectedHotelId);
@@ -741,7 +741,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     UserProfile? currentUser,
     String? selectedHotelId,
   ) {
-    final roomProducts = ref.watch(roomProductsProvider).valueOrNull ?? const [];
+    final roomProducts = ref.watch(roomProductsProvider.select((s) => s.valueOrNull ?? const []));
     final hotelItems = selectedHotelId != null
         ? roomProducts.where((item) => item.hotelId == selectedHotelId).toList()
         : const <RoomProduct>[];
@@ -2389,7 +2389,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final isMobile = MediaQuery.sizeOf(context).width < 720 && !widget.isDialog;
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final canManageRooms = ref.watch(hasPermissionProvider('manage_rooms')) &&
         (currentUser?.isIvraUser == true || currentUser?.hotelId == selectedHotelId);
@@ -3046,7 +3046,7 @@ class _RoomCardProductRow extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
-    final currentUser = ref.watch(currentUserProvider).valueOrNull;
+    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final canSubmitEditRequests = ref.watch(hasPermissionProvider('submit_edit_requests'));
     final isHousekeeper = currentUser?.role == UserRole.housekeeper && currentUser?.hotelId == item.hotelId;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
