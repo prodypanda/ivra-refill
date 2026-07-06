@@ -169,7 +169,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
       _scanTriggered = true;
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (context.mounted) {
-          final roomProducts = roomProductsAsync.value ?? const [];
+          final roomProducts = roomProductsAsync.valueOrNull ?? const [];
           final hotelItems = selectedHotelId != null
               ? roomProducts.where((item) => item.hotelId == selectedHotelId).toList()
               : roomProducts;
