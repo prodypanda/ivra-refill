@@ -711,7 +711,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 final targetEventsAsync = ref.watch(housekeeperHistoryProvider(housekeeperId));
                 return targetEventsAsync.when(
                   loading: () => const Padding(padding: EdgeInsets.all(16.0), child: ShimmerLoading(width: double.infinity, height: 100)),
-                  error: (error, stack) => Center(child: Text(l10n.tParams('errorWithArgs', {'error': error.toString()}), style: TextStyle(color: theme.colorScheme.error))),
+                  error: (error, stack) => Center(child: Text(l10n.tParams('errorWithArgs', {'error': error.toString()}), style: TextStyle(color: Theme.of(context).colorScheme.error))),
                   data: (targetEvents) {
                     if (targetEvents.isEmpty) {
                       return Padding(
