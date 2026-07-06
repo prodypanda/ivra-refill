@@ -13,6 +13,7 @@ import '../shared/page_scaffold.dart';
 import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/premium_confirm_dialog.dart';
+import '../shared/premium_loading.dart';
 
 class FemmeDeChambreScreen extends ConsumerStatefulWidget {
   const FemmeDeChambreScreen({super.key});
@@ -41,8 +42,17 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     );
 
     final currentUser = ref.watch(currentUserProvider).valueOrNull;
-    final isHousekeeper = currentUser?.role == UserRole.housekeeper;
-    final canManage = currentUser?.role != UserRole.hotelStaff && !isHousekeeper;
+    if (currentUser == null) {
+      return PageScaffold(
+        title: l10n.t('housekeepersTitle'),
+        child: const Center(
+          child: PremiumLoadingWidget(),
+        ),
+      );
+    }
+    final isHousekeeper = currentUser.role == UserRole.housekeeper;
+    final canManage = currentUser.role != UserRole.hotelStaff && !isHousekeeper;
+    final selectedHotelId = ref.watch(selectedHotelIdProvider);
 
     return PageScaffold(
       title: isHousekeeper ? l10n.t('myBasket') : l10n.t('housekeepersTitle'),
@@ -73,10 +83,10 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
         IconButton(
           tooltip: l10n.t('allHistory'),
           icon: const Icon(Icons.history),
-          onPressed: () => _showAllHistoryDialog(context, currentUser!.id),
+          onPressed: () => _showAllHistoryDialog(context, currentUser.id),
         ),
       ] : [
-        if (canManage)
+        if (canManage && selectedHotelId != null)
           FilledButton.icon(
             onPressed: () => _showInviteHousekeeperDialog(context),
             icon: const Icon(Icons.person_add_outlined),
@@ -86,8 +96,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
       child: Container(
         decoration: BoxDecoration(gradient: backgroundGradient),
         child: isHousekeeper 
-          ? _buildHousekeeperView(context, currentUser!)
-          : _buildManagementView(context, currentUser!),
+          ? _buildHousekeeperView(context, currentUser)
+          : _buildManagementView(context, currentUser),
       ),
     );
   }
@@ -267,30 +277,137 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
   }
 
   Widget _buildManagementView(BuildContext context, UserProfile currentUser) {
+    final hotelsAsync = ref.watch(hotelsProvider);
+    final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final housekeepersAsync = ref.watch(hotelHousekeepersProvider);
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final primaryColor = const Color(0xFFF2A900); // Golden yellow/orange
 
     return AsyncValueView(
-      value: housekeepersAsync,
-      builder: (housekeepers) {
-        if (housekeepers.isEmpty) {
+      value: hotelsAsync,
+      builder: (hotels) {
+        if (hotels.isEmpty) {
           return EmptyState(
-            icon: Icons.people_outline,
-            title: l10n.t('housekeepersTitle'),
-            message: l10n.t('noHousekeepers'),
-            actionLabel: currentUser.role != UserRole.hotelStaff ? l10n.t('inviteHousekeeper') : null,
-            onAction: currentUser.role != UserRole.hotelStaff ? () => _showInviteHousekeeperDialog(context) : null,
+            icon: Icons.hotel_outlined,
+            title: l10n.t('inventoryNoHotels'),
+            message: l10n.t('inventoryAddHotelHint'),
           );
         }
 
-        return ListView.separated(
-          padding: const EdgeInsets.all(16.0),
-          itemCount: housekeepers.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 16),
-          itemBuilder: (context, index) {
-            final hk = housekeepers[index];
-            return _buildHousekeeperExpandableCard(context, hk, currentUser);
-          },
+        // Auto-select hotel if selectedHotelId is null
+        if (selectedHotelId == null) {
+          final userHotelId = currentUser.hotelId;
+          final autoSelectId = userHotelId != null &&
+                  hotels.any((hotel) => hotel.id == userHotelId)
+              ? userHotelId
+              : (hotels.isNotEmpty ? hotels.first.id : null);
+          if (autoSelectId != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ref.read(selectedHotelIdProvider.notifier).state = autoSelectId;
+            });
+          }
+        }
+
+        final userHotelId = currentUser.hotelId;
+        final userIsHotelScoped =
+            userHotelId != null && hotels.any((hotel) => hotel.id == userHotelId);
+        final isScoped = userIsHotelScoped || hotels.length == 1;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Control panel with hotel selection dropdown
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: GlassCard(
+                padding: const EdgeInsets.all(16),
+                color: theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.4),
+                child: Row(
+                  children: [
+                    Icon(Icons.business_outlined, color: primaryColor),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: isScoped
+                          ? Text(
+                              hotels
+                                  .firstWhere(
+                                    (h) => h.id == selectedHotelId,
+                                    orElse: () => hotels.first,
+                                  )
+                                  .name,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          : DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: selectedHotelId,
+                                hint: Text(l10n.t('roomsSelectHotelFirst')),
+                                icon: Icon(Icons.arrow_drop_down, color: primaryColor),
+                                items: [
+                                  for (final hotel in hotels)
+                                    DropdownMenuItem(
+                                      value: hotel.id,
+                                      child: Text(
+                                        hotel.name,
+                                        style: const TextStyle(fontWeight: FontWeight.w600),
+                                      ),
+                                    ),
+                                ],
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    ref.read(selectedHotelIdProvider.notifier).state = val;
+                                  }
+                                },
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Content section
+            Expanded(
+              child: selectedHotelId == null
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 40),
+                      child: Center(
+                        child: Text(
+                          l10n.t('roomsSelectHotelFirst'),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    )
+                  : AsyncValueView(
+                      value: housekeepersAsync,
+                      builder: (housekeepers) {
+                        if (housekeepers.isEmpty) {
+                          return EmptyState(
+                            icon: Icons.people_outline,
+                            title: l10n.t('housekeepersTitle'),
+                            message: l10n.t('noHousekeepers'),
+                            actionLabel: currentUser.role != UserRole.hotelStaff ? l10n.t('inviteHousekeeper') : null,
+                            onAction: currentUser.role != UserRole.hotelStaff ? () => _showInviteHousekeeperDialog(context) : null,
+                          );
+                        }
+
+                        return ListView.separated(
+                          padding: const EdgeInsets.all(16.0),
+                          itemCount: housekeepers.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: 16),
+                          itemBuilder: (context, index) {
+                            final hk = housekeepers[index];
+                            return _buildHousekeeperExpandableCard(context, hk, currentUser);
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
         );
       },
     );
@@ -414,7 +531,6 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
   }
 
   Future<void> _pickAvatar(String targetUserId) async {
-    final l10n = AppLocalizations.of(context);
     try {
       final picker = ImagePicker();
       XFile? image;

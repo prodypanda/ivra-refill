@@ -45,8 +45,6 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserAsync = ref.watch(currentUserProvider);
-    final currentUser = currentUserAsync.valueOrNull;
     final navItems = _navItems(context, ref);
     final location = GoRouterState.of(context).uri.toString();
     final selectedIndex = navItems.indexWhere(
