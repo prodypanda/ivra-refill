@@ -896,9 +896,8 @@ class _TrendChart extends StatelessWidget {
                               end: Alignment.topCenter,
                             ),
                             width: 14,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(6),
-                              topRight: Radius.circular(6),
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(6),
                             ),
                             backDrawRodData: BackgroundBarChartRodData(
                               show: true,
@@ -1034,9 +1033,8 @@ class _ReportActionState extends State<_ReportAction> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
                       ),
                     ),
                     child: Row(

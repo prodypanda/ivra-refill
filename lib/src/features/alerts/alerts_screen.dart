@@ -978,9 +978,8 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                         decoration: BoxDecoration(
                           color: severityCol.withValues(
                               alpha: isResolved ? 0.3 : 1.0),
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            bottomLeft: Radius.circular(16),
+                          borderRadius: const BorderRadiusDirectional.horizontal(
+                            start: Radius.circular(16),
                           ),
                         ),
                       ),

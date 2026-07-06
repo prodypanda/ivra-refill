@@ -2469,9 +2469,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                   decoration: BoxDecoration(
                     color:
                         overallColor.withValues(alpha: isMobile ? 0.14 : 0.08),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(isMobile ? 28 : 16),
-                      topRight: Radius.circular(isMobile ? 28 : 16),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(isMobile ? 28 : 16),
                     ),
                   ),
                   child: widget.isDialog
