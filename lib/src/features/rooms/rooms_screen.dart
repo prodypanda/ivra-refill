@@ -133,9 +133,10 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
 
     final currentUser =
         ref.watch(currentUserProvider.select((s) => s.valueOrNull));
-    final isStaff = currentUser?.role == UserRole.hotelStaff;
     final expressQrEnabled = ref.watch(expressQrEnabledProvider);
-    final showQrButton = expressQrEnabled || !isStaff;
+    final isStaffOrHousekeeper = currentUser?.role == UserRole.hotelStaff ||
+        currentUser?.role == UserRole.housekeeper;
+    final showQrButton = expressQrEnabled || !isStaffOrHousekeeper;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final canCreateRoomsFromTemplate = (currentUser?.isIvraUser == true) ||
         (currentUser?.role == UserRole.hotelManager &&

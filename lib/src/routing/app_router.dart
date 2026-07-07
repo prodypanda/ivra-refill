@@ -133,7 +133,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         final matchedHotels = hotels.where((h) => h.id == hotelId);
         final expressQrEnabled = matchedHotels.isNotEmpty ? matchedHotels.first.expressQrEnabled : false;
 
-        if (!expressQrEnabled && currentUser?.role == UserRole.hotelStaff) {
+        final isStaffOrHousekeeper = currentUser?.role == UserRole.hotelStaff ||
+            currentUser?.role == UserRole.housekeeper;
+        if (!expressQrEnabled && isStaffOrHousekeeper) {
           if (path.startsWith('/qr') || path.startsWith('/app/qr')) {
             return RoomsScreen.route;
           }

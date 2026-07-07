@@ -232,6 +232,30 @@ void main() {
       final currentUri = GoRouter.of(roomsContext).routeInformationProvider.value.uri;
       expect(currentUri.path, '/rooms');
     });
+    testWidgets('Housekeeper cannot see QR button and is redirected from /qr when Express QR is disabled', (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.housekeeper),
+      );
+
+      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
+      final repo = container.read(repositoryProvider) as MockIvraRepository;
+      await repo.updateHotelExpressQrEnabled(hotelId: 'hotel-seaside', enabled: false);
+      container.invalidate(hotelsProvider);
+      await tester.pumpAndSettle();
+
+      // Verify that the QR button is NOT displayed
+      expect(find.byIcon(Icons.qr_code_scanner_rounded), findsNothing);
+
+      // Verify that navigating to /qr redirects back to /rooms
+      container.read(routerProvider).go('/qr');
+      await tester.pumpAndSettle();
+
+      final roomsContext = tester.element(find.byType(RoomsScreen));
+      final currentUri = GoRouter.of(roomsContext).routeInformationProvider.value.uri;
+      expect(currentUri.path, '/rooms');
+    });
   });
 }
 
@@ -242,7 +266,9 @@ UserProfile _userForRole(UserRole role) {
     email: '${role.value}@ivra.test',
     role: role,
     roleString: role.value,
-    hotelId: role == UserRole.hotelManager || role == UserRole.hotelStaff
+    hotelId: role == UserRole.hotelManager ||
+            role == UserRole.hotelStaff ||
+            role == UserRole.housekeeper
         ? 'hotel-seaside'
         : null,
   );
