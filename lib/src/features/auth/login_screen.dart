@@ -505,9 +505,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final hasCreds = await hasBiometricCredentials();
       if (mounted) setState(() => _hasSavedCredentials = hasCreds);
 
-      ref.invalidate(realCurrentUserProvider);
-      ref.invalidate(currentUserProvider);
-      ref.invalidate(dashboardProvider);
+      invalidateAccountScopedData(ref);
     } catch (error) {
       if (mounted) setState(() => _error = localizeAuthError(l10n, error));
     } finally {

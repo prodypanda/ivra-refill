@@ -124,7 +124,7 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
 
       if (res.user != null) {
         if (!mounted) return;
-        ref.invalidate(currentUserProvider);
+        invalidateAccountScopedData(ref);
         context.go(DashboardScreen.route);
       } else {
         ref.read(passwordSetProvider.notifier).state = false;

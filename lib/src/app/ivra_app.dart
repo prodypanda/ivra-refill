@@ -79,7 +79,7 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
     ref.listen<AsyncValue<UserProfile>>(currentUserProvider, (prev, next) {
       final nextUser = next.valueOrNull;
       final prevUserId = prev?.valueOrNull?.id;
-      final userChanged = prevUserId != null && prevUserId != nextUser?.id;
+      final userChanged = prevUserId != nextUser?.id;
       final selected = ref.read(selectedHotelIdProvider);
       final hotelId = nextUser?.hotelId;
       if (hotelId != null && (selected == null || userChanged)) {
@@ -91,7 +91,9 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
       // sign out), drop the previous account's cached data so the new account
       // sees fresh results without needing a manual pull-to-refresh.
       if (userChanged) {
-        invalidateAccountScopedData(ref);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          invalidateAccountScopedData(ref);
+        });
       }
       
       if (nextUser != null && prevUserId != nextUser.id) {
