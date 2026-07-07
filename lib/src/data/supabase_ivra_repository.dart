@@ -871,9 +871,23 @@ class SupabaseIvraRepository implements IvraRepository {
 
   @override
   Future<void> acceptTeamInvitation({required String token}) async {
-    await _client.rpc('accept_team_invitation', params: {
-      'p_token': token,
-    });
+    try {
+      await _client.rpc('accept_team_invitation', params: {
+        'p_token': token,
+      });
+    } catch (e) {
+      // The auto_accept_invitations RPC (called during currentUser()) may have
+      // already accepted the invitation before we got here. In that case the
+      // accept_team_invitation RPC raises "Pending invitation not found".
+      // Fall back to auto_accept_invitations to ensure the profile and
+      // invitation are properly updated regardless of ordering.
+      final message = e is PostgrestException ? e.message : e.toString();
+      if (message.contains('not found')) {
+        await _client.rpc('auto_accept_invitations');
+      } else {
+        rethrow;
+      }
+    }
     await _auditService.logAction('Accepted team invitation', details: {});
   }
 
