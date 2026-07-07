@@ -839,5 +839,8 @@
   "chipLabelValue": "{label}: {value}",
   "productSkuLabel": "{label} ({sku})",
   "productSkuLabelReverse": "{sku} - {label}",
-  "roomNumberLabel": "غرفة {number}"
+  "roomNumberLabel": "غرفة {number}",
+  "noProductsFound": "لم يتم العثور على منتجات",
+  "markDamagedTitle": "وضع علامة كـ تالف - {product} في الغرفة {room}",
+  "markLostTitle": "وضع علامة كـ مفقود - {product} في الغرفة {room}"
 }

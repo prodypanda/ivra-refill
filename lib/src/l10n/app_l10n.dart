@@ -5143,6 +5143,24 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Room {number}'**
   String roomNumberLabel(String number);
+
+  /// Empty state message when no products are found
+  ///
+  /// In en, this message translates to:
+  /// **'No products found'**
+  String get noProductsFound;
+
+  /// No description provided for @markDamagedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark damaged - {product} in Room {room}'**
+  String markDamagedTitle(String product, String room);
+
+  /// No description provided for @markLostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark lost - {product} in Room {room}'**
+  String markLostTitle(String product, String room);
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

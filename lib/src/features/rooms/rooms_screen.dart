@@ -3646,7 +3646,7 @@ class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
     final l10n = AppLocalizations.of(context);
     try {
       final language = Localizations.localeOf(context).languageCode;
-      final title = 'Mark damaged - ${widget.item.product.label(language)} in Room ${widget.item.roomNumber}';
+      final title = l10n.tParams('markDamagedTitle', {'product': widget.item.product.label(language), 'room': widget.item.roomNumber.toString()});
 
       String? imageUrl;
       if (_selectedImage != null) {
@@ -3791,7 +3791,7 @@ class _MarkLostDialogState extends ConsumerState<_MarkLostDialog> {
     final l10n = AppLocalizations.of(context);
     try {
       final language = Localizations.localeOf(context).languageCode;
-      final title = 'Mark lost - ${widget.item.product.label(language)} in Room ${widget.item.roomNumber}';
+      final title = l10n.tParams('markLostTitle', {'product': widget.item.product.label(language), 'room': widget.item.roomNumber.toString()});
 
       final oldData = {
         'status': widget.item.status.value,
@@ -4124,7 +4124,7 @@ class _RoomEditRequestDialogState
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Text(
-                        'No products found',
+                        l10n.t('noProductsFound'),
                         style: TextStyle(color: Colors.grey.shade500),
                       ),
                     )

@@ -839,5 +839,8 @@
   "chipLabelValue": "{label} : {value}",
   "productSkuLabel": "{label} ({sku})",
   "productSkuLabelReverse": "{sku} - {label}",
-  "roomNumberLabel": "Chambre {number}"
+  "roomNumberLabel": "Chambre {number}",
+  "noProductsFound": "Aucun produit trouvé",
+  "markDamagedTitle": "Marquer comme endommagé - {product} dans la chambre {room}",
+  "markLostTitle": "Marquer comme perdu - {product} dans la chambre {room}"
 }
