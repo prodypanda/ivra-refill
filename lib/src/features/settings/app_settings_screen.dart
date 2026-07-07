@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/page_scaffold.dart';
+import '../shared/premium_snackbar.dart';
+
 
 class AppSettingsScreen extends ConsumerWidget {
   const AppSettingsScreen({super.key});
@@ -113,11 +115,28 @@ class AppSettingsScreen extends ConsumerWidget {
                 onChanged: selectedHotelId == null
                     ? null
                     : (value) async {
-                        await ref.read(repositoryProvider).updateHotelExpressQrEnabled(
-                          hotelId: selectedHotelId,
-                          enabled: value,
-                        );
-                        ref.invalidate(hotelsProvider);
+                        // 1. Optimistic Update
+                        ref.read(expressQrEnabledOverrideProvider.notifier).update((state) {
+                          return {...state, selectedHotelId: value};
+                        });
+
+                        try {
+                          await ref.read(repositoryProvider).updateHotelExpressQrEnabled(
+                            hotelId: selectedHotelId,
+                            enabled: value,
+                          );
+                          ref.invalidate(hotelsProvider);
+                        } catch (e) {
+                          // 2. Revert on Error
+                          ref.read(expressQrEnabledOverrideProvider.notifier).update((state) {
+                            final newState = Map<String, bool>.from(state);
+                            newState.remove(selectedHotelId);
+                            return newState;
+                          });
+                          if (context.mounted) {
+                            PremiumSnackbar.showError(context, e);
+                          }
+                        }
                       },
               ),
             ),

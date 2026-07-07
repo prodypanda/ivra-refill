@@ -111,14 +111,24 @@ final percentageRefillEnabledProvider = StateProvider<bool>((ref) {
   return true;
 });
 
+final expressQrEnabledOverrideProvider = StateProvider<Map<String, bool>>((ref) => {});
+
 final expressQrEnabledProvider = Provider<bool>((ref) {
-  final hotels = ref.watch(hotelsProvider).valueOrNull ?? [];
   final selectedHotelId = ref.watch(selectedHotelIdProvider);
-  if (selectedHotelId == null || hotels.isEmpty) return false;
+  if (selectedHotelId == null) return false;
+
+  final overrides = ref.watch(expressQrEnabledOverrideProvider);
+  if (overrides.containsKey(selectedHotelId)) {
+    return overrides[selectedHotelId]!;
+  }
+
+  final hotels = ref.watch(hotelsProvider).valueOrNull ?? [];
+  if (hotels.isEmpty) return false;
   final matches = hotels.where((h) => h.id == selectedHotelId);
   if (matches.isEmpty) return false;
   return matches.first.expressQrEnabled;
 });
+
 
 /// Set to true after the invited user successfully sets their password.
 /// This prevents the router from redirecting back to SetPasswordScreen
