@@ -16,6 +16,14 @@ class AppSettingsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final isMobile = MediaQuery.sizeOf(context).width < 720;
     final percentageRefillEnabled = ref.watch(percentageRefillEnabledProvider);
+    final selectedHotelId = ref.watch(selectedHotelIdProvider);
+    final hotels = ref.watch(hotelsProvider).valueOrNull ?? [];
+
+    if (selectedHotelId == null && hotels.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(selectedHotelIdProvider.notifier).state = hotels.first.id;
+      });
+    }
 
     return PageScaffold(
       title: l10n.t('appSettings'),
@@ -24,6 +32,48 @@ class AppSettingsScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (hotels.isNotEmpty) ...[
+              Card(
+                elevation: isMobile ? 0 : null,
+                shape: isMobile
+                    ? RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        side: BorderSide(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
+                      )
+                    : null,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: l10n.t('hotels'),
+                      prefixIcon: const Icon(Icons.business_outlined),
+                      border: InputBorder.none,
+                    ),
+                    value: selectedHotelId,
+                    hint: Text(l10n.t('roomsSelectHotelFirst')),
+                    isExpanded: true,
+                    items: [
+                      for (final hotel in hotels)
+                        DropdownMenuItem(
+                          value: hotel.id,
+                          child: Text(
+                            hotel.name,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) {
+                        ref.read(selectedHotelIdProvider.notifier).state = val;
+                      }
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
             Card(
               elevation: isMobile ? 0 : null,
               shape: isMobile
@@ -60,16 +110,15 @@ class AppSettingsScreen extends ConsumerWidget {
                 title: Text(l10n.t('expressQrTitle')),
                 subtitle: Text(l10n.t('expressQrSubtitle')),
                 value: ref.watch(expressQrEnabledProvider),
-                onChanged: (value) async {
-                  final selectedHotelId = ref.read(selectedHotelIdProvider);
-                  if (selectedHotelId != null) {
-                    await ref.read(repositoryProvider).updateHotelExpressQrEnabled(
-                      hotelId: selectedHotelId,
-                      enabled: value,
-                    );
-                    ref.invalidate(hotelsProvider);
-                  }
-                },
+                onChanged: selectedHotelId == null
+                    ? null
+                    : (value) async {
+                        await ref.read(repositoryProvider).updateHotelExpressQrEnabled(
+                          hotelId: selectedHotelId,
+                          enabled: value,
+                        );
+                        ref.invalidate(hotelsProvider);
+                      },
               ),
             ),
           ],
