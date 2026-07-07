@@ -1001,6 +1001,16 @@ class AppL10nEn extends AppL10n {
   String get roomsGestionExpressQr => 'Express QR Management';
 
   @override
+  String get roomsGestionQr => 'QR Code Management';
+
+  @override
+  String get expressQrTitle => 'Express QR Management';
+
+  @override
+  String get expressQrSubtitle =>
+      'Allow direct scanning of dispenser-level QR codes';
+
+  @override
   String get roomsSelectHotelFirst => 'Select a hotel...';
 
   @override
@@ -2789,6 +2799,126 @@ class AppL10nEn extends AppL10n {
   String roomNumberLabel(String number) {
     return 'Room $number';
   }
+
+  @override
+  String get onboardingStep1Title => 'Scan a QR Code';
+
+  @override
+  String get onboardingStep1Desc =>
+      'Scan a QR code on a bottle or room to start.';
+
+  @override
+  String get onboardingStep2Title => 'Refill a Bottle';
+
+  @override
+  String get onboardingStep2Desc =>
+      'Easily track product refills and keep inventory up to date.';
+
+  @override
+  String get onboardingStep3Title => 'Pending Actions';
+
+  @override
+  String get onboardingStep3Desc =>
+      'Check your dashboard for any pending alerts or tasks.';
+
+  @override
+  String get onboardingStep4Title => 'Switch Language';
+
+  @override
+  String get onboardingStep4Desc =>
+      'Change your preferred language in the Settings menu at any time.';
+
+  @override
+  String get onboardingStep5Title => 'View Inventory';
+
+  @override
+  String get onboardingStep5Desc =>
+      'Keep track of your hotel\'s stock levels and incoming orders.';
+
+  @override
+  String get onboardingStep6Title => 'Approve Requests';
+
+  @override
+  String get onboardingStep6Desc =>
+      'Review and approve pending stock requests from your staff.';
+
+  @override
+  String get onboardingStep7Title => 'Check Alerts';
+
+  @override
+  String get onboardingStep7Desc =>
+      'Stay informed about low inventory or operational alerts.';
+
+  @override
+  String get onboardingStep8Title => 'Manage Hotels';
+
+  @override
+  String get onboardingStep8Desc =>
+      'Add and configure multiple hotels under your management.';
+
+  @override
+  String get onboardingStep9Title => 'Invite Team';
+
+  @override
+  String get onboardingStep9Desc =>
+      'Invite managers and staff members to join your workspace.';
+
+  @override
+  String get onboardingStep10Title => 'View Reports';
+
+  @override
+  String get onboardingStep10Desc =>
+      'Generate detailed reports and export data across all hotels.';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingDone => 'Done';
+
+  @override
+  String get onboardingResetMessage =>
+      'Onboarding tour reset. It will be shown on the dashboard.';
+
+  @override
+  String get replayOnboarding => 'Replay onboarding tour';
+
+  @override
+  String get rolePermissionsGuide => 'Role & Permissions Guide';
+
+  @override
+  String get help => 'Help';
+
+  @override
+  String get helpContextDashboardTitle => 'Dashboard Overview';
+
+  @override
+  String get helpContextDashboardDesc =>
+      'This screen shows a summary of your hotel\'s refill operations for today. You can quickly see recent activities, pending approvals, and low stock alerts.';
+
+  @override
+  String get helpContextInventoryTitle => 'Inventory Management';
+
+  @override
+  String get helpContextInventoryDesc =>
+      'Manage your product stock levels. Tap a product card to see details or adjust quantities for your current hotel.';
+
+  @override
+  String get helpContextRoomsTitle => 'Rooms Status';
+
+  @override
+  String get helpContextRoomsDesc =>
+      'View all rooms and their product status. Tap a room to refill or replace bottles directly, or scan a QR code to jump straight to the correct room.';
+
+  @override
+  String get helpContextReportsTitle => 'Reports & Exports';
+
+  @override
+  String get helpContextReportsDesc =>
+      'Generate and export refill history, inventory snapshots, and alert summaries. Use the download buttons to save this data as CSV files.';
 
   @override
   String get noProductsFound => 'No products found';

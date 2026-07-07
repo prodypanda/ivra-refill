@@ -996,6 +996,16 @@ class AppL10nAr extends AppL10n {
   String get roomsGestionExpressQr => 'الإدارة السريعة (QR)';
 
   @override
+  String get roomsGestionQr => 'إدارة رموز QR';
+
+  @override
+  String get expressQrTitle => 'الإدارة السريعة (QR)';
+
+  @override
+  String get expressQrSubtitle =>
+      'السماح بالمسح المباشر لرموز QR الخاصة بالموزع';
+
+  @override
   String get roomsSelectHotelFirst => 'اختر فندقاً...';
 
   @override
@@ -2774,6 +2784,125 @@ class AppL10nAr extends AppL10n {
   String roomNumberLabel(String number) {
     return 'غرفة $number';
   }
+
+  @override
+  String get onboardingStep1Title => 'مسح رمز الاستجابة السريعة';
+
+  @override
+  String get onboardingStep1Desc =>
+      'قم بمسح رمز الاستجابة السريعة الموجود على زجاجة أو غرفة للبدء.';
+
+  @override
+  String get onboardingStep2Title => 'إعادة تعبئة الزجاجة';
+
+  @override
+  String get onboardingStep2Desc =>
+      'تتبع عمليات إعادة تعبئة المنتجات بسهولة وحافظ على تحديث المخزون.';
+
+  @override
+  String get onboardingStep3Title => 'الإجراءات المعلقة';
+
+  @override
+  String get onboardingStep3Desc =>
+      'تحقق من لوحة القيادة الخاصة بك لمعرفة أي تنبيهات أو مهام معلقة.';
+
+  @override
+  String get onboardingStep4Title => 'تغيير اللغة';
+
+  @override
+  String get onboardingStep4Desc =>
+      'قم بتغيير لغتك المفضلة في قائمة الإعدادات في أي وقت.';
+
+  @override
+  String get onboardingStep5Title => 'عرض المخزون';
+
+  @override
+  String get onboardingStep5Desc =>
+      'تتبع مستويات المخزون في فندقك والطلبات الواردة.';
+
+  @override
+  String get onboardingStep6Title => 'الموافقة على الطلبات';
+
+  @override
+  String get onboardingStep6Desc =>
+      'مراجعة والموافقة على طلبات المخزون المعلقة من موظفيك.';
+
+  @override
+  String get onboardingStep7Title => 'التحقق من التنبيهات';
+
+  @override
+  String get onboardingStep7Desc =>
+      'ابق على اطلاع بتنبيهات انخفاض المخزون أو التنبيهات التشغيلية.';
+
+  @override
+  String get onboardingStep8Title => 'إدارة الفنادق';
+
+  @override
+  String get onboardingStep8Desc => 'إضافة وتكوين فنادق متعددة تحت إدارتك.';
+
+  @override
+  String get onboardingStep9Title => 'دعوة فريق';
+
+  @override
+  String get onboardingStep9Desc =>
+      'دعوة المديرين والموظفين للانضمام إلى مساحة العمل الخاصة بك.';
+
+  @override
+  String get onboardingStep10Title => 'عرض التقارير';
+
+  @override
+  String get onboardingStep10Desc =>
+      'إنشاء تقارير مفصلة وتصدير البيانات عبر جميع الفنادق.';
+
+  @override
+  String get onboardingSkip => 'تخطي';
+
+  @override
+  String get onboardingNext => 'التالي';
+
+  @override
+  String get onboardingDone => 'تم';
+
+  @override
+  String get onboardingResetMessage =>
+      'تمت إعادة تعيين جولة التعريف. سيتم عرضها على لوحة القيادة.';
+
+  @override
+  String get replayOnboarding => 'إعادة تشغيل الجولة التعريفية';
+
+  @override
+  String get rolePermissionsGuide => 'دليل الأدوار والصلاحيات';
+
+  @override
+  String get help => 'مساعدة';
+
+  @override
+  String get helpContextDashboardTitle => 'نظرة عامة على لوحة القيادة';
+
+  @override
+  String get helpContextDashboardDesc =>
+      'تعرض هذه الشاشة ملخصًا لعمليات إعادة التعبئة في فندقك لهذا اليوم. يمكنك رؤية الأنشطة الحديثة والموافقات المعلقة وتنبيهات انخفاض المخزون بسرعة.';
+
+  @override
+  String get helpContextInventoryTitle => 'إدارة المخزون';
+
+  @override
+  String get helpContextInventoryDesc =>
+      'إدارة مستويات مخزون منتجاتك. اضغط على بطاقة المنتج لرؤية التفاصيل أو تعديل الكميات.';
+
+  @override
+  String get helpContextRoomsTitle => 'حالة الغرف';
+
+  @override
+  String get helpContextRoomsDesc =>
+      'عرض جميع الغرف وحالة منتجاتها. اضغط على غرفة لإعادة تعبئة الزجاجات أو استبدالها، أو قم بمسح رمز الاستجابة السريعة للانتقال مباشرة إلى الغرفة الصحيحة.';
+
+  @override
+  String get helpContextReportsTitle => 'التقارير والتصدير';
+
+  @override
+  String get helpContextReportsDesc =>
+      'إنشاء وتصدير سجل إعادة التعبئة ولقطات المخزون وملخصات التنبيهات. استخدم أزرار التنزيل لحفظ هذه البيانات كملفات CSV.';
 
   @override
   String get noProductsFound => 'لم يتم العثور على منتجات';

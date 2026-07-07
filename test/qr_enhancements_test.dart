@@ -13,7 +13,7 @@ import 'package:ivra_refill/src/routing/app_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues({'express_qr_enabled': true});
 
   group('QrCodePdfService Tests', () {
     test('generateQrPdf generates a non-empty list of PDF bytes', () async {
@@ -323,6 +323,7 @@ Future<void> _pumpIvraApp(
   UserProfile? currentUser,
   List<RoomProduct>? allRoomProductsOverride,
 }) async {
+  final prefs = await SharedPreferences.getInstance();
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -331,6 +332,7 @@ Future<void> _pumpIvraApp(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
         localeProvider.overrideWith((ref) => locale ?? const Locale('en')),
         if (currentUser != null)
           currentUserProvider.overrideWith((ref) async => currentUser),

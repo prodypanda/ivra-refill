@@ -44,6 +44,27 @@ class AppSettingsScreen extends ConsumerWidget {
                 },
               ),
             ),
+            const SizedBox(height: 16),
+            Card(
+              elevation: isMobile ? 0 : null,
+              shape: isMobile
+                  ? RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      side: BorderSide(
+                        color: theme.colorScheme.outlineVariant,
+                      ),
+                    )
+                  : null,
+              child: SwitchListTile(
+                secondary: const Icon(Icons.qr_code_scanner_outlined),
+                title: Text(l10n.t('expressQrTitle')),
+                subtitle: Text(l10n.t('expressQrSubtitle')),
+                value: ref.watch(expressQrEnabledProvider),
+                onChanged: (value) {
+                  ref.read(expressQrEnabledProvider.notifier).state = value;
+                },
+              ),
+            ),
           ],
         ),
       ),

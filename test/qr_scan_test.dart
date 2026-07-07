@@ -13,7 +13,7 @@ import 'package:ivra_refill/src/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues({'express_qr_enabled': true});
 
   group('QR Code Scanning Tests', () {
     testWidgets('Clicking room QR button and scanning room code filters list', (tester) async {
@@ -228,6 +228,7 @@ Future<void> _pumpIvraApp(
   Locale? locale,
   UserProfile? currentUser,
 }) async {
+  final prefs = await SharedPreferences.getInstance();
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -236,6 +237,7 @@ Future<void> _pumpIvraApp(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
         localeProvider.overrideWith((ref) => locale ?? const Locale('en')),
         if (currentUser != null)
           currentUserProvider.overrideWith((ref) async => currentUser),

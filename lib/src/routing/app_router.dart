@@ -129,7 +129,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             }
           }
         }
-        if (sku == null || sku.trim().isEmpty) {
+        final expressQrEnabled = ref.read(expressQrEnabledProvider);
+        if (!expressQrEnabled || sku == null || sku.trim().isEmpty) {
           if (hotelId != null && floor != null && room != null) {
             return '${RoomsScreen.route}?hotelId=$hotelId&floorNumber=$floor&roomNumber=$room';
           }

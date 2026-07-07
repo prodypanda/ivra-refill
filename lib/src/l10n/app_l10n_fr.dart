@@ -1013,6 +1013,16 @@ class AppL10nFr extends AppL10n {
   String get roomsGestionExpressQr => 'Gestion Express (QR)';
 
   @override
+  String get roomsGestionQr => 'Gestion des QR Codes';
+
+  @override
+  String get expressQrTitle => 'Gestion Express (QR)';
+
+  @override
+  String get expressQrSubtitle =>
+      'Autoriser le scan direct des QR codes au niveau du distributeur';
+
+  @override
   String get roomsSelectHotelFirst => 'Sélectionner un hôtel...';
 
   @override
@@ -2832,6 +2842,126 @@ class AppL10nFr extends AppL10n {
   String roomNumberLabel(String number) {
     return 'Chambre $number';
   }
+
+  @override
+  String get onboardingStep1Title => 'Scanner un QR Code';
+
+  @override
+  String get onboardingStep1Desc =>
+      'Scannez un code QR sur une bouteille ou une chambre pour commencer.';
+
+  @override
+  String get onboardingStep2Title => 'Recharger une Bouteille';
+
+  @override
+  String get onboardingStep2Desc =>
+      'Suivez facilement les recharges de produits et maintenez l\'inventaire à jour.';
+
+  @override
+  String get onboardingStep3Title => 'Actions en Attente';
+
+  @override
+  String get onboardingStep3Desc =>
+      'Consultez votre tableau de bord pour les alertes ou tâches en attente.';
+
+  @override
+  String get onboardingStep4Title => 'Changer de Langue';
+
+  @override
+  String get onboardingStep4Desc =>
+      'Modifiez votre langue préférée dans le menu Paramètres à tout moment.';
+
+  @override
+  String get onboardingStep5Title => 'Voir l\'Inventaire';
+
+  @override
+  String get onboardingStep5Desc =>
+      'Gardez une trace des niveaux de stock de votre hôtel et des commandes à venir.';
+
+  @override
+  String get onboardingStep6Title => 'Approuver les Demandes';
+
+  @override
+  String get onboardingStep6Desc =>
+      'Examinez et approuvez les demandes de stock en attente de votre personnel.';
+
+  @override
+  String get onboardingStep7Title => 'Vérifier les Alertes';
+
+  @override
+  String get onboardingStep7Desc =>
+      'Restez informé des alertes de stock faible ou opérationnelles.';
+
+  @override
+  String get onboardingStep8Title => 'Gérer les Hôtels';
+
+  @override
+  String get onboardingStep8Desc =>
+      'Ajoutez et configurez plusieurs hôtels sous votre gestion.';
+
+  @override
+  String get onboardingStep9Title => 'Inviter l\'Équipe';
+
+  @override
+  String get onboardingStep9Desc =>
+      'Invitez des gestionnaires et des membres du personnel à rejoindre votre espace de travail.';
+
+  @override
+  String get onboardingStep10Title => 'Voir les Rapports';
+
+  @override
+  String get onboardingStep10Desc =>
+      'Générez des rapports détaillés et exportez les données de tous les hôtels.';
+
+  @override
+  String get onboardingSkip => 'Passer';
+
+  @override
+  String get onboardingNext => 'Suivant';
+
+  @override
+  String get onboardingDone => 'Terminé';
+
+  @override
+  String get onboardingResetMessage =>
+      'Visite d\'intégration réinitialisée. Elle sera affichée sur le tableau de bord.';
+
+  @override
+  String get replayOnboarding => 'Rejouer la visite guidée';
+
+  @override
+  String get rolePermissionsGuide => 'Guide des Rôles & Permissions';
+
+  @override
+  String get help => 'Aide';
+
+  @override
+  String get helpContextDashboardTitle => 'Aperçu du Tableau de Bord';
+
+  @override
+  String get helpContextDashboardDesc =>
+      'Cet écran affiche un résumé des opérations de recharge de votre hôtel pour aujourd\'hui. Vous pouvez voir rapidement les activités récentes, les approbations en attente et les alertes de stock faible.';
+
+  @override
+  String get helpContextInventoryTitle => 'Gestion de l\'Inventaire';
+
+  @override
+  String get helpContextInventoryDesc =>
+      'Gérez les niveaux de stock de vos produits. Appuyez sur une carte de produit pour voir les détails ou ajuster les quantités.';
+
+  @override
+  String get helpContextRoomsTitle => 'Statut des Chambres';
+
+  @override
+  String get helpContextRoomsDesc =>
+      'Affichez toutes les chambres et le statut de leurs produits. Appuyez sur une chambre pour recharger ou remplacer des bouteilles, ou scannez un QR code pour y accéder directement.';
+
+  @override
+  String get helpContextReportsTitle => 'Rapports & Exports';
+
+  @override
+  String get helpContextReportsDesc =>
+      'Générez et exportez l\'historique des recharges, des instantanés d\'inventaire et des résumés d\'alertes.';
 
   @override
   String get noProductsFound => 'Aucun produit trouvé';

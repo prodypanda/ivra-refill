@@ -16,7 +16,7 @@ import 'package:ivra_refill/src/routing/app_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues({'express_qr_enabled': true});
 
   group('QR Deep Linking and Action Overlay Tests', () {
     testWidgets('Guest scans QR link with SKU -> redirects to PublicProductScreen', (tester) async {
@@ -137,6 +137,7 @@ Future<void> _pumpIvraApp(
   Size size = const Size(1280, 900),
   UserProfile? currentUser,
 }) async {
+  final prefs = await SharedPreferences.getInstance();
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
   addTearDown(tester.view.resetDevicePixelRatio);
@@ -145,6 +146,7 @@ Future<void> _pumpIvraApp(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
         localeProvider.overrideWith((ref) => const Locale('en')),
         if (currentUser != null)
           currentUserProvider.overrideWith((ref) async => currentUser)

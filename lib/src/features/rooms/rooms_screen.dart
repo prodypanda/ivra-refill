@@ -218,7 +218,9 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
       actions: [
         if (isCompact)
           IconButton(
-            tooltip: l10n.t('roomsGestionExpressQr'),
+            tooltip: ref.watch(expressQrEnabledProvider)
+                ? l10n.t('roomsGestionExpressQr')
+                : l10n.t('roomsGestionQr'),
             icon: const Icon(Icons.qr_code_scanner_rounded),
             onPressed: () {
               HapticFeedback.lightImpact();
@@ -238,7 +240,9 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
             ),
             icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
             label: Text(
-              l10n.t('roomsGestionExpressQr'),
+              ref.watch(expressQrEnabledProvider)
+                  ? l10n.t('roomsGestionExpressQr')
+                  : l10n.t('roomsGestionQr'),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {

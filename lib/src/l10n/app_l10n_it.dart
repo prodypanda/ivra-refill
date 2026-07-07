@@ -1008,6 +1008,16 @@ class AppL10nIt extends AppL10n {
   String get roomsGestionExpressQr => 'Gestione Espressa (QR)';
 
   @override
+  String get roomsGestionQr => 'Gestione Codici QR';
+
+  @override
+  String get expressQrTitle => 'Gestione Espressa (QR)';
+
+  @override
+  String get expressQrSubtitle =>
+      'Consenti la scansione diretta dei codici QR del distributore';
+
+  @override
   String get roomsSelectHotelFirst => 'Seleziona hotel...';
 
   @override
@@ -2821,6 +2831,126 @@ class AppL10nIt extends AppL10n {
   String roomNumberLabel(String number) {
     return 'Camera $number';
   }
+
+  @override
+  String get onboardingStep1Title => 'Scansiona un QR Code';
+
+  @override
+  String get onboardingStep1Desc =>
+      'Scansiona un codice QR su una bottiglia o una stanza per iniziare.';
+
+  @override
+  String get onboardingStep2Title => 'Ricarica una Bottiglia';
+
+  @override
+  String get onboardingStep2Desc =>
+      'Tieni facilmente traccia delle ricariche dei prodotti e mantieni aggiornato l\'inventario.';
+
+  @override
+  String get onboardingStep3Title => 'Azioni in Sospeso';
+
+  @override
+  String get onboardingStep3Desc =>
+      'Controlla la tua dashboard per eventuali avvisi o attività in sospeso.';
+
+  @override
+  String get onboardingStep4Title => 'Cambia Lingua';
+
+  @override
+  String get onboardingStep4Desc =>
+      'Cambia la lingua preferita nel menu Impostazioni in qualsiasi momento.';
+
+  @override
+  String get onboardingStep5Title => 'Visualizza Inventario';
+
+  @override
+  String get onboardingStep5Desc =>
+      'Tieni traccia dei livelli delle scorte del tuo hotel e degli ordini in arrivo.';
+
+  @override
+  String get onboardingStep6Title => 'Approva Richieste';
+
+  @override
+  String get onboardingStep6Desc =>
+      'Rivedi e approva le richieste di scorte in sospeso dal tuo personale.';
+
+  @override
+  String get onboardingStep7Title => 'Controlla Avvisi';
+
+  @override
+  String get onboardingStep7Desc =>
+      'Tieniti informato su avvisi di scorte in esaurimento o operativi.';
+
+  @override
+  String get onboardingStep8Title => 'Gestisci Hotel';
+
+  @override
+  String get onboardingStep8Desc =>
+      'Aggiungi e configura più hotel sotto la tua gestione.';
+
+  @override
+  String get onboardingStep9Title => 'Invita Team';
+
+  @override
+  String get onboardingStep9Desc =>
+      'Invita manager e membri dello staff a unirsi al tuo spazio di lavoro.';
+
+  @override
+  String get onboardingStep10Title => 'Visualizza Rapporti';
+
+  @override
+  String get onboardingStep10Desc =>
+      'Genera rapporti dettagliati ed esporta dati per tutti gli hotel.';
+
+  @override
+  String get onboardingSkip => 'Salta';
+
+  @override
+  String get onboardingNext => 'Avanti';
+
+  @override
+  String get onboardingDone => 'Fatto';
+
+  @override
+  String get onboardingResetMessage =>
+      'Tour di onboarding ripristinato. Verrà mostrato nella dashboard.';
+
+  @override
+  String get replayOnboarding => 'Riproduci tour di onboarding';
+
+  @override
+  String get rolePermissionsGuide => 'Guida a Ruoli e Permessi';
+
+  @override
+  String get help => 'Aiuto';
+
+  @override
+  String get helpContextDashboardTitle => 'Panoramica della Dashboard';
+
+  @override
+  String get helpContextDashboardDesc =>
+      'Questa schermata mostra un riepilogo delle operazioni di ricarica del tuo hotel per oggi. Puoi visualizzare rapidamente le attività recenti, le approvazioni in sospeso e gli avvisi di esaurimento scorte.';
+
+  @override
+  String get helpContextInventoryTitle => 'Gestione dell\'Inventario';
+
+  @override
+  String get helpContextInventoryDesc =>
+      'Gestisci i livelli delle scorte dei tuoi prodotti. Tocca una scheda prodotto per visualizzare i dettagli o regolare le quantità.';
+
+  @override
+  String get helpContextRoomsTitle => 'Stato delle Camere';
+
+  @override
+  String get helpContextRoomsDesc =>
+      'Visualizza tutte le camere e lo stato dei loro prodotti. Tocca una camera per ricaricare o sostituire le bottiglie, oppure scansiona un codice QR per passare direttamente alla camera corretta.';
+
+  @override
+  String get helpContextReportsTitle => 'Rapporti ed Esportazioni';
+
+  @override
+  String get helpContextReportsDesc =>
+      'Genera ed esporta la cronologia delle ricariche, istantanee dell\'inventario e riepiloghi degli avvisi. Utilizza i pulsanti di download per salvare questi dati come file CSV.';
 
   @override
   String get noProductsFound => 'Nessun prodotto trovato';

@@ -111,6 +111,25 @@ final percentageRefillEnabledProvider = StateProvider<bool>((ref) {
   return true;
 });
 
+final expressQrEnabledProvider = StateProvider<bool>((ref) {
+  ref.listenSelf((previous, next) async {
+    if (previous != null && previous != next) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('express_qr_enabled', next);
+      } catch (e) {
+        debugPrint('Error saving express QR enabled selection: $e');
+      }
+    }
+  });
+
+  final prefs = ref.watch(sharedPreferencesProvider);
+  if (prefs != null) {
+    return prefs.getBool('express_qr_enabled') ?? false;
+  }
+  return false;
+});
+
 /// Set to true after the invited user successfully sets their password.
 /// This prevents the router from redirecting back to SetPasswordScreen
 /// during the brief window where userMetadata hasn't propagated yet.

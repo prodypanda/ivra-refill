@@ -1943,6 +1943,24 @@ abstract class AppL10n {
   /// **'Express QR Management'**
   String get roomsGestionExpressQr;
 
+  /// No description provided for @roomsGestionQr.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Code Management'**
+  String get roomsGestionQr;
+
+  /// No description provided for @expressQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Express QR Management'**
+  String get expressQrTitle;
+
+  /// No description provided for @expressQrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow direct scanning of dispenser-level QR codes'**
+  String get expressQrSubtitle;
+
   /// No description provided for @roomsSelectHotelFirst.
   ///
   /// In en, this message translates to:
@@ -5143,6 +5161,216 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Room {number}'**
   String roomNumberLabel(String number);
+
+  /// No description provided for @onboardingStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a QR Code'**
+  String get onboardingStep1Title;
+
+  /// No description provided for @onboardingStep1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a QR code on a bottle or room to start.'**
+  String get onboardingStep1Desc;
+
+  /// No description provided for @onboardingStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Refill a Bottle'**
+  String get onboardingStep2Title;
+
+  /// No description provided for @onboardingStep2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Easily track product refills and keep inventory up to date.'**
+  String get onboardingStep2Desc;
+
+  /// No description provided for @onboardingStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Actions'**
+  String get onboardingStep3Title;
+
+  /// No description provided for @onboardingStep3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your dashboard for any pending alerts or tasks.'**
+  String get onboardingStep3Desc;
+
+  /// No description provided for @onboardingStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch Language'**
+  String get onboardingStep4Title;
+
+  /// No description provided for @onboardingStep4Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Change your preferred language in the Settings menu at any time.'**
+  String get onboardingStep4Desc;
+
+  /// No description provided for @onboardingStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'View Inventory'**
+  String get onboardingStep5Title;
+
+  /// No description provided for @onboardingStep5Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep track of your hotel\'s stock levels and incoming orders.'**
+  String get onboardingStep5Desc;
+
+  /// No description provided for @onboardingStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve Requests'**
+  String get onboardingStep6Title;
+
+  /// No description provided for @onboardingStep6Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Review and approve pending stock requests from your staff.'**
+  String get onboardingStep6Desc;
+
+  /// No description provided for @onboardingStep7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Alerts'**
+  String get onboardingStep7Title;
+
+  /// No description provided for @onboardingStep7Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay informed about low inventory or operational alerts.'**
+  String get onboardingStep7Desc;
+
+  /// No description provided for @onboardingStep8Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Hotels'**
+  String get onboardingStep8Title;
+
+  /// No description provided for @onboardingStep8Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Add and configure multiple hotels under your management.'**
+  String get onboardingStep8Desc;
+
+  /// No description provided for @onboardingStep9Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Team'**
+  String get onboardingStep9Title;
+
+  /// No description provided for @onboardingStep9Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite managers and staff members to join your workspace.'**
+  String get onboardingStep9Desc;
+
+  /// No description provided for @onboardingStep10Title.
+  ///
+  /// In en, this message translates to:
+  /// **'View Reports'**
+  String get onboardingStep10Title;
+
+  /// No description provided for @onboardingStep10Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate detailed reports and export data across all hotels.'**
+  String get onboardingStep10Desc;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get onboardingDone;
+
+  /// No description provided for @onboardingResetMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding tour reset. It will be shown on the dashboard.'**
+  String get onboardingResetMessage;
+
+  /// No description provided for @replayOnboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay onboarding tour'**
+  String get replayOnboarding;
+
+  /// No description provided for @rolePermissionsGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Role & Permissions Guide'**
+  String get rolePermissionsGuide;
+
+  /// No description provided for @help.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get help;
+
+  /// No description provided for @helpContextDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard Overview'**
+  String get helpContextDashboardTitle;
+
+  /// No description provided for @helpContextDashboardDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This screen shows a summary of your hotel\'s refill operations for today. You can quickly see recent activities, pending approvals, and low stock alerts.'**
+  String get helpContextDashboardDesc;
+
+  /// No description provided for @helpContextInventoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory Management'**
+  String get helpContextInventoryTitle;
+
+  /// No description provided for @helpContextInventoryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your product stock levels. Tap a product card to see details or adjust quantities for your current hotel.'**
+  String get helpContextInventoryDesc;
+
+  /// No description provided for @helpContextRoomsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms Status'**
+  String get helpContextRoomsTitle;
+
+  /// No description provided for @helpContextRoomsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View all rooms and their product status. Tap a room to refill or replace bottles directly, or scan a QR code to jump straight to the correct room.'**
+  String get helpContextRoomsDesc;
+
+  /// No description provided for @helpContextReportsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports & Exports'**
+  String get helpContextReportsTitle;
+
+  /// No description provided for @helpContextReportsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate and export refill history, inventory snapshots, and alert summaries. Use the download buttons to save this data as CSV files.'**
+  String get helpContextReportsDesc;
 
   /// Empty state message when no products are found
   ///

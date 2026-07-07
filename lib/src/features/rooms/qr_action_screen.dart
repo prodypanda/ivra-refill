@@ -79,6 +79,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
   @override
   void initState() {
     super.initState();
+    final expressQrEnabled = ref.read(expressQrEnabledProvider);
+    if (!expressQrEnabled) {
+      _scope = _QrScope.room;
+    }
     _scanController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -218,7 +222,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         _actionResult = ActionResult.none;
         _actionMessage = null;
       });
-      if (sku != null && sku.trim().isNotEmpty) {
+      final expressQrEnabled = ref.read(expressQrEnabledProvider);
+      if (expressQrEnabled && sku != null && sku.trim().isNotEmpty) {
         context.go('/q/$hotelId/$floor/$room/$sku');
       } else {
         context.go('/rooms?hotelId=$hotelId&floorNumber=$floor&roomNumber=$room');
@@ -239,6 +244,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     final language = Localizations.localeOf(context).languageCode;
     final precisionScanWindow = ref.watch(precisionScanWindowEnabledProvider);
     final tapToScanEnabled = ref.watch(tapToScanEnabledProvider);
+    final expressQrEnabled = ref.watch(expressQrEnabledProvider);
+    if (!expressQrEnabled && _scope != _QrScope.room) {
+      _scope = _QrScope.room;
+    }
 
     final isScanMode = widget.hotelSlugOrId.isEmpty ||
         widget.floor.isEmpty ||
@@ -852,41 +861,43 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         ),
         const SizedBox(height: 16),
 
-        // QR Label Scope Selector
-        Text(
-          l10n.t('qrGenerateScope') ?? 'QR Label Type',
-          style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        SegmentedButton<_QrScope>(
-          segments: [
-            ButtonSegment<_QrScope>(
-              value: _QrScope.room,
-              label: Text(l10n.t('qrGenerateScopeRoom') ?? 'Room Door (No SKU)'),
-              icon: const Icon(Icons.meeting_room_outlined),
-            ),
-            ButtonSegment<_QrScope>(
-              value: _QrScope.dispenser,
-              label: Text(l10n.t('qrGenerateScopeDispenser') ?? 'Dispenser (With SKU)'),
-              icon: const Icon(Icons.sanitizer_outlined),
-            ),
-          ],
-          selected: {_scope},
-          onSelectionChanged: (val) {
-            HapticFeedback.lightImpact();
-            setState(() {
-              _scope = val.first;
-              _selectedRoomNumber = 'all_rooms';
-              _selectedProductSku = 'all_room_products';
-            });
-          },
-          style: SegmentedButton.styleFrom(
-            selectedBackgroundColor: colorScheme.primary.withValues(alpha: 0.15),
-            selectedForegroundColor: colorScheme.primary,
-            visualDensity: VisualDensity.compact,
+        if (ref.watch(expressQrEnabledProvider)) ...[
+          // QR Label Scope Selector
+          Text(
+            l10n.t('qrGenerateScope') ?? 'QR Label Type',
+            style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
-        ),
-        const SizedBox(height: 16),
+          const SizedBox(height: 8),
+          SegmentedButton<_QrScope>(
+            segments: [
+              ButtonSegment<_QrScope>(
+                value: _QrScope.room,
+                label: Text(l10n.t('qrGenerateScopeRoom') ?? 'Room Door (No SKU)'),
+                icon: const Icon(Icons.meeting_room_outlined),
+              ),
+              ButtonSegment<_QrScope>(
+                value: _QrScope.dispenser,
+                label: Text(l10n.t('qrGenerateScopeDispenser') ?? 'Dispenser (With SKU)'),
+                icon: const Icon(Icons.sanitizer_outlined),
+              ),
+            ],
+            selected: {_scope},
+            onSelectionChanged: (val) {
+              HapticFeedback.lightImpact();
+              setState(() {
+                _scope = val.first;
+                _selectedRoomNumber = 'all_rooms';
+                _selectedProductSku = 'all_room_products';
+              });
+            },
+            style: SegmentedButton.styleFrom(
+              selectedBackgroundColor: colorScheme.primary.withValues(alpha: 0.15),
+              selectedForegroundColor: colorScheme.primary,
+              visualDensity: VisualDensity.compact,
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
 
         // Dynamic Room & Product inputs based on allRoomProductsProvider
         AsyncValueView<List<RoomProduct>>(
