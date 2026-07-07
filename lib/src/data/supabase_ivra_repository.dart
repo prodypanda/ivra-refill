@@ -1627,4 +1627,21 @@ class SupabaseIvraRepository implements IvraRepository {
       },
     );
   }
+
+  Future<void> _clearHotelsCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('cache_hotels');
+  }
+
+  @override
+  Future<void> updateHotelExpressQrEnabled({
+    required String hotelId,
+    required bool enabled,
+  }) async {
+    await _client
+        .from('hotels')
+        .update({'express_qr_enabled': enabled})
+        .eq('id', hotelId);
+    await _clearHotelsCache();
+  }
 }

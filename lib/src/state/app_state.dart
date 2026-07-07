@@ -111,23 +111,13 @@ final percentageRefillEnabledProvider = StateProvider<bool>((ref) {
   return true;
 });
 
-final expressQrEnabledProvider = StateProvider<bool>((ref) {
-  ref.listenSelf((previous, next) async {
-    if (previous != null && previous != next) {
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('express_qr_enabled', next);
-      } catch (e) {
-        debugPrint('Error saving express QR enabled selection: $e');
-      }
-    }
-  });
-
-  final prefs = ref.watch(sharedPreferencesProvider);
-  if (prefs != null) {
-    return prefs.getBool('express_qr_enabled') ?? false;
-  }
-  return false;
+final expressQrEnabledProvider = Provider<bool>((ref) {
+  final hotels = ref.watch(hotelsProvider).valueOrNull ?? [];
+  final selectedHotelId = ref.watch(selectedHotelIdProvider);
+  if (selectedHotelId == null || hotels.isEmpty) return false;
+  final matches = hotels.where((h) => h.id == selectedHotelId);
+  if (matches.isEmpty) return false;
+  return matches.first.expressQrEnabled;
 });
 
 /// Set to true after the invited user successfully sets their password.

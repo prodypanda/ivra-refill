@@ -129,7 +129,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             }
           }
         }
-        final expressQrEnabled = ref.read(expressQrEnabledProvider);
+        final hotels = ref.read(hotelsProvider).valueOrNull ?? [];
+        final matchedHotels = hotels.where((h) => h.id == hotelId);
+        final expressQrEnabled = matchedHotels.isNotEmpty ? matchedHotels.first.expressQrEnabled : false;
+
+        if (!expressQrEnabled && currentUser?.role == UserRole.hotelStaff) {
+          if (path.startsWith('/qr') || path.startsWith('/app/qr')) {
+            return RoomsScreen.route;
+          }
+        }
         if (!expressQrEnabled || sku == null || sku.trim().isEmpty) {
           if (hotelId != null && floor != null && room != null) {
             return '${RoomsScreen.route}?hotelId=$hotelId&floorNumber=$floor&roomNumber=$room';

@@ -78,6 +78,7 @@ class MockIvraRepository implements IvraRepository {
         notes: 'Pilot hotel for refill lifecycle operations.',
         roomCount: 84,
         pendingEdits: 2,
+        expressQrEnabled: true,
       ),
       const Hotel(
         id: 'hotel-palms',
@@ -91,6 +92,7 @@ class MockIvraRepository implements IvraRepository {
         address: '8 Palm Avenue, Maitama',
         roomCount: 46,
         pendingEdits: 0,
+        expressQrEnabled: true,
       ),
     ];
 
@@ -428,7 +430,7 @@ class MockIvraRepository implements IvraRepository {
     ),
   ];
 
-  late final List<Hotel> _hotels;
+  late List<Hotel> _hotels;
   late final List<RoomInfo> _rooms;
   late final List<RoomProduct> _roomProducts;
   late final List<InventoryItem> _inventory;
@@ -1164,6 +1166,17 @@ class MockIvraRepository implements IvraRepository {
   @override
   Future<void> deleteProduct(String productId) async {
     _products.removeWhere((p) => p.id == productId);
+  }
+
+  @override
+  Future<void> updateHotelExpressQrEnabled({
+    required String hotelId,
+    required bool enabled,
+  }) async {
+    final idx = _hotels.indexWhere((h) => h.id == hotelId);
+    if (idx != -1) {
+      _hotels[idx] = _hotels[idx].copyWith(expressQrEnabled: enabled);
+    }
   }
 
   @override

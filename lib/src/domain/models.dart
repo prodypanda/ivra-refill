@@ -130,6 +130,7 @@ class Hotel {
     this.notes = '',
     required this.roomCount,
     required this.pendingEdits,
+    this.expressQrEnabled = false,
   });
 
   final String id;
@@ -144,6 +145,7 @@ class Hotel {
   final String notes;
   final int roomCount;
   final int pendingEdits;
+  final bool expressQrEnabled;
 
   Hotel copyWith({
     String? name,
@@ -157,6 +159,7 @@ class Hotel {
     String? notes,
     int? roomCount,
     int? pendingEdits,
+    bool? expressQrEnabled,
   }) {
     return Hotel(
       id: id,
@@ -171,6 +174,7 @@ class Hotel {
       notes: notes ?? this.notes,
       roomCount: roomCount ?? this.roomCount,
       pendingEdits: pendingEdits ?? this.pendingEdits,
+      expressQrEnabled: expressQrEnabled ?? this.expressQrEnabled,
     );
   }
 
@@ -188,6 +192,7 @@ class Hotel {
       notes: asString(map['notes']),
       roomCount: asInt(map['room_count']),
       pendingEdits: asInt(map['pending_edits']),
+      expressQrEnabled: map['express_qr_enabled'] as bool? ?? false,
     );
   }
 }

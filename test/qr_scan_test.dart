@@ -11,6 +11,8 @@ import 'package:ivra_refill/src/features/inventory/inventory_screen.dart';
 import 'package:ivra_refill/src/state/app_state.dart';
 import 'package:ivra_refill/src/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ivra_refill/src/data/mock_ivra_repository.dart';
+import 'package:ivra_refill/src/routing/app_router.dart';
 
 void main() {
   SharedPreferences.setMockInitialValues({'express_qr_enabled': true});
@@ -205,6 +207,30 @@ void main() {
       final roomsContext = tester.element(find.byType(RoomsScreen));
       final currentUri = GoRouter.of(roomsContext).routeInformationProvider.value.uri;
       expect(currentUri.queryParameters['scan'], isNull);
+    });
+    testWidgets('Staff cannot see QR button and is redirected from /qr when Express QR is disabled', (tester) async {
+      await _pumpIvraApp(
+        tester,
+        size: const Size(1280, 900),
+        currentUser: _userForRole(UserRole.hotelStaff),
+      );
+
+      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
+      final repo = container.read(repositoryProvider) as MockIvraRepository;
+      await repo.updateHotelExpressQrEnabled(hotelId: 'hotel-seaside', enabled: false);
+      container.invalidate(hotelsProvider);
+      await tester.pumpAndSettle();
+
+      // Verify that the QR button is NOT displayed
+      expect(find.byIcon(Icons.qr_code_scanner_rounded), findsNothing);
+
+      // Verify that navigating to /qr redirects back to /rooms
+      container.read(routerProvider).go('/qr');
+      await tester.pumpAndSettle();
+
+      final roomsContext = tester.element(find.byType(RoomsScreen));
+      final currentUri = GoRouter.of(roomsContext).routeInformationProvider.value.uri;
+      expect(currentUri.path, '/rooms');
     });
   });
 }

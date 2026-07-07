@@ -133,6 +133,9 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
 
     final currentUser =
         ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final isStaff = currentUser?.role == UserRole.hotelStaff;
+    final expressQrEnabled = ref.watch(expressQrEnabledProvider);
+    final showQrButton = expressQrEnabled || !isStaff;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final canCreateRoomsFromTemplate = (currentUser?.isIvraUser == true) ||
         (currentUser?.role == UserRole.hotelManager &&
@@ -216,41 +219,43 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         ]);
       },
       actions: [
-        if (isCompact)
-          IconButton(
-            tooltip: ref.watch(expressQrEnabledProvider)
-                ? l10n.t('roomsGestionExpressQr')
-                : l10n.t('roomsGestionQr'),
-            icon: const Icon(Icons.qr_code_scanner_rounded),
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              context.go('/qr');
-            },
-          )
-        else
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: primaryColor.withValues(alpha: 0.1),
-              foregroundColor: primaryColor,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
-            label: Text(
-              ref.watch(expressQrEnabledProvider)
+        if (showQrButton) ...[
+          if (isCompact)
+            IconButton(
+              tooltip: ref.watch(expressQrEnabledProvider)
                   ? l10n.t('roomsGestionExpressQr')
                   : l10n.t('roomsGestionQr'),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              icon: const Icon(Icons.qr_code_scanner_rounded),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                context.go('/qr');
+              },
+            )
+          else
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: primaryColor.withValues(alpha: 0.1),
+                foregroundColor: primaryColor,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
+              label: Text(
+                ref.watch(expressQrEnabledProvider)
+                    ? l10n.t('roomsGestionExpressQr')
+                    : l10n.t('roomsGestionQr'),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                context.go('/qr');
+              },
             ),
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              context.go('/qr');
-            },
-          ),
-        const SizedBox(width: 8),
+          const SizedBox(width: 8),
+        ],
         if (canCreateRoomsFromTemplate)
           IconButton(
             tooltip: l10n.t('roomsTooltipCreateTemplate'),

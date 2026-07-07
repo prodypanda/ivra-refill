@@ -252,6 +252,11 @@ abstract class IvraRepository {
     String? deductFromHousekeeperId,
   });
 
+  Future<void> updateHotelExpressQrEnabled({
+    required String hotelId,
+    required bool enabled,
+  });
+
   Future<void> removeProductFromRoom({required String roomProductId});
 
   /// Clear any locally persisted offline read-cache. Called on sign-out so a

@@ -60,8 +60,15 @@ class AppSettingsScreen extends ConsumerWidget {
                 title: Text(l10n.t('expressQrTitle')),
                 subtitle: Text(l10n.t('expressQrSubtitle')),
                 value: ref.watch(expressQrEnabledProvider),
-                onChanged: (value) {
-                  ref.read(expressQrEnabledProvider.notifier).state = value;
+                onChanged: (value) async {
+                  final selectedHotelId = ref.read(selectedHotelIdProvider);
+                  if (selectedHotelId != null) {
+                    await ref.read(repositoryProvider).updateHotelExpressQrEnabled(
+                      hotelId: selectedHotelId,
+                      enabled: value,
+                    );
+                    ref.invalidate(hotelsProvider);
+                  }
                 },
               ),
             ),
