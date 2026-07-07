@@ -259,4 +259,35 @@ void main() {
       expect(terminal.isInBackoff(now), isFalse);
     });
   });
+
+  test('simulate network recovery with 50+ backlogged operations', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = MockIvraRepository();
+    final service = OfflineSyncService();
+
+    // Enqueue 55 operations
+    for (var i = 0; i < 55; i++) {
+      await service.enqueue(
+        type: SyncActionType.refill,
+        payload: {
+          'roomProductId': 'rp-101-shampoo',
+          'notes': 'Backlogged refill $i',
+        },
+      );
+    }
+
+    final pendingBefore = await service.pendingActions();
+    expect(pendingBefore.length, 55);
+
+    // Sync
+    final summary = await service.syncPendingDetailed(repository);
+
+    // Expect all synced
+    expect(summary.synced, 55);
+    expect(summary.failed, 0);
+
+    final pendingAfter = await service.pendingActions();
+    expect(pendingAfter, isEmpty);
+  });
+
 }
