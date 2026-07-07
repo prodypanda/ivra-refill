@@ -2,7 +2,7 @@
 name: ivra_refill
 description: Ivra hotel refill operations app for Android and web.
 publish_to: none
-version: 1.1.15+75
+version: 1.2.0+76
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -72,6 +72,7 @@ flutter:
     - assets/fonts/DejaVuSans.ttf
     - assets/fonts/DejaVuSans-Bold.ttf
     - assets/images/
+    - CHANGELOG.md
   fonts:
     - family: MyFlutterApp
       fonts:

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/mock_ivra_repository.dart';
@@ -13,7 +14,66 @@ import '../auth/biometric_auth.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/premium_snackbar.dart';
+import '../../version.dart';
 import 'app_settings_screen.dart';
+
+
+  void _showChangelog(BuildContext context, AppLocalizations l10n) async {
+    try {
+      final changelogData = await rootBundle.loadString('CHANGELOG.md');
+      if (!context.mounted) return;
+      
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          final theme = Theme.of(context);
+          return DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.8,
+            minChildSize: 0.5,
+            maxChildSize: 0.95,
+            builder: (context, scrollController) {
+              return SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("What's New", style: theme.textTheme.headlineSmall),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+                      Text('Current Version: v$appVersion', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child: ListView(
+                          controller: scrollController,
+                          children: [
+                            Text(changelogData, style: theme.textTheme.bodyMedium),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
+    } catch (e) {
+      if (context.mounted) {
+        PremiumSnackbar.showError(context, 'Failed to load changelog.');
+      }
+    }
+  }
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});

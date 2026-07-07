@@ -1,0 +1,131 @@
+# API Reference
+
+## Repository Methods
+
+- `Future<UserProfile> currentUser()`
+- `Future<void> updateCurrentUserProfile({`
+- `Future<void> updateUserProfile({`
+- `Future<void> changeCurrentUserPassword({`
+- `Future<DashboardMetrics> dashboardMetrics({String? hotelId})`
+- `Future<List<Hotel>> hotels()`
+- `Future<List<UserProfile>> teamMembers({String? hotelId})`
+- `Future<List<TeamInvitation>> teamInvitations({String? hotelId})`
+- `Future<List<Product>> products()`
+- `Future<List<RoomInfo>> rooms({String? hotelId})`
+- `Future<List<RoomProduct>> roomProducts({String? hotelId, String? roomId})`
+- `Future<List<InventoryItem>> inventory({String? hotelId})`
+- `Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({String? housekeeperId, String? hotelId})`
+- `Future<List<HousekeeperStockEvent>> fetchHousekeeperStockEvents({`
+- `Future<void> checkoutHousekeeperStock({required String housekeeperId, required String productId, required int fullBottles, required int fullBidons})`
+- `Future<void> returnHousekeeperStock({`
+- `Future<List<SuggestedOrder>> suggestedOrders({String? hotelId})`
+- `Future<List<ApprovalRequest>> approvalRequests({String? hotelId})`
+- `Future<List<AlertItem>> alerts({String? hotelId})`
+- `Future<List<RefillEvent>> recentRefillEvents({String? hotelId})`
+- `Future<List<InventoryEvent>> recentInventoryEvents({String? hotelId})`
+- `Future<Set<String>> appliedClientRequestIds({String? hotelId})`
+- `Future<List<AuditLog>> fetchAuditLogs()`
+- `Future<void> clearAuditLogs()`
+- `Future<List<String>> fetchRoles()`
+- `Future<Map<String, Set<String>>> fetchRolePermissions()`
+- `Future<List<String>> fetchAllPermissions()`
+- `Future<void> updateRolePermission({`
+- `Future<void> createRole({`
+- `Future<void> createHotel({`
+- `Future<void> deleteHotel(String hotelId)`
+- `Future<void> deleteRoom(String roomId)`
+- `Future<void> deleteFloor(String floorId)`
+- `Future<void> deleteUser(String userId)`
+- `Future<void> deleteAlert(String alertId)`
+- `Future<void> deleteProduct(String productId)`
+- `Future<void> createRoomsFromTemplate({`
+- `Future<void> inviteTeamMember({`
+- `Future<String> updateUserAvatar({`
+- `Future<TeamInvitation?> invitationByToken({required String token})`
+- `Future<void> acceptTeamInvitation({required String token})`
+- `Future<void> cancelTeamInvitation({required String invitationId})`
+- `Future<void> resendTeamInvitation({required String invitationId})`
+- `Future<void> setTeamMemberActive({`
+- `Future<void> createProduct({`
+- `Future<void> updateProduct({`
+- `Future<void> recordRefill({`
+- `Future<void> undoRefill({`
+- `Future<void> requestCorrection({`
+- `Future<void> replaceBottle({`
+- `Future<String?> submitChangeRequest({`
+- `Future<void> recordStockAdjustment({`
+- `Future<void> approveRequest({`
+- `Future<void> rejectRequest({`
+- `Future<int> refreshSmartAlerts({String? hotelId})`
+- `Future<void> resolveAlert({required String alertId})`
+- `Future<List<Hotel>> userHotels({required String userId})`
+- `Future<void> assignUserHotel({`
+- `Future<void> unassignUserHotel({`
+- `Future<void> addProductToRoom({`
+- `Future<void> removeProductFromRoom({required String roomProductId})`
+- `Future<void> clearCachedData()`
+
+## Supabase Tables
+
+- `hotels`
+- `profiles`
+- `user_invitations`
+- `floors`
+- `rooms`
+- `products`
+- `room_products`
+- `hotel_inventory`
+- `refill_events`
+- `correction_requests`
+- `approval_requests`
+- `inventory_events`
+- `audit_log`
+- `alerts`
+- `user_hotels`
+- `user_fcm_tokens`
+- `audit_logs`
+- `roles`
+- `role_permissions`
+- `housekeeper_allocations`
+- `housekeeper_stock_events`
+
+## RLS Policies
+
+- `Table: hotels - Policy: hotels_select`
+- `Table: hotels - Policy: hotels_insert_ivra`
+- `Table: hotels - Policy: hotels_update_ivra`
+- `Table: profiles - Policy: profiles_select`
+- `Table: user_invitations - Policy: user_invitations_select`
+- `Table: floors - Policy: floors_select`
+- `Table: floors - Policy: floors_write_ivra`
+- `Table: rooms - Policy: rooms_select`
+- `Table: rooms - Policy: rooms_write_ivra`
+- `Table: products - Policy: products_select`
+- `Table: products - Policy: products_write_ivra`
+- `Table: room_products - Policy: room_products_select`
+- `Table: room_products - Policy: room_products_write_ivra`
+- `Table: hotel_inventory - Policy: inventory_select`
+- `Table: refill_events - Policy: refill_events_select`
+- `Table: correction_requests - Policy: corrections_select`
+- `Table: approval_requests - Policy: approvals_select`
+- `Table: inventory_events - Policy: inventory_events_select`
+- `Table: audit_log - Policy: audit_select_ivra`
+- `Table: alerts - Policy: alerts_select`
+- `Table: user_hotels - Policy: Users can read their own hotel assignments`
+- `Table: user_hotels - Policy: App admins can manage all assignments`
+- `Table: profiles - Policy: Users can view profiles`
+- `Table: profiles - Policy: Users can update their own profile`
+- `Table: profiles - Policy: App admins can manage all profiles`
+- `Table: hotels - Policy: Users can view assigned hotels or all if admin`
+- `Table: hotels - Policy: App admins can manage hotels`
+- `Table: user_fcm_tokens - Policy: Users can view their own tokens`
+- `Table: user_fcm_tokens - Policy: Users can insert their own tokens`
+- `Table: user_fcm_tokens - Policy: Users can update their own tokens`
+- `Table: user_fcm_tokens - Policy: Users can delete their own tokens`
+- `Table: public - Policy: Super admins can view audit logs`
+- `Table: storage - Policy: products_bucket_public_read`
+- `Table: storage - Policy: products_bucket_write_ivra`
+- `Table: storage - Policy: products_bucket_update_ivra`
+- `Table: storage - Policy: products_bucket_delete_ivra`
+- `Table: profiles - Policy: profiles_select`
+- `Table: hotels - Policy: Users can view assigned hotels or all if admin`

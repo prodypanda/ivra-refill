@@ -22,6 +22,7 @@ import '../features/reports/reports_screen.dart';
 import '../features/rooms/rooms_screen.dart';
 import '../features/settings/app_settings_screen.dart';
 import '../features/settings/settings_screen.dart';
+import '../features/settings/role_permissions_screen.dart';
 import '../features/shared/not_found_screen.dart';
 import '../features/shell/app_shell.dart';
 import '../features/team/team_screen.dart';
@@ -360,6 +361,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: SettingsScreen.route,
             builder: (context, state) => const SettingsScreen(),
+          ),
+          GoRoute(
+            path: RolePermissionsScreen.route,
+            builder: (context, state) => const RolePermissionsScreen(),
           ),
           GoRoute(
             path: AppSettingsScreen.route,
