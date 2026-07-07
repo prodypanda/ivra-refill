@@ -152,10 +152,7 @@ class _AcceptInvitationScreenState
       await ref
           .read(repositoryProvider)
           .acceptTeamInvitation(token: widget.token.trim());
-      ref.invalidate(realCurrentUserProvider);
-      ref.invalidate(currentUserProvider);
-      ref.invalidate(teamMembersProvider);
-      ref.invalidate(teamInvitationsProvider);
+      invalidateAccountScopedData(ref);
       if (!mounted) return;
       context.go(DashboardScreen.route);
     } catch (error) {

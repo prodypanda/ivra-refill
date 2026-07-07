@@ -241,7 +241,7 @@ final auditLogsProvider = FutureProvider.autoDispose<List<AuditLog>>((ref) {
   return ref.watch(repositoryProvider).fetchAuditLogs();
 });
 
-final teamMembersProvider = FutureProvider<List<UserProfile>>((ref) async {
+final teamMembersProvider = FutureProvider.autoDispose<List<UserProfile>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
   final members = await ref.watch(repositoryProvider).teamMembers(hotelId: hotelId);
   final invitations = await ref.watch(repositoryProvider).teamInvitations(hotelId: hotelId);
@@ -256,7 +256,7 @@ final demoUsersProvider = FutureProvider<List<UserProfile>>((ref) {
   return ref.watch(repositoryProvider).teamMembers();
 });
 
-final teamInvitationsProvider = FutureProvider<List<TeamInvitation>>((ref) {
+final teamInvitationsProvider = FutureProvider.autoDispose<List<TeamInvitation>>((ref) {
   final hotelId = ref.watch(selectedHotelIdProvider);
   return ref.watch(repositoryProvider).teamInvitations(hotelId: hotelId);
 });
