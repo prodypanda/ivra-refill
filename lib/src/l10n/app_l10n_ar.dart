@@ -2738,7 +2738,7 @@ class AppL10nAr extends AppL10n {
   String get dialogRefillNotesHint => 'مثال: تعبئة قياسية...';
 
   @override
-  String get dateFormatHint => 'يوم-شهر-سنة';
+  String get dateFormatHint => 'سنة-شهر-يوم';
 
   @override
   String errorWithArgs(String error) {
@@ -2773,5 +2773,18 @@ class AppL10nAr extends AppL10n {
   @override
   String roomNumberLabel(String number) {
     return 'غرفة $number';
+  }
+
+  @override
+  String get noProductsFound => 'لم يتم العثور على منتجات';
+
+  @override
+  String markDamagedTitle(String product, String room) {
+    return 'وضع علامة كـ تالف - $product في الغرفة $room';
+  }
+
+  @override
+  String markLostTitle(String product, String room) {
+    return 'وضع علامة كـ مفقود - $product في الغرفة $room';
   }
 }

@@ -3,6 +3,9 @@
 
 const Map<String, Map<String, String>> kL10nValues = {
   'en': {
+    'noProductsFound': 'No products found',
+    'markDamagedTitle': 'Mark damaged - {product} in Room {room}',
+    'markLostTitle': 'Mark lost - {product} in Room {room}',
     'markAsRead': 'Mark as Read',
     'confirmDeleteHotel': 'Are you sure you want to delete the hotel \'{hotelName}\'? This action is permanent, cannot be undone, and will permanently remove all associated rooms, staff assignments, and records.',
     'confirmDeleteRoom': 'Are you sure you want to delete room \'{roomNumber}\'? This action is permanent, cannot be undone, and will permanently remove all associated products and history.',
@@ -845,6 +848,9 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomNumberLabel': 'Room {number}',
   },
   'fr': {
+    'noProductsFound': 'Aucun produit trouvé',
+    'markDamagedTitle': 'Marquer comme endommagé - {product} dans la chambre {room}',
+    'markLostTitle': 'Marquer comme perdu - {product} dans la chambre {room}',
     'markAsRead': 'Marquer comme lu',
     'confirmDeleteHotel': 'Voulez-vous vraiment supprimer l\'hôtel \'{hotelName}\' ? Cette action est irréversible et supprimera définitivement toutes les chambres, affectations de personnel et enregistrements associés.',
     'confirmDeleteRoom': 'Voulez-vous vraiment supprimer la chambre \'{roomNumber}\' ? Cette action est irréversible et supprimera définitivement tous les produits et l\'historique associés.',
@@ -1687,6 +1693,9 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomNumberLabel': 'Chambre {number}',
   },
   'ar': {
+    'noProductsFound': 'لم يتم العثور على منتجات',
+    'markDamagedTitle': 'وضع علامة كـ تالف - {product} في الغرفة {room}',
+    'markLostTitle': 'وضع علامة كـ مفقود - {product} في الغرفة {room}',
     'markAsRead': 'تحديد كمقروء',
     'confirmDeleteHotel': 'هل أنت متأكد من رغبتك في حذف الفندق \'{hotelName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع الغرف المرتبطة، وتعيينات الموظفين، والسجلات بشكل نهائي.',
     'confirmDeleteRoom': 'هل أنت متأكد من رغبتك في حذف الغرفة \'{roomNumber}\'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع المنتجات والسجلات المرتبطة بشكل نهائي.',
@@ -2529,6 +2538,9 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomNumberLabel': 'غرفة {number}',
   },
   'it': {
+    'noProductsFound': 'Nessun prodotto trovato',
+    'markDamagedTitle': 'Segna come danneggiato - {product} nella Stanza {room}',
+    'markLostTitle': 'Segna come perso - {product} nella Stanza {room}',
     'markAsRead': 'Segna come letto',
     'confirmDeleteHotel': 'Sei sicuro di voler eliminare l\'hotel \'{hotelName}\'? Questa azione è permanente, non può essere annullata ed eliminerà tutte le camere, assegnazioni del personale e record associati.',
     'confirmDeleteRoom': 'Sei sicuro di voler eliminare la camera \'{roomNumber}\'? Questa azione è permanente, non può essere annullata ed eliminerà tutti i prodotti e la cronologia associati.',

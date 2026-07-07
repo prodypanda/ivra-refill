@@ -2789,4 +2789,17 @@ class AppL10nEn extends AppL10n {
   String roomNumberLabel(String number) {
     return 'Room $number';
   }
+
+  @override
+  String get noProductsFound => 'No products found';
+
+  @override
+  String markDamagedTitle(String product, String room) {
+    return 'Mark damaged - $product in Room $room';
+  }
+
+  @override
+  String markLostTitle(String product, String room) {
+    return 'Mark lost - $product in Room $room';
+  }
 }
