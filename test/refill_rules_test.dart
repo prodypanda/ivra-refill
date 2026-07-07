@@ -983,35 +983,4 @@ void main() {
     expect(service.canUndoRefill(event31), isFalse);
   });
 
-
-  test('30-minute undo window bounds exactly at 29 and 31 minutes', () async {
-    final repository = MockIvraRepository();
-    final service = RefillRulesService();
-    final roomProduct = (await repository.roomProducts()).first;
-
-    // Simulate event occurred 29 minutes ago
-    final event29 = RefillEvent(
-      id: '29-min-event',
-      roomProductId: roomProduct.id,
-      type: RefillEventType.refill,
-      previousRefillCount: 0,
-      newRefillCount: 1,
-      occurredAt: DateTime.now().subtract(const Duration(minutes: 29)),
-      performedBy: 'u1',
-    );
-    expect(service.canUndoRefill(event29), isTrue);
-
-    // Simulate event occurred 31 minutes ago
-    final event31 = RefillEvent(
-      id: '31-min-event',
-      roomProductId: roomProduct.id,
-      type: RefillEventType.refill,
-      previousRefillCount: 0,
-      newRefillCount: 1,
-      occurredAt: DateTime.now().subtract(const Duration(minutes: 31)),
-      performedBy: 'u1',
-    );
-    expect(service.canUndoRefill(event31), isFalse);
-  });
-
 }
