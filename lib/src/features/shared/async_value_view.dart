@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/app_localizations.dart';
 import 'premium_loading.dart';
+import '../../utils/app_logger.dart';
 
 class AsyncValueView<T> extends StatelessWidget {
   const AsyncValueView({
@@ -29,10 +30,14 @@ class AsyncValueView<T> extends StatelessWidget {
               child: PremiumLoadingWidget(),
             ),
           ),
-      error: (error, stackTrace) => _AsyncErrorState(
-        message: error.toString(),
-        onRetry: onRetry,
-      ),
+      error: (error, stackTrace) {
+        AppLogger.error(error,
+            stackTrace: stackTrace, context: 'AsyncValueView Error');
+        return _AsyncErrorState(
+          message: error.toString(),
+          onRetry: onRetry,
+        );
+      },
     );
   }
 }

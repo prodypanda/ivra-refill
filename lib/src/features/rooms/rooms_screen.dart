@@ -22,7 +22,7 @@ import '../shared/page_scaffold.dart';
 import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
-import '../shared/premium_loading.dart';
+
 import '../shared/premium_confirm_dialog.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/refill_percentage_dialog.dart';
@@ -131,10 +131,12 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final primaryColor = theme.colorScheme.primary;
     final isCompact = MediaQuery.of(context).size.width < 600;
 
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser =
+        ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final canCreateRoomsFromTemplate = (currentUser?.isIvraUser == true) ||
-        (currentUser?.role == UserRole.hotelManager && currentUser?.hotelId == selectedHotelId);
+        (currentUser?.role == UserRole.hotelManager &&
+            currentUser?.hotelId == selectedHotelId);
 
     final hotelsAsync = ref.watch(hotelsProvider);
     final roomsAsync = ref.watch(roomsProvider);
@@ -145,7 +147,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         return roomProductsAsync.when<AsyncValue<List<_RoomGroup>>>(
           data: (products) {
             final groups = rooms.map((room) {
-              final roomProducts = products.where((p) => p.roomId == room.id).toList();
+              final roomProducts =
+                  products.where((p) => p.roomId == room.id).toList();
               return _RoomGroup(roomInfo: room, products: roomProducts);
             }).toList();
             return AsyncValue.data(groups);
@@ -171,7 +174,9 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         if (context.mounted) {
           final roomProducts = roomProductsAsync.value ?? const [];
           final hotelItems = selectedHotelId != null
-              ? roomProducts.where((item) => item.hotelId == selectedHotelId).toList()
+              ? roomProducts
+                  .where((item) => item.hotelId == selectedHotelId)
+                  .toList()
               : roomProducts;
 
           await _scanRoomOrProductQr(context, hotelItems);
@@ -185,9 +190,10 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final combinedValue = combinedAsync.valueOrNull;
     if (combinedValue != null && widget.roomNumber != null && !_hasAutoOpened) {
       final matchedGroup = combinedValue.cast<_RoomGroup?>().firstWhere(
-        (g) => g?.roomNumber.toLowerCase() == widget.roomNumber!.toLowerCase(),
-        orElse: () => null,
-      );
+            (g) =>
+                g?.roomNumber.toLowerCase() == widget.roomNumber!.toLowerCase(),
+            orElse: () => null,
+          );
       if (matchedGroup != null) {
         _hasAutoOpened = true;
         _expandedFloors.add(matchedGroup.floorNumber);
@@ -254,7 +260,18 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
           ref.invalidate(hotelsProvider);
           ref.invalidate(roomProductsProvider);
         },
-        loadingWidget: const PremiumLoadingWidget(),
+        loadingWidget: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: List.generate(
+              4,
+              (index) => const Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: CardShimmer(),
+              ),
+            ),
+          ),
+        ),
         builder: (hotels) {
           if (hotels.isEmpty) {
             return EmptyState(
@@ -305,14 +322,16 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     ref.invalidate(roomsProvider);
                     ref.invalidate(roomProductsProvider);
                   },
-                  loadingWidget: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    itemCount: 3,
-                    itemBuilder: (context, index) => const Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: CardShimmer(),
+                  loadingWidget: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: List.generate(
+                        3,
+                        (index) => const Padding(
+                          padding: EdgeInsets.only(bottom: 16),
+                          child: CardShimmer(),
+                        ),
+                      ),
                     ),
                   ),
                   builder: (groups) {
@@ -341,7 +360,10 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                       if (_productSearchQuery.isNotEmpty) {
                         final query = _productSearchQuery.toLowerCase();
                         final matches = group.products.any((item) {
-                          final name = item.product.label(Localizations.localeOf(context).languageCode).toLowerCase();
+                          final name = item.product
+                              .label(
+                                  Localizations.localeOf(context).languageCode)
+                              .toLowerCase();
                           final sku = item.product.sku.toLowerCase();
                           return name.contains(query) || sku.contains(query);
                         });
@@ -383,13 +405,17 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     // Group rooms by floor
                     final Map<int, List<_RoomGroup>> roomsByFloor = {};
                     for (final group in filteredGroups) {
-                      roomsByFloor.putIfAbsent(group.floorNumber, () => []).add(group);
+                      roomsByFloor
+                          .putIfAbsent(group.floorNumber, () => [])
+                          .add(group);
                     }
 
                     final sortedFloors = roomsByFloor.keys.toList()..sort();
                     final isMobile = MediaQuery.sizeOf(context).width < 720;
-                    final canDeleteRooms = ref.watch(hasPermissionProvider('manage_rooms')) &&
-                        (currentUser?.isIvraUser == true || currentUser?.hotelId == selectedHotelId);
+                    final canDeleteRooms =
+                        ref.watch(hasPermissionProvider('manage_rooms')) &&
+                            (currentUser?.isIvraUser == true ||
+                                currentUser?.hotelId == selectedHotelId);
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -407,11 +433,14 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                           (() {
                             final floorRooms = roomsByFloor[floor]!;
                             final floorHasCritical = floorRooms.any((group) {
-                              final status = _getRoomOverallStatus(group.products);
-                              return status == _RoomOverallStatus.attentionRequired;
+                              final status =
+                                  _getRoomOverallStatus(group.products);
+                              return status ==
+                                  _RoomOverallStatus.attentionRequired;
                             });
                             final floorHasWarning = floorRooms.any((group) {
-                              final status = _getRoomOverallStatus(group.products);
+                              final status =
+                                  _getRoomOverallStatus(group.products);
                               return status == _RoomOverallStatus.refillNeeded;
                             });
                             return _buildFloorHeader(
@@ -440,7 +469,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                       context, ref, selectedHotelId, floor)
                                   : null,
                               onDeleteFloor: canDeleteRooms
-                                  ? () => _confirmDeleteFloor(context, ref, floor)
+                                  ? () =>
+                                      _confirmDeleteFloor(context, ref, floor)
                                   : null,
                             );
                           })(),
@@ -448,28 +478,28 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                               _searchQuery.isNotEmpty ||
                               _productSearchQuery.isNotEmpty) ...[
                             const SizedBox(height: 12),
-                          AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            transitionBuilder: (child, animation) =>
-                                FadeTransition(
-                              opacity: animation,
-                              child: SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(0, 0.05),
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: child,
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              transitionBuilder: (child, animation) =>
+                                  FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, 0.05),
+                                    end: Offset.zero,
+                                  ).animate(animation),
+                                  child: child,
+                                ),
                               ),
-                            ),
-                            child: _showDetailedView
-                                ? Column(
-                                    key: const ValueKey('detailed_view'),
-                                    children: [
-                                      for (final group in _sortRoomsInFloor(
-                                          roomsByFloor[floor]!))
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 16),
+                              child: _showDetailedView
+                                  ? Column(
+                                      key: const ValueKey('detailed_view'),
+                                      children: [
+                                        for (final group in _sortRoomsInFloor(
+                                            roomsByFloor[floor]!))
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 16),
                                             child: _RoomCard(
                                               roomId: group.roomId,
                                               roomProducts: group.products,
@@ -478,34 +508,40 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                               hotelId: group.hotelId,
                                               onDeleteRoom: canDeleteRooms
                                                   ? () => _confirmDeleteRoom(
-                                                      context, ref, group.roomId, group.roomNumber)
+                                                      context,
+                                                      ref,
+                                                      group.roomId,
+                                                      group.roomNumber)
                                                   : null,
-                                              productSearchQuery: _productSearchQuery,
-                                            ),),
-                                    ],
-                                  )
-                                : Padding(
-                                    key: const ValueKey('compact_view'),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    child: Wrap(
-                                      spacing: 12,
-                                      runSpacing: 12,
-                                      children: [
-                                        for (final group in _sortRoomsInFloor(
-                                            roomsByFloor[floor]!))
-                                          _CompactRoomTile(
-                                            roomNumber: group.roomNumber,
-                                            roomProducts: group.products,
-                                            onTap: () => _showRoomDetailsDialog(
-                                              context,
-                                              group,
+                                              productSearchQuery:
+                                                  _productSearchQuery,
                                             ),
                                           ),
                                       ],
+                                    )
+                                  : Padding(
+                                      key: const ValueKey('compact_view'),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8),
+                                      child: Wrap(
+                                        spacing: 12,
+                                        runSpacing: 12,
+                                        children: [
+                                          for (final group in _sortRoomsInFloor(
+                                              roomsByFloor[floor]!))
+                                            _CompactRoomTile(
+                                              roomNumber: group.roomNumber,
+                                              roomProducts: group.products,
+                                              onTap: () =>
+                                                  _showRoomDetailsDialog(
+                                                context,
+                                                group,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                          ),
+                            ),
                           ],
                         ],
                         const SizedBox(height: 40),
@@ -602,132 +638,134 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
           onTap: onToggle,
           borderRadius: BorderRadius.circular(20),
           child: Container(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withValues(alpha: 0.8),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: primaryColor.withValues(alpha: 0.2),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: primaryColor.withValues(alpha: 0.05),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface.withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: primaryColor.withValues(alpha: 0.2),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withValues(alpha: 0.05),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
-          children: [
-            AnimatedRotation(
-              turns: isExpanded ? 0.25 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: Icon(Icons.chevron_right_rounded,
-                  color: primaryColor, size: 26),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    primaryColor.withValues(alpha: 0.2),
-                    primaryColor.withValues(alpha: 0.05),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Row(
+              children: [
+                AnimatedRotation(
+                  turns: isExpanded ? 0.25 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(Icons.chevron_right_rounded,
+                      color: primaryColor, size: 26),
                 ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: primaryColor.withValues(alpha: 0.3),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        primaryColor.withValues(alpha: 0.2),
+                        primaryColor.withValues(alpha: 0.05),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: primaryColor.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child:
+                      Icon(Icons.layers_rounded, color: primaryColor, size: 24),
                 ),
-              ),
-              child: Icon(Icons.layers_rounded, color: primaryColor, size: 24),
-            ),
-            const SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                '${l10n.t('roomsLabelFloor')} $floor',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: theme.colorScheme.onSurface,
-                  letterSpacing: -0.5,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: primaryColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$roomCount',
-                style: theme.textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: primaryColor,
-                ),
-              ),
-            ),
-            if (hasCritical) ...[
-              const SizedBox(width: 8),
-              Tooltip(
-                message: l10n.t('roomsStatusAttentionRequired'),
-                child: Icon(
-                  Icons.warning_amber_rounded,
-                  color: theme.colorScheme.error,
-                  size: 20,
-                ),
-              ),
-            ] else if (hasWarning) ...[
-              const SizedBox(width: 8),
-              Tooltip(
-                message: l10n.t('roomsStatusRefillNeeded'),
-                child: Icon(
-                  Icons.hourglass_empty_rounded,
-                  color: Colors.orange.shade700,
-                  size: 20,
-                ),
-              ),
-            ],
-            const SizedBox(width: 16),
-            Expanded(
-              child: Container(
-                height: 2,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      primaryColor.withValues(alpha: 0.5),
-                      primaryColor.withValues(alpha: 0.0),
-                    ],
+                const SizedBox(width: 16),
+                Flexible(
+                  child: Text(
+                    '${l10n.t('roomsLabelFloor')} $floor',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: theme.colorScheme.onSurface,
+                      letterSpacing: -0.5,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '$roomCount',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: primaryColor,
+                    ),
+                  ),
+                ),
+                if (hasCritical) ...[
+                  const SizedBox(width: 8),
+                  Tooltip(
+                    message: l10n.t('roomsStatusAttentionRequired'),
+                    child: Icon(
+                      Icons.warning_amber_rounded,
+                      color: theme.colorScheme.error,
+                      size: 20,
+                    ),
+                  ),
+                ] else if (hasWarning) ...[
+                  const SizedBox(width: 8),
+                  Tooltip(
+                    message: l10n.t('roomsStatusRefillNeeded'),
+                    child: Icon(
+                      Icons.hourglass_empty_rounded,
+                      color: Colors.orange.shade700,
+                      size: 20,
+                    ),
+                  ),
+                ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Container(
+                    height: 2,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          primaryColor.withValues(alpha: 0.5),
+                          primaryColor.withValues(alpha: 0.0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                if (onAddRoom != null) ...[
+                  const SizedBox(width: 8),
+                  IconButton(
+                    tooltip: l10n.t('roomsBtnAddRoom'),
+                    icon: Icon(Icons.add_circle_outline, color: primaryColor),
+                    onPressed: onAddRoom,
+                  ),
+                ],
+                if (onDeleteFloor != null) ...[
+                  const SizedBox(width: 4),
+                  IconButton(
+                    tooltip: l10n.t('delete'),
+                    icon: Icon(Icons.delete_outline,
+                        color: theme.colorScheme.error),
+                    onPressed: onDeleteFloor,
+                  ),
+                ],
+              ],
             ),
-            if (onAddRoom != null) ...[
-              const SizedBox(width: 8),
-              IconButton(
-                tooltip: l10n.t('roomsBtnAddRoom'),
-                icon: Icon(Icons.add_circle_outline, color: primaryColor),
-                onPressed: onAddRoom,
-              ),
-            ],
-            if (onDeleteFloor != null) ...[
-              const SizedBox(width: 4),
-              IconButton(
-                tooltip: l10n.t('delete'),
-                icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
-                onPressed: onDeleteFloor,
-              ),
-            ],
-          ],
-        ),
-      ),
+          ),
         ),
       ),
     );
@@ -741,7 +779,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     UserProfile? currentUser,
     String? selectedHotelId,
   ) {
-    final roomProducts = ref.watch(roomProductsProvider.select((s) => s.valueOrNull ?? const []));
+    final roomProducts = ref
+        .watch(roomProductsProvider.select((s) => s.valueOrNull ?? const []));
     final hotelItems = selectedHotelId != null
         ? roomProducts.where((item) => item.hotelId == selectedHotelId).toList()
         : const <RoomProduct>[];
@@ -835,8 +874,10 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                           ),
                         IconButton(
                           tooltip: l10n.t('qrScanTitle'),
-                          icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
-                          onPressed: () => _scanRoomOrProductQr(context, hotelItems),
+                          icon: const Icon(Icons.qr_code_scanner_outlined,
+                              size: 20),
+                          onPressed: () =>
+                              _scanRoomOrProductQr(context, hotelItems),
                         ),
                       ],
                     ),
@@ -866,8 +907,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                   controller: _productSearchController,
                   decoration: InputDecoration(
                     hintText: l10n.t('roomsSearchProductPlaceholder'),
-                    prefixIcon:
-                        const Icon(Icons.spa_outlined, size: 20, color: Colors.grey),
+                    prefixIcon: const Icon(Icons.spa_outlined,
+                        size: 20, color: Colors.grey),
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -885,8 +926,10 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                           ),
                         IconButton(
                           tooltip: l10n.t('qrScanTitle'),
-                          icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
-                          onPressed: () => _scanProductQrGlobal(context, hotelItems),
+                          icon: const Icon(Icons.qr_code_scanner_outlined,
+                              size: 20),
+                          onPressed: () =>
+                              _scanProductQrGlobal(context, hotelItems),
                         ),
                       ],
                     ),
@@ -1109,12 +1152,18 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     );
   }
 
-  Future<void> _scanRoomOrProductQr(BuildContext context, List<RoomProduct> hotelItems) async {
-    final roomCodes = hotelItems.map((e) => 'room:${e.hotelId}:${e.roomNumber}').toSet().toList();
-    final productCodes = hotelItems.map((e) => 'product:${e.product.sku}').toSet().toList();
+  Future<void> _scanRoomOrProductQr(
+      BuildContext context, List<RoomProduct> hotelItems) async {
+    final roomCodes = hotelItems
+        .map((e) => 'room:${e.hotelId}:${e.roomNumber}')
+        .toSet()
+        .toList();
+    final productCodes =
+        hotelItems.map((e) => 'product:${e.product.sku}').toSet().toList();
     final allDemoCodes = [...roomCodes, ...productCodes];
 
-    final code = await PremiumQrScannerDialog.show(context, demoCodes: allDemoCodes);
+    final code =
+        await PremiumQrScannerDialog.show(context, demoCodes: allDemoCodes);
     if (code == null || code.trim().isEmpty) return;
 
     final trimmed = code.trim();
@@ -1138,7 +1187,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
       });
     } else {
       // Check if it matches a product SKU in hotelItems
-      final isSku = hotelItems.any((e) => e.product.sku.toLowerCase() == trimmed.toLowerCase());
+      final isSku = hotelItems
+          .any((e) => e.product.sku.toLowerCase() == trimmed.toLowerCase());
       if (isSku) {
         _productSearchController.text = trimmed;
         setState(() {
@@ -1154,13 +1204,17 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     }
   }
 
-  Future<void> _scanProductQrGlobal(BuildContext context, List<RoomProduct> hotelItems) async {
-    final productCodes = hotelItems.map((e) => 'product:${e.product.sku}').toSet().toList();
-    final code = await PremiumQrScannerDialog.show(context, demoCodes: productCodes);
+  Future<void> _scanProductQrGlobal(
+      BuildContext context, List<RoomProduct> hotelItems) async {
+    final productCodes =
+        hotelItems.map((e) => 'product:${e.product.sku}').toSet().toList();
+    final code =
+        await PremiumQrScannerDialog.show(context, demoCodes: productCodes);
     if (code == null || code.trim().isEmpty) return;
 
     final trimmed = code.trim();
-    final sku = trimmed.startsWith('product:') ? trimmed.split(':')[1] : trimmed;
+    final sku =
+        trimmed.startsWith('product:') ? trimmed.split(':')[1] : trimmed;
     _productSearchController.text = sku;
     setState(() {
       _productSearchQuery = sku;
@@ -1236,8 +1290,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     ref.invalidate(dashboardProvider);
   }
 
-  Future<void> _confirmDeleteRoom(
-      BuildContext context, WidgetRef ref, String roomId, String roomNumber) async {
+  Future<void> _confirmDeleteRoom(BuildContext context, WidgetRef ref,
+      String roomId, String roomNumber) async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await PremiumConfirmDialog.show(
       context,
@@ -1261,17 +1315,19 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
   Future<void> _confirmDeleteFloor(
       BuildContext context, WidgetRef ref, int floorNumber) async {
     final l10n = AppLocalizations.of(context);
-    
+
     final roomsList = await ref.read(roomsProvider.future);
     if (!context.mounted) return;
-    final floorInfo = roomsList.where((r) => r.floorNumber == floorNumber).firstOrNull;
+    final floorInfo =
+        roomsList.where((r) => r.floorNumber == floorNumber).firstOrNull;
     if (floorInfo == null) return;
     final floorId = floorInfo.floorId;
 
     final confirmed = await PremiumConfirmDialog.show(
       context,
       title: l10n.t('delete'),
-      message: l10n.tParams('confirmDeleteFloor', {'floorNumber': floorNumber.toString()}),
+      message: l10n.tParams(
+          'confirmDeleteFloor', {'floorNumber': floorNumber.toString()}),
     );
 
     if (confirmed && context.mounted) {
@@ -1591,7 +1647,8 @@ Future<bool?> _showInsufficientStockDialog({
     builder: (context) => AlertDialog(
       title: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.error),
+          Icon(Icons.warning_amber_rounded,
+              color: Theme.of(context).colorScheme.error),
           const SizedBox(width: 8),
           Text(l10n.t('inventoryEnforceTitle')),
         ],
@@ -1622,7 +1679,8 @@ Future<bool?> showHousekeeperStockDialog({
     builder: (context) => AlertDialog(
       title: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.error),
+          Icon(Icons.warning_amber_rounded,
+              color: Theme.of(context).colorScheme.error),
           const SizedBox(width: 8),
           Text(l10n.t('inventoryEnforceTitle')),
         ],
@@ -1713,14 +1771,14 @@ Future<void> replaceBottle(
           showProceedAction: true,
         );
         if (proceed != true) return;
-        
+
         // Deduct 1 full bottle from hotel central inventory and add to housekeeper allocation/cart
         await ref.read(repositoryProvider).checkoutHousekeeperStock(
-          housekeeperId: currentUser!.id,
-          productId: item.product.id,
-          fullBottles: 1,
-          fullBidons: 0,
-        );
+              housekeeperId: currentUser!.id,
+              productId: item.product.id,
+              fullBottles: 1,
+              fullBidons: 0,
+            );
         autoAdjust = false;
       } else {
         await showHousekeeperStockDialog(
@@ -1847,7 +1905,8 @@ Future<bool> checkAndCheckoutHousekeeperRefillStock(
   // A housekeeper has refill stock if:
   // - They have an open bidon: openBidons > 0
   // - Or they have a full bidon: fullBidons > 0
-  if (housekeeperAllocation.openBidons > 0 || housekeeperAllocation.fullBidons > 0) {
+  if (housekeeperAllocation.openBidons > 0 ||
+      housekeeperAllocation.fullBidons > 0) {
     return true; // Has stock, can proceed
   }
 
@@ -1890,12 +1949,12 @@ Future<bool> checkAndCheckoutHousekeeperRefillStock(
 
     // Deduct 1 full bidon from hotel central inventory and add to housekeeper allocation/cart
     await ref.read(repositoryProvider).checkoutHousekeeperStock(
-      housekeeperId: currentUser!.id,
-      productId: item.product.id,
-      fullBottles: 0,
-      fullBidons: 1,
-    );
-    
+          housekeeperId: currentUser!.id,
+          productId: item.product.id,
+          fullBottles: 0,
+          fullBidons: 1,
+        );
+
     // Invalidate housekeeper allocations provider to let UI / providers update
     ref.invalidate(housekeeperAllocationsProvider);
     return true;
@@ -1928,10 +1987,12 @@ class _AddProductToRoomDialog extends ConsumerStatefulWidget {
   final Set<String> existingProductIds;
 
   @override
-  ConsumerState<_AddProductToRoomDialog> createState() => _AddProductToRoomDialogState();
+  ConsumerState<_AddProductToRoomDialog> createState() =>
+      _AddProductToRoomDialogState();
 }
 
-class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog> {
+class _AddProductToRoomDialogState
+    extends ConsumerState<_AddProductToRoomDialog> {
   String? _selectedSku;
   bool _isLoading = false;
 
@@ -1973,7 +2034,8 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                 items: availableProducts.map((p) {
                   return DropdownMenuItem<String>(
                     value: p.sku,
-                    child: Text(l10n.tParams('productSkuLabel', {'label': p.label(language), 'sku': p.sku})),
+                    child: Text(l10n.tParams('productSkuLabel',
+                        {'label': p.label(language), 'sku': p.sku})),
                   );
                 }).toList(),
                 onChanged: _isLoading
@@ -2006,15 +2068,19 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                     _isLoading = true;
                   });
                   try {
-                    final currentUser = ref.read(currentUserProvider).valueOrNull;
-                    final isHousekeeper = currentUser?.role == UserRole.housekeeper;
+                    final currentUser =
+                        ref.read(currentUserProvider).valueOrNull;
+                    final isHousekeeper =
+                        currentUser?.role == UserRole.housekeeper;
                     var autoAdjust = true;
 
                     if (isHousekeeper) {
                       final products = await ref.read(productsProvider.future);
-                      final selectedProduct = products.firstWhere((p) => p.sku == _selectedSku!);
+                      final selectedProduct =
+                          products.firstWhere((p) => p.sku == _selectedSku!);
 
-                      final allocations = await ref.read(housekeeperAllocationsProvider.future);
+                      final allocations =
+                          await ref.read(housekeeperAllocationsProvider.future);
 
                       final housekeeperAllocation = allocations.firstWhere(
                         (a) => a.product.sku == _selectedSku!,
@@ -2033,7 +2099,8 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                       );
 
                       if (housekeeperAllocation.fullBottles == 0) {
-                        final inventory = await ref.read(inventoryProvider.future);
+                        final inventory =
+                            await ref.read(inventoryProvider.future);
 
                         final hotelStockItem = inventory.firstWhere(
                           (stock) => stock.product.sku == _selectedSku!,
@@ -2055,7 +2122,8 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                           if (context.mounted) {
                             final proceed = await showHousekeeperStockDialog(
                               context: context,
-                              message: l10n.tParams('housekeeperAddGetFromHotel', {
+                              message:
+                                  l10n.tParams('housekeeperAddGetFromHotel', {
                                 'product': productName,
                                 'room': widget.roomNumber,
                                 'count': hotelBottles.toString(),
@@ -2070,18 +2138,21 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                             }
                           }
 
-                          await ref.read(repositoryProvider).checkoutHousekeeperStock(
-                            housekeeperId: currentUser!.id,
-                            productId: selectedProduct.id,
-                            fullBottles: 1,
-                            fullBidons: 0,
-                          );
+                          await ref
+                              .read(repositoryProvider)
+                              .checkoutHousekeeperStock(
+                                housekeeperId: currentUser!.id,
+                                productId: selectedProduct.id,
+                                fullBottles: 1,
+                                fullBidons: 0,
+                              );
                           autoAdjust = false;
                         } else {
                           if (context.mounted) {
                             await showHousekeeperStockDialog(
                               context: context,
-                              message: l10n.tParams('housekeeperAddNotifyManager', {
+                              message:
+                                  l10n.tParams('housekeeperAddNotifyManager', {
                                 'product': productName,
                                 'room': widget.roomNumber,
                               }),
@@ -2104,7 +2175,8 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
                           roomNumber: widget.roomNumber,
                           productSku: _selectedSku!,
                           autoAdjustInventory: autoAdjust,
-                          deductFromHousekeeperId: isHousekeeper ? currentUser?.id : null,
+                          deductFromHousekeeperId:
+                              isHousekeeper ? currentUser?.id : null,
                         );
 
                     ref.invalidate(roomProductsProvider);
@@ -2138,7 +2210,8 @@ class _AddProductToRoomDialogState extends ConsumerState<_AddProductToRoomDialog
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white),
                 )
               : Text(l10n.t('btnConfirm')),
         ),
@@ -2179,15 +2252,21 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
 
   Future<void> _scanCardProductQr(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final allProducts = ref.read(roomProductsProvider).valueOrNull ?? widget.roomProducts;
-    final currentRoomProducts = allProducts.where((p) => p.roomId == widget.roomId).toList();
-    final products = currentRoomProducts.map((e) => 'product:${e.product.sku}').toList();
+    final allProducts =
+        ref.read(roomProductsProvider).valueOrNull ?? widget.roomProducts;
+    final currentRoomProducts =
+        allProducts.where((p) => p.roomId == widget.roomId).toList();
+    final products =
+        currentRoomProducts.map((e) => 'product:${e.product.sku}').toList();
 
-    final code = await PremiumQrScannerDialog.show(context, demoCodes: products);
+    final code =
+        await PremiumQrScannerDialog.show(context, demoCodes: products);
     if (code == null) return;
 
     final sku = code.startsWith('product:') ? code.split(':')[1] : code;
-    final matchedItem = currentRoomProducts.where((e) => e.product.sku.toLowerCase() == sku.toLowerCase()).firstOrNull;
+    final matchedItem = currentRoomProducts
+        .where((e) => e.product.sku.toLowerCase() == sku.toLowerCase())
+        .firstOrNull;
 
     if (matchedItem == null) {
       if (mounted) {
@@ -2207,7 +2286,10 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
       builder: (context) {
         return AlertDialog(
           title: Text(l10n.t('qrActionPrompt')),
-          content: Text(l10n.t('qrActionMessage').replaceAll('{product}', matchedItem.product.label(Localizations.localeOf(context).languageCode))),
+          content: Text(l10n.t('qrActionMessage').replaceAll(
+              '{product}',
+              matchedItem.product
+                  .label(Localizations.localeOf(context).languageCode))),
           actions: [
             if (matchedItem.product.isRefillable)
               TextButton(
@@ -2266,7 +2348,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     final structuredNotes = '[Refill: $refillPercentage%] $notes'.trim();
     final l10n = AppLocalizations.of(context);
 
-    final canProceed = await checkAndCheckoutHousekeeperRefillStock(context, ref, item);
+    final canProceed =
+        await checkAndCheckoutHousekeeperRefillStock(context, ref, item);
     if (!canProceed) return;
 
     try {
@@ -2291,12 +2374,12 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
 
       if (isOffline) {
         await ref.read(offlineSyncServiceProvider).enqueue(
-              type: SyncActionType.refill,
-              payload: {
-                'roomProductId': item.id,
-                'notes': structuredNotes,
-              },
-            );
+          type: SyncActionType.refill,
+          payload: {
+            'roomProductId': item.id,
+            'notes': structuredNotes,
+          },
+        );
         ref.invalidate(offlineActionsProvider);
       }
 
@@ -2322,7 +2405,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     }
   }
 
-  void _showAddProductDialog(BuildContext context, List<RoomProduct> currentProducts) {
+  void _showAddProductDialog(
+      BuildContext context, List<RoomProduct> currentProducts) {
     showDialog<void>(
       context: context,
       builder: (context) => _AddProductToRoomDialog(
@@ -2359,7 +2443,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     final confirmed = await PremiumConfirmDialog.show(
       context,
       title: l10n.t('delete'),
-      message: l10n.tParams('confirmDeleteRoom', {'roomNumber': widget.roomNumber}),
+      message:
+          l10n.tParams('confirmDeleteRoom', {'roomNumber': widget.roomNumber}),
     );
 
     if (confirmed && context.mounted) {
@@ -2383,17 +2468,21 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
   Widget build(BuildContext context) {
     final roomProductsAsync = ref.watch(roomProductsProvider);
     final roomProducts = roomProductsAsync.valueOrNull
-        ?.where((p) => p.roomId == widget.roomId)
-        .toList() ?? widget.roomProducts;
+            ?.where((p) => p.roomId == widget.roomId)
+            .toList() ??
+        widget.roomProducts;
 
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final isMobile = MediaQuery.sizeOf(context).width < 720 && !widget.isDialog;
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser =
+        ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final canManageRooms = ref.watch(hasPermissionProvider('manage_rooms')) &&
-        (currentUser?.isIvraUser == true || currentUser?.hotelId == selectedHotelId);
-    final isHousekeeper = currentUser?.role == UserRole.housekeeper && currentUser?.hotelId == widget.hotelId;
+        (currentUser?.isIvraUser == true ||
+            currentUser?.hotelId == selectedHotelId);
+    final isHousekeeper = currentUser?.role == UserRole.housekeeper &&
+        currentUser?.hotelId == widget.hotelId;
     final canEditRoomProducts = isHousekeeper || canManageRooms;
 
     var overallStatus = l10n.t('roomsStatusAllOk');
@@ -2407,8 +2496,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
         item.status == BottleStatus.damaged ||
         item.status == BottleStatus.lost);
 
-    final hasWarning = roomProducts
-        .any((item) => item.status == BottleStatus.needsRefill);
+    final hasWarning =
+        roomProducts.any((item) => item.status == BottleStatus.needsRefill);
 
     if (roomProducts.isEmpty) {
       overallStatus = l10n.t('roomsStatusNoProducts');
@@ -2493,7 +2582,9 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                 const SizedBox(width: 8),
                                 IconButton(
                                   tooltip: l10n.t('qrScanTitle'),
-                                  icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+                                  icon: const Icon(
+                                      Icons.qr_code_scanner_outlined,
+                                      size: 20),
                                   color: overallColor,
                                   onPressed: () => _scanCardProductQr(context),
                                   visualDensity: VisualDensity.compact,
@@ -2503,8 +2594,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color:
-                                        theme.colorScheme.surfaceContainerHighest,
+                                    color: theme
+                                        .colorScheme.surfaceContainerHighest,
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
@@ -2532,8 +2623,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                     color: overallColor.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                        color:
-                                            overallColor.withValues(alpha: 0.5)),
+                                        color: overallColor.withValues(
+                                            alpha: 0.5)),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -2556,15 +2647,21 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                 if (canManageRooms) ...[
                                   IconButton(
                                     tooltip: l10n.t('roomsDialogRoomEditTitle'),
-                                    icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.primary),
-                                    onPressed: () => _showEditRoomLocal(context),
+                                    icon: Icon(Icons.edit_outlined,
+                                        size: 20,
+                                        color: theme.colorScheme.primary),
+                                    onPressed: () =>
+                                        _showEditRoomLocal(context),
                                     visualDensity: VisualDensity.compact,
                                   ),
                                   const SizedBox(width: 8),
                                   IconButton(
                                     tooltip: l10n.t('delete'),
-                                    icon: Icon(Icons.delete_outline, size: 20, color: theme.colorScheme.error),
-                                    onPressed: () => _confirmDeleteRoomLocal(context),
+                                    icon: Icon(Icons.delete_outline,
+                                        size: 20,
+                                        color: theme.colorScheme.error),
+                                    onPressed: () =>
+                                        _confirmDeleteRoomLocal(context),
                                     visualDensity: VisualDensity.compact,
                                   ),
                                 ],
@@ -2580,8 +2677,12 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                               statusColor: overallColor,
                               statusIcon: overallIcon,
                               onScanPressed: () => _scanCardProductQr(context),
-                              onEdit: canManageRooms ? () => _showEditRoomLocal(context) : null,
-                              onDelete: canManageRooms ? () => _confirmDeleteRoomLocal(context) : null,
+                              onEdit: canManageRooms
+                                  ? () => _showEditRoomLocal(context)
+                                  : null,
+                              onDelete: canManageRooms
+                                  ? () => _confirmDeleteRoomLocal(context)
+                                  : null,
                             )
                           : Row(
                               children: [
@@ -2591,7 +2692,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                 Expanded(
                                   child: Text(
                                     '${l10n.t('roomsLabelRoom')} ${widget.roomNumber}',
-                                    style: theme.textTheme.titleMedium?.copyWith(
+                                    style:
+                                        theme.textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                     overflow: TextOverflow.ellipsis,
@@ -2600,7 +2702,9 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                 const SizedBox(width: 8),
                                 IconButton(
                                   tooltip: l10n.t('qrScanTitle'),
-                                  icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+                                  icon: const Icon(
+                                      Icons.qr_code_scanner_outlined,
+                                      size: 20),
                                   color: overallColor,
                                   onPressed: () => _scanCardProductQr(context),
                                   visualDensity: VisualDensity.compact,
@@ -2610,8 +2714,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color:
-                                        theme.colorScheme.surfaceContainerHighest,
+                                    color: theme
+                                        .colorScheme.surfaceContainerHighest,
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
@@ -2627,11 +2731,12 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: overallColor.withValues(alpha: 0.1),
+                                      color:
+                                          overallColor.withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
-                                          color:
-                                              overallColor.withValues(alpha: 0.5)),
+                                          color: overallColor.withValues(
+                                              alpha: 0.5)),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -2642,8 +2747,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                         Flexible(
                                           child: Text(
                                             overallStatus,
-                                            style:
-                                                theme.textTheme.bodySmall?.copyWith(
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
                                               color: overallColor,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -2658,15 +2763,21 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                                   const SizedBox(width: 8),
                                   IconButton(
                                     tooltip: l10n.t('roomsDialogRoomEditTitle'),
-                                    icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.primary),
-                                    onPressed: () => _showEditRoomLocal(context),
+                                    icon: Icon(Icons.edit_outlined,
+                                        size: 20,
+                                        color: theme.colorScheme.primary),
+                                    onPressed: () =>
+                                        _showEditRoomLocal(context),
                                     visualDensity: VisualDensity.compact,
                                   ),
                                   const SizedBox(width: 8),
                                   IconButton(
                                     tooltip: l10n.t('delete'),
-                                    icon: Icon(Icons.delete_outline, size: 20, color: theme.colorScheme.error),
-                                    onPressed: () => _confirmDeleteRoomLocal(context),
+                                    icon: Icon(Icons.delete_outline,
+                                        size: 20,
+                                        color: theme.colorScheme.error),
+                                    onPressed: () =>
+                                        _confirmDeleteRoomLocal(context),
                                     visualDensity: VisualDensity.compact,
                                   ),
                                 ],
@@ -2686,33 +2797,44 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                             children: [
                               if (displayedProducts.isEmpty)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 24),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 24),
                                   child: Center(
                                     child: Text(
                                       l10n.t('roomsNoProducts'),
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        color: theme.colorScheme.onSurfaceVariant,
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
                                 )
                               else
-                                for (int i = 0; i < displayedProducts.length; i++) ...[
-                                  if (i > 0) Divider(height: isMobile ? 18 : 24),
-                                  _RoomCardProductRow(item: displayedProducts[i]),
+                                for (int i = 0;
+                                    i < displayedProducts.length;
+                                    i++) ...[
+                                  if (i > 0)
+                                    Divider(height: isMobile ? 18 : 24),
+                                  _RoomCardProductRow(
+                                      item: displayedProducts[i]),
                                 ],
                               if (canEditRoomProducts) ...[
                                 const SizedBox(height: 16),
                                 Center(
                                   child: FilledButton.icon(
                                     style: FilledButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 8),
                                       minimumSize: const Size(120, 40),
-                                      backgroundColor: theme.colorScheme.primary,
-                                      foregroundColor: theme.colorScheme.onPrimary,
+                                      backgroundColor:
+                                          theme.colorScheme.primary,
+                                      foregroundColor:
+                                          theme.colorScheme.onPrimary,
                                     ),
-                                    onPressed: () => _showAddProductDialog(context, roomProducts),
+                                    onPressed: () => _showAddProductDialog(
+                                        context, roomProducts),
                                     icon: const Icon(Icons.add, size: 18),
                                     label: Text(l10n.t('roomsBtnAddProduct')),
                                   ),
@@ -2744,7 +2866,9 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                             ),
                           )
                         else
-                          for (int i = 0; i < displayedProducts.length; i++) ...[
+                          for (int i = 0;
+                              i < displayedProducts.length;
+                              i++) ...[
                             if (i > 0) Divider(height: isMobile ? 18 : 24),
                             _RoomCardProductRow(item: displayedProducts[i]),
                           ],
@@ -2753,12 +2877,14 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                           Center(
                             child: FilledButton.icon(
                               style: FilledButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
                                 minimumSize: const Size(120, 40),
                                 backgroundColor: theme.colorScheme.primary,
                                 foregroundColor: theme.colorScheme.onPrimary,
                               ),
-                              onPressed: () => _showAddProductDialog(context, roomProducts),
+                              onPressed: () =>
+                                  _showAddProductDialog(context, roomProducts),
                               icon: const Icon(Icons.add, size: 18),
                               label: Text(l10n.t('roomsBtnAddProduct')),
                             ),
@@ -2839,7 +2965,8 @@ class _MobileRoomHeader extends StatelessWidget {
               const SizedBox(width: 4),
               IconButton(
                 tooltip: l10n.t('roomsDialogRoomEditTitle'),
-                icon: Icon(Icons.edit_outlined, size: 20, color: theme.colorScheme.primary),
+                icon: Icon(Icons.edit_outlined,
+                    size: 20, color: theme.colorScheme.primary),
                 onPressed: onEdit,
                 visualDensity: VisualDensity.compact,
               ),
@@ -2848,7 +2975,8 @@ class _MobileRoomHeader extends StatelessWidget {
               const SizedBox(width: 4),
               IconButton(
                 tooltip: l10n.t('delete'),
-                icon: Icon(Icons.delete_outline, size: 20, color: theme.colorScheme.error),
+                icon: Icon(Icons.delete_outline,
+                    size: 20, color: theme.colorScheme.error),
                 onPressed: onDelete,
                 visualDensity: VisualDensity.compact,
               ),
@@ -3046,12 +3174,16 @@ class _RoomCardProductRow extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
-    final canSubmitEditRequests = ref.watch(hasPermissionProvider('submit_edit_requests'));
-    final isHousekeeper = currentUser?.role == UserRole.housekeeper && currentUser?.hotelId == item.hotelId;
+    final currentUser =
+        ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final canSubmitEditRequests =
+        ref.watch(hasPermissionProvider('submit_edit_requests'));
+    final isHousekeeper = currentUser?.role == UserRole.housekeeper &&
+        currentUser?.hotelId == item.hotelId;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final canManageRooms = ref.watch(hasPermissionProvider('manage_rooms')) &&
-        (currentUser?.isIvraUser == true || currentUser?.hotelId == selectedHotelId);
+        (currentUser?.isIvraUser == true ||
+            currentUser?.hotelId == selectedHotelId);
     final canEditRoomProducts = isHousekeeper || canManageRooms;
 
     Future<void> confirmRemoveProduct() async {
@@ -3066,7 +3198,9 @@ class _RoomCardProductRow extends ConsumerWidget {
 
       if (confirmed && context.mounted) {
         try {
-          await ref.read(repositoryProvider).removeProductFromRoom(roomProductId: item.id);
+          await ref
+              .read(repositoryProvider)
+              .removeProductFromRoom(roomProductId: item.id);
           ref.invalidate(roomProductsProvider);
           ref.invalidate(dashboardProvider);
           ref.invalidate(roomsProvider);
@@ -3115,7 +3249,8 @@ class _RoomCardProductRow extends ConsumerWidget {
 
       final structuredNotes = '[Refill: $refillPercentage%] $notes'.trim();
 
-      final canProceed = await checkAndCheckoutHousekeeperRefillStock(context, ref, item);
+      final canProceed =
+          await checkAndCheckoutHousekeeperRefillStock(context, ref, item);
       if (!canProceed) return;
 
       var isOffline = ref.read(offlineModeProvider);
@@ -3277,16 +3412,16 @@ class _RoomCardProductRow extends ConsumerWidget {
                   if (item.product.isRefillable) ...[
                     FilledButton.icon(
                       style: FilledButton.styleFrom(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         backgroundColor: const Color(0xFF267D65),
                         foregroundColor: Colors.white,
                         minimumSize: const Size(80, 36),
                       ),
                       onPressed: item.canRefill ? performRefill : null,
                       icon: const Icon(IvraIcons.refillAction, size: 18),
-                      label:
-                          Text(l10n.t('roomsBtnRefillBottle'), style: const TextStyle(fontSize: 12)),
+                      label: Text(l10n.t('roomsBtnRefillBottle'),
+                          style: const TextStyle(fontSize: 12)),
                     ),
                     IconButton(
                       visualDensity: VisualDensity.compact,
@@ -3299,8 +3434,8 @@ class _RoomCardProductRow extends ConsumerWidget {
                   ] else ...[
                     FilledButton.icon(
                       style: FilledButton.styleFrom(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         backgroundColor: const Color(0xFF267D65),
                         foregroundColor: Colors.white,
                         minimumSize: const Size(80, 36),
@@ -3309,8 +3444,8 @@ class _RoomCardProductRow extends ConsumerWidget {
                           ? null
                           : () => replaceBottle(context, ref, item),
                       icon: const Icon(IvraIcons.replaceAction, size: 18),
-                      label:
-                          Text(l10n.t('roomsBtnReplaceBottle'), style: const TextStyle(fontSize: 12)),
+                      label: Text(l10n.t('roomsBtnReplaceBottle'),
+                          style: const TextStyle(fontSize: 12)),
                     ),
                   ],
                   IconButton(
@@ -3345,7 +3480,8 @@ class _RoomCardProductRow extends ConsumerWidget {
                           value: 'room_edit',
                           child: Row(
                             children: [
-                              const Icon(Icons.edit_location_alt_outlined, size: 18),
+                              const Icon(Icons.edit_location_alt_outlined,
+                                  size: 18),
                               const SizedBox(width: 8),
                               Text(l10n.t('roomsBtnRoomEdit')),
                             ],
@@ -3543,7 +3679,8 @@ class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
           children: [
             Text(
               '${l10n.t('roomsBtnMarkDamaged')} - ${l10n.t('roomsLabelRoom')} ${widget.item.roomNumber}',
-              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             Form(
@@ -3557,7 +3694,8 @@ class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
                     child: Container(
                       height: 120,
                       decoration: BoxDecoration(
-                        border: Border.all(color: theme.colorScheme.outlineVariant),
+                        border:
+                            Border.all(color: theme.colorScheme.outlineVariant),
                         borderRadius: BorderRadius.circular(12),
                         color: theme.colorScheme.surfaceContainerLow,
                       ),
@@ -3576,12 +3714,15 @@ class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
                                     right: 4,
                                     top: 4,
                                     child: CircleAvatar(
-                                      backgroundColor: Colors.black.withValues(alpha: 0.6),
+                                      backgroundColor:
+                                          Colors.black.withValues(alpha: 0.6),
                                       radius: 16,
                                       child: IconButton(
                                         padding: EdgeInsets.zero,
-                                        icon: const Icon(Icons.close, size: 16, color: Colors.white),
-                                        onPressed: () => setState(() => _selectedImage = null),
+                                        icon: const Icon(Icons.close,
+                                            size: 16, color: Colors.white),
+                                        onPressed: () => setState(
+                                            () => _selectedImage = null),
                                       ),
                                     ),
                                   ),
@@ -3592,7 +3733,9 @@ class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.camera_alt_outlined, color: theme.colorScheme.onSurfaceVariant, size: 32),
+                                  Icon(Icons.camera_alt_outlined,
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                      size: 32),
                                   const SizedBox(height: 8),
                                   Text(
                                     l10n.t('roomsUploadProofAction'),
@@ -3623,7 +3766,8 @@ class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(l10n.t('btnCancel')),
                 ),
                 const SizedBox(width: 12),
@@ -3646,7 +3790,8 @@ class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
     final l10n = AppLocalizations.of(context);
     try {
       final language = Localizations.localeOf(context).languageCode;
-      final title = 'Mark damaged - ${widget.item.product.label(language)} in Room ${widget.item.roomNumber}';
+      final title =
+          'Mark damaged - ${widget.item.product.label(language)} in Room ${widget.item.roomNumber}';
 
       String? imageUrl;
       if (_selectedImage != null) {
@@ -3657,10 +3802,11 @@ class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
           final mime = ext == 'png' ? 'image/png' : 'image/jpeg';
           imageUrl = 'data:$mime;base64,${base64Encode(bytes)}';
         } else {
-          final fileName = 'proofs/${DateTime.now().millisecondsSinceEpoch}.$ext';
-          await Supabase.instance.client.storage
-              .from('products')
-              .uploadBinary(fileName, bytes, fileOptions: const FileOptions(upsert: true));
+          final fileName =
+              'proofs/${DateTime.now().millisecondsSinceEpoch}.$ext';
+          await Supabase.instance.client.storage.from('products').uploadBinary(
+              fileName, bytes,
+              fileOptions: const FileOptions(upsert: true));
           imageUrl = Supabase.instance.client.storage
               .from('products')
               .getPublicUrl(fileName);
@@ -3749,7 +3895,8 @@ class _MarkLostDialogState extends ConsumerState<_MarkLostDialog> {
           children: [
             Text(
               '${l10n.t('roomsBtnMarkLost')} - ${l10n.t('roomsLabelRoom')} ${widget.item.roomNumber}',
-              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             Form(
@@ -3768,7 +3915,8 @@ class _MarkLostDialogState extends ConsumerState<_MarkLostDialog> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
                   child: Text(l10n.t('btnCancel')),
                 ),
                 const SizedBox(width: 12),
@@ -3791,7 +3939,8 @@ class _MarkLostDialogState extends ConsumerState<_MarkLostDialog> {
     final l10n = AppLocalizations.of(context);
     try {
       final language = Localizations.localeOf(context).languageCode;
-      final title = 'Mark lost - ${widget.item.product.label(language)} in Room ${widget.item.roomNumber}';
+      final title =
+          'Mark lost - ${widget.item.product.label(language)} in Room ${widget.item.roomNumber}';
 
       final oldData = {
         'status': widget.item.status.value,
@@ -3904,7 +4053,8 @@ class _BottleLifecycleEditDialogState
                       for (final status in BottleStatus.values)
                         DropdownMenuItem(
                           value: status,
-                          child: Text(_getLocalizedBottleStatus(context, status)),
+                          child:
+                              Text(_getLocalizedBottleStatus(context, status)),
                         ),
                     ],
                     onChanged: (value) {
@@ -3983,11 +4133,14 @@ class _BottleLifecycleEditDialogState
       );
       if (mounted) {
         Navigator.of(context).pop();
-        PremiumSnackbar.showSuccess(context, offline
-                  ? l10n.t('roomsMsgEditRequestQueued')
-                  : appliedImmediately
-                      ? l10n.t('roomsMsgDetailsUpdated')
-                      : l10n.t('roomsMsgEditRequestSubmitted'),);
+        PremiumSnackbar.showSuccess(
+          context,
+          offline
+              ? l10n.t('roomsMsgEditRequestQueued')
+              : appliedImmediately
+                  ? l10n.t('roomsMsgDetailsUpdated')
+                  : l10n.t('roomsMsgEditRequestSubmitted'),
+        );
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -4192,7 +4345,8 @@ class _RoomEditRequestDialogState
           .toList();
 
       final newProductIds = _selectedProductIds ?? oldProductIds;
-      final addedProductIds = newProductIds.where((pid) => !oldProductIds.contains(pid)).toList();
+      final addedProductIds =
+          newProductIds.where((pid) => !oldProductIds.contains(pid)).toList();
 
       final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
       final products = ref.read(productsProvider).valueOrNull ?? [];
@@ -4285,7 +4439,8 @@ Future<bool> _submitPendingEditRequest({
   var isOffline = ref.read(offlineModeProvider);
   final currentUser = ref.read(currentUserProvider).valueOrNull;
   final applyImmediately = (currentUser?.isIvraUser == true) ||
-      (currentUser?.role == UserRole.hotelManager && currentUser?.hotelId == hotelId);
+      (currentUser?.role == UserRole.hotelManager &&
+          currentUser?.hotelId == hotelId);
 
   if (!isOffline) {
     try {
@@ -4464,17 +4619,21 @@ class _RefillHistoryDialog extends ConsumerWidget {
                             event.type == RefillEventType.bottleReplaced &&
                                 index == events.length - 1 &&
                                 event.previousRefillCount == 0;
-                        final isStatusChange = event.type == RefillEventType.bottleReplaced &&
-                            event.notes != null &&
-                            event.notes!.startsWith('Status changed from ');
+                        final isStatusChange =
+                            event.type == RefillEventType.bottleReplaced &&
+                                event.notes != null &&
+                                event.notes!.startsWith('Status changed from ');
 
                         int? parsedPercentage;
                         String? parsedUserNotes;
                         if (event.notes != null) {
                           if (event.notes!.startsWith('[Refill: ')) {
-                            final match = RegExp(r'^\[Refill:\s*(\d+)%\]\s*(.*)$').firstMatch(event.notes!);
+                            final match =
+                                RegExp(r'^\[Refill:\s*(\d+)%\]\s*(.*)$')
+                                    .firstMatch(event.notes!);
                             if (match != null) {
-                              parsedPercentage = int.tryParse(match.group(1) ?? '');
+                              parsedPercentage =
+                                  int.tryParse(match.group(1) ?? '');
                               final rawNotes = match.group(2)?.trim();
                               if (rawNotes != null && rawNotes.isNotEmpty) {
                                 parsedUserNotes = rawNotes;
@@ -4485,25 +4644,31 @@ class _RefillHistoryDialog extends ConsumerWidget {
                           }
                         }
 
-                        String label = _eventLabel(l10n, event.type, isInitialPlacement);
+                        String label =
+                            _eventLabel(l10n, event.type, isInitialPlacement);
                         Widget subtitleWidget;
 
                         if (isStatusChange) {
                           final parts = event.notes!.split(' ');
                           final oldStatusVal = parts.length > 3 ? parts[3] : '';
                           final newStatusVal = parts.length > 5 ? parts[5] : '';
-                          final oldStatus = BottleStatus.fromValue(oldStatusVal);
-                          final newStatus = BottleStatus.fromValue(newStatusVal);
-                          final oldLocalized = _getLocalizedBottleStatus(context, oldStatus);
-                          final newLocalized = _getLocalizedBottleStatus(context, newStatus);
-                          
+                          final oldStatus =
+                              BottleStatus.fromValue(oldStatusVal);
+                          final newStatus =
+                              BottleStatus.fromValue(newStatusVal);
+                          final oldLocalized =
+                              _getLocalizedBottleStatus(context, oldStatus);
+                          final newLocalized =
+                              _getLocalizedBottleStatus(context, newStatus);
+
                           label = l10n.tParams('roomsHistoryStatusChanged', {
                             'oldValue': oldLocalized,
                             'newValue': newLocalized,
                           });
                         }
 
-                        final performerStr = event.performedByName != null && event.performedByName!.isNotEmpty
+                        final performerStr = event.performedByName != null &&
+                                event.performedByName!.isNotEmpty
                             ? ' | ${event.performedByName}'
                             : '';
                         final subtitleText = isStatusChange
@@ -4511,7 +4676,8 @@ class _RefillHistoryDialog extends ConsumerWidget {
                             : '${_formatDateTime(event.occurredAt)}$performerStr | ${event.previousRefillCount} -> ${event.newRefillCount}';
 
                         Widget? proofPhotoWidget;
-                        if (event.proofPhotoUrl != null && event.proofPhotoUrl!.isNotEmpty) {
+                        if (event.proofPhotoUrl != null &&
+                            event.proofPhotoUrl!.isNotEmpty) {
                           proofPhotoWidget = Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Row(
@@ -4525,14 +4691,18 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                           alignment: Alignment.topRight,
                                           children: [
                                             InteractiveViewer(
-                                              child: Image.network(event.proofPhotoUrl!),
+                                              child: Image.network(
+                                                  event.proofPhotoUrl!),
                                             ),
                                             IconButton(
-                                              icon: const Icon(Icons.close, color: Colors.white),
+                                              icon: const Icon(Icons.close,
+                                                  color: Colors.white),
                                               style: IconButton.styleFrom(
-                                                backgroundColor: Colors.black.withValues(alpha: 0.6),
+                                                backgroundColor: Colors.black
+                                                    .withValues(alpha: 0.6),
                                               ),
-                                              onPressed: () => Navigator.of(context).pop(),
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
                                             ),
                                           ],
                                         ),
@@ -4544,9 +4714,13 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                     height: 60,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                                      border: Border.all(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outlineVariant),
                                       image: DecorationImage(
-                                        image: NetworkImage(event.proofPhotoUrl!),
+                                        image:
+                                            NetworkImage(event.proofPhotoUrl!),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -4562,13 +4736,20 @@ class _RefillHistoryDialog extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(subtitleText),
-                            if (parsedUserNotes != null && parsedUserNotes.isNotEmpty) ...[
+                            if (parsedUserNotes != null &&
+                                parsedUserNotes.isNotEmpty) ...[
                               const SizedBox(height: 4),
                               Text(
                                 parsedUserNotes,
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
                                       fontStyle: FontStyle.italic,
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.85),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant
+                                          .withValues(alpha: 0.85),
                                     ),
                               ),
                             ],
@@ -4593,15 +4774,18 @@ class _RefillHistoryDialog extends ConsumerWidget {
                               // housekeeper cart or hotel inventory directly.
                               if (!isStatusChange &&
                                   (event.type == RefillEventType.refill ||
-                                      event.type == RefillEventType.bottleReplaced))
+                                      event.type ==
+                                          RefillEventType.bottleReplaced))
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 6,
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: housekeeperIds.contains(event.performedBy)
-                                        ? const Color(0xFFF2A900).withValues(alpha: 0.15)
+                                    color: housekeeperIds
+                                            .contains(event.performedBy)
+                                        ? const Color(0xFFF2A900)
+                                            .withValues(alpha: 0.15)
                                         : Theme.of(context)
                                             .colorScheme
                                             .secondaryContainer
@@ -4612,23 +4796,32 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
-                                        housekeeperIds.contains(event.performedBy)
+                                        housekeeperIds
+                                                .contains(event.performedBy)
                                             ? Icons.shopping_bag_outlined
                                             : Icons.warehouse_outlined,
                                         size: 12,
-                                        color: housekeeperIds.contains(event.performedBy)
+                                        color: housekeeperIds
+                                                .contains(event.performedBy)
                                             ? const Color(0xFFB47E00)
-                                            : Theme.of(context).colorScheme.onSecondaryContainer,
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSecondaryContainer,
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        housekeeperIds.contains(event.performedBy)
+                                        housekeeperIds
+                                                .contains(event.performedBy)
                                             ? l10n.t('sourceHousekeeperCart')
                                             : l10n.t('sourceHotelInventory'),
-                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w600,
-                                              color: housekeeperIds.contains(event.performedBy)
+                                              color: housekeeperIds.contains(
+                                                      event.performedBy)
                                                   ? const Color(0xFFB47E00)
                                                   : Theme.of(context)
                                                       .colorScheme
@@ -4645,17 +4838,28 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.5),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                        .withValues(alpha: 0.5),
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border.all(
-                                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withValues(alpha: 0.2),
                                       width: 1,
                                     ),
                                   ),
                                   child: Text(
                                     '$parsedPercentage%',
-                                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
                                           fontWeight: FontWeight.bold,
                                         ),
                                   ),
@@ -4907,9 +5111,12 @@ class _CorrectionRequestDialogState
       }
       if (mounted) {
         Navigator.of(context).pop();
-        PremiumSnackbar.showSuccess(context, offline
-                  ? l10n.t('roomsMsgCorrectionQueued')
-                  : l10n.t('roomsMsgCorrectionSubmitted'),);
+        PremiumSnackbar.showSuccess(
+          context,
+          offline
+              ? l10n.t('roomsMsgCorrectionQueued')
+              : l10n.t('roomsMsgCorrectionSubmitted'),
+        );
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -5142,7 +5349,7 @@ class _RoomTemplateDialogState extends ConsumerState<_RoomTemplateDialog> {
       final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
       final products = ref.read(productsProvider).valueOrNull ?? [];
       var needsAutoAdjust = false;
-      
+
       for (final pid in _selectedProductIds) {
         final product = products.firstWhere((p) => p.id == pid);
         final stockItem = inventory.firstWhere(
@@ -5399,7 +5606,7 @@ class _AddRoomDialogState extends ConsumerState<_AddRoomDialog> {
 
       final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
       var needsAutoAdjust = false;
-      
+
       for (final pid in _selectedProductIds) {
         final product = widget.products.firstWhere((p) => p.id == pid);
         final stockItem = inventory.firstWhere(

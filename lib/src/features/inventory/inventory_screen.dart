@@ -17,7 +17,6 @@ import '../shared/shimmer_loading.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/centered_sheet.dart';
 
-
 class InventoryScreen extends ConsumerStatefulWidget {
   final String? hotelId;
   const InventoryScreen({super.key, this.hotelId});
@@ -28,7 +27,12 @@ class InventoryScreen extends ConsumerStatefulWidget {
   ConsumerState<InventoryScreen> createState() => _InventoryScreenState();
 }
 
-enum InventorySortOption { nameAsc, nameDesc, fullBottlesDesc, emptyBottlesDesc }
+enum InventorySortOption {
+  nameAsc,
+  nameDesc,
+  fullBottlesDesc,
+  emptyBottlesDesc
+}
 
 class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   String _searchQuery = '';
@@ -67,7 +71,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final theme = Theme.of(context);
     final primaryColor = const Color(0xFFF2A900); // Golden yellow/orange
 
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser =
+        ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final canManage = currentUser?.role != UserRole.housekeeper;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final hotelsAsync = ref.watch(hotelsProvider);
@@ -171,8 +176,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     children: List.generate(
                       3,
                       (index) => const Padding(
-                        padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
-                        child: CardShimmer(),
+                        padding:
+                            EdgeInsets.only(bottom: 12, left: 16, right: 16),
+                        child: CardShimmer(isCompact: true),
                       ),
                     ),
                   ),
@@ -202,13 +208,18 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     }).toList();
 
                     // Apply sort
-                    final languageCode = Localizations.localeOf(context).languageCode;
+                    final languageCode =
+                        Localizations.localeOf(context).languageCode;
                     filteredItems.sort((a, b) {
                       switch (_sortOption) {
                         case InventorySortOption.nameAsc:
-                          return a.product.label(languageCode).compareTo(b.product.label(languageCode));
+                          return a.product
+                              .label(languageCode)
+                              .compareTo(b.product.label(languageCode));
                         case InventorySortOption.nameDesc:
-                          return b.product.label(languageCode).compareTo(a.product.label(languageCode));
+                          return b.product
+                              .label(languageCode)
+                              .compareTo(a.product.label(languageCode));
                         case InventorySortOption.fullBottlesDesc:
                           return b.fullBottles.compareTo(a.fullBottles);
                         case InventorySortOption.emptyBottlesDesc:
@@ -230,9 +241,15 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 AsyncValueView(
                   value: suggestedOrdersAsync,
                   onRetry: () => ref.invalidate(suggestedOrdersProvider),
-                  loadingWidget: const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: CardShimmer(),
+                  loadingWidget: Column(
+                    children: List.generate(
+                      2,
+                      (index) => const Padding(
+                        padding:
+                            EdgeInsets.only(bottom: 16, left: 16, right: 16),
+                        child: CardShimmer(),
+                      ),
+                    ),
                   ),
                   builder: (orders) {
                     // Filter orders by hotel and search query
@@ -361,7 +378,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                           ),
                         IconButton(
                           tooltip: l10n.t('qrScanTitle'),
-                          icon: const Icon(Icons.qr_code_scanner_outlined, size: 20),
+                          icon: const Icon(Icons.qr_code_scanner_outlined,
+                              size: 20),
                           onPressed: () => _scanProductQr(context),
                         ),
                       ],
@@ -446,7 +464,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   label: Text(l10n.t('sortNameAsc') ?? 'Name (A-Z)'),
                   selected: _sortOption == InventorySortOption.nameAsc,
                   onSelected: (selected) {
-                    if (selected) setState(() => _sortOption = InventorySortOption.nameAsc);
+                    if (selected)
+                      setState(() => _sortOption = InventorySortOption.nameAsc);
                   },
                 ),
                 const SizedBox(width: 8),
@@ -454,23 +473,31 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   label: Text(l10n.t('sortNameDesc') ?? 'Name (Z-A)'),
                   selected: _sortOption == InventorySortOption.nameDesc,
                   onSelected: (selected) {
-                    if (selected) setState(() => _sortOption = InventorySortOption.nameDesc);
+                    if (selected)
+                      setState(
+                          () => _sortOption = InventorySortOption.nameDesc);
                   },
                 ),
                 const SizedBox(width: 8),
                 ChoiceChip(
-                  label: Text(l10n.t('sortMostFullBottles') ?? 'Most Full Bottles'),
+                  label: Text(
+                      l10n.t('sortMostFullBottles') ?? 'Most Full Bottles'),
                   selected: _sortOption == InventorySortOption.fullBottlesDesc,
                   onSelected: (selected) {
-                    if (selected) setState(() => _sortOption = InventorySortOption.fullBottlesDesc);
+                    if (selected)
+                      setState(() =>
+                          _sortOption = InventorySortOption.fullBottlesDesc);
                   },
                 ),
                 const SizedBox(width: 8),
                 ChoiceChip(
-                  label: Text(l10n.t('sortMostEmptyBottles') ?? 'Most Used Bottles'),
+                  label: Text(
+                      l10n.t('sortMostEmptyBottles') ?? 'Most Used Bottles'),
                   selected: _sortOption == InventorySortOption.emptyBottlesDesc,
                   onSelected: (selected) {
-                    if (selected) setState(() => _sortOption = InventorySortOption.emptyBottlesDesc);
+                    if (selected)
+                      setState(() =>
+                          _sortOption = InventorySortOption.emptyBottlesDesc);
                   },
                 ),
               ],
@@ -523,13 +550,17 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
     final productSkus = products.map((p) => 'product:${p.sku}').toList();
 
-    final code = await PremiumQrScannerDialog.show(context, demoCodes: productSkus);
+    final code =
+        await PremiumQrScannerDialog.show(context, demoCodes: productSkus);
     if (code == null || code.trim().isEmpty) return;
 
     final trimmed = code.trim();
-    final sku = trimmed.startsWith('product:') ? trimmed.split(':')[1] : trimmed;
+    final sku =
+        trimmed.startsWith('product:') ? trimmed.split(':')[1] : trimmed;
 
-    final matchedProduct = products.where((p) => p.sku.toLowerCase() == sku.toLowerCase()).firstOrNull;
+    final matchedProduct = products
+        .where((p) => p.sku.toLowerCase() == sku.toLowerCase())
+        .firstOrNull;
     if (matchedProduct == null) {
       if (context.mounted) {
         PremiumSnackbar.show(
@@ -542,10 +573,12 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     }
 
     if (!context.mounted) return;
-    await _showStockAdjustmentDialog(context, initialProductId: matchedProduct.id);
+    await _showStockAdjustmentDialog(context,
+        initialProductId: matchedProduct.id);
   }
 
-  Future<void> _showStockAdjustmentDialog(BuildContext context, {String? initialProductId}) async {
+  Future<void> _showStockAdjustmentDialog(BuildContext context,
+      {String? initialProductId}) async {
     final l10n = AppLocalizations.of(context);
     final selectedHotelId = ref.read(selectedHotelIdProvider);
 
@@ -578,9 +611,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final hotelItems =
         itemsList.where((item) => item.hotelId == selectedHotelId).toList();
     final allHotelItems = productsList.map((product) {
-      final existing = hotelItems
-          .where((item) => item.product.id == product.id)
-          .firstOrNull;
+      final existing =
+          hotelItems.where((item) => item.product.id == product.id).firstOrNull;
       return existing ??
           InventoryItem(
             id: 'new_${product.id}',
@@ -605,7 +637,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
     String? initialItemId;
     if (initialProductId != null) {
-      final existing = hotelItems.where((item) => item.product.id == initialProductId).firstOrNull;
+      final existing = hotelItems
+          .where((item) => item.product.id == initialProductId)
+          .firstOrNull;
       initialItemId = existing?.id ?? 'new_$initialProductId';
     }
 
@@ -677,7 +711,8 @@ class _PremiumInventoryCard extends ConsumerStatefulWidget {
   final String language;
 
   @override
-  ConsumerState<_PremiumInventoryCard> createState() => _PremiumInventoryCardState();
+  ConsumerState<_PremiumInventoryCard> createState() =>
+      _PremiumInventoryCardState();
 }
 
 class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
@@ -751,12 +786,12 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser =
+        ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final canManage = currentUser?.role != UserRole.housekeeper;
     final language = Localizations.localeOf(context).languageCode;
     final lowStock = widget.item.lowBottles || widget.item.lowBidons;
@@ -854,7 +889,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                             tooltip: l10n.t('productHistoryTitle'),
                             onPressed: () => _showProductHistory(context),
                             style: IconButton.styleFrom(
-                              backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.08),
+                              backgroundColor: theme.colorScheme.secondary
+                                  .withValues(alpha: 0.08),
                               foregroundColor: theme.colorScheme.secondary,
                               padding: const EdgeInsets.all(8),
                               minimumSize: const Size(36, 36),
@@ -867,7 +903,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                               tooltip: l10n.t('adjustStockTitle'),
                               onPressed: () => _adjustStock(context),
                               style: IconButton.styleFrom(
-                                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.08),
+                                backgroundColor: theme.colorScheme.primary
+                                    .withValues(alpha: 0.08),
                                 foregroundColor: theme.colorScheme.primary,
                                 padding: const EdgeInsets.all(8),
                                 minimumSize: const Size(36, 36),
@@ -878,15 +915,20 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                       ),
                     ],
                   ),
-
                 ],
               ),
               const Spacer(),
               // Visual Stock Indicators
               _VisualStockBar(
                 label: widget.item.product.bottleType == BottleType.withPump
-                    ? l10n.tParams('inventoryTableFullBottlesWithPump', {'size': _getFormattedVolume(widget.item.product.bottleVolumeMl, language)})
-                    : l10n.tParams('inventoryTableFullBottlesWithoutPump', {'size': _getFormattedVolume(widget.item.product.bottleVolumeMl, language)}),
+                    ? l10n.tParams('inventoryTableFullBottlesWithPump', {
+                        'size': _getFormattedVolume(
+                            widget.item.product.bottleVolumeMl, language)
+                      })
+                    : l10n.tParams('inventoryTableFullBottlesWithoutPump', {
+                        'size': _getFormattedVolume(
+                            widget.item.product.bottleVolumeMl, language)
+                      }),
                 value: widget.item.fullBottles,
                 threshold: widget.item.product.lowBottleThreshold,
                 icon: widget.item.product.bottleType == BottleType.withPump
@@ -906,7 +948,9 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                   String? displaySuffix;
 
                   if (openBidons > 0 && bidonVolume > 0) {
-                    final double volumeLeft = (openVolume == 0.0) ? bidonVolume.toDouble() : openVolume;
+                    final double volumeLeft = (openVolume == 0.0)
+                        ? bidonVolume.toDouble()
+                        : openVolume;
                     final double percent = (volumeLeft / bidonVolume) * 100;
                     final int percentRound = percent.round();
 
@@ -923,7 +967,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                   }
 
                   return _VisualStockBar(
-                    label: l10n.tParams('inventoryTableFullBidons', {'size': _getFormattedVolume(bidonVolume, language)}),
+                    label: l10n.tParams('inventoryTableFullBidons',
+                        {'size': _getFormattedVolume(bidonVolume, language)}),
                     value: displayValue,
                     threshold: widget.item.product.lowBidonThreshold,
                     icon: IvraIcons.fullRefillBottle,
@@ -934,10 +979,12 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
               ],
               const SizedBox(height: 16),
               InkWell(
-                onTap: () => setState(() => _showAdvancedStats = !_showAdvancedStats),
+                onTap: () =>
+                    setState(() => _showAdvancedStats = !_showAdvancedStats),
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -976,18 +1023,24 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                         children: [
                           Expanded(
                             child: _MiniStat(
-                              label: l10n.tParams('inventoryTableEmptyBottles', {
-                                'months': '${(widget.item.product.maxBottleAgeDays / 30.0).round()}'
+                              label: l10n.tParams(
+                                  'inventoryTableEmptyBottles', {
+                                'months':
+                                    '${(widget.item.product.maxBottleAgeDays / 30.0).round()}'
                               }),
                               value: widget.item.emptyBottles,
-                              icon: widget.item.product.bottleType == BottleType.withPump
+                              icon: widget.item.product.bottleType ==
+                                      BottleType.withPump
                                   ? IvraIcons.emptyBottleWithPump
                                   : IvraIcons.emptyBottleWithoutPump,
                               color: theme.colorScheme.tertiary,
                             ),
                           ),
                           if (widget.item.product.isRefillable) ...[
-                            Container(width: 1, height: 24, color: theme.dividerColor),
+                            Container(
+                                width: 1,
+                                height: 24,
+                                color: theme.dividerColor),
                             Expanded(
                               child: _MiniStat(
                                 label: l10n.t('inventoryTableEmptyBidons'),
@@ -1220,7 +1273,6 @@ class _InventoryStatusPill extends StatelessWidget {
   }
 }
 
-
 class _StockAdjustmentDialog extends ConsumerStatefulWidget {
   const _StockAdjustmentDialog({required this.items, this.initialItemId});
 
@@ -1250,7 +1302,8 @@ class _StockAdjustmentDialogState
     super.initState();
     final hasInitialId = widget.initialItemId != null &&
         widget.items.any((item) => item.id == widget.initialItemId);
-    _inventoryItemId = hasInitialId ? widget.initialItemId! : widget.items.first.id;
+    _inventoryItemId =
+        hasInitialId ? widget.initialItemId! : widget.items.first.id;
   }
 
   @override
@@ -1337,22 +1390,34 @@ class _StockAdjustmentDialogState
                   children: [
                     _DeltaField(
                       controller: _fullBottles,
-                      label: selectedItem.product.bottleType == BottleType.withPump
-                          ? l10n.tParams('inventoryTableFullBottlesWithPump', {'size': _getFormattedVolume(selectedItem.product.bottleVolumeMl, language)})
-                          : l10n.tParams('inventoryTableFullBottlesWithoutPump', {'size': _getFormattedVolume(selectedItem.product.bottleVolumeMl, language)}),
+                      label: selectedItem.product.bottleType ==
+                              BottleType.withPump
+                          ? l10n.tParams('inventoryTableFullBottlesWithPump', {
+                              'size': _getFormattedVolume(
+                                  selectedItem.product.bottleVolumeMl, language)
+                            })
+                          : l10n.tParams(
+                              'inventoryTableFullBottlesWithoutPump', {
+                              'size': _getFormattedVolume(
+                                  selectedItem.product.bottleVolumeMl, language)
+                            }),
                     ),
                     const SizedBox(height: 12),
                     _DeltaField(
                       controller: _emptyBottles,
                       label: l10n.tParams('inventoryTableEmptyBottles', {
-                        'months': '${(selectedItem.product.maxBottleAgeDays / 30.0).round()}'
+                        'months':
+                            '${(selectedItem.product.maxBottleAgeDays / 30.0).round()}'
                       }),
                     ),
                     if (selectedItem.product.isRefillable) ...[
                       const SizedBox(height: 12),
                       _DeltaField(
                         controller: _fullBidons,
-                        label: l10n.tParams('inventoryTableFullBidons', {'size': _getFormattedVolume(selectedItem.product.bidonVolumeMl, language)}),
+                        label: l10n.tParams('inventoryTableFullBidons', {
+                          'size': _getFormattedVolume(
+                              selectedItem.product.bidonVolumeMl, language)
+                        }),
                       ),
                       const SizedBox(height: 8),
                       TextButton.icon(
@@ -1425,9 +1490,12 @@ class _StockAdjustmentDialogState
         'productId': item.product.id,
         'fullBottlesDelta': int.parse(_fullBottles.text),
         'emptyBottlesDelta': int.parse(_emptyBottles.text),
-        'fullBidonsDelta': item.product.isRefillable ? int.parse(_fullBidons.text) : 0,
-        'openBidonsDelta': item.product.isRefillable ? int.parse(_openBidons.text) : 0,
-        'emptyBidonsDelta': item.product.isRefillable ? int.parse(_emptyBidons.text) : 0,
+        'fullBidonsDelta':
+            item.product.isRefillable ? int.parse(_fullBidons.text) : 0,
+        'openBidonsDelta':
+            item.product.isRefillable ? int.parse(_openBidons.text) : 0,
+        'emptyBidonsDelta':
+            item.product.isRefillable ? int.parse(_emptyBidons.text) : 0,
         'reason': _reason.text.trim(),
       };
       var isOffline = ref.read(offlineModeProvider);
@@ -1443,69 +1511,88 @@ class _StockAdjustmentDialogState
                 emptyBidonsDelta: payload['emptyBidonsDelta'] as int,
                 reason: payload['reason'] as String,
               );
-              
-          final newAlertsCount = await ref.read(repositoryProvider).refreshSmartAlerts(hotelId: item.hotelId);
-          debugPrint('[ALERT-PUSH] refreshSmartAlerts returned $newAlertsCount new alerts');
+
+          final newAlertsCount = await ref
+              .read(repositoryProvider)
+              .refreshSmartAlerts(hotelId: item.hotelId);
+          debugPrint(
+              '[ALERT-PUSH] refreshSmartAlerts returned $newAlertsCount new alerts');
           if (newAlertsCount > 0) {
             ref.invalidate(alertsProvider);
             try {
               if (Supabase.instance.client.auth.currentSession != null) {
                 // Fetch the new alerts directly from repository to bypass any Riverpod cache issues
-                final latestAlerts = await ref.read(repositoryProvider).alerts(hotelId: item.hotelId);
+                final latestAlerts = await ref
+                    .read(repositoryProvider)
+                    .alerts(hotelId: item.hotelId);
                 final products = await ref.read(productsProvider.future);
-                
-                debugPrint('[ALERT-PUSH] Fetched ${latestAlerts.length} alerts, ${products.length} products');
-                
-                final unresolved = latestAlerts.where((a) => !a.isResolved).toList()
+
+                debugPrint(
+                    '[ALERT-PUSH] Fetched ${latestAlerts.length} alerts, ${products.length} products');
+
+                final unresolved = latestAlerts
+                    .where((a) => !a.isResolved)
+                    .toList()
                   ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-                
-                debugPrint('[ALERT-PUSH] ${unresolved.length} unresolved alerts, sending up to $newAlertsCount');
-                
+
+                debugPrint(
+                    '[ALERT-PUSH] ${unresolved.length} unresolved alerts, sending up to $newAlertsCount');
+
                 // Send notifications for the newest alerts (most recently created)
-                for (var i = 0; i < newAlertsCount && i < unresolved.length; i++) {
-                   final alert = unresolved[i];
-                   final product = products.where((p) => p.id == alert.productId).firstOrNull;
-                   
-                   debugPrint('[ALERT-PUSH] Alert type=${alert.type.value}, productId=${alert.productId}, product found=${product != null}');
-                   debugPrint('[ALERT-PUSH] Raw title="${alert.title}", Raw body="${alert.body}"');
-                   
-                   final (pushTitle, pushBody) = alert.localizedStrings(l10n, lang, product);
-                   
-                   debugPrint('[ALERT-PUSH] Translated title="$pushTitle", body="$pushBody"');
-                   
-                   await Supabase.instance.client.functions.invoke(
-                     'send-notification',
-                     body: {
-                       'title': pushTitle,
-                       'body': pushBody,
-                       'targetType': 'hotel',
-                       'targetValue': item.hotelId,
-                       'targetPage': '/alerts',
-                       'actionButtons': [
-                         {
-                           'id': 'more_info',
-                           'title': l10n.t('notificationMoreInfo'),
-                         },
-                         {
-                           'id': 'resolve',
-                           'title': l10n.t('alertsResolve'),
-                         },
-                         {
-                           'id': 'delete',
-                           'title': l10n.t('delete'),
-                         },
-                       ],
-                       'data': {
-                         'alertId': alert.id,
-                         'hotelId': item.hotelId,
-                       },
-                     },
-                   );
-                   debugPrint('[ALERT-PUSH] Notification sent successfully for alert ${alert.id}');
+                for (var i = 0;
+                    i < newAlertsCount && i < unresolved.length;
+                    i++) {
+                  final alert = unresolved[i];
+                  final product = products
+                      .where((p) => p.id == alert.productId)
+                      .firstOrNull;
+
+                  debugPrint(
+                      '[ALERT-PUSH] Alert type=${alert.type.value}, productId=${alert.productId}, product found=${product != null}');
+                  debugPrint(
+                      '[ALERT-PUSH] Raw title="${alert.title}", Raw body="${alert.body}"');
+
+                  final (pushTitle, pushBody) =
+                      alert.localizedStrings(l10n, lang, product);
+
+                  debugPrint(
+                      '[ALERT-PUSH] Translated title="$pushTitle", body="$pushBody"');
+
+                  await Supabase.instance.client.functions.invoke(
+                    'send-notification',
+                    body: {
+                      'title': pushTitle,
+                      'body': pushBody,
+                      'targetType': 'hotel',
+                      'targetValue': item.hotelId,
+                      'targetPage': '/alerts',
+                      'actionButtons': [
+                        {
+                          'id': 'more_info',
+                          'title': l10n.t('notificationMoreInfo'),
+                        },
+                        {
+                          'id': 'resolve',
+                          'title': l10n.t('alertsResolve'),
+                        },
+                        {
+                          'id': 'delete',
+                          'title': l10n.t('delete'),
+                        },
+                      ],
+                      'data': {
+                        'alertId': alert.id,
+                        'hotelId': item.hotelId,
+                      },
+                    },
+                  );
+                  debugPrint(
+                      '[ALERT-PUSH] Notification sent successfully for alert ${alert.id}');
                 }
               }
             } catch (e) {
-              debugPrint('[ALERT-PUSH] Failed to dispatch alert push notification: $e');
+              debugPrint(
+                  '[ALERT-PUSH] Failed to dispatch alert push notification: $e');
             }
           }
         } catch (e) {
@@ -1569,13 +1656,14 @@ class _DeltaFieldState extends State<_DeltaField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        border: Border.all(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
       ),
       child: Row(
         children: [
@@ -1612,13 +1700,15 @@ class _DeltaFieldState extends State<_DeltaField> {
                   child: TextFormField(
                     controller: widget.controller,
                     textAlign: TextAlign.center,
-                    keyboardType: const TextInputType.numberWithOptions(signed: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(signed: true),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.zero,
                       isDense: true,
                     ),
-                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
                     validator: (value) {
                       if (int.tryParse(value ?? '') == null) {
                         return '!';
@@ -1868,10 +1958,12 @@ class _BulkStockAdjustmentDialogState
                     TextButton(
                       onPressed: () {
                         setState(() {
-                          _selectedProductIds = widget.products.map((p) => p.id).toSet();
+                          _selectedProductIds =
+                              widget.products.map((p) => p.id).toSet();
                         });
                       },
-                      child: Text(l10n.t('bulkAdjustSelectAll') ?? 'Select All'),
+                      child:
+                          Text(l10n.t('bulkAdjustSelectAll') ?? 'Select All'),
                     ),
                     TextButton(
                       onPressed: () {
@@ -1879,7 +1971,8 @@ class _BulkStockAdjustmentDialogState
                           _selectedProductIds.clear();
                         });
                       },
-                      child: Text(l10n.t('bulkAdjustDeselectAll') ?? 'Deselect All'),
+                      child: Text(
+                          l10n.t('bulkAdjustDeselectAll') ?? 'Deselect All'),
                     ),
                   ],
                 ),
@@ -1890,7 +1983,8 @@ class _BulkStockAdjustmentDialogState
                   children: widget.products.map((p) {
                     final isSelected = _selectedProductIds.contains(p.id);
                     return FilterChip(
-                      label: Text(p.label(Localizations.localeOf(context).languageCode)),
+                      label: Text(p
+                          .label(Localizations.localeOf(context).languageCode)),
                       selected: isSelected,
                       onSelected: (selected) {
                         setState(() {
@@ -1905,62 +1999,67 @@ class _BulkStockAdjustmentDialogState
                   }).toList(),
                 ),
                 const SizedBox(height: 24),
-                Builder(
-                  builder: (context) {
-                    final selectedProducts = widget.products.where((p) => _selectedProductIds.contains(p.id));
-                    final showRefillFields = selectedProducts.isEmpty || selectedProducts.any((p) => p.isRefillable);
-                    return Column(
-                      children: [
-                        _DeltaField(
-                          controller: _fullBottles,
-                          label: l10n.t('inventoryTableFullBottles'),
-                        ),
+                Builder(builder: (context) {
+                  final selectedProducts = widget.products
+                      .where((p) => _selectedProductIds.contains(p.id));
+                  final showRefillFields = selectedProducts.isEmpty ||
+                      selectedProducts.any((p) => p.isRefillable);
+                  return Column(
+                    children: [
+                      _DeltaField(
+                        controller: _fullBottles,
+                        label: l10n.t('inventoryTableFullBottles'),
+                      ),
+                      const SizedBox(height: 12),
+                      _DeltaField(
+                        controller: _emptyBottles,
+                        label: selectedProducts.length == 1
+                            ? l10n.tParams('inventoryTableEmptyBottles', {
+                                'months':
+                                    '${(selectedProducts.first.maxBottleAgeDays / 30.0).round()}'
+                              })
+                            : l10n.t('inventoryTableEmptyBottlesGeneric'),
+                      ),
+                      if (showRefillFields) ...[
                         const SizedBox(height: 12),
                         _DeltaField(
-                          controller: _emptyBottles,
+                          controller: _fullBidons,
                           label: selectedProducts.length == 1
-                              ? l10n.tParams('inventoryTableEmptyBottles', {
-                                  'months': '${(selectedProducts.first.maxBottleAgeDays / 30.0).round()}'
+                              ? l10n.tParams('inventoryTableFullBidons', {
+                                  'size': _getFormattedVolume(
+                                      selectedProducts.first.bidonVolumeMl,
+                                      language)
                                 })
-                              : l10n.t('inventoryTableEmptyBottlesGeneric'),
+                              : l10n.t('inventoryTableFullBidonsGeneric'),
                         ),
-                        if (showRefillFields) ...[
-                          const SizedBox(height: 12),
-                          _DeltaField(
-                            controller: _fullBidons,
-                            label: selectedProducts.length == 1
-                                ? l10n.tParams('inventoryTableFullBidons', {'size': _getFormattedVolume(selectedProducts.first.bidonVolumeMl, language)})
-                                : l10n.t('inventoryTableFullBidonsGeneric'),
+                        const SizedBox(height: 8),
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _showAdvanced = !_showAdvanced;
+                            });
+                          },
+                          icon: Icon(_showAdvanced
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down),
+                          label: Text(l10n.t('more')),
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.colorScheme.onSurfaceVariant,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                           ),
+                        ),
+                        if (_showAdvanced) ...[
                           const SizedBox(height: 8),
-                          TextButton.icon(
-                            onPressed: () {
-                              setState(() {
-                                _showAdvanced = !_showAdvanced;
-                              });
-                            },
-                            icon: Icon(_showAdvanced
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down),
-                            label: Text(l10n.t('more')),
-                            style: TextButton.styleFrom(
-                              foregroundColor: theme.colorScheme.onSurfaceVariant,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                            ),
+                          _DeltaField(
+                            controller: _emptyBidons,
+                            label: emptyBidonsLabel,
                           ),
-                          if (_showAdvanced) ...[
-                            const SizedBox(height: 8),
-                            _DeltaField(
-                              controller: _emptyBidons,
-                              label: emptyBidonsLabel,
-                            ),
-                          ],
                         ],
                       ],
-                    );
-                  }
-                ),
+                    ],
+                  );
+                }),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _reason,
@@ -1999,7 +2098,8 @@ class _BulkStockAdjustmentDialogState
     if (_selectedProductIds.isEmpty) {
       PremiumSnackbar.showError(
         context,
-        l10n.t('bulkAdjustNoProductsSelected') ?? 'Please select at least one product.',
+        l10n.t('bulkAdjustNoProductsSelected') ??
+            'Please select at least one product.',
       );
       return;
     }
@@ -2015,7 +2115,8 @@ class _BulkStockAdjustmentDialogState
 
       var isOffline = ref.read(offlineModeProvider);
 
-      final selectedProducts = widget.products.where((p) => _selectedProductIds.contains(p.id));
+      final selectedProducts =
+          widget.products.where((p) => _selectedProductIds.contains(p.id));
 
       for (final product in selectedProducts) {
         final payload = {
@@ -2062,7 +2163,9 @@ class _BulkStockAdjustmentDialogState
       }
 
       if (!isOffline) {
-        await ref.read(repositoryProvider).refreshSmartAlerts(hotelId: widget.hotelId);
+        await ref
+            .read(repositoryProvider)
+            .refreshSmartAlerts(hotelId: widget.hotelId);
       }
 
       ref.invalidate(inventoryProvider);
@@ -2105,7 +2208,8 @@ class _ProductHistoryDialog extends ConsumerStatefulWidget {
   final List<UserProfile> teamMembers;
 
   @override
-  ConsumerState<_ProductHistoryDialog> createState() => _ProductHistoryDialogState();
+  ConsumerState<_ProductHistoryDialog> createState() =>
+      _ProductHistoryDialogState();
 }
 
 class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
@@ -2133,14 +2237,16 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                 final productRoomProducts = roomProducts
                     .where((rp) => rp.product.id == widget.item.product.id)
                     .toList();
-                final productRoomProductIds = productRoomProducts.map((rp) => rp.id).toSet();
-                
+                final productRoomProductIds =
+                    productRoomProducts.map((rp) => rp.id).toSet();
+
                 final roomNumbers = {
                   for (var rp in productRoomProducts) rp.id: rp.roomNumber
                 };
 
                 final filteredRefills = refillEvents
-                    .where((e) => productRoomProductIds.contains(e.roomProductId))
+                    .where(
+                        (e) => productRoomProductIds.contains(e.roomProductId))
                     .toList();
 
                 final filteredAdjustments = inventoryEvents
@@ -2148,8 +2254,12 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                     .toList();
 
                 // Stats calculation (from unfiltered lists)
-                final refillsCount = filteredRefills.where((e) => e.type == RefillEventType.refill).length;
-                final replacementsCount = filteredRefills.where((e) => e.type == RefillEventType.bottleReplaced).length;
+                final refillsCount = filteredRefills
+                    .where((e) => e.type == RefillEventType.refill)
+                    .length;
+                final replacementsCount = filteredRefills
+                    .where((e) => e.type == RefillEventType.bottleReplaced)
+                    .length;
                 final adjustmentsCount = filteredAdjustments.length;
 
                 final allEvents = <_UnifiedHistoryItem>[];
@@ -2158,18 +2268,23 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                   final roomNumber = roomNumbers[e.roomProductId] ?? '';
                   final isInitial = e.type == RefillEventType.bottleReplaced &&
                       e.previousRefillCount == 0;
-                  
-                  final title = isInitial
-                      ? l10n.tParams('productHistoryNewBottle', {'roomNumber': roomNumber})
-                      : e.type == RefillEventType.bottleReplaced
-                          ? l10n.tParams('productHistoryReplacement', {'roomNumber': roomNumber})
-                          : l10n.tParams('productHistoryRefill', {'roomNumber': roomNumber});
 
-                  final subtitle = '${e.previousRefillCount} -> ${e.newRefillCount}';
+                  final title = isInitial
+                      ? l10n.tParams(
+                          'productHistoryNewBottle', {'roomNumber': roomNumber})
+                      : e.type == RefillEventType.bottleReplaced
+                          ? l10n.tParams('productHistoryReplacement',
+                              {'roomNumber': roomNumber})
+                          : l10n.tParams('productHistoryRefill',
+                              {'roomNumber': roomNumber});
+
+                  final subtitle =
+                      '${e.previousRefillCount} -> ${e.newRefillCount}';
                   final userName = widget.teamMembers
-                      .where((u) => u.id == e.performedBy)
-                      .firstOrNull
-                      ?.fullName ?? e.performedBy;
+                          .where((u) => u.id == e.performedBy)
+                          .firstOrNull
+                          ?.fullName ??
+                      e.performedBy;
 
                   final color = isInitial
                       ? Colors.blueAccent
@@ -2206,14 +2321,15 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
 
                 for (final e in filteredAdjustments) {
                   final title = l10n.t('productHistoryAdjustment');
-                  
+
                   final changes = <String>[];
                   final spans = <TextSpan>[];
 
                   void addDeltaSpan(int delta, String label) {
                     if (delta == 0) return;
                     if (spans.isNotEmpty) {
-                      spans.add(const TextSpan(text: ', ', style: TextStyle(color: Colors.grey)));
+                      spans.add(const TextSpan(
+                          text: ', ', style: TextStyle(color: Colors.grey)));
                     }
                     final sign = delta > 0 ? "+" : "";
                     spans.add(TextSpan(
@@ -2231,17 +2347,24 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                     ));
                   }
 
-                  addDeltaSpan(e.fullBottlesDelta, l10n.t('productHistoryDeltaFullBottles'));
-                  addDeltaSpan(e.emptyBottlesDelta, l10n.t('productHistoryDeltaUsedBottles'));
-                  addDeltaSpan(e.fullBidonsDelta, l10n.t('productHistoryDeltaFullBidons'));
-                  addDeltaSpan(e.openBidonsDelta, l10n.t('productHistoryDeltaOpenBidons'));
-                  addDeltaSpan(e.emptyBidonsDelta, l10n.t('productHistoryDeltaEmptyBidons'));
+                  addDeltaSpan(e.fullBottlesDelta,
+                      l10n.t('productHistoryDeltaFullBottles'));
+                  addDeltaSpan(e.emptyBottlesDelta,
+                      l10n.t('productHistoryDeltaUsedBottles'));
+                  addDeltaSpan(e.fullBidonsDelta,
+                      l10n.t('productHistoryDeltaFullBidons'));
+                  addDeltaSpan(e.openBidonsDelta,
+                      l10n.t('productHistoryDeltaOpenBidons'));
+                  addDeltaSpan(e.emptyBidonsDelta,
+                      l10n.t('productHistoryDeltaEmptyBidons'));
 
-                  final subtitle = changes.isEmpty ? 'No changes' : changes.join(', ');
+                  final subtitle =
+                      changes.isEmpty ? 'No changes' : changes.join(', ');
                   final userName = widget.teamMembers
-                      .where((u) => u.id == e.performedBy)
-                      .firstOrNull
-                      ?.fullName ?? e.performedBy;
+                          .where((u) => u.id == e.performedBy)
+                          .firstOrNull
+                          ?.fullName ??
+                      e.performedBy;
 
                   final color = Colors.orangeAccent;
 
@@ -2250,7 +2373,9 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                     occurredAt: e.occurredAt,
                     title: title,
                     subtitle: subtitle,
-                    subtitleSpans: spans.isEmpty ? [const TextSpan(text: 'No changes')] : spans,
+                    subtitleSpans: spans.isEmpty
+                        ? [const TextSpan(text: 'No changes')]
+                        : spans,
                     performedBy: userName,
                     notes: e.reason,
                     icon: Icons.inventory_2_outlined,
@@ -2280,19 +2405,23 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 16),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                theme.colorScheme.secondary.withValues(alpha: 0.15),
-                                theme.colorScheme.secondary.withValues(alpha: 0.05),
+                                theme.colorScheme.secondary
+                                    .withValues(alpha: 0.15),
+                                theme.colorScheme.secondary
+                                    .withValues(alpha: 0.05),
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: theme.colorScheme.secondary.withValues(alpha: 0.2),
+                              color: theme.colorScheme.secondary
+                                  .withValues(alpha: 0.2),
                             ),
                           ),
                           child: Row(
@@ -2300,7 +2429,8 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                                  color: theme.colorScheme.secondary
+                                      .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(
@@ -2316,7 +2446,8 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                   children: [
                                     Text(
                                       l10n.t('productHistoryTitle'),
-                                      style: theme.textTheme.titleSmall?.copyWith(
+                                      style:
+                                          theme.textTheme.titleSmall?.copyWith(
                                         color: theme.colorScheme.secondary,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
@@ -2325,7 +2456,8 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                     const SizedBox(height: 4),
                                     Text(
                                       widget.item.product.label(language),
-                                      style: theme.textTheme.titleLarge?.copyWith(
+                                      style:
+                                          theme.textTheme.titleLarge?.copyWith(
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: -0.5,
                                       ),
@@ -2374,19 +2506,23 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                               ChoiceChip(
                                 label: Text(l10n.t('productHistoryFilterAll')),
                                 selected: _selectedFilter == 'all',
-                                onSelected: (val) => setState(() => _selectedFilter = 'all'),
+                                onSelected: (val) =>
+                                    setState(() => _selectedFilter = 'all'),
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
                                 label: Text(l10n.t('productHistoryFilterRoom')),
                                 selected: _selectedFilter == 'room',
-                                onSelected: (val) => setState(() => _selectedFilter = 'room'),
+                                onSelected: (val) =>
+                                    setState(() => _selectedFilter = 'room'),
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text(l10n.t('productHistoryFilterManual')),
+                                label:
+                                    Text(l10n.t('productHistoryFilterManual')),
                                 selected: _selectedFilter == 'manual',
-                                onSelected: (val) => setState(() => _selectedFilter = 'manual'),
+                                onSelected: (val) =>
+                                    setState(() => _selectedFilter = 'manual'),
                               ),
                             ],
                           ),
@@ -2396,12 +2532,15 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                         Flexible(
                           child: displayEvents.isEmpty
                               ? Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 24),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 24),
                                   child: Center(
                                     child: Text(
                                       l10n.t('productHistoryNoHistory'),
-                                      style: theme.textTheme.bodyLarge?.copyWith(
-                                        color: theme.colorScheme.onSurfaceVariant,
+                                      style:
+                                          theme.textTheme.bodyLarge?.copyWith(
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ),
@@ -2411,11 +2550,13 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                   itemCount: displayEvents.length,
                                   itemBuilder: (context, index) {
                                     final event = displayEvents[index];
-                                    final isLastItem = index == displayEvents.length - 1;
-                                    
+                                    final isLastItem =
+                                        index == displayEvents.length - 1;
+
                                     return IntrinsicHeight(
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
                                         children: [
                                           // Timeline indicator
                                           SizedBox(
@@ -2426,21 +2567,30 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                                   width: 32,
                                                   height: 32,
                                                   decoration: BoxDecoration(
-                                                    color: event.color.withValues(alpha: 0.12),
+                                                    color: event.color
+                                                        .withValues(
+                                                            alpha: 0.12),
                                                     shape: BoxShape.circle,
                                                     border: Border.all(
-                                                      color: event.color.withValues(alpha: 0.3),
+                                                      color: event.color
+                                                          .withValues(
+                                                              alpha: 0.3),
                                                       width: 1,
                                                     ),
                                                   ),
-                                                  child: Icon(event.icon, size: 16, color: event.color),
+                                                  child: Icon(event.icon,
+                                                      size: 16,
+                                                      color: event.color),
                                                 ),
                                                 Expanded(
                                                   child: Container(
                                                     width: 2,
                                                     color: isLastItem
                                                         ? Colors.transparent
-                                                        : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                                                        : theme.colorScheme
+                                                            .outlineVariant
+                                                            .withValues(
+                                                                alpha: 0.5),
                                                   ),
                                                 ),
                                               ],
@@ -2450,49 +2600,89 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                           // Content
                                           Expanded(
                                             child: Padding(
-                                              padding: const EdgeInsets.only(bottom: 16),
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 16),
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     event.title,
-                                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                                      fontWeight: FontWeight.bold,
+                                                    style: theme
+                                                        .textTheme.bodyLarge
+                                                        ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Text.rich(
                                                     TextSpan(
-                                                      children: event.subtitleSpans,
+                                                      children:
+                                                          event.subtitleSpans,
                                                     ),
-                                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                                      fontWeight: FontWeight.w600,
+                                                    style: theme
+                                                        .textTheme.bodyMedium
+                                                        ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 2),
                                                   Text(
-                                                    '${_formatDateTime(event.occurredAt)} | ${l10n.tParams('productHistoryActionBy', {'user': event.performedBy})}',
-                                                    style: theme.textTheme.bodySmall?.copyWith(
-                                                      color: theme.colorScheme.onSurfaceVariant,
+                                                    '${_formatDateTime(event.occurredAt)} | ${l10n.tParams('productHistoryActionBy', {
+                                                          'user':
+                                                              event.performedBy
+                                                        })}',
+                                                    style: theme
+                                                        .textTheme.bodySmall
+                                                        ?.copyWith(
+                                                      color: theme.colorScheme
+                                                          .onSurfaceVariant,
                                                     ),
                                                   ),
-                                                  if (event.notes != null && event.notes!.trim().isNotEmpty) ...[
+                                                  if (event.notes != null &&
+                                                      event.notes!
+                                                          .trim()
+                                                          .isNotEmpty) ...[
                                                     const SizedBox(height: 6),
                                                     Container(
                                                       width: double.infinity,
-                                                      padding: const EdgeInsets.all(8),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8),
                                                       decoration: BoxDecoration(
-                                                        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-                                                        borderRadius: BorderRadius.circular(8),
+                                                        color: theme.colorScheme
+                                                            .surfaceContainerHighest
+                                                            .withValues(
+                                                                alpha: 0.4),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
                                                         border: Border.all(
-                                                          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.2),
+                                                          color: theme
+                                                              .colorScheme
+                                                              .outlineVariant
+                                                              .withValues(
+                                                                  alpha: 0.2),
                                                         ),
                                                       ),
                                                       child: Text(
-                                                        l10n.tParams('productHistoryReason', {'reason': event.notes!.trim()}),
-                                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                                          fontStyle: FontStyle.italic,
-                                                          color: theme.colorScheme.onSurfaceVariant,
+                                                        l10n.tParams(
+                                                            'productHistoryReason',
+                                                            {
+                                                              'reason': event
+                                                                  .notes!
+                                                                  .trim()
+                                                            }),
+                                                        style: theme.textTheme
+                                                            .bodyMedium
+                                                            ?.copyWith(
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                          color: theme
+                                                              .colorScheme
+                                                              .onSurfaceVariant,
                                                         ),
                                                       ),
                                                     ),
@@ -2611,12 +2801,12 @@ class _UnifiedHistoryItem {
 String _getFormattedVolume(int ml, String lang) {
   if (ml >= 1000) {
     final double l = ml / 1000.0;
-    final String formattedStr = l == l.toInt() ? l.toInt().toString() : l.toStringAsFixed(1);
-    final separator = (lang == 'fr' || lang == 'it' || lang == 'ar') ? ',' : '.';
+    final String formattedStr =
+        l == l.toInt() ? l.toInt().toString() : l.toStringAsFixed(1);
+    final separator =
+        (lang == 'fr' || lang == 'it' || lang == 'ar') ? ',' : '.';
     return '${formattedStr}L'.replaceAll('.', separator);
   } else {
     return '${ml}ml';
   }
 }
-
-

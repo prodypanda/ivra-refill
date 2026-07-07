@@ -12,12 +12,11 @@ import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
+import '../shared/empty_state.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/product_image.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/premium_confirm_dialog.dart';
-
-
 
 class ProductsScreen extends ConsumerWidget {
   const ProductsScreen({super.key});
@@ -82,11 +81,10 @@ class _ProductsTable extends ConsumerWidget {
     final canManage = ref.watch(hasPermissionProvider('manage_products'));
 
     if (products.isEmpty) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Text(l10n.t('productsNoProducts')),
-        ),
+      return EmptyState(
+        icon: Icons.inventory_2_outlined,
+        title: l10n.t('productsNoProducts'),
+        message: '',
       );
     }
 
@@ -259,18 +257,21 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                  Icon(
-                                    widget.product.bottleType == BottleType.withPump
-                                        ? IvraIcons.fullBottleWithPump
-                                        : IvraIcons.fullBottleWithoutPump,
-                                    size: 16,
-                                    color: theme.colorScheme.onPrimaryContainer,
-                                  ),
+                                Icon(
+                                  widget.product.bottleType ==
+                                          BottleType.withPump
+                                      ? IvraIcons.fullBottleWithPump
+                                      : IvraIcons.fullBottleWithoutPump,
+                                  size: 16,
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  widget.product.bottleType == BottleType.withPump
+                                  widget.product.bottleType ==
+                                          BottleType.withPump
                                       ? l10n.t('productsLabelBottleWithPump')
-                                      : l10n.t('productsLabelBottleWithoutPump'),
+                                      : l10n
+                                          .t('productsLabelBottleWithoutPump'),
                                   style: TextStyle(
                                     color: theme.colorScheme.onPrimaryContainer,
                                     fontSize: 10,
@@ -427,7 +428,8 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
     final confirmed = await PremiumConfirmDialog.show(
       context,
       title: l10n.t('delete'),
-      message: l10n.tParams('confirmDeleteProduct', {'productName': productName}),
+      message:
+          l10n.tParams('confirmDeleteProduct', {'productName': productName}),
     );
 
     if (confirmed && context.mounted) {
@@ -778,11 +780,16 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                                           {'name': _selectedImage!.name})
                                       : l10n.t('productsImageSet'))
                                   : l10n.t('productsImageNone'),
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: _hasImage
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: _hasImage
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
+                                  ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -811,7 +818,10 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                               children: [
                                 Text(
                                   l10n.t('productsLabelBottleType'),
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -822,15 +832,18 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                                     segments: [
                                       ButtonSegment<BottleType>(
                                         value: BottleType.withPump,
-                                        label: Text(l10n.t('productsLabelBottleWithPump')),
+                                        label: Text(l10n
+                                            .t('productsLabelBottleWithPump')),
                                       ),
                                       ButtonSegment<BottleType>(
                                         value: BottleType.withoutPump,
-                                        label: Text(l10n.t('productsLabelBottleWithoutPump')),
+                                        label: Text(l10n.t(
+                                            'productsLabelBottleWithoutPump')),
                                       ),
                                     ],
                                     selected: {_selectedBottleType},
-                                    onSelectionChanged: (Set<BottleType> selected) {
+                                    onSelectionChanged:
+                                        (Set<BottleType> selected) {
                                       setState(() {
                                         _selectedBottleType = selected.first;
                                       });
@@ -851,7 +864,10 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                               children: [
                                 Text(
                                   l10n.t('productsLabelRefillType'),
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -862,15 +878,18 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                                     segments: [
                                       ButtonSegment<RefillType>(
                                         value: RefillType.refillable,
-                                        label: Text(l10n.t('productsLabelRefillable')),
+                                        label: Text(
+                                            l10n.t('productsLabelRefillable')),
                                       ),
                                       ButtonSegment<RefillType>(
                                         value: RefillType.directReplacement,
-                                        label: Text(l10n.t('productsLabelDirectReplacement')),
+                                        label: Text(l10n.t(
+                                            'productsLabelDirectReplacement')),
                                       ),
                                     ],
                                     selected: {_selectedRefillType},
-                                    onSelectionChanged: (Set<RefillType> selected) {
+                                    onSelectionChanged:
+                                        (Set<RefillType> selected) {
                                       setState(() {
                                         _selectedRefillType = selected.first;
                                       });
@@ -985,8 +1004,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
             // real backend reason (e.g. an RLS or storage error) so the issue
             // can actually be diagnosed instead of a generic retry message.
             if (mounted) {
-              final reason =
-                  e is StorageException ? e.message : e.toString();
+              final reason = e is StorageException ? e.message : e.toString();
               PremiumSnackbar.show(
                 context,
                 '${l10n.t('productsImageUploadFailed')} ($reason)',
@@ -1006,9 +1024,10 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           ? 0
           : int.parse(_maxRefillCount.text);
       final maxBottleAgeDays = int.parse(_maxBottleAgeDays.text);
-      final lowBidonThreshold = _selectedRefillType == RefillType.directReplacement
-          ? 0
-          : int.parse(_lowBidonThreshold.text);
+      final lowBidonThreshold =
+          _selectedRefillType == RefillType.directReplacement
+              ? 0
+              : int.parse(_lowBidonThreshold.text);
 
       if (product == null) {
         await repository.createProduct(
