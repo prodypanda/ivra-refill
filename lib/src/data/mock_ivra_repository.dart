@@ -1165,6 +1165,23 @@ class MockIvraRepository implements IvraRepository {
 
   @override
   Future<void> deleteProduct(String productId) async {
+    // Cascading deletes for room products
+    final roomProductsToRemove = _roomProducts.where((rp) => rp.product.id == productId).toList();
+    for (final rp in roomProductsToRemove) {
+      _events.removeWhere((e) => e.roomProductId == rp.id);
+      _alerts.removeWhere((a) => a.roomProductId == rp.id);
+      _housekeeperStockEvents.removeWhere((hse) => hse.roomProductId == rp.id);
+    }
+    _roomProducts.removeWhere((rp) => rp.product.id == productId);
+
+    // Cascading deletes for other product references
+    _inventory.removeWhere((inv) => inv.product.id == productId);
+    _inventoryEvents.removeWhere((ie) => ie.productId == productId);
+    _alerts.removeWhere((a) => a.productId == productId);
+    _housekeeperAllocations.removeWhere((ha) => ha.product.id == productId);
+    _housekeeperStockEvents.removeWhere((hse) => hse.product.id == productId);
+
+    // Finally delete the product
     _products.removeWhere((p) => p.id == productId);
   }
 

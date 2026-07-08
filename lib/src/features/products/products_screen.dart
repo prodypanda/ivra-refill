@@ -436,6 +436,11 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
       try {
         await ref.read(repositoryProvider).deleteProduct(widget.product.id);
         ref.invalidate(productsProvider);
+        ref.invalidate(roomProductsProvider);
+        ref.invalidate(inventoryProvider);
+        ref.invalidate(alertsProvider);
+        ref.invalidate(dashboardProvider);
+        ref.invalidate(housekeeperAllocationsProvider);
       } catch (e) {
         if (context.mounted) {
           PremiumSnackbar.showError(context, e);
