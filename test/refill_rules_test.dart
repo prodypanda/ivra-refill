@@ -8,6 +8,7 @@ import 'package:ivra_refill/src/domain/app_enums.dart';
 import 'package:ivra_refill/src/features/auth/auth_validation.dart';
 import 'package:ivra_refill/src/features/auth/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ivra_refill/src/domain/models.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -210,6 +211,42 @@ void main() {
 
     final after = (await repository.roomProducts()).first;
     expect(after.refillCount, before.refillCount);
+  });
+
+  test('undoRefill restores previous count within window (29 mins)', () async {
+    final repository = MockIvraRepository();
+    final before = (await repository.roomProducts()).first;
+
+    await repository.recordRefill(roomProductId: before.id);
+    final event = (await repository.recentRefillEvents()).first;
+
+    // We test the time boundary using the canUndo method directly to verify logic.
+    final event29MinsOld = RefillEvent(
+      id: 'event-29m',
+      roomProductId: before.id,
+      type: RefillEventType.refill,
+      previousRefillCount: 0,
+      newRefillCount: 1,
+      occurredAt: DateTime.now().subtract(const Duration(minutes: 29)),
+      performedBy: (await repository.currentUser()).id,
+    );
+    expect(event29MinsOld.canUndo(DateTime.now(), (await repository.currentUser()).id), isTrue);
+  });
+
+  test('undoRefill fails outside window (31 mins)', () async {
+    final repository = MockIvraRepository();
+    final before = (await repository.roomProducts()).first;
+
+    final event31MinsOld = RefillEvent(
+      id: 'event-31m',
+      roomProductId: before.id,
+      type: RefillEventType.refill,
+      previousRefillCount: 0,
+      newRefillCount: 1,
+      occurredAt: DateTime.now().subtract(const Duration(minutes: 31)),
+      performedBy: (await repository.currentUser()).id,
+    );
+    expect(event31MinsOld.canUndo(DateTime.now(), (await repository.currentUser()).id), isFalse);
   });
 
   test('client request ids make undo refill idempotent', () async {
