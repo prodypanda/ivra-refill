@@ -2259,14 +2259,50 @@ class _RoomCard extends ConsumerStatefulWidget {
 class _RoomCardState extends ConsumerState<_RoomCard> {
   bool _isHovered = false;
 
+  Future<void> _addCatalogProductToRoom(Product product, {required bool autoAdjust, required String? deductFromHousekeeperId}) async {
+    final l10n = AppLocalizations.of(context);
+    try {
+      await ref.read(repositoryProvider).addProductToRoom(
+            hotelId: widget.hotelId,
+            floor: widget.floorNumber.toString(),
+            roomNumber: widget.roomNumber,
+            productSku: product.sku,
+            autoAdjustInventory: autoAdjust,
+            deductFromHousekeeperId: deductFromHousekeeperId,
+          );
+
+      ref.invalidate(roomProductsProvider);
+      ref.invalidate(dashboardProvider);
+      ref.invalidate(roomsProvider);
+      ref.invalidate(inventoryProvider);
+      ref.invalidate(housekeeperAllocationsProvider);
+
+      if (context.mounted) {
+        HapticFeedback.mediumImpact();
+        PremiumSnackbar.show(
+          context,
+          l10n.t('roomsProductAdded'),
+          icon: Icons.check_circle_outline,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        PremiumSnackbar.showError(context, e);
+      }
+    }
+  }
+
   Future<void> _scanCardProductQr(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
     final allProducts =
         ref.read(roomProductsProvider).valueOrNull ?? widget.roomProducts;
     final currentRoomProducts =
         allProducts.where((p) => p.roomId == widget.roomId).toList();
-    final products =
-        currentRoomProducts.map((e) => 'product:${e.product.sku}').toList();
+
+    // Enable scanning any product from the catalog so that we can support adding missing ones
+    final allCatalogProducts =
+        await ref.read(productsProvider.future).catchError((_) => <Product>[]);
+    final products = allCatalogProducts.map((e) => 'product:${e.sku}').toList();
 
     final code =
         await PremiumQrScannerDialog.show(context, demoCodes: products);
@@ -2278,12 +2314,178 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
         .firstOrNull;
 
     if (matchedItem == null) {
-      if (mounted) {
-        PremiumSnackbar.show(
-          context,
-          l10n.t('roomsNoRoomsFound'),
-          icon: Icons.error_outline_rounded,
-        );
+      final catalogProduct = allCatalogProducts
+          .where((p) => p.sku.toLowerCase() == sku.toLowerCase())
+          .firstOrNull;
+
+      if (catalogProduct != null) {
+        if (!mounted) return;
+        final currentUser = ref.read(currentUserProvider).valueOrNull;
+        final isHousekeeper = currentUser?.role == UserRole.housekeeper;
+
+        if (isHousekeeper) {
+          final allocations = ref.read(housekeeperAllocationsProvider).valueOrNull ?? [];
+          final allocation = allocations
+              .where((a) => a.product.id == catalogProduct.id)
+              .firstOrNull;
+          final cartBottles = allocation?.fullBottles ?? 0;
+
+          if (cartBottles > 0) {
+            final language = Localizations.localeOf(context).languageCode;
+            final productName = catalogProduct.label(language);
+
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (ctx) {
+                final theme = Theme.of(ctx);
+                return AlertDialog(
+                  icon: Icon(Icons.inventory_2_outlined, color: theme.colorScheme.primary, size: 36),
+                  title: Text(l10n.t('scanAssignAutoAddTitle')),
+                  content: Text(
+                    l10n.tParams('roomsScanConfirmFromCart', {
+                      'product': productName,
+                      'count': cartBottles.toString(),
+                    }),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: Text(l10n.t('btnCancel')),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: Text(l10n.t('btnConfirm')),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            if (confirmed == true && mounted) {
+              await _addCatalogProductToRoom(catalogProduct, autoAdjust: false, deductFromHousekeeperId: currentUser?.id);
+            }
+          } else {
+            final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+            final hotelStockItem = inventory
+                .where((stock) => stock.product.id == catalogProduct.id)
+                .firstOrNull;
+            final hotelBottles = hotelStockItem?.fullBottles ?? 0;
+            final language = Localizations.localeOf(context).languageCode;
+            final productName = catalogProduct.label(language);
+
+            if (hotelBottles > 0) {
+              final proceed = await showHousekeeperStockDialog(
+                context: context,
+                message: l10n.tParams('housekeeperAddGetFromHotel', {
+                  'product': productName,
+                  'room': widget.roomNumber,
+                  'count': hotelBottles.toString(),
+                }),
+                showProceedAction: true,
+              );
+              if (proceed == true && mounted) {
+                try {
+                  await ref.read(repositoryProvider).checkoutHousekeeperStock(
+                        housekeeperId: currentUser!.id,
+                        productId: catalogProduct.id,
+                        fullBottles: 1,
+                        fullBidons: 0,
+                      );
+                  await _addCatalogProductToRoom(catalogProduct, autoAdjust: false, deductFromHousekeeperId: currentUser.id);
+                } catch (e) {
+                  if (mounted) {
+                    PremiumSnackbar.showError(context, e);
+                  }
+                }
+              }
+            } else {
+              await showHousekeeperStockDialog(
+                context: context,
+                message: l10n.tParams('housekeeperAddNotifyManager', {
+                  'product': productName,
+                  'room': widget.roomNumber,
+                }),
+                showProceedAction: false,
+              );
+            }
+          }
+        } else {
+          final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
+          final hotelStockItem = inventory
+              .where((stock) => stock.product.id == catalogProduct.id)
+              .firstOrNull;
+          final hotelBottles = hotelStockItem?.fullBottles ?? 0;
+          final language = Localizations.localeOf(context).languageCode;
+          final productName = catalogProduct.label(language);
+
+          if (hotelBottles > 0) {
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (ctx) {
+                final theme = Theme.of(ctx);
+                return AlertDialog(
+                  icon: Icon(Icons.inventory_2_outlined, color: theme.colorScheme.primary, size: 36),
+                  title: Text(l10n.t('scanAssignAutoAddTitle')),
+                  content: Text(
+                    l10n.tParams('roomsScanConfirmFromHotel', {
+                      'product': productName,
+                      'count': hotelBottles.toString(),
+                    }),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: Text(l10n.t('btnCancel')),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: Text(l10n.t('btnConfirm')),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            if (confirmed == true && mounted) {
+              await _addCatalogProductToRoom(catalogProduct, autoAdjust: true, deductFromHousekeeperId: null);
+            }
+          } else {
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (ctx) {
+                return AlertDialog(
+                  icon: Icon(Icons.inventory_2_outlined, color: Colors.orange.shade700, size: 36),
+                  title: Text(l10n.t('scanAssignAutoAddTitle')),
+                  content: Text(
+                    l10n.tParams('scanAssignAutoAddMessage', {'product': productName}),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: Text(l10n.t('btnCancel')),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: Text(l10n.t('scanAssignConfirm')),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            if (confirmed == true && mounted) {
+              await _addCatalogProductToRoom(catalogProduct, autoAdjust: true, deductFromHousekeeperId: null);
+            }
+          }
+        }
+      } else {
+        if (mounted) {
+          PremiumSnackbar.show(
+            context,
+            l10n.t('roomsNoRoomsFound'),
+            icon: Icons.error_outline_rounded,
+          );
+        }
       }
       return;
     }

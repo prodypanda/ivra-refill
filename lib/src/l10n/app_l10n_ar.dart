@@ -864,6 +864,16 @@ class AppL10nAr extends AppL10n {
   String get roomsNoRoomsFound => 'لم يتم العثور على غرف أو منتجات.';
 
   @override
+  String roomsScanConfirmFromCart(String product, String count) {
+    return 'المنتج \"$product\" غير مخصص حاليًا لهذه الغرفة، ولكن لديك $count في عربتك. هل ترغب في أخذ زجاجة واحدة من عربتك وتخصيصها لهذه الغرفة؟';
+  }
+
+  @override
+  String roomsScanConfirmFromHotel(String product, String count) {
+    return 'المنتج \"$product\" غير موجود في هذه الغرفة. تتوفر $count زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة وتخصيصها لهذه الغرفة؟';
+  }
+
+  @override
   String get roomsNoProducts => 'لا توجد منتجات مخصصة لهذه الغرفة.';
 
   @override

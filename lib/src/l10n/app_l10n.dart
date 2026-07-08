@@ -1685,6 +1685,18 @@ abstract class AppL10n {
   /// **'No rooms or products found.'**
   String get roomsNoRoomsFound;
 
+  /// No description provided for @roomsScanConfirmFromCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Product \"{product}\" is not currently assigned to this room, but you have {count} in your cart. Would you like to take 1 from your cart and assign it to this room?'**
+  String roomsScanConfirmFromCart(String product, String count);
+
+  /// No description provided for @roomsScanConfirmFromHotel.
+  ///
+  /// In en, this message translates to:
+  /// **'Product \"{product}\" is not in this room. There are {count} bottles in the hotel inventory. Would you like to get 1 and assign it to this room?'**
+  String roomsScanConfirmFromHotel(String product, String count);
+
   /// No description provided for @roomsNoProducts.
   ///
   /// In en, this message translates to:

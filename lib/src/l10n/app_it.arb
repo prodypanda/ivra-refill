@@ -264,6 +264,8 @@
   "teamHotelsUpdateFailed": "Impossibile aggiornare le assegnazioni hotel. Riprova.",
   "roomsTooltipCreateTemplate": "Crea modello camera",
   "roomsNoRoomsFound": "Nessuna camera o prodotto trovato.",
+  "roomsScanConfirmFromCart": "Il prodotto \"{product}\" non è attualmente assegnato a questa camera, ma ne hai {count} nel carrello. Vuoi prenderne 1 dal carrello e assegnarlo a questa camera?",
+  "roomsScanConfirmFromHotel": "Il prodotto \"{product}\" non è in questa camera. Ci sono {count} bottiglie nell'inventario dell'hotel. Vuoi prenderne 1 e assegnarlo a questa camera?",
   "roomsNoProducts": "Nessun prodotto assegnato a questa camera.",
   "roomsStatusNoProducts": "Nessun prodotto",
   "roomsSearchEmptyHint": "Prova a modificare la ricerca o i filtri.",

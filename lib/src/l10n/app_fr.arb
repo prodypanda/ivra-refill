@@ -264,6 +264,8 @@
   "teamHotelsUpdateFailed": "Impossible de mettre à jour les affectations d'hôtels. Réessayez.",
   "roomsTooltipCreateTemplate": "Créer un modèle de chambre",
   "roomsNoRoomsFound": "Aucune chambre ni produit trouvé.",
+  "roomsScanConfirmFromCart": "Le produit \"{product}\" n'est pas actuellement assigné à cette chambre, mais vous en avez {count} dans votre panier. Souhaitez-vous en prendre 1 dans votre panier et l'assigner à cette chambre ?",
+  "roomsScanConfirmFromHotel": "Le produit \"{product}\" n'est pas dans cette chambre. Il y a {count} bouteilles dans l'inventaire de l'hôtel. Souhaitez-vous en prendre 1 et l'assigner à cette chambre ?",
   "roomsNoProducts": "Aucun produit attribué à cette chambre.",
   "roomsStatusNoProducts": "Aucun produit",
   "roomsSearchEmptyHint": "Essayez de modifier votre recherche ou vos filtres.",

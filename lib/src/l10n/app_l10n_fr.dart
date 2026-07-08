@@ -879,6 +879,16 @@ class AppL10nFr extends AppL10n {
   String get roomsNoRoomsFound => 'Aucune chambre ni produit trouvé.';
 
   @override
+  String roomsScanConfirmFromCart(String product, String count) {
+    return 'Le produit \"$product\" n\'est pas actuellement assigné à cette chambre, mais vous en avez $count dans votre panier. Souhaitez-vous en prendre 1 dans votre panier et l\'assigner à cette chambre ?';
+  }
+
+  @override
+  String roomsScanConfirmFromHotel(String product, String count) {
+    return 'Le produit \"$product\" n\'est pas dans cette chambre. Il y a $count bouteilles dans l\'inventaire de l\'hôtel. Souhaitez-vous en prendre 1 et l\'assigner à cette chambre ?';
+  }
+
+  @override
   String get roomsNoProducts => 'Aucun produit attribué à cette chambre.';
 
   @override

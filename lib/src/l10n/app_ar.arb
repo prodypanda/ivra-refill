@@ -264,6 +264,8 @@
   "teamHotelsUpdateFailed": "تعذّر تحديث تعيينات الفنادق. حاول مرّة أخرى.",
   "roomsTooltipCreateTemplate": "إنشاء نموذج غرفة",
   "roomsNoRoomsFound": "لم يتم العثور على غرف أو منتجات.",
+  "roomsScanConfirmFromCart": "المنتج \"{product}\" غير مخصص حاليًا لهذه الغرفة، ولكن لديك {count} في عربتك. هل ترغب في أخذ زجاجة واحدة من عربتك وتخصيصها لهذه الغرفة؟",
+  "roomsScanConfirmFromHotel": "المنتج \"{product}\" غير موجود في هذه الغرفة. تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة وتخصيصها لهذه الغرفة؟",
   "roomsNoProducts": "لا توجد منتجات مخصصة لهذه الغرفة.",
   "roomsStatusNoProducts": "لا توجد منتجات",
   "roomsSearchEmptyHint": "جرّب تعديل استفسار البحث أو العوامل التصفية.",
