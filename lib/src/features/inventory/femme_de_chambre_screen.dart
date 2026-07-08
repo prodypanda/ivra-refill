@@ -15,6 +15,7 @@ import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/premium_confirm_dialog.dart';
 import '../shared/premium_loading.dart';
+import '../shared/hover_image_tooltip.dart';
 
 class FemmeDeChambreScreen extends ConsumerStatefulWidget {
   const FemmeDeChambreScreen({super.key});
@@ -220,19 +221,21 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
       padding: const EdgeInsets.only(top: 16),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: _isUploadingAvatar ? null : () => _pickAvatar(user.id),
-            child: Stack(
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: theme.colorScheme.primaryContainer,
-                  backgroundImage: (user.avatarUrl != null && user.avatarUrl!.isNotEmpty && user.avatarUrl!.startsWith('http')) ? NetworkImage(user.avatarUrl!) : null,
-                  child: (user.avatarUrl == null || user.avatarUrl!.isEmpty || !user.avatarUrl!.startsWith('http'))
-                      ? Icon(Icons.person, size: 40, color: theme.colorScheme.onPrimaryContainer)
-                      : null,
-                ),
-                if (_isUploadingAvatar)
+          HoverImageTooltip(
+            imageUrl: user.avatarUrl,
+            child: GestureDetector(
+              onTap: _isUploadingAvatar ? null : () => _pickAvatar(user.id),
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    backgroundImage: (user.avatarUrl != null && user.avatarUrl!.isNotEmpty && user.avatarUrl!.startsWith('http')) ? NetworkImage(user.avatarUrl!) : null,
+                    child: (user.avatarUrl == null || user.avatarUrl!.isEmpty || !user.avatarUrl!.startsWith('http'))
+                        ? Icon(Icons.person, size: 40, color: theme.colorScheme.onPrimaryContainer)
+                        : null,
+                  ),
+                  if (_isUploadingAvatar)
                   const Positioned.fill(
                     child: CircularProgressIndicator(),
                   ),
@@ -254,6 +257,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 ),
               ],
             ),
+          ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -443,18 +447,20 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
 
     return GlassCard(
       child: ExpansionTile(
-        leading: GestureDetector(
-          onTap: canManage ? () => _pickAvatar(hk.id) : null,
-          child: Stack(
-            children: [
-              CircleAvatar(
-                backgroundColor: theme.colorScheme.primaryContainer,
-                backgroundImage: (hk.avatarUrl != null && hk.avatarUrl!.isNotEmpty && hk.avatarUrl!.startsWith('http')) ? NetworkImage(hk.avatarUrl!) : null,
-                child: (hk.avatarUrl == null || hk.avatarUrl!.isEmpty || !hk.avatarUrl!.startsWith('http'))
-                    ? Icon(Icons.person, color: theme.colorScheme.onPrimaryContainer)
-                    : null,
-              ),
-              if (canManage)
+        leading: HoverImageTooltip(
+          imageUrl: hk.avatarUrl,
+          child: GestureDetector(
+            onTap: canManage ? () => _pickAvatar(hk.id) : null,
+            child: Stack(
+              children: [
+                CircleAvatar(
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  backgroundImage: (hk.avatarUrl != null && hk.avatarUrl!.isNotEmpty && hk.avatarUrl!.startsWith('http')) ? NetworkImage(hk.avatarUrl!) : null,
+                  child: (hk.avatarUrl == null || hk.avatarUrl!.isEmpty || !hk.avatarUrl!.startsWith('http'))
+                      ? Icon(Icons.person, color: theme.colorScheme.onPrimaryContainer)
+                      : null,
+                ),
+                if (canManage)
                 Positioned(
                   bottom: 0,
                   right: 0,
@@ -473,6 +479,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 ),
             ],
           ),
+        ),
         ),
         title: Text(hk.fullName, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
@@ -840,14 +847,17 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
             // Header: Product Info
             Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: const Color(0xFFF2A900).withOpacity(0.1),
-                  backgroundImage: allocation.product.imageUrl != null && allocation.product.imageUrl!.isNotEmpty 
-                      ? NetworkImage(allocation.product.imageUrl!) 
-                      : null,
-                  child: allocation.product.imageUrl == null || allocation.product.imageUrl!.isEmpty
-                      ? const Icon(Icons.inventory_2_outlined, color: Color(0xFFF2A900))
-                      : null,
+                HoverImageTooltip(
+                  imageUrl: allocation.product.imageUrl,
+                  child: CircleAvatar(
+                    backgroundColor: const Color(0xFFF2A900).withOpacity(0.1),
+                    backgroundImage: allocation.product.imageUrl != null && allocation.product.imageUrl!.isNotEmpty 
+                        ? NetworkImage(allocation.product.imageUrl!) 
+                        : null,
+                    child: allocation.product.imageUrl == null || allocation.product.imageUrl!.isEmpty
+                        ? const Icon(Icons.inventory_2_outlined, color: Color(0xFFF2A900))
+                        : null,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
