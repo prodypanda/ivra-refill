@@ -137,7 +137,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         final isStaffOrHousekeeper = currentUser?.role == UserRole.hotelStaff ||
             currentUser?.role == UserRole.housekeeper;
 
-        if (!expressQrEnabled && isStaffOrHousekeeper) {
+        if (!expressQrEnabled) {
           if (path.startsWith('/qr') || path.startsWith('/app/qr')) {
             return RoomsScreen.route;
           }
