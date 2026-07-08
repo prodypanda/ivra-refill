@@ -26,6 +26,7 @@ import '../shared/shimmer_loading.dart';
 import '../shared/premium_confirm_dialog.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/refill_percentage_dialog.dart';
+import '../../utils/qr_parser.dart';
 
 class RoomsScreen extends ConsumerStatefulWidget {
   const RoomsScreen({
@@ -1176,9 +1177,9 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         await PremiumQrScannerDialog.show(context, demoCodes: allDemoCodes);
     if (code == null || code.trim().isEmpty) return;
 
-    final trimmed = code.trim();
-    if (trimmed.startsWith('room:')) {
-      final parts = trimmed.split(':');
+    final parsed = QrParser.parsePayload(code);
+    if (parsed.startsWith('room:')) {
+      final parts = parsed.split(':');
       if (parts.length >= 3) {
         final hotelId = parts[1];
         final roomNumber = parts[2];
@@ -1189,8 +1190,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         });
         _recordRecentRoom(hotelId, roomNumber);
       }
-    } else if (trimmed.startsWith('product:')) {
-      final sku = trimmed.split(':')[1];
+    } else if (parsed.startsWith('product:')) {
+      final sku = parsed.split(':')[1];
       _productSearchController.text = sku;
       setState(() {
         _productSearchQuery = sku;
@@ -1198,17 +1199,17 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     } else {
       // Check if it matches a product SKU in hotelItems
       final isSku = hotelItems
-          .any((e) => e.product.sku.toLowerCase() == trimmed.toLowerCase());
+          .any((e) => e.product.sku.toLowerCase() == parsed.toLowerCase());
       if (isSku) {
-        _productSearchController.text = trimmed;
+        _productSearchController.text = parsed;
         setState(() {
-          _productSearchQuery = trimmed;
+          _productSearchQuery = parsed;
         });
       } else {
         // Assume it's a room number
-        _searchController.text = trimmed;
+        _searchController.text = parsed;
         setState(() {
-          _searchQuery = trimmed;
+          _searchQuery = parsed;
         });
       }
     }
@@ -1222,9 +1223,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
         await PremiumQrScannerDialog.show(context, demoCodes: productCodes);
     if (code == null || code.trim().isEmpty) return;
 
-    final trimmed = code.trim();
-    final sku =
-        trimmed.startsWith('product:') ? trimmed.split(':')[1] : trimmed;
+    final sku = QrParser.parsePayload(code);
     _productSearchController.text = sku;
     setState(() {
       _productSearchQuery = sku;
@@ -2273,7 +2272,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
         await PremiumQrScannerDialog.show(context, demoCodes: products);
     if (code == null) return;
 
-    final sku = code.startsWith('product:') ? code.split(':')[1] : code;
+    final sku = QrParser.parsePayload(code);
     final matchedItem = currentRoomProducts
         .where((e) => e.product.sku.toLowerCase() == sku.toLowerCase())
         .firstOrNull;

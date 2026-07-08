@@ -16,6 +16,7 @@ import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/centered_sheet.dart';
+import '../../utils/qr_parser.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
   final String? hotelId;
@@ -554,9 +555,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
         await PremiumQrScannerDialog.show(context, demoCodes: productSkus);
     if (code == null || code.trim().isEmpty) return;
 
-    final trimmed = code.trim();
-    final sku =
-        trimmed.startsWith('product:') ? trimmed.split(':')[1] : trimmed;
+    final sku = QrParser.parsePayload(code);
 
     final matchedProduct = products
         .where((p) => p.sku.toLowerCase() == sku.toLowerCase())
