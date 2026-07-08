@@ -1082,27 +1082,33 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                               // ── Bottom row: chips + resolve button ──
                               Row(
                                 children: [
-                                  // Type chip
-                                  _PillChip(
-                                    label:
-                                        l10n.alertTypeLabel(widget.alert.type),
-                                    backgroundColor: severityCol.withValues(
-                                        alpha: isResolved ? 0.05 : 0.08),
-                                    textColor: severityCol.withValues(
-                                        alpha: contentOpacity),
+                                  Expanded(
+                                    child: Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children: [
+                                        // Type chip
+                                        _PillChip(
+                                          label:
+                                              l10n.alertTypeLabel(widget.alert.type),
+                                          backgroundColor: severityCol.withValues(
+                                              alpha: isResolved ? 0.05 : 0.08),
+                                          textColor: severityCol.withValues(
+                                              alpha: contentOpacity),
+                                        ),
+                                        // Severity indicator
+                                        _PillChip(
+                                          label: l10n.tParams('alertsSeverityLabel', {
+                                            'severity': '${widget.alert.severity}'
+                                          }),
+                                          backgroundColor: severityCol.withValues(
+                                              alpha: isResolved ? 0.05 : 0.08),
+                                          textColor: severityCol.withValues(
+                                              alpha: contentOpacity),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  // Severity indicator
-                                  _PillChip(
-                                    label: l10n.tParams('alertsSeverityLabel', {
-                                      'severity': '${widget.alert.severity}'
-                                    }),
-                                    backgroundColor: severityCol.withValues(
-                                        alpha: isResolved ? 0.05 : 0.08),
-                                    textColor: severityCol.withValues(
-                                        alpha: contentOpacity),
-                                  ),
-                                  const Spacer(),
                                   // Status indicator or resolve button
                                   if (isResolved)
                                     Row(
