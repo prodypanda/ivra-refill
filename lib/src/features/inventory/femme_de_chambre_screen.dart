@@ -440,6 +440,42 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     );
   }
 
+  Future<List<HousekeeperAllocation>> _getActiveAllocations(
+    String housekeeperId,
+  ) async {
+    final allocations = await ref
+        .read(repositoryProvider)
+        .fetchHousekeeperAllocations(housekeeperId: housekeeperId);
+    return allocations
+        .where((a) =>
+            a.fullBottles > 0 ||
+            a.emptyBottles > 0 ||
+            a.fullBidons > 0 ||
+            a.openBidons > 0 ||
+            a.emptyBidons > 0 ||
+            a.openBidonVolumeLeftMl > 0)
+        .toList();
+  }
+
+  Future<void> _returnAllStock(
+    String housekeeperId,
+    List<HousekeeperAllocation> activeAllocations,
+  ) async {
+    final repo = ref.read(repositoryProvider);
+    for (final alloc in activeAllocations) {
+      await repo.returnHousekeeperStock(
+        housekeeperId: housekeeperId,
+        productId: alloc.product.id,
+        fullBottles: alloc.fullBottles,
+        emptyBottles: alloc.emptyBottles,
+        fullBidons: alloc.fullBidons,
+        openBidons: alloc.openBidons,
+        emptyBidons: alloc.emptyBidons,
+        openBidonVolumeLeftMl: alloc.openBidonVolumeLeftMl,
+      );
+    }
+  }
+
   Widget _buildHousekeeperExpandableCard(BuildContext context, UserProfile hk, UserProfile currentUser) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
@@ -527,19 +563,64 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
               PopupMenuButton<String>(
                 onSelected: (value) async {
                   if (value == 'toggle_status') {
-                    await ref.read(repositoryProvider).setTeamMemberActive(userId: hk.id, isActive: !hk.isActive);
+                    final isActive = !hk.isActive;
+                    
+                    if (!isActive) {
+                      final activeAllocations = await _getActiveAllocations(hk.id);
+                      if (activeAllocations.isNotEmpty && context.mounted) {
+                        final result = await showDialog<String>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(l10n.t('hkDeactivateWithStockTitle')),
+                            content: Text(l10n.t('hkDeactivateWithStockMessage')),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop('cancel'),
+                                child: Text(l10n.t('btnCancel')),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop('deactivate'),
+                                child: Text(l10n.t('btnJustDeactivate')),
+                              ),
+                              FilledButton(
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: Theme.of(context).colorScheme.error,
+                                  foregroundColor: Theme.of(context).colorScheme.onError,
+                                ),
+                                onPressed: () => Navigator.of(context).pop('return'),
+                                child: Text(l10n.t('btnReturnAndDeactivate')),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (result == null || result == 'cancel') return;
+                        if (result == 'return') {
+                          await _returnAllStock(hk.id, activeAllocations);
+                        }
+                      }
+                    }
+
+                    await ref.read(repositoryProvider).setTeamMemberActive(userId: hk.id, isActive: isActive);
                     ref.invalidate(hotelHousekeepersProvider);
                   } else if (value == 'delete') {
+                    List<HousekeeperAllocation> activeAllocations = await _getActiveAllocations(hk.id);
+                    String messageKey = activeAllocations.isNotEmpty ? 'hkDeleteWithStockMessage' : 'confirmDeleteUser';
+                    
+                    if (!context.mounted) return;
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (c) => PremiumConfirmDialog(
                         title: l10n.t('confirmAction'),
-                        message: l10n.tParams('confirmDeleteUser', {'userName': hk.fullName}),
+                        message: l10n.tParams(messageKey, {'userName': hk.fullName}),
                         confirmLabel: l10n.t('deleteGeneric'),
                         isDestructive: true,
                       ),
                     );
                     if (confirm == true) {
+                      if (activeAllocations.isNotEmpty) {
+                        await _returnAllStock(hk.id, activeAllocations);
+                      }
                       await ref.read(repositoryProvider).deleteUser(hk.id);
                       ref.invalidate(hotelHousekeepersProvider);
                     }
