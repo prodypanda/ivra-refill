@@ -2942,4 +2942,22 @@ class AppL10nEn extends AppL10n {
   String markLostTitle(String product, String room) {
     return 'Mark lost - $product in Room $room';
   }
+
+  @override
+  String get hkDeactivateWithStockTitle => 'Housekeeper Cart Inventory';
+
+  @override
+  String get hkDeactivateWithStockMessage =>
+      'This housekeeper has active inventory in their cart. Would you like to return this inventory to the hotel\'s central inventory before deactivating their account?';
+
+  @override
+  String get btnReturnAndDeactivate => 'Return & Deactivate';
+
+  @override
+  String get btnJustDeactivate => 'Just Deactivate';
+
+  @override
+  String hkDeleteWithStockMessage(String userName) {
+    return 'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'$userName\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.';
+  }
 }

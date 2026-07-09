@@ -5401,6 +5401,36 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Mark lost - {product} in Room {room}'**
   String markLostTitle(String product, String room);
+
+  /// No description provided for @hkDeactivateWithStockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Housekeeper Cart Inventory'**
+  String get hkDeactivateWithStockTitle;
+
+  /// No description provided for @hkDeactivateWithStockMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This housekeeper has active inventory in their cart. Would you like to return this inventory to the hotel\'s central inventory before deactivating their account?'**
+  String get hkDeactivateWithStockMessage;
+
+  /// No description provided for @btnReturnAndDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Return & Deactivate'**
+  String get btnReturnAndDeactivate;
+
+  /// No description provided for @btnJustDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Just Deactivate'**
+  String get btnJustDeactivate;
+
+  /// No description provided for @hkDeleteWithStockMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.'**
+  String hkDeleteWithStockMessage(String userName);
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

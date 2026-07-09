@@ -2985,4 +2985,22 @@ class AppL10nFr extends AppL10n {
   String markLostTitle(String product, String room) {
     return 'Marquer comme perdu - $product dans la chambre $room';
   }
+
+  @override
+  String get hkDeactivateWithStockTitle => 'Inventaire de la femme de chambre';
+
+  @override
+  String get hkDeactivateWithStockMessage =>
+      'Cette femme de chambre a des produits dans son chariot. Voulez-vous retourner cet inventaire au stock central de l\'hôtel avant de désactiver son compte ?';
+
+  @override
+  String get btnReturnAndDeactivate => 'Retourner et désactiver';
+
+  @override
+  String get btnJustDeactivate => 'Juste désactiver';
+
+  @override
+  String hkDeleteWithStockMessage(String userName) {
+    return 'Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l\'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l\'équipe \'$userName\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.';
+  }
 }

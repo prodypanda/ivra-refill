@@ -2974,4 +2974,22 @@ class AppL10nIt extends AppL10n {
   String markLostTitle(String product, String room) {
     return 'Segna come perso - $product nella Stanza $room';
   }
+
+  @override
+  String get hkDeactivateWithStockTitle => 'Inventario del Carrello';
+
+  @override
+  String get hkDeactivateWithStockMessage =>
+      'Questa governante ha dell\'inventario attivo nel suo carrello. Vuoi restituire questo inventario al magazzino centrale dell\'hotel prima di disattivare il suo account?';
+
+  @override
+  String get btnReturnAndDeactivate => 'Restituisci e Disattiva';
+
+  @override
+  String get btnJustDeactivate => 'Solo Disattiva';
+
+  @override
+  String hkDeleteWithStockMessage(String userName) {
+    return 'Questa governante ha dell\'inventario attivo nel suo carrello. L\'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell\'hotel.\n\nSei sicuro di voler eliminare il membro del team \'$userName\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.';
+  }
 }

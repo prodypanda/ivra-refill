@@ -152,12 +152,89 @@ class TeamScreen extends ConsumerWidget {
     ref.invalidate(teamMembersProvider);
   }
 
+  Future<List<HousekeeperAllocation>> _getActiveAllocations(
+    WidgetRef ref,
+    String housekeeperId,
+  ) async {
+    final allocations = await ref
+        .read(repositoryProvider)
+        .fetchHousekeeperAllocations(housekeeperId: housekeeperId);
+    return allocations
+        .where((a) =>
+            a.fullBottles > 0 ||
+            a.emptyBottles > 0 ||
+            a.fullBidons > 0 ||
+            a.openBidons > 0 ||
+            a.emptyBidons > 0 ||
+            a.openBidonVolumeLeftMl > 0)
+        .toList();
+  }
+
+  Future<void> _returnAllStock(
+    WidgetRef ref,
+    String housekeeperId,
+    List<HousekeeperAllocation> activeAllocations,
+  ) async {
+    final repo = ref.read(repositoryProvider);
+    for (final alloc in activeAllocations) {
+      await repo.returnHousekeeperStock(
+        housekeeperId: housekeeperId,
+        productId: alloc.product.id,
+        fullBottles: alloc.fullBottles,
+        emptyBottles: alloc.emptyBottles,
+        fullBidons: alloc.fullBidons,
+        openBidons: alloc.openBidons,
+        emptyBidons: alloc.emptyBidons,
+        openBidonVolumeLeftMl: alloc.openBidonVolumeLeftMl,
+      );
+    }
+  }
+
   Future<void> _setMemberActive(
     BuildContext context,
     WidgetRef ref,
     UserProfile member,
     bool isActive,
   ) async {
+    final l10n = AppLocalizations.of(context);
+
+    // If deactivating a housekeeper, check for active inventory
+    if (!isActive && member.role == UserRole.housekeeper) {
+      final activeAllocations = await _getActiveAllocations(ref, member.id);
+      if (activeAllocations.isNotEmpty && context.mounted) {
+        final result = await showDialog<String>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.t('hkDeactivateWithStockTitle')),
+            content: Text(l10n.t('hkDeactivateWithStockMessage')),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop('cancel'),
+                child: Text(l10n.t('btnCancel')),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop('deactivate'),
+                child: Text(l10n.t('btnJustDeactivate')),
+              ),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
+                ),
+                onPressed: () => Navigator.of(context).pop('return'),
+                child: Text(l10n.t('btnReturnAndDeactivate')),
+              ),
+            ],
+          ),
+        );
+
+        if (result == null || result == 'cancel') return;
+        if (result == 'return') {
+          await _returnAllStock(ref, member.id, activeAllocations);
+        }
+      }
+    }
+
     await ref.read(repositoryProvider).setTeamMemberActive(
           userId: member.id,
           isActive: isActive,
@@ -166,7 +243,7 @@ class TeamScreen extends ConsumerWidget {
     if (!context.mounted) return;
     PremiumSnackbar.showSuccess(
       context,
-      AppLocalizations.of(context).tParams(
+      l10n.tParams(
         isActive ? 'teamMemberReactivated' : 'teamMemberDeactivated',
         {'name': member.fullName},
       ),
@@ -179,14 +256,28 @@ class TeamScreen extends ConsumerWidget {
     UserProfile member,
   ) async {
     final l10n = AppLocalizations.of(context);
+    List<HousekeeperAllocation> activeAllocations = [];
+    String messageKey = 'confirmDeleteUser';
+
+    if (member.role == UserRole.housekeeper) {
+      activeAllocations = await _getActiveAllocations(ref, member.id);
+      if (activeAllocations.isNotEmpty) {
+        messageKey = 'hkDeleteWithStockMessage';
+      }
+    }
+
+    if (!context.mounted) return;
     final confirmed = await PremiumConfirmDialog.show(
       context,
       title: l10n.t('delete'),
-      message: l10n.tParams('confirmDeleteUser', {'userName': member.fullName}),
+      message: l10n.tParams(messageKey, {'userName': member.fullName}),
     );
 
     if (confirmed && context.mounted) {
       try {
+        if (activeAllocations.isNotEmpty) {
+          await _returnAllStock(ref, member.id, activeAllocations);
+        }
         await ref.read(repositoryProvider).deleteUser(member.id);
         ref.invalidate(teamMembersProvider);
       } catch (e) {

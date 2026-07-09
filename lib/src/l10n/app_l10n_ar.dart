@@ -2926,4 +2926,22 @@ class AppL10nAr extends AppL10n {
   String markLostTitle(String product, String room) {
     return 'وضع علامة كـ مفقود - $product في الغرفة $room';
   }
+
+  @override
+  String get hkDeactivateWithStockTitle => 'مخزون عربة عاملة النظافة';
+
+  @override
+  String get hkDeactivateWithStockMessage =>
+      'تحتوي عربة عاملة النظافة هذه على مخزون نشط. هل ترغب في إعادة هذا المخزون إلى المخزون المركزي للفندق قبل إلغاء تنشيط حسابها؟';
+
+  @override
+  String get btnReturnAndDeactivate => 'إرجاع وإلغاء التنشيط';
+
+  @override
+  String get btnJustDeactivate => 'إلغاء التنشيط فقط';
+
+  @override
+  String hkDeleteWithStockMessage(String userName) {
+    return 'تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق \'$userName\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.';
+  }
 }
