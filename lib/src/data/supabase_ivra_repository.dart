@@ -517,7 +517,7 @@ class SupabaseIvraRepository implements IvraRepository {
       productMap.forEach((key, val) {
         if (key == 'id') {
           flattened['product_id'] = val;
-        } else {
+        } else if (key != 'created_at' && key != 'updated_at') {
           flattened[key] = val;
         }
       });
@@ -567,7 +567,7 @@ class SupabaseIvraRepository implements IvraRepository {
       productMap.forEach((key, val) {
         if (key == 'id') {
           flattened['product_id'] = val;
-        } else {
+        } else if (key != 'created_at' && key != 'updated_at') {
           flattened[key] = val;
         }
       });
