@@ -1242,6 +1242,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                             ref.invalidate(housekeeperAllocationsProvider);
                             ref.invalidate(inventoryProvider);
                             ref.invalidate(housekeeperStockEventsProvider);
+                            ref.invalidate(housekeeperHistoryProvider);
+                            ref.invalidate(housekeeperAllStockEventsProvider);
                             if (context.mounted) {
                               PremiumSnackbar.show(
                                 context,
@@ -1463,6 +1465,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                             ref.invalidate(housekeeperAllocationsProvider);
                             ref.invalidate(inventoryProvider);
                             ref.invalidate(housekeeperStockEventsProvider);
+                            ref.invalidate(housekeeperHistoryProvider);
+                            ref.invalidate(housekeeperAllStockEventsProvider);
                             if (context.mounted) {
                               PremiumSnackbar.show(
                                 context,

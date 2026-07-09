@@ -2264,6 +2264,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       ref.invalidate(roomProductsProvider);
       ref.invalidate(inventoryProvider);
       ref.invalidate(housekeeperAllocationsProvider);
+      ref.invalidate(housekeeperHistoryProvider);
+      ref.invalidate(housekeeperAllStockEventsProvider);
+      ref.invalidate(housekeeperStockEventsProvider);
       ref.invalidate(dashboardProvider);
 
       if (mounted) {
@@ -2445,6 +2448,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       ref.invalidate(refillEventsProvider);
       ref.invalidate(inventoryProvider);
       ref.invalidate(housekeeperAllocationsProvider);
+      ref.invalidate(housekeeperHistoryProvider);
+      ref.invalidate(housekeeperAllStockEventsProvider);
+      ref.invalidate(housekeeperStockEventsProvider);
 
       if (mounted) {
         HapticFeedback.mediumImpact();

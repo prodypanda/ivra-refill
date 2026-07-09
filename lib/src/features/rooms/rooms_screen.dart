@@ -1865,6 +1865,9 @@ Future<void> replaceBottle(
   ref.invalidate(refillEventsProvider);
   ref.invalidate(inventoryProvider);
   ref.invalidate(housekeeperAllocationsProvider);
+  ref.invalidate(housekeeperHistoryProvider);
+  ref.invalidate(housekeeperAllStockEventsProvider);
+  ref.invalidate(housekeeperStockEventsProvider);
   ref.invalidate(suggestedOrdersProvider);
   ref.invalidate(alertsProvider);
   ref.invalidate(dashboardProvider);
@@ -1964,6 +1967,9 @@ Future<bool> checkAndCheckoutHousekeeperRefillStock(
 
     // Invalidate housekeeper allocations provider to let UI / providers update
     ref.invalidate(housekeeperAllocationsProvider);
+    ref.invalidate(housekeeperHistoryProvider);
+    ref.invalidate(housekeeperAllStockEventsProvider);
+    ref.invalidate(housekeeperStockEventsProvider);
     return true;
   } else {
     if (context.mounted) {
@@ -2191,6 +2197,9 @@ class _AddProductToRoomDialogState
                     ref.invalidate(roomsProvider);
                     ref.invalidate(inventoryProvider);
                     ref.invalidate(housekeeperAllocationsProvider);
+                    ref.invalidate(housekeeperHistoryProvider);
+                    ref.invalidate(housekeeperAllStockEventsProvider);
+                    ref.invalidate(housekeeperStockEventsProvider);
 
                     if (context.mounted) {
                       HapticFeedback.mediumImpact();
@@ -2274,6 +2283,9 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
       ref.invalidate(roomsProvider);
       ref.invalidate(inventoryProvider);
       ref.invalidate(housekeeperAllocationsProvider);
+      ref.invalidate(housekeeperHistoryProvider);
+      ref.invalidate(housekeeperAllStockEventsProvider);
+      ref.invalidate(housekeeperStockEventsProvider);
 
       if (context.mounted) {
         HapticFeedback.mediumImpact();
