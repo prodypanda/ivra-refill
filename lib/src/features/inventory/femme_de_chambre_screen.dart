@@ -822,9 +822,16 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                                 : event.product.nameEn);
 
                         final meta = _stockEventMeta(l10n, event);
+                        final displayLabel = event.roomNumber != null && event.roomNumber!.isNotEmpty
+                            ? (event.eventType == HousekeeperStockEventType.roomPlacement
+                                ? '${meta.label} ${event.roomNumber}'
+                                : (event.eventType == HousekeeperStockEventType.refillUse || event.eventType == HousekeeperStockEventType.replaceUse
+                                    ? '${meta.label} (${l10n.t('roomsLabelRoom')} ${event.roomNumber})'
+                                    : '${meta.label} — ${event.roomNumber}'))
+                            : meta.label;
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: Text(l10n.tParams('productEventTitle', {'productName': pName, 'eventLabel': meta.label})),
+                          title: Text(l10n.tParams('productEventTitle', {'productName': pName, 'eventLabel': displayLabel})),
                           subtitle: Text(
                             event.roomNumber != null && event.roomNumber!.isNotEmpty
                                 ? '${dateFormat.format(event.createdAt.toLocal())} • ${l10n.t('roomsLabelRoom')} ${event.roomNumber}'

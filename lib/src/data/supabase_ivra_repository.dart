@@ -1506,31 +1506,16 @@ class SupabaseIvraRepository implements IvraRepository {
       roomId = asString(roomResult['id']);
     }
 
-    // 4. Check inventory or housekeeper allocation
+    // 4. Check inventory or housekeeper allocation availability
     if (deductFromHousekeeperId != null) {
-      // Deduct atomically via SECURITY DEFINER RPC. A direct client-side
-      // UPDATE on housekeeper_allocations is silently blocked by RLS
-      // (only a SELECT policy exists), which left phantom stock in the cart.
-      try {
-        await _client.rpc('use_housekeeper_stock_for_room', params: {
-          'p_housekeeper_id': deductFromHousekeeperId,
-          'p_product_id': product.id,
-          'p_full_bottles': 1,
-        });
-      } on PostgrestException catch (e) {
-        if (e.message.contains('No housekeeper allocation') ||
-            e.message.contains('Insufficient full bottles')) {
-          throw StateError('Product not in housekeeper allocation');
-        }
-        rethrow;
+      final allocations = await fetchHousekeeperAllocations(
+        housekeeperId: deductFromHousekeeperId,
+        hotelId: hotelId,
+      );
+      final alloc = allocations.where((a) => a.product.id == product.id).firstOrNull;
+      if (alloc == null || alloc.fullBottles <= 0) {
+        throw StateError('Product not in housekeeper allocation');
       }
-      
-      await _auditService.logAction('Used housekeeper stock for room placement', details: {
-        'housekeeper_id': deductFromHousekeeperId,
-        'product_id': product.id,
-        'room_id': roomId,
-        'full_bottles_deducted': 1,
-      });
     } else {
       final invResult = await _client.from('hotel_inventory').select('full_bottles').eq('hotel_id', hotelId).eq('product_id', product.id).maybeSingle();
       final currentStock = invResult != null ? asInt(invResult['full_bottles']) : 0;
@@ -1578,7 +1563,37 @@ class SupabaseIvraRepository implements IvraRepository {
 
     final roomProductId = asString(roomProductResult['id']);
 
-    // 7. Insert refill event (bottle_replaced)
+    // 7. Deduct from housekeeper stock if applicable
+    if (deductFromHousekeeperId != null) {
+      try {
+        await _client.rpc('use_housekeeper_stock_for_room', params: {
+          'p_housekeeper_id': deductFromHousekeeperId,
+          'p_product_id': product.id,
+          'p_full_bottles': 1,
+          'p_room_product_id': roomProductId,
+        });
+      } on PostgrestException catch (e) {
+        if (e.message.contains('No housekeeper allocation') ||
+            e.message.contains('Insufficient full bottles')) {
+          // Attempt to clean up the inserted room product if deduction fails
+          try {
+            await _client.from('room_products').delete().eq('id', roomProductId);
+          } catch (_) {}
+          throw StateError('Product not in housekeeper allocation');
+        }
+        rethrow;
+      }
+
+      await _auditService.logAction('Used housekeeper stock for room placement', details: {
+        'housekeeper_id': deductFromHousekeeperId,
+        'product_id': product.id,
+        'room_id': roomId,
+        'room_product_id': roomProductId,
+        'full_bottles_deducted': 1,
+      });
+    }
+
+    // 8. Insert refill event (bottle_replaced)
     await _client.from('refill_events').insert({
       'hotel_id': hotelId,
       'room_product_id': roomProductId,

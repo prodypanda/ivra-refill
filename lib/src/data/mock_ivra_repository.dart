@@ -2563,25 +2563,17 @@ class MockIvraRepository implements IvraRepository {
       final allocIndex = _housekeeperAllocations.indexWhere(
         (alloc) => alloc.housekeeperId == deductFromHousekeeperId && alloc.product.id == product.id,
       );
-  if (allocIndex != -1) {
-  final existing = _housekeeperAllocations[allocIndex];
-  if (existing.fullBottles <= 0) {
-  throw StateError('Product not in housekeeper allocation');
-  }
-  _housekeeperAllocations[allocIndex] = existing.copyWith(
-  fullBottles: max(existing.fullBottles - 1, 0),
-  );
-  _logHousekeeperStockEvent(
-  hotelId: hotelId,
-  housekeeperId: deductFromHousekeeperId,
-  product: product,
-  eventType: HousekeeperStockEventType.roomPlacement,
-  fullBottlesDelta: -1,
-  roomNumber: roomNumber,
-  );
-  } else {
-  throw StateError('Housekeeper allocation not found');
-  }
+      if (allocIndex != -1) {
+        final existing = _housekeeperAllocations[allocIndex];
+        if (existing.fullBottles <= 0) {
+          throw StateError('Product not in housekeeper allocation');
+        }
+        _housekeeperAllocations[allocIndex] = existing.copyWith(
+          fullBottles: max(existing.fullBottles - 1, 0),
+        );
+      } else {
+        throw StateError('Housekeeper allocation not found');
+      }
     } else {
       final inventoryIndex = _inventory.indexWhere(
         (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
@@ -2673,5 +2665,17 @@ class MockIvraRepository implements IvraRepository {
         performedBy: _currentUser.id,
       ),
     );
+
+    if (deductFromHousekeeperId != null) {
+      _logHousekeeperStockEvent(
+        hotelId: hotelId,
+        housekeeperId: deductFromHousekeeperId,
+        product: product,
+        eventType: HousekeeperStockEventType.roomPlacement,
+        fullBottlesDelta: -1,
+        roomNumber: roomNumber,
+        roomProductId: roomProductId,
+      );
+    }
   }
 }

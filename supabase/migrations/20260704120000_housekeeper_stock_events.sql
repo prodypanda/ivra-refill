@@ -239,7 +239,12 @@ END;
 $function$;
 
 -- 4. use_housekeeper_stock_for_room: log 'room_placement' event
-CREATE OR REPLACE FUNCTION public.use_housekeeper_stock_for_room(p_housekeeper_id uuid, p_product_id uuid, p_full_bottles integer DEFAULT 1)
+CREATE OR REPLACE FUNCTION public.use_housekeeper_stock_for_room(
+  p_housekeeper_id uuid,
+  p_product_id uuid,
+  p_full_bottles integer DEFAULT 1,
+  p_room_product_id uuid DEFAULT NULL
+)
  RETURNS void
  LANGUAGE plpgsql
  SECURITY DEFINER
@@ -281,10 +286,10 @@ BEGIN
   WHERE housekeeper_id = p_housekeeper_id AND product_id = p_product_id;
 
   INSERT INTO housekeeper_stock_events (
-    hotel_id, housekeeper_id, product_id, event_type, full_bottles_delta
+    hotel_id, housekeeper_id, product_id, event_type, full_bottles_delta, room_product_id
   )
   VALUES (
-    v_hotel_id, p_housekeeper_id, p_product_id, 'room_placement', -p_full_bottles
+    v_hotel_id, p_housekeeper_id, p_product_id, 'room_placement', -p_full_bottles, p_room_product_id
   );
 END;
 $function$;
