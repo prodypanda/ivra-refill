@@ -16,6 +16,7 @@ import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/centered_sheet.dart';
+import '../shared/hover_image_tooltip.dart';
 import '../../utils/qr_parser.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
@@ -834,19 +835,30 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Icon(
-                      lowStock
-                          ? Icons.priority_high_rounded
-                          : Icons.inventory_2_outlined,
-                      color: statusColor,
-                      size: 28,
+                  HoverImageTooltip(
+                    imageUrl: widget.item.product.imageUrl,
+                    child: Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: statusColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(20),
+                        image: (widget.item.product.imageUrl != null && widget.item.product.imageUrl!.isNotEmpty && widget.item.product.imageUrl!.startsWith('http')) 
+                            ? DecorationImage(
+                                image: NetworkImage(widget.item.product.imageUrl!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                      ),
+                      child: (widget.item.product.imageUrl == null || widget.item.product.imageUrl!.isEmpty || !widget.item.product.imageUrl!.startsWith('http'))
+                          ? Icon(
+                              lowStock
+                                  ? Icons.priority_high_rounded
+                                  : Icons.inventory_2_outlined,
+                              color: statusColor,
+                              size: 28,
+                            )
+                          : null,
                     ),
                   ),
                   const SizedBox(width: 16),
