@@ -825,7 +825,11 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                         return ListTile(
                           contentPadding: EdgeInsets.zero,
                           title: Text(l10n.tParams('productEventTitle', {'productName': pName, 'eventLabel': meta.label})),
-                          subtitle: Text(dateFormat.format(event.createdAt.toLocal())),
+                          subtitle: Text(
+                            event.roomNumber != null && event.roomNumber!.isNotEmpty
+                                ? '${dateFormat.format(event.createdAt.toLocal())} • ${l10n.t('roomsLabelRoom')} ${event.roomNumber}'
+                                : dateFormat.format(event.createdAt.toLocal()),
+                          ),
                           trailing: Text(
                             _stockEventDeltas(l10n, event),
                             style: const TextStyle(fontWeight: FontWeight.bold),
