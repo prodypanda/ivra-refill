@@ -308,11 +308,17 @@ class SupabaseIvraRepository implements IvraRepository {
   Future<void> updateUserProfile({
     required String userId,
     required String fullName,
+    UserRole? role,
   }) async {
-    await _client.from('profiles').update({
+    final payload = <String, dynamic>{
       'full_name': fullName,
-    }).eq('id', userId);
-      await _auditService.logAction('Updated user profile', details: {'user_id': userId, 'full_name': fullName});
+    };
+    if (role != null) {
+      payload['role'] = role.value;
+    }
+
+    await _client.from('profiles').update(payload).eq('id', userId);
+    await _auditService.logAction('Updated user profile', details: {'user_id': userId, 'full_name': fullName, 'role': role?.value});
   }
 
   @override

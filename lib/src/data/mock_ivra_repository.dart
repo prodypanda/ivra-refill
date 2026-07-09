@@ -474,6 +474,7 @@ class MockIvraRepository implements IvraRepository {
   Future<void> updateUserProfile({
     required String userId,
     required String fullName,
+    UserRole? role,
   }) async {
     final trimmedName = fullName.trim();
     if (trimmedName.isEmpty) {
@@ -486,11 +487,15 @@ class MockIvraRepository implements IvraRepository {
     if (index != -1) {
       _teamMembers[index] = _teamMembers[index].copyWith(
         fullName: trimmedName,
+        role: role ?? _teamMembers[index].role,
       );
     }
     
     if (_currentUser.id == userId) {
-      _currentUser = _currentUser.copyWith(fullName: trimmedName);
+      _currentUser = _currentUser.copyWith(
+        fullName: trimmedName,
+        role: role ?? _currentUser.role,
+      );
     }
   }
 

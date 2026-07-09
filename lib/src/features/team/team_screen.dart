@@ -63,7 +63,10 @@ class TeamScreen extends ConsumerWidget {
                   _showManageHotelsDialog(context, ref, member),
               onEditProfile: (member) => showDialog(
                 context: context,
-                builder: (context) => _EditProfileDialog(member: member),
+                builder: (context) => _EditProfileDialog(
+                  member: member,
+                  currentUser: currentUser,
+                ),
               ),
               onDelete: (member) => _confirmDeleteUser(context, ref, member),
               onViewAs: (member) => _viewAsMember(context, ref, member),
@@ -1222,9 +1225,10 @@ List<UserRole> _invitableRoles(UserRole role) {
 // Edit Profile Dialog
 // ============================================================
 class _EditProfileDialog extends ConsumerStatefulWidget {
-  const _EditProfileDialog({required this.member});
+  const _EditProfileDialog({required this.member, required this.currentUser});
 
   final UserProfile member;
+  final UserProfile? currentUser;
 
   @override
   ConsumerState<_EditProfileDialog> createState() => _EditProfileDialogState();
@@ -1233,12 +1237,14 @@ class _EditProfileDialog extends ConsumerStatefulWidget {
 class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _fullName;
+  late UserRole _role;
   var _isSaving = false;
 
   @override
   void initState() {
     super.initState();
     _fullName = TextEditingController(text: widget.member.fullName);
+    _role = widget.member.role;
   }
 
   @override
@@ -1250,6 +1256,8 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final canEditRole = widget.currentUser?.role == UserRole.appAdmin;
+
     return AlertDialog(
       title: Text(l10n.t('teamEditProfile')),
       content: SizedBox(
@@ -1264,6 +1272,25 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
                 decoration: InputDecoration(labelText: l10n.t('teamLabelFullName')),
                 validator: (val) => val == null || val.trim().isEmpty ? l10n.t('requiredField') : null,
               ),
+              if (canEditRole) ...[
+                const SizedBox(height: 16),
+                DropdownButtonFormField<UserRole>(
+                  value: _role,
+                  decoration: InputDecoration(labelText: l10n.t('teamTableColumnRole')),
+                  items: [
+                    for (final role in UserRole.values)
+                      DropdownMenuItem(
+                        value: role,
+                        child: Text(AppLocalizations.of(context).userRoleLabel(role)),
+                      ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() => _role = value);
+                    }
+                  },
+                ),
+              ],
             ],
           ),
         ),
@@ -1292,6 +1319,7 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
       await repo.updateUserProfile(
         userId: widget.member.id,
         fullName: _fullName.text.trim(),
+        role: _role,
       );
       // Invalidate providers so UI updates
       ref.invalidate(teamMembersProvider);
