@@ -8,6 +8,7 @@ import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../../ui/ivra_icons.dart';
 import '../shared/async_value_view.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
@@ -157,28 +158,28 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                         context,
                         title: l10n.t('fullBottles'),
                         value: '$totalFullBottles',
-                        icon: Icons.local_drink,
+                        icon: IvraIcons.fullBottleWithPump,
                         color: const Color(0xFFF2A900),
                       ),
                       _buildSummaryCard(
                         context,
                         title: l10n.t('inventoryTableEmptyBottlesGeneric'),
                         value: '$totalEmptyBottles',
-                        icon: Icons.delete_outline,
+                        icon: IvraIcons.emptyBottleWithPump,
                         color: Colors.redAccent,
                       ),
                       _buildSummaryCard(
                         context,
                         title: l10n.t('inventoryTableFullBidonsGeneric'),
                         value: '$totalFullBidons',
-                        icon: Icons.opacity_outlined,
+                        icon: IvraIcons.fullRefillBottle,
                         color: Colors.blueAccent,
                       ),
                       _buildSummaryCard(
                         context,
                         title: l10n.t('inventoryTableOpenBidons'),
                         value: '$totalOpenBidons',
-                        icon: Icons.hourglass_empty,
+                        icon: IvraIcons.refillAction,
                         color: Colors.teal,
                       ),
                     ],
@@ -988,35 +989,39 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                   context,
                   label: AppLocalizations.of(context).t('fullBottles'),
                   value: '${allocation.fullBottles}',
-                  icon: Icons.local_drink_outlined,
+                  icon: allocation.product.bottleType == BottleType.withPump
+                      ? IvraIcons.fullBottleWithPump
+                      : IvraIcons.fullBottleWithoutPump,
                   color: Colors.green,
                 ),
                 _buildMiniDetail(
                   context,
                   label: AppLocalizations.of(context).t('inventoryTableEmptyBottlesGeneric'),
                   value: '${allocation.emptyBottles}',
-                  icon: Icons.delete_outline,
+                  icon: allocation.product.bottleType == BottleType.withPump
+                      ? IvraIcons.emptyBottleWithPump
+                      : IvraIcons.emptyBottleWithoutPump,
                   color: Colors.redAccent,
                 ),
                 _buildMiniDetail(
                   context,
                   label: AppLocalizations.of(context).t('inventoryTableFullBidonsGeneric'),
                   value: '${allocation.fullBidons}',
-                  icon: Icons.opacity_outlined,
+                  icon: IvraIcons.fullRefillBottle,
                   color: Colors.blueAccent,
                 ),
                 _buildMiniDetail(
                   context,
                   label: AppLocalizations.of(context).t('inventoryTableOpenBidons'),
                   value: '${allocation.openBidons}',
-                  icon: Icons.hourglass_empty,
+                  icon: IvraIcons.refillAction,
                   color: Colors.teal,
                 ),
                 _buildMiniDetail(
                   context,
                   label: AppLocalizations.of(context).t('inventoryTableEmptyBidons'),
                   value: '${allocation.emptyBidons}',
-                  icon: Icons.recycling_outlined,
+                  icon: IvraIcons.emptyRefillBottle,
                   color: Colors.grey,
                 ),
               ],
