@@ -344,10 +344,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   double _metricAspectRatio(double width) {
-    if (width < 360) return 1.8;
-    if (width < 640) return 2.0;
-    if (width < 1000) return 2.2;
-    return 2.4;
+    if (width < 360) return 2.1;
+    if (width < 640) return 2.4;
+    if (width < 1000) return 2.6;
+    return 2.8;
   }
 }
 
@@ -684,7 +684,7 @@ class _MetricCardState extends State<_MetricCard> {
                       width: 1.5,
                     ),
                   ),
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -704,24 +704,24 @@ class _MetricCardState extends State<_MetricCard> {
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 0.2,
                               ),
-                              maxLines: 3,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: widget.iconColor.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(widget.icon,
-                                size: 28, color: widget.iconColor),
+                                size: 24, color: widget.iconColor),
                           ),
                         ],
                       ),
                       Text(
                         widget.value.toString(),
-                        style: theme.textTheme.displaySmall?.copyWith(
+                        style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.w900,
                           color: theme.colorScheme.onSurface,
                           letterSpacing: -1.0,

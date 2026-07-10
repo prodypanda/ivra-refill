@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'product_image.dart';
 
 class HoverImageTooltip extends StatelessWidget {
   const HoverImageTooltip({
@@ -14,7 +15,7 @@ class HoverImageTooltip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrl == null || imageUrl!.isEmpty || !imageUrl!.startsWith('http')) {
+    if (imageUrl == null || imageUrl!.isEmpty) {
       return child;
     }
 
@@ -26,7 +27,7 @@ class HoverImageTooltip extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 15,
             spreadRadius: 5,
           )
@@ -37,23 +38,13 @@ class HoverImageTooltip extends StatelessWidget {
       richMessage: WidgetSpan(
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: Image.network(
-            imageUrl!,
+          child: SizedBox(
             width: imageSize,
             height: imageSize,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return SizedBox(
-                width: imageSize,
-                height: imageSize,
-                child: const Center(child: CircularProgressIndicator()),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) => SizedBox(
-              width: imageSize,
-              height: imageSize,
-              child: const Icon(Icons.broken_image, size: 64, color: Colors.grey),
+            child: ProductImage(
+              imagePath: imageUrl!,
+              fit: BoxFit.cover,
+              iconSize: 48.0,
             ),
           ),
         ),

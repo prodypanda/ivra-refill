@@ -14,6 +14,7 @@ import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../shared/product_image.dart';
+import '../shared/hover_image_tooltip.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
 import '../shared/centered_sheet.dart';
@@ -1527,6 +1528,7 @@ Future<void> showRefillHistory(
   WidgetRef ref,
   RoomProduct item,
 ) async {
+  ref.invalidate(refillEventsProvider);
   final events = await ref.read(refillEventsProvider.future);
   final user = await ref.read(currentUserProvider.future);
   final itemEvents = events
@@ -2193,6 +2195,7 @@ class _AddProductToRoomDialogState
                         );
 
                     ref.invalidate(roomProductsProvider);
+                    ref.invalidate(refillEventsProvider);
                     ref.invalidate(dashboardProvider);
                     ref.invalidate(roomsProvider);
                     ref.invalidate(inventoryProvider);
@@ -2279,6 +2282,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
           );
 
       ref.invalidate(roomProductsProvider);
+      ref.invalidate(refillEventsProvider);
       ref.invalidate(dashboardProvider);
       ref.invalidate(roomsProvider);
       ref.invalidate(inventoryProvider);
@@ -3522,24 +3526,27 @@ class _RoomCardProductRow extends ConsumerWidget {
       builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 650;
 
-        final productThumb = Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 3,
-                offset: const Offset(0, 1.5),
-              ),
-            ],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: ProductImage(
-            imagePath: item.product.imagePath,
-            fit: BoxFit.cover,
-            iconSize: 20,
+        final productThumb = HoverImageTooltip(
+          imageUrl: item.product.imagePath,
+          child: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 3,
+                  offset: const Offset(0, 1.5),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: ProductImage(
+              imagePath: item.product.imagePath,
+              fit: BoxFit.cover,
+              iconSize: 20,
+            ),
           ),
         );
 
