@@ -1094,19 +1094,62 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
   // ============================================================
   Future<void> _showCheckoutDialog(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final productsAsync = ref.read(productsProvider);
     final hotelId = ref.read(selectedHotelIdProvider);
     final currentUser = ref.read(currentUserProvider).valueOrNull;
 
     if (currentUser == null) return;
 
-    final products = productsAsync.valueOrNull ?? [];
-    if (products.isEmpty) {
-      PremiumSnackbar.show(
-        context,
-        l10n.t('errorGeneric'),
-        isError: true,
+    // Show dynamic loading dialog if required data is not loaded yet
+    final needsLoading = ref.read(productsProvider).valueOrNull == null ||
+        ref.read(inventoryProvider).valueOrNull == null;
+
+    if (needsLoading) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: PremiumLoadingWidget(),
+        ),
       );
+    }
+
+    final List<Product> products;
+    final List<InventoryItem> inventory;
+
+    try {
+      final results = await Future.wait([
+        ref.read(productsProvider.future),
+        ref.read(inventoryProvider.future),
+      ]);
+
+      if (needsLoading && context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      products = results[0] as List<Product>;
+      inventory = results[1] as List<InventoryItem>;
+    } catch (e) {
+      if (needsLoading && context.mounted) {
+        Navigator.of(context).pop();
+      }
+      if (context.mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('errorGeneric'),
+          isError: true,
+        );
+      }
+      return;
+    }
+
+    if (products.isEmpty) {
+      if (context.mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('errorGeneric'),
+          isError: true,
+        );
+      }
       return;
     }
 
@@ -1116,7 +1159,6 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
 
     // Hotel inventory is used to show available stock and clamp quantities
     // so the housekeeper can't request more than the hotel actually has.
-    final inventory = ref.read(inventoryProvider).valueOrNull ?? [];
     InventoryItem? hotelStockFor(Product product) {
       for (final item in inventory) {
         if (item.product.id == product.id && (hotelId == null || item.hotelId == hotelId)) {
@@ -1301,18 +1343,53 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
   // ============================================================
   Future<void> _showReturnDialog(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final allocationsAsync = ref.read(housekeeperAllocationsProvider);
     final currentUser = ref.read(currentUserProvider).valueOrNull;
 
     if (currentUser == null) return;
 
-    final allocations = allocationsAsync.valueOrNull ?? [];
-    if (allocations.isEmpty) {
-      PremiumSnackbar.show(
-        context,
-        l10n.t('noAllocations'),
-        isError: true,
+    // Show dynamic loading dialog if required data is not loaded yet
+    final needsLoading = ref.read(housekeeperAllocationsProvider).valueOrNull == null;
+
+    if (needsLoading) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: PremiumLoadingWidget(),
+        ),
       );
+    }
+
+    final List<HousekeeperAllocation> allocations;
+
+    try {
+      allocations = await ref.read(housekeeperAllocationsProvider.future);
+
+      if (needsLoading && context.mounted) {
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (needsLoading && context.mounted) {
+        Navigator.of(context).pop();
+      }
+      if (context.mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('errorGeneric'),
+          isError: true,
+        );
+      }
+      return;
+    }
+
+    if (allocations.isEmpty) {
+      if (context.mounted) {
+        PremiumSnackbar.show(
+          context,
+          l10n.t('noAllocations'),
+          isError: true,
+        );
+      }
       return;
     }
 
