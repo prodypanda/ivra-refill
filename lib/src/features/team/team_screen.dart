@@ -986,7 +986,7 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutBack,
         child: SizedBox(
-          width: 320,
+          width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 320.0),
           child: GlassCard(
             padding: const EdgeInsets.all(20),
             borderColor: member.isActive
@@ -1169,7 +1169,7 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutBack,
         child: SizedBox(
-          width: 320,
+          width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 320.0),
           child: GlassCard(
             padding: const EdgeInsets.all(20),
             borderColor: theme.colorScheme.tertiary

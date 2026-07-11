@@ -1000,7 +1000,7 @@ class _ReportActionState extends State<_ReportAction> {
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutBack,
         child: SizedBox(
-          width: 360,
+          width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 360.0),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
