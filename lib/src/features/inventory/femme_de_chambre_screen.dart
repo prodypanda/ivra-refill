@@ -1135,6 +1135,22 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
             final hotelStock = hotelStockFor(selectedProduct);
             final maxBottles = hotelStock?.fullBottles ?? 0;
             final maxBidons = hotelStock?.fullBidons ?? 0;
+
+            final String stockText;
+            if (selectedProduct.isRefillable) {
+              stockText = l10n.tParams('housekeeperHotelStockAvailable', {
+                'bottles': maxBottles.toString(),
+                'bidons': maxBidons.toString(),
+              });
+            } else {
+              final raw = l10n.tParams('housekeeperHotelStockAvailable', {
+                'bottles': maxBottles.toString(),
+                'bidons': '',
+              });
+              final parts = raw.contains('،') ? raw.split('،') : raw.split(',');
+              stockText = parts.isNotEmpty ? parts[0].trim() : raw;
+            }
+
             return AlertDialog(
               title: Row(
                 children: [
@@ -1197,10 +1213,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              l10n.tParams('housekeeperHotelStockAvailable', {
-                                'bottles': maxBottles.toString(),
-                                'bidons': maxBidons.toString(),
-                              }),
+                              stockText,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1219,16 +1232,18 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                       max: maxBottles,
                       onChanged: (val) => setDialogState(() => fullBottles = val),
                     ),
-                    const SizedBox(height: 16),
 
-                    // Full Bidons Counter (clamped to hotel stock)
-                    _buildCounterRow(
-                      context,
-                      title: l10n.t('inventoryTableFullBidonsGeneric'),
-                      value: fullBidons,
-                      max: maxBidons,
-                      onChanged: (val) => setDialogState(() => fullBidons = val),
-                    ),
+                    if (selectedProduct.isRefillable) ...[
+                      const SizedBox(height: 16),
+                      // Full Bidons Counter (clamped to hotel stock)
+                      _buildCounterRow(
+                        context,
+                        title: l10n.t('inventoryTableFullBidonsGeneric'),
+                        value: fullBidons,
+                        max: maxBidons,
+                        onChanged: (val) => setDialogState(() => fullBidons = val),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -1387,61 +1402,63 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Full Bidons Counter
-                      _buildCounterRow(
-                        context,
-                        title: l10n.t('inventoryTableFullBidonsGeneric'),
-                        value: fullBidons,
-                        max: selectedAllocation.fullBidons,
-                        onChanged: (val) => setDialogState(() => fullBidons = val),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Open Bidons Counter
-                      _buildCounterRow(
-                        context,
-                        title: l10n.t('inventoryTableOpenBidons'),
-                        value: openBidons,
-                        max: selectedAllocation.openBidons,
-                        onChanged: (val) {
-                          setDialogState(() {
-                            openBidons = val;
-                            if (openBidons == 0) {
-                              openBidonVolume = 0.0;
-                            } else if (openBidonVolume == 0.0) {
-                              openBidonVolume = maxVolume;
-                            }
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Empty Bidons Counter
-                      _buildCounterRow(
-                        context,
-                        title: l10n.t('inventoryTableEmptyBidons'),
-                        value: emptyBidons,
-                        max: selectedAllocation.emptyBidons,
-                        onChanged: (val) => setDialogState(() => emptyBidons = val),
-                      ),
-
-                      if (openBidons > 0) ...[
-                        const SizedBox(height: 20),
-                        // Slider for Open Bidon Volume
-                        Text(
-                          '${l10n.t('openBidonVolumeLeft')} (${openBidonVolume.toInt()} ml):',
-                          style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                      if (selectedAllocation.product.isRefillable) ...[
+                        // Full Bidons Counter
+                        _buildCounterRow(
+                          context,
+                          title: l10n.t('inventoryTableFullBidonsGeneric'),
+                          value: fullBidons,
+                          max: selectedAllocation.fullBidons,
+                          onChanged: (val) => setDialogState(() => fullBidons = val),
                         ),
-                        Slider(
-                          value: openBidonVolume.clamp(0.0, maxVolume),
-                          min: 0.0,
-                          max: maxVolume,
-                          divisions: (maxVolume / 50).round(),
-                          activeColor: Colors.teal,
+                        const SizedBox(height: 16),
+
+                        // Open Bidons Counter
+                        _buildCounterRow(
+                          context,
+                          title: l10n.t('inventoryTableOpenBidons'),
+                          value: openBidons,
+                          max: selectedAllocation.openBidons,
                           onChanged: (val) {
-                            setDialogState(() => openBidonVolume = val);
+                            setDialogState(() {
+                              openBidons = val;
+                              if (openBidons == 0) {
+                                openBidonVolume = 0.0;
+                              } else if (openBidonVolume == 0.0) {
+                                openBidonVolume = maxVolume;
+                              }
+                            });
                           },
                         ),
+                        const SizedBox(height: 16),
+
+                        // Empty Bidons Counter
+                        _buildCounterRow(
+                          context,
+                          title: l10n.t('inventoryTableEmptyBidons'),
+                          value: emptyBidons,
+                          max: selectedAllocation.emptyBidons,
+                          onChanged: (val) => setDialogState(() => emptyBidons = val),
+                        ),
+
+                        if (openBidons > 0) ...[
+                          const SizedBox(height: 20),
+                          // Slider for Open Bidon Volume
+                          Text(
+                            '${l10n.t('openBidonVolumeLeft')} (${openBidonVolume.toInt()} ml):',
+                            style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          Slider(
+                            value: openBidonVolume.clamp(0.0, maxVolume),
+                            min: 0.0,
+                            max: maxVolume,
+                            divisions: (maxVolume / 50).round(),
+                            activeColor: Colors.teal,
+                            onChanged: (val) {
+                              setDialogState(() => openBidonVolume = val);
+                            },
+                          ),
+                        ],
                       ],
                     ],
                   ),
