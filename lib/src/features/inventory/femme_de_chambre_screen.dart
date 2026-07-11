@@ -1099,39 +1099,13 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
 
     if (currentUser == null) return;
 
-    // Show dynamic loading dialog if required data is not loaded yet
-    final needsLoading = ref.read(productsProvider).valueOrNull == null ||
-        ref.read(inventoryProvider).valueOrNull == null;
-
-    if (needsLoading) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-          child: PremiumLoadingWidget(),
-        ),
-      );
-    }
-
     final List<Product> products;
     final List<InventoryItem> inventory;
 
     try {
-      final results = await Future.wait([
-        ref.read(productsProvider.future),
-        ref.read(inventoryProvider.future),
-      ]);
-
-      if (needsLoading && context.mounted) {
-        Navigator.of(context).pop();
-      }
-
-      products = results[0] as List<Product>;
-      inventory = results[1] as List<InventoryItem>;
+      products = await ref.read(productsProvider.future);
+      inventory = await ref.read(inventoryProvider.future);
     } catch (e) {
-      if (needsLoading && context.mounted) {
-        Navigator.of(context).pop();
-      }
       if (context.mounted) {
         PremiumSnackbar.show(
           context,
@@ -1167,6 +1141,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
       }
       return null;
     }
+
+    if (!context.mounted) return;
 
     await showDialog(
       context: context,
@@ -1347,31 +1323,11 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
 
     if (currentUser == null) return;
 
-    // Show dynamic loading dialog if required data is not loaded yet
-    final needsLoading = ref.read(housekeeperAllocationsProvider).valueOrNull == null;
-
-    if (needsLoading) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-          child: PremiumLoadingWidget(),
-        ),
-      );
-    }
-
     final List<HousekeeperAllocation> allocations;
 
     try {
       allocations = await ref.read(housekeeperAllocationsProvider.future);
-
-      if (needsLoading && context.mounted) {
-        Navigator.of(context).pop();
-      }
     } catch (e) {
-      if (needsLoading && context.mounted) {
-        Navigator.of(context).pop();
-      }
       if (context.mounted) {
         PremiumSnackbar.show(
           context,
@@ -1400,6 +1356,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     int openBidons = selectedAllocation.openBidons;
     int emptyBidons = selectedAllocation.emptyBidons;
     double openBidonVolume = selectedAllocation.openBidonVolumeLeftMl;
+
+    if (!context.mounted) return;
 
     await showDialog(
       context: context,
