@@ -2944,4 +2944,44 @@ class AppL10nAr extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق \'$userName\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.';
   }
+
+  @override
+  String get settingsFeatureColumnLabel => 'ميزة';
+
+  @override
+  String settingsCurrentVersionLabel(String appVersion) {
+    return 'الإصدار الحالي: v$appVersion';
+  }
+
+  @override
+  String get settingsLanguageEnglish => 'English';
+
+  @override
+  String get settingsLanguageFrench => 'Français';
+
+  @override
+  String get settingsLanguageArabic => 'العربية';
+
+  @override
+  String get settingsLanguageItalian => 'Italiano';
+
+  @override
+  String get inventoryHkLoading => '...';
+
+  @override
+  String shellOpenCountLabel(int count) {
+    return '$count';
+  }
+
+  @override
+  String get loginLanguageFr => 'FR';
+
+  @override
+  String get loginLanguageEn => 'EN';
+
+  @override
+  String get loginLanguageIt => 'IT';
+
+  @override
+  String get loginLanguageAr => 'AR';
 }

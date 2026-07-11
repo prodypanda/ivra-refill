@@ -3003,4 +3003,44 @@ class AppL10nFr extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l\'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l\'équipe \'$userName\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.';
   }
+
+  @override
+  String get settingsFeatureColumnLabel => 'Fonctionnalité';
+
+  @override
+  String settingsCurrentVersionLabel(String appVersion) {
+    return 'Version actuelle: v$appVersion';
+  }
+
+  @override
+  String get settingsLanguageEnglish => 'English';
+
+  @override
+  String get settingsLanguageFrench => 'Français';
+
+  @override
+  String get settingsLanguageArabic => 'العربية';
+
+  @override
+  String get settingsLanguageItalian => 'Italiano';
+
+  @override
+  String get inventoryHkLoading => '...';
+
+  @override
+  String shellOpenCountLabel(int count) {
+    return '$count';
+  }
+
+  @override
+  String get loginLanguageFr => 'FR';
+
+  @override
+  String get loginLanguageEn => 'EN';
+
+  @override
+  String get loginLanguageIt => 'IT';
+
+  @override
+  String get loginLanguageAr => 'AR';
 }

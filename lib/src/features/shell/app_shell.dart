@@ -95,7 +95,7 @@ class _AppShellState extends ConsumerState<AppShell> {
                           destinations: [
                             for (final item in navItems)
                               NavigationRailDestination(
-                                icon: _buildNavItemIcon(ref, item),
+                                icon: _buildNavItemIcon(context, ref, item),
                                 label: Text(item.label),
                               ),
                           ],
@@ -316,7 +316,7 @@ class _MobileShell extends ConsumerWidget {
                 destinations: [
                   for (var index = 0; index < primaryItems.length; index++)
                     NavigationDestination(
-                      icon: _buildNavItemIcon(ref, primaryItems[index]),
+                      icon: _buildNavItemIcon(context, ref, primaryItems[index]),
                       label: primaryItems[index].mobileLabel,
                     ),
                   if (hasMore)
@@ -350,7 +350,7 @@ class _MobileShell extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
                     child: ListTile(
-                      leading: _buildNavItemIcon(ref, item),
+                      leading: _buildNavItemIcon(context, ref, item),
                       title: Text(item.label),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
@@ -497,7 +497,7 @@ class _DrawerFooter extends StatelessWidget {
   }
 }
 
-Widget _buildNavItemIcon(WidgetRef ref, _NavItem item) {
+Widget _buildNavItemIcon(BuildContext context, WidgetRef ref, _NavItem item) {
   if (item.route == AlertsScreen.route) {
     final alertsAsync = ref.watch(alertsProvider);
     return alertsAsync.maybeWhen(
@@ -506,7 +506,7 @@ Widget _buildNavItemIcon(WidgetRef ref, _NavItem item) {
         if (openCount > 0) {
           return Badge(
             backgroundColor: Colors.orange,
-            label: Text('$openCount'),
+            label: Text(AppLocalizations.of(context)!.tParams("shellOpenCountLabel", {"count": openCount.toString()})),
             child: Icon(item.icon),
           );
         }

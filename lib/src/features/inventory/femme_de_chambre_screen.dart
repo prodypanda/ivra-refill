@@ -528,7 +528,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
               builder: (context, ref, _) {
                 final basketAsync = ref.watch(housekeeperBasketProvider(hk.id));
                 return basketAsync.when(
-                  loading: () => Text('...', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+                  loading: () => Text(AppLocalizations.of(context)!.t("inventoryHkLoading"), style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
                   error: (_, __) => const SizedBox(),
                   data: (basket) {
                     if (basket.isEmpty) return const SizedBox();

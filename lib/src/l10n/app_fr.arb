@@ -887,5 +887,17 @@
   "hkDeactivateWithStockMessage": "Cette femme de chambre a des produits dans son chariot. Voulez-vous retourner cet inventaire au stock central de l'hôtel avant de désactiver son compte ?",
   "btnReturnAndDeactivate": "Retourner et désactiver",
   "btnJustDeactivate": "Juste désactiver",
-  "hkDeleteWithStockMessage": "Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l'équipe '{userName}' ? Cette action est irréversible et il perdra immédiatement l'accès à l'application."
+  "hkDeleteWithStockMessage": "Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l'équipe '{userName}' ? Cette action est irréversible et il perdra immédiatement l'accès à l'application.",
+  "settingsFeatureColumnLabel": "Fonctionnalité",
+  "settingsCurrentVersionLabel": "Version actuelle: v{appVersion}",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageFrench": "Français",
+  "settingsLanguageArabic": "العربية",
+  "settingsLanguageItalian": "Italiano",
+  "inventoryHkLoading": "...",
+  "shellOpenCountLabel": "{count}",
+  "loginLanguageFr": "FR",
+  "loginLanguageEn": "EN",
+  "loginLanguageIt": "IT",
+  "loginLanguageAr": "AR"
 }

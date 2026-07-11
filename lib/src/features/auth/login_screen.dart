@@ -123,11 +123,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   fontWeight: FontWeight.w600,
                 ),
                 dropdownColor: colorScheme.surface,
-                items: const [
-                  DropdownMenuItem(value: 'fr', child: Text('FR')),
-                  DropdownMenuItem(value: 'en', child: Text('EN')),
-                  DropdownMenuItem(value: 'it', child: Text('IT')),
-                  DropdownMenuItem(value: 'ar', child: Text('AR')),
+                items: [
+                  DropdownMenuItem(value: 'fr', child: Text(AppLocalizations.of(context)!.t("loginLanguageFr"))),
+                  DropdownMenuItem(value: 'en', child: Text(AppLocalizations.of(context)!.t("loginLanguageEn"))),
+                  DropdownMenuItem(value: 'it', child: Text(AppLocalizations.of(context)!.t("loginLanguageIt"))),
+                  DropdownMenuItem(value: 'ar', child: Text(AppLocalizations.of(context)!.t("loginLanguageAr"))),
                 ],
                 onChanged: (String? newLang) {
                   if (newLang != null) {
