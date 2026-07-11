@@ -1003,31 +1003,33 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                       : IvraIcons.emptyBottleWithoutPump,
                   color: Colors.redAccent,
                 ),
-                _buildMiniDetail(
-                  context,
-                  label: AppLocalizations.of(context).t('inventoryTableFullBidonsGeneric'),
-                  value: '${allocation.fullBidons}',
-                  icon: IvraIcons.fullRefillBottle,
-                  color: Colors.blueAccent,
-                ),
-                _buildMiniDetail(
-                  context,
-                  label: AppLocalizations.of(context).t('inventoryTableOpenBidons'),
-                  value: '${allocation.openBidons}',
-                  icon: IvraIcons.refillAction,
-                  color: Colors.teal,
-                ),
-                _buildMiniDetail(
-                  context,
-                  label: AppLocalizations.of(context).t('inventoryTableEmptyBidons'),
-                  value: '${allocation.emptyBidons}',
-                  icon: IvraIcons.emptyRefillBottle,
-                  color: Colors.grey,
-                ),
+                if (allocation.product.isRefillable) ...[
+                  _buildMiniDetail(
+                    context,
+                    label: AppLocalizations.of(context).t('inventoryTableFullBidonsGeneric'),
+                    value: '${allocation.fullBidons}',
+                    icon: IvraIcons.fullRefillBottle,
+                    color: Colors.blueAccent,
+                  ),
+                  _buildMiniDetail(
+                    context,
+                    label: AppLocalizations.of(context).t('inventoryTableOpenBidons'),
+                    value: '${allocation.openBidons}',
+                    icon: IvraIcons.refillAction,
+                    color: Colors.teal,
+                  ),
+                  _buildMiniDetail(
+                    context,
+                    label: AppLocalizations.of(context).t('inventoryTableEmptyBidons'),
+                    value: '${allocation.emptyBidons}',
+                    icon: IvraIcons.emptyRefillBottle,
+                    color: Colors.grey,
+                  ),
+                ],
               ],
             ),
 
-            if (allocation.openBidons > 0) ...[
+            if (allocation.product.isRefillable && allocation.openBidons > 0) ...[
               const SizedBox(height: 16),
               // Open Bidon Volume Indicator
               Row(
