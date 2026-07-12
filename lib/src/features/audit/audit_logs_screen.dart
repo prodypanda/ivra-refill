@@ -371,26 +371,36 @@ class _AuditLogMobileCard extends StatelessWidget {
               ),
             ],
             const Divider(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(Icons.language, size: 12, color: theme.colorScheme.outline),
-                    const SizedBox(width: 4),
+                    Icon(Icons.language, size: 13, color: theme.colorScheme.outline),
+                    const SizedBox(width: 6),
                     Text(
                       ipAddress,
                       style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline),
                     ),
                   ],
                 ),
+                const SizedBox(height: 6),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.devices, size: 12, color: theme.colorScheme.outline),
-                    const SizedBox(width: 4),
-                    Text(
-                      deviceInfo,
-                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 1.0),
+                      child: Icon(Icons.devices, size: 13, color: theme.colorScheme.outline),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        deviceInfo,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.outline,
+                          height: 1.3,
+                        ),
+                      ),
                     ),
                   ],
                 ),
