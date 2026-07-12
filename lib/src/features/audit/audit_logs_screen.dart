@@ -18,7 +18,8 @@ class AuditLogsScreen extends ConsumerStatefulWidget {
 }
 
 class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
-  final _scrollController = ScrollController();
+  final _horizontalScrollController = ScrollController();
+  final _verticalScrollController = ScrollController();
   int? _sortColumnIndex = 0;
   bool _sortAscending = false;
   String? _selectedActionFilter;
@@ -55,7 +56,8 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _horizontalScrollController.dispose();
+    _verticalScrollController.dispose();
     super.dispose();
   }
 
@@ -146,55 +148,69 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
                   ),
                 ),
               if (isWide)
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Scrollbar(
-                    controller: _scrollController,
-                    thumbVisibility: true,
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        sortColumnIndex: _sortColumnIndex,
-                        sortAscending: _sortAscending,
-                        columns: [
-                          DataColumn(label: Text(l10n.t('auditTimestamp')), onSort: _onSort),
-                          DataColumn(label: Text(l10n.t('auditUser')), onSort: _onSort),
-                          DataColumn(label: Text(l10n.t('auditAction')), onSort: _onSort),
-                          DataColumn(label: Text(l10n.t('auditIpAddress')), onSort: _onSort),
-                          DataColumn(label: Text(l10n.t('auditDevice')), onSort: _onSort),
-                        ],
-                        rows: filteredLogs.map((log) {
-                          final user = log.userId != null 
-                              ? teamMembers.where((m) => m.id == log.userId).firstOrNull 
-                              : null;
-                          final userDisplay = user != null ? user.email : (log.userId ?? 'System');
-                          
-                          final date = DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createdAt);
+                Container(
+                  constraints: BoxConstraints(
+                    maxHeight: (MediaQuery.sizeOf(context).height - 260).clamp(300, 1000),
+                  ),
+                  child: Card(
+                    margin: EdgeInsets.zero,
+                    child: Scrollbar(
+                      controller: _horizontalScrollController,
+                      thumbVisibility: true,
+                      child: SingleChildScrollView(
+                        controller: _horizontalScrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: Scrollbar(
+                          controller: _verticalScrollController,
+                          thumbVisibility: true,
+                          notificationPredicate: (notif) => notif.depth == 0,
+                          child: SingleChildScrollView(
+                            controller: _verticalScrollController,
+                            scrollDirection: Axis.vertical,
+                            child: DataTable(
+                              sortColumnIndex: _sortColumnIndex,
+                              sortAscending: _sortAscending,
+                              columns: [
+                                DataColumn(label: Text(l10n.t('auditTimestamp')), onSort: _onSort),
+                                DataColumn(label: Text(l10n.t('auditUser')), onSort: _onSort),
+                                DataColumn(label: Text(l10n.t('auditAction')), onSort: _onSort),
+                                DataColumn(label: Text(l10n.t('auditIpAddress')), onSort: _onSort),
+                                DataColumn(label: Text(l10n.t('auditDevice')), onSort: _onSort),
+                              ],
+                              rows: filteredLogs.map((log) {
+                                final user = log.userId != null 
+                                    ? teamMembers.where((m) => m.id == log.userId).firstOrNull 
+                                    : null;
+                                final userDisplay = user != null ? user.email : (log.userId ?? 'System');
+                                
+                                final date = DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createdAt);
 
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(date)),
-                              DataCell(Text(userDisplay)),
-                              DataCell(
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(log.action, style: const TextStyle(fontWeight: FontWeight.w600)),
-                                    if (log.details != null && log.details!.isNotEmpty)
-                                      Text(
-                                        log.details!.entries.map((e) => '${e.key}: ${e.value}').join(', '),
-                                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                return DataRow(
+                                  cells: [
+                                    DataCell(Text(date)),
+                                    DataCell(Text(userDisplay)),
+                                    DataCell(
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(log.action, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                          if (log.details != null && log.details!.isNotEmpty)
+                                            Text(
+                                              log.details!.entries.map((e) => '${e.key}: ${e.value}').join(', '),
+                                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                            ),
+                                        ],
                                       ),
+                                    ),
+                                    DataCell(Text(log.ipAddress ?? '-')),
+                                    DataCell(Text(log.deviceInfo ?? '-')),
                                   ],
-                                ),
-                              ),
-                              DataCell(Text(log.ipAddress ?? '-')),
-                              DataCell(Text(log.deviceInfo ?? '-')),
-                            ],
-                          );
-                        }).toList(),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),

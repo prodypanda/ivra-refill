@@ -22,6 +22,8 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
   TabController? _tabController;
   String _searchQuery = '';
   String? _selectedMobileRole;
+  final _horizontalScrollController = ScrollController();
+  final _verticalScrollController = ScrollController();
 
   static const _fallbackPermissions = [
     'view_rooms',
@@ -43,6 +45,8 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
   @override
   void dispose() {
     _tabController?.dispose();
+    _horizontalScrollController.dispose();
+    _verticalScrollController.dispose();
     super.dispose();
   }
 
@@ -471,139 +475,158 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                         ),
                         const Divider(height: 1),
                         if (isWide)
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: DataTable(
-                              columnSpacing: 32,
-                              columns: [
-                                DataColumn(label: Text(l10n.t('authorizationsPermission'))),
-                                ...roles.map(
-                                  (role) => DataColumn(
-                                    label: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          _getRoleLabel(context, role),
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        if (role != 'app_admin')
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              InkWell(
-                                                onTap: () => _bulkSetPermissions(role, true),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                                                  child: Text(
-                                                    l10n.t('authBulkGrantAll'),
-                                                    style: TextStyle(
-                                                      fontSize: 10,
-                                                      color: Theme.of(context).colorScheme.primary,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              const Text('|', style: TextStyle(fontSize: 10, color: Colors.grey)),
-                                              InkWell(
-                                                onTap: () => _bulkSetPermissions(role, false),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                                                  child: Text(
-                                                    l10n.t('authBulkRevokeAll'),
-                                                    style: TextStyle(
-                                                      fontSize: 10,
-                                                      color: Theme.of(context).colorScheme.error,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              rows: () {
-                                final rowsList = <DataRow>[];
-                                String? lastCategory;
-
-                                for (final permission in filteredPermissions) {
-                                  final cat = _getPermissionCategory(context, permission);
-                                  if (cat != lastCategory) {
-                                    lastCategory = cat;
-                                    rowsList.add(
-                                      DataRow(
-                                        color: WidgetStateProperty.all(
-                                          Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
-                                        ),
-                                        cells: [
-                                          DataCell(
-                                            Text(
-                                              cat.toUpperCase(),
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 11,
-                                                color: Theme.of(context).colorScheme.primary,
-                                                letterSpacing: 1.1,
-                                              ),
-                                            ),
-                                          ),
-                                          for (var i = 0; i < roles.length; i++)
-                                            const DataCell(SizedBox.shrink()),
-                                        ],
-                                      ),
-                                    );
-                                  }
-
-                                  rowsList.add(
-                                    DataRow(
-                                      cells: [
-                                        DataCell(
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                          Container(
+                            constraints: BoxConstraints(
+                              maxHeight: (MediaQuery.sizeOf(context).height - 260).clamp(300, 1000),
+                            ),
+                            child: Scrollbar(
+                              controller: _horizontalScrollController,
+                              thumbVisibility: true,
+                              child: SingleChildScrollView(
+                                controller: _horizontalScrollController,
+                                scrollDirection: Axis.horizontal,
+                                child: Scrollbar(
+                                  controller: _verticalScrollController,
+                                  thumbVisibility: true,
+                                  notificationPredicate: (notif) => notif.depth == 0,
+                                  child: SingleChildScrollView(
+                                    controller: _verticalScrollController,
+                                    scrollDirection: Axis.vertical,
+                                    child: DataTable(
+                                      columnSpacing: 32,
+                                      columns: [
+                                        DataColumn(label: Text(l10n.t('authorizationsPermission'))),
+                                        ...roles.map(
+                                          (role) => DataColumn(
+                                            label: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  _getPermissionTitle(context, permission),
-                                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                                  _getRoleLabel(context, role),
+                                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                                 ),
-                                                const SizedBox(height: 2),
-                                                Text(
-                                                  _getPermissionDescription(context, permission),
-                                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                                if (role != 'app_admin')
+                                                  Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () => _bulkSetPermissions(role, true),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                                                          child: Text(
+                                                            l10n.t('authBulkGrantAll'),
+                                                            style: TextStyle(
+                                                              fontSize: 10,
+                                                              color: Theme.of(context).colorScheme.primary,
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
                                                       ),
-                                                ),
+                                                      const Text('|', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                                                      InkWell(
+                                                        onTap: () => _bulkSetPermissions(role, false),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                                                          child: Text(
+                                                            l10n.t('authBulkRevokeAll'),
+                                                            style: TextStyle(
+                                                              fontSize: 10,
+                                                              color: Theme.of(context).colorScheme.error,
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                               ],
                                             ),
                                           ),
                                         ),
-                                        ...roles.map((role) {
-                                          final isEnabled = matrix[role]?.contains(permission) ?? false;
-                                          final isSystemAdmin = role == 'app_admin';
+                                      ],
+                                      rows: () {
+                                        final rowsList = <DataRow>[];
+                                        String? lastCategory;
 
-                                          return DataCell(
-                                            Switch(
-                                              value: isSystemAdmin ? true : isEnabled,
-                                              activeColor: const Color(0xFF267D65),
-                                              onChanged: isSystemAdmin
-                                                  ? null
-                                                  : (val) => _togglePermission(role, permission, val),
+                                        for (final permission in filteredPermissions) {
+                                          final cat = _getPermissionCategory(context, permission);
+                                          if (cat != lastCategory) {
+                                            lastCategory = cat;
+                                            rowsList.add(
+                                              DataRow(
+                                                color: WidgetStateProperty.all(
+                                                  Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
+                                                ),
+                                                cells: [
+                                                  DataCell(
+                                                    Text(
+                                                      cat.toUpperCase(),
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 11,
+                                                        color: Theme.of(context).colorScheme.primary,
+                                                        letterSpacing: 1.1,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  for (var i = 0; i < roles.length; i++)
+                                                    const DataCell(SizedBox.shrink()),
+                                                ],
+                                              ),
+                                            );
+                                          }
+
+                                          rowsList.add(
+                                            DataRow(
+                                              cells: [
+                                                DataCell(
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        Text(
+                                                          _getPermissionTitle(context, permission),
+                                                          style: const TextStyle(fontWeight: FontWeight.w600),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Text(
+                                                          _getPermissionDescription(context, permission),
+                                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                                              ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                ...roles.map((role) {
+                                                  final isEnabled = matrix[role]?.contains(permission) ?? false;
+                                                  final isSystemAdmin = role == 'app_admin';
+
+                                                  return DataCell(
+                                                    Switch(
+                                                      value: isSystemAdmin ? true : isEnabled,
+                                                      activeColor: const Color(0xFF267D65),
+                                                      onChanged: isSystemAdmin
+                                                          ? null
+                                                          : (val) => _togglePermission(role, permission, val),
+                                                    ),
+                                                  );
+                                                }),
+                                              ],
                                             ),
                                           );
-                                        }),
-                                      ],
+                                        }
+                                        return rowsList;
+                                      }(),
                                     ),
-                                  );
-                                }
-                                return rowsList;
-                              }(),
+                                  ),
+                                ),
+                              ),
                             ),
                           )
                         else ...[
