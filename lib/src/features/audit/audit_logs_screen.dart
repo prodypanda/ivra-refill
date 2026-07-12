@@ -23,6 +23,29 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
   bool _sortAscending = false;
   String? _selectedActionFilter;
 
+  IconData _getActionIcon(String action) {
+    final lower = action.toLowerCase();
+    if (lower.contains('login')) return Icons.login_rounded;
+    if (lower.contains('logout')) return Icons.logout_rounded;
+    if (lower.contains('create') || lower.contains('add')) return Icons.add_circle_outline_rounded;
+    if (lower.contains('update') || lower.contains('edit')) return Icons.edit_note_rounded;
+    if (lower.contains('delete') || lower.contains('clear')) return Icons.delete_outline_rounded;
+    if (lower.contains('sync')) return Icons.sync_rounded;
+    if (lower.contains('approve')) return Icons.assignment_turned_in_rounded;
+    if (lower.contains('reject')) return Icons.assignment_late_rounded;
+    return Icons.info_outline_rounded;
+  }
+
+  Color _getActionColor(BuildContext context, String action) {
+    final lower = action.toLowerCase();
+    final colorScheme = Theme.of(context).colorScheme;
+    if (lower.contains('delete') || lower.contains('clear') || lower.contains('reject')) return colorScheme.error;
+    if (lower.contains('create') || lower.contains('add') || lower.contains('approve')) return Colors.green.shade700;
+    if (lower.contains('update') || lower.contains('edit')) return colorScheme.primary;
+    if (lower.contains('login') || lower.contains('logout') || lower.contains('sync')) return colorScheme.secondary;
+    return colorScheme.outline;
+  }
+
   void _onSort(int columnIndex, bool ascending) {
     setState(() {
       _sortColumnIndex = columnIndex;
@@ -94,6 +117,8 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
                 return b.createdAt.compareTo(a.createdAt); // default descending
             }
           });
+
+          final isWide = MediaQuery.sizeOf(context).width >= 720;
           
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -120,8 +145,8 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
                     ],
                   ),
                 ),
-              Expanded(
-                child: Card(
+              if (isWide)
+                Card(
                   margin: EdgeInsets.zero,
                   child: Scrollbar(
                     controller: _scrollController,
@@ -130,55 +155,234 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
                       controller: _scrollController,
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
-                      sortColumnIndex: _sortColumnIndex,
-                      sortAscending: _sortAscending,
-                      columns: [
-                        DataColumn(label: Text(l10n.t('auditTimestamp')), onSort: _onSort),
-                        DataColumn(label: Text(l10n.t('auditUser')), onSort: _onSort),
-                        DataColumn(label: Text(l10n.t('auditAction')), onSort: _onSort),
-                        DataColumn(label: Text(l10n.t('auditIpAddress')), onSort: _onSort),
-                        DataColumn(label: Text(l10n.t('auditDevice')), onSort: _onSort),
-                      ],
-                      rows: filteredLogs.map((log) {
-                        final user = log.userId != null 
-                            ? teamMembers.where((m) => m.id == log.userId).firstOrNull 
-                            : null;
-                        final userDisplay = user != null ? user.email : (log.userId ?? 'System');
-                        
-                        final date = DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createdAt);
+                        sortColumnIndex: _sortColumnIndex,
+                        sortAscending: _sortAscending,
+                        columns: [
+                          DataColumn(label: Text(l10n.t('auditTimestamp')), onSort: _onSort),
+                          DataColumn(label: Text(l10n.t('auditUser')), onSort: _onSort),
+                          DataColumn(label: Text(l10n.t('auditAction')), onSort: _onSort),
+                          DataColumn(label: Text(l10n.t('auditIpAddress')), onSort: _onSort),
+                          DataColumn(label: Text(l10n.t('auditDevice')), onSort: _onSort),
+                        ],
+                        rows: filteredLogs.map((log) {
+                          final user = log.userId != null 
+                              ? teamMembers.where((m) => m.id == log.userId).firstOrNull 
+                              : null;
+                          final userDisplay = user != null ? user.email : (log.userId ?? 'System');
+                          
+                          final date = DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createdAt);
 
-                        return DataRow(
-                          cells: [
-                        DataCell(Text(date)),
-                        DataCell(Text(userDisplay)),
-                        DataCell(
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(log.action, style: const TextStyle(fontWeight: FontWeight.w600)),
-                              if (log.details != null && log.details!.isNotEmpty)
-                                Text(
-                                  log.details!.entries.map((e) => '${e.key}: ${e.value}').join(', '),
-                                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(date)),
+                              DataCell(Text(userDisplay)),
+                              DataCell(
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(log.action, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                    if (log.details != null && log.details!.isNotEmpty)
+                                      Text(
+                                        log.details!.entries.map((e) => '${e.key}: ${e.value}').join(', '),
+                                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                      ),
+                                  ],
                                 ),
+                              ),
+                              DataCell(Text(log.ipAddress ?? '-')),
+                              DataCell(Text(log.deviceInfo ?? '-')),
                             ],
-                          ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                )
+              else ...[
+                if (filteredLogs.isEmpty)
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Text(
+                        l10n.t('noAuditLogs') ?? 'No audit logs found',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                      ),
+                    ),
+                  )
+                else
+                  ...filteredLogs.map((log) {
+                    final user = log.userId != null 
+                        ? teamMembers.where((m) => m.id == log.userId).firstOrNull 
+                        : null;
+                    final userDisplay = user != null ? user.email : (log.userId ?? 'System');
+                    final date = DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createdAt);
+
+                    return _AuditLogMobileCard(
+                      date: date,
+                      userDisplay: userDisplay,
+                      action: log.action,
+                      icon: _getActionIcon(log.action),
+                      color: _getActionColor(context, log.action),
+                      ipAddress: log.ipAddress ?? '-',
+                      deviceInfo: log.deviceInfo ?? '-',
+                      details: log.details,
+                    );
+                  }),
+              ],
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _AuditLogMobileCard extends StatelessWidget {
+  const _AuditLogMobileCard({
+    required this.date,
+    required this.userDisplay,
+    required this.action,
+    required this.icon,
+    required this.color,
+    required this.ipAddress,
+    required this.deviceInfo,
+    this.details,
+  });
+
+  final String date;
+  final String userDisplay;
+  final String action;
+  final IconData icon;
+  final Color color;
+  final String ipAddress;
+  final String deviceInfo;
+  final Map<String, dynamic>? details;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(
+              color: color,
+              width: 4,
+            ),
+          ),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: color, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    action,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.person_outline, size: 14, color: theme.colorScheme.onSurfaceVariant),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    userDisplay,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(Icons.access_time, size: 14, color: theme.colorScheme.onSurfaceVariant),
+                const SizedBox(width: 4),
+                Text(
+                  date,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            if (details != null && details!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: details!.entries.map((e) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: RichText(
+                        text: TextSpan(
+                          style: theme.textTheme.bodySmall,
+                          children: [
+                            TextSpan(
+                              text: '${e.key}: ',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(text: '${e.value}'),
+                          ],
                         ),
-                        DataCell(Text(log.ipAddress ?? '-')),
-                        DataCell(Text(log.deviceInfo ?? '-')),
-                      ],
+                      ),
                     );
                   }).toList(),
                 ),
               ),
+            ],
+            const Divider(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.language, size: 12, color: theme.colorScheme.outline),
+                    const SizedBox(width: 4),
+                    Text(
+                      ipAddress,
+                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Icon(Icons.devices, size: 12, color: theme.colorScheme.outline),
+                    const SizedBox(width: 4),
+                    Text(
+                      deviceInfo,
+                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
-  },
-),
-);
-}
+  }
 }
