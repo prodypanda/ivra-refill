@@ -725,7 +725,7 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
       if (!mounted) return;
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${l10n.t('authResetLinkSent')} $email')),
+        SnackBar(content: Text(l10n.tParams('authResetLinkSent', {'email': email.toString()}))),
       );
     } catch (error) {
       if (mounted) setState(() => _error = localizeAuthError(l10n, error));

@@ -1493,11 +1493,11 @@ abstract class AppL10n {
   /// **'Send reset link'**
   String get authBtnSendResetLink;
 
-  /// No description provided for @authResetLinkSent.
+  /// Success message when reset link is sent
   ///
   /// In en, this message translates to:
-  /// **'Password reset link sent to'**
-  String get authResetLinkSent;
+  /// **'Password reset link sent to {email}'**
+  String authResetLinkSent(String email);
 
   /// No description provided for @authValidationEmailRequired.
   ///
@@ -5431,6 +5431,36 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.'**
   String hkDeleteWithStockMessage(String userName);
+
+  /// Column header for features in role permissions
+  ///
+  /// In en, this message translates to:
+  /// **'Feature'**
+  String get roleFeatureColumnLabel;
+
+  /// Empty state when no permissions match
+  ///
+  /// In en, this message translates to:
+  /// **'No permissions found.'**
+  String get roleNoPermissionsFound;
+
+  /// Header for release notes
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s New'**
+  String get settingsWhatsNew;
+
+  /// Shows current app version
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version: v{version}'**
+  String settingsCurrentVersion(String version);
+
+  /// Brand name in bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'iVRA Refill, by Pulire Tunisia'**
+  String get appShellBranding;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
