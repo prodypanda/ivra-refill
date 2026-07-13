@@ -468,6 +468,7 @@ class _DrawerFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       child: Column(
@@ -475,16 +476,16 @@ class _DrawerFooter extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'v$appVersion',
-            style: const TextStyle(
+            l10n.tParams('settingsCurrentVersion', {'version': appVersion.toString()}),
+            style: TextStyle(
               fontSize: 10,
               color: Colors.grey,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
-          const Text(
-            'iVRA Refill, by Pulire Tunisia',
+          Text(
+            l10n.t('appShellBranding'),
             style: TextStyle(
               fontSize: 10,
               color: Colors.grey,

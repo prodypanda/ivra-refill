@@ -232,7 +232,7 @@
   "setPasswordBody": "Imposta una password sicura per il tuo account per completare la registrazione.",
   "setPasswordButton": "Imposta password",
   "authBtnSendResetLink": "Invia link di ripristino",
-  "authResetLinkSent": "Link di reimpostazione della password inviato a",
+  "authResetLinkSent": "Link di reimpostazione della password inviato a {email}",
   "authValidationEmailRequired": "L'e-mail è richiesta",
   "authValidationEmailInvalid": "Inserisci un indirizzo e-mail valido",
   "authValidationPasswordRequired": "La password è richiesta",
@@ -887,5 +887,10 @@
   "hkDeactivateWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. Vuoi restituire questo inventario al magazzino centrale dell'hotel prima di disattivare il suo account?",
   "btnReturnAndDeactivate": "Restituisci e Disattiva",
   "btnJustDeactivate": "Solo Disattiva",
-  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione."
+  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione.",
+  "roleFeatureColumnLabel": "Funzionalità",
+  "roleNoPermissionsFound": "Nessun permesso trovato.",
+  "settingsWhatsNew": "Novità",
+  "settingsCurrentVersion": "Versione attuale: v{version}",
+  "appShellBranding": "iVRA Refill, da Pulire Tunisia"
 }

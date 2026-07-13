@@ -350,7 +350,7 @@
   "setPasswordBody": "Please set a secure password for your account to complete your registration.",
   "setPasswordButton": "Set Password",
   "authBtnSendResetLink": "Send reset link",
-  "authResetLinkSent": "Password reset link sent to",
+  "authResetLinkSent": "Password reset link sent to {email}",
   "authValidationEmailRequired": "Email is required",
   "authValidationEmailInvalid": "Enter a valid email address",
   "authValidationPasswordRequired": "Password is required",
@@ -1690,6 +1690,41 @@
     "placeholders": {
       "userName": {
         "type": "String"
+      }
+    }
+  },
+  "roleFeatureColumnLabel": "Feature",
+  "@roleFeatureColumnLabel": {
+    "description": "Column header for features in role permissions"
+  },
+  "roleNoPermissionsFound": "No permissions found.",
+  "@roleNoPermissionsFound": {
+    "description": "Empty state when no permissions match"
+  },
+  "settingsWhatsNew": "What's New",
+  "@settingsWhatsNew": {
+    "description": "Header for release notes"
+  },
+  "settingsCurrentVersion": "Current Version: v{version}",
+  "@settingsCurrentVersion": {
+    "description": "Shows current app version",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.8"
+      }
+    }
+  },
+  "appShellBranding": "iVRA Refill, by Pulire Tunisia",
+  "@appShellBranding": {
+    "description": "Brand name in bottom sheet"
+  },
+  "@authResetLinkSent": {
+    "description": "Success message when reset link is sent",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "user@example.com"
       }
     }
   }

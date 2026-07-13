@@ -43,14 +43,14 @@ import 'app_settings_screen.dart';
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("What's New", style: theme.textTheme.headlineSmall),
+                          Text(l10n.t('settingsWhatsNew'), style: theme.textTheme.headlineSmall),
                           IconButton(
                             icon: const Icon(Icons.close),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ],
                       ),
-                      Text('Current Version: v$appVersion', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
+                      Text(l10n.tParams('settingsCurrentVersion', {'version': appVersion.toString()}), style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
                       const SizedBox(height: 16),
                       Expanded(
                         child: ListView(

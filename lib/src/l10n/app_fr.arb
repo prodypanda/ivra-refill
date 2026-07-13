@@ -232,7 +232,7 @@
   "setPasswordBody": "Veuillez définir un mot de passe sécurisé pour votre compte afin de finaliser votre inscription.",
   "setPasswordButton": "Définir le mot de passe",
   "authBtnSendResetLink": "Envoyer le lien de réinitialisation",
-  "authResetLinkSent": "Lien de réinitialisation envoyé à",
+  "authResetLinkSent": "Lien de réinitialisation envoyé à {email}",
   "authValidationEmailRequired": "L'e-mail est requis",
   "authValidationEmailInvalid": "Entrez une adresse e-mail valide",
   "authValidationPasswordRequired": "Le mot de passe est requis",
@@ -887,5 +887,10 @@
   "hkDeactivateWithStockMessage": "Cette femme de chambre a des produits dans son chariot. Voulez-vous retourner cet inventaire au stock central de l'hôtel avant de désactiver son compte ?",
   "btnReturnAndDeactivate": "Retourner et désactiver",
   "btnJustDeactivate": "Juste désactiver",
-  "hkDeleteWithStockMessage": "Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l'équipe '{userName}' ? Cette action est irréversible et il perdra immédiatement l'accès à l'application."
+  "hkDeleteWithStockMessage": "Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l'équipe '{userName}' ? Cette action est irréversible et il perdra immédiatement l'accès à l'application.",
+  "roleFeatureColumnLabel": "Fonctionnalité",
+  "roleNoPermissionsFound": "Aucune autorisation trouvée.",
+  "settingsWhatsNew": "Quoi de neuf",
+  "settingsCurrentVersion": "Version actuelle : v{version}",
+  "appShellBranding": "iVRA Refill, par Pulire Tunisia"
 }

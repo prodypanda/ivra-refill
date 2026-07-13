@@ -764,7 +764,9 @@ class AppL10nFr extends AppL10n {
   String get authBtnSendResetLink => 'Envoyer le lien de réinitialisation';
 
   @override
-  String get authResetLinkSent => 'Lien de réinitialisation envoyé à';
+  String authResetLinkSent(String email) {
+    return 'Lien de réinitialisation envoyé à $email';
+  }
 
   @override
   String get authValidationEmailRequired => 'L\'e-mail est requis';
@@ -3003,4 +3005,21 @@ class AppL10nFr extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l\'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l\'équipe \'$userName\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.';
   }
+
+  @override
+  String get roleFeatureColumnLabel => 'Fonctionnalité';
+
+  @override
+  String get roleNoPermissionsFound => 'Aucune autorisation trouvée.';
+
+  @override
+  String get settingsWhatsNew => 'Quoi de neuf';
+
+  @override
+  String settingsCurrentVersion(String version) {
+    return 'Version actuelle : v$version';
+  }
+
+  @override
+  String get appShellBranding => 'iVRA Refill, par Pulire Tunisia';
 }
