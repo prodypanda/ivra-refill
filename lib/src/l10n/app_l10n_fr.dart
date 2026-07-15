@@ -3003,4 +3003,13 @@ class AppL10nFr extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l\'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l\'équipe \'$userName\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.';
   }
+
+  @override
+  String get whatsNew => 'Quoi de neuf';
+
+  @override
+  String get feature => 'Fonctionnalité';
+
+  @override
+  String get noPermissionsFound => 'Aucune autorisation trouvée.';
 }
