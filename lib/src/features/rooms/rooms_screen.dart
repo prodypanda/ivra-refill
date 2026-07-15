@@ -2066,7 +2066,7 @@ class _AddProductToRoomDialogState
         },
         loading: () => const SizedBox(
           height: 100,
-          child: Center(child: CircularProgressIndicator()),
+          child: Center(child: CardShimmer(isCompact: true)),
         ),
         error: (e, s) => Text(e.toString()),
       ),

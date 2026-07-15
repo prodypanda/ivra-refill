@@ -2565,6 +2565,7 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                         index == displayEvents.length - 1;
 
                                     return IntrinsicHeight(
+                                      key: ValueKey(event.id),
                                       child: Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.stretch,
