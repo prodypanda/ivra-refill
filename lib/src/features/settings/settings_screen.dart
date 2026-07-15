@@ -43,7 +43,7 @@ import 'app_settings_screen.dart';
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("What's New", style: theme.textTheme.headlineSmall),
+                          Text(AppLocalizations.of(context)!.t('whatsNew'), style: theme.textTheme.headlineSmall),
                           IconButton(
                             icon: const Icon(Icons.close),
                             onPressed: () => Navigator.of(context).pop(),
@@ -165,10 +165,10 @@ class SettingsScreen extends ConsumerWidget {
               child: SwitchListTile(
                 secondary: const Icon(Icons.sync_disabled_outlined),
                 title:
-                    Text(AppLocalizations.of(context).t('settingsOfflineMode')),
+                    Text(AppLocalizations.of(context)!.t('settingsOfflineMode')),
                 subtitle: Text(offlineMode
-                    ? AppLocalizations.of(context).t('settingsOfflineQueue')
-                    : AppLocalizations.of(context).t('settingsOfflineSend')),
+                    ? AppLocalizations.of(context)!.t('settingsOfflineQueue')
+                    : AppLocalizations.of(context)!.t('settingsOfflineSend')),
                 value: offlineMode,
                 onChanged: (value) {
                   ref.read(offlineModeProvider.notifier).state = value;
@@ -279,7 +279,7 @@ class SettingsScreen extends ConsumerWidget {
                                     : () => _clearQueue(context, ref),
                                 icon: const Icon(Icons.delete_sweep_outlined),
                                 label: Text(
-                                  AppLocalizations.of(context).t(
+                                  AppLocalizations.of(context)!.t(
                                     'settingsBtnClear',
                                   ),
                                 ),
@@ -290,7 +290,7 @@ class SettingsScreen extends ConsumerWidget {
                                     : () => _syncQueue(context, ref),
                                 icon: const Icon(Icons.sync_outlined),
                                 label: Text(
-                                  AppLocalizations.of(context).t(
+                                  AppLocalizations.of(context)!.t(
                                     'settingsBtnSyncNow',
                                   ),
                                 ),
@@ -409,8 +409,8 @@ class SettingsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(didSync
-            ? AppLocalizations.of(context).t('settingsActionSynced')
-            : AppLocalizations.of(context).t('settingsActionNeedsReview')),
+            ? AppLocalizations.of(context)!.t('settingsActionSynced')
+            : AppLocalizations.of(context)!.t('settingsActionNeedsReview')),
       ),
     );
   }
@@ -440,7 +440,7 @@ class SettingsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content:
-              Text(AppLocalizations.of(context).t('settingsActionUpdated'))),
+              Text(AppLocalizations.of(context)!.t('settingsActionUpdated'))),
     );
   }
 
@@ -455,7 +455,7 @@ class SettingsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content:
-              Text(AppLocalizations.of(context).t('settingsActionRemoved'))),
+              Text(AppLocalizations.of(context)!.t('settingsActionRemoved'))),
     );
   }
 
@@ -466,7 +466,7 @@ class SettingsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content:
-              Text(AppLocalizations.of(context).t('settingsQueueCleared'))),
+              Text(AppLocalizations.of(context)!.t('settingsQueueCleared'))),
     );
   }
 }
@@ -710,7 +710,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppLocalizations.of(context).t('settingsDemoUser'),
+                AppLocalizations.of(context)!.t('settingsDemoUser'),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 12),
@@ -719,7 +719,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
                 isExpanded: true,
                 decoration: InputDecoration(
                   labelText:
-                      AppLocalizations.of(context).t('settingsTestAccessAs'),
+                      AppLocalizations.of(context)!.t('settingsTestAccessAs'),
                   prefixIcon: Icon(Icons.manage_accounts_outlined),
                 ),
                 items: [
@@ -745,7 +745,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
                   if (!context.mounted) return;
                   PremiumSnackbar.showSuccess(
                     context, 
-                    AppLocalizations.of(context).t('settingsDemoUserChanged'),
+                    AppLocalizations.of(context)!.t('settingsDemoUserChanged'),
                   );
                 },
               ),
@@ -793,7 +793,7 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        AppLocalizations.of(context).t(
+        AppLocalizations.of(context)!.t(
           widget.action.lastError == null
               ? 'settingsActionEditTitle'
               : 'settingsActionConflictTitle',
@@ -854,7 +854,7 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 maxLines: 14,
                 decoration: InputDecoration(
                   labelText:
-                      AppLocalizations.of(context).t('settingsPayloadJson'),
+                      AppLocalizations.of(context)!.t('settingsPayloadJson'),
                   alignLabelWithHint: true,
                   errorText: _error,
                 ),
@@ -867,17 +867,17 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(AppLocalizations.of(context).t('btnCancel')),
+          child: Text(AppLocalizations.of(context)!.t('btnCancel')),
         ),
         TextButton.icon(
           onPressed: () => _submit(retryAfterSave: false),
           icon: const Icon(Icons.save_outlined),
-          label: Text(AppLocalizations.of(context).t('btnSave')),
+          label: Text(AppLocalizations.of(context)!.t('btnSave')),
         ),
         FilledButton.icon(
           onPressed: () => _submit(retryAfterSave: true),
           icon: const Icon(Icons.sync_outlined),
-          label: Text(AppLocalizations.of(context).t('settingsSaveAndRetry')),
+          label: Text(AppLocalizations.of(context)!.t('settingsSaveAndRetry')),
         ),
       ],
     );
@@ -899,7 +899,7 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
       final decoded = jsonDecode(_payloadController.text);
       if (decoded is! Map) {
         setState(() => _error =
-            AppLocalizations.of(context).t('settingsPayloadInvalidJson'));
+            AppLocalizations.of(context)!.t('settingsPayloadInvalidJson'));
         return null;
       }
       setState(() => _error = null);
