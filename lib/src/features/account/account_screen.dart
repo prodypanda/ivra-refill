@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
+import '../shared/shimmer_loading.dart';
 import '../../state/app_state.dart';
 import '../auth/login_screen.dart';
 import '../auth/auth_validation.dart';
@@ -51,7 +52,10 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     if (!isLoggedIn) {
       return const Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: CardShimmer(isCompact: false),
+          ),
         ),
       );
     }

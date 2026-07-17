@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
+import '../shared/shimmer_loading.dart';
 import '../../state/app_state.dart';
 import '../../ui/ivra_icons.dart';
 import '../shared/async_value_view.dart';

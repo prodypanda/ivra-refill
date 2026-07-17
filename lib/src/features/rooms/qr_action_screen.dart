@@ -566,6 +566,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                       }
 
                       return Padding(
+                        key: ValueKey(val),
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: ActionChip(
                           avatar: Icon(Icons.qr_code_2_rounded, size: 16, color: colorScheme.primary),
