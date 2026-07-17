@@ -89,11 +89,21 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
         ),
       ] : [
         if (canManage && selectedHotelId != null)
-          FilledButton.icon(
-            onPressed: () => _showInviteHousekeeperDialog(context),
-            icon: const Icon(Icons.person_add_outlined),
-            label: Text(l10n.t('inviteHousekeeper')),
-          ),
+          MediaQuery.sizeOf(context).width >= 600
+              ? FilledButton.icon(
+                  onPressed: () => _showInviteHousekeeperDialog(context),
+                  icon: const Icon(Icons.person_add_outlined),
+                  label: Text(l10n.t('inviteHousekeeper')),
+                )
+              : IconButton(
+                  tooltip: l10n.t('inviteHousekeeper'),
+                  icon: const Icon(Icons.person_add_outlined),
+                  onPressed: () => _showInviteHousekeeperDialog(context),
+                  style: IconButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
+                  ),
+                ),
       ],
       child: Container(
         decoration: BoxDecoration(gradient: backgroundGradient),
