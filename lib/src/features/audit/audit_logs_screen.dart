@@ -395,7 +395,7 @@ class _AuditLogMobileCard extends StatelessWidget {
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        deviceInfo,
+                        _formatDeviceInfo(deviceInfo),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.outline,
                           height: 1.3,
@@ -410,5 +410,17 @@ class _AuditLogMobileCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDeviceInfo(String info) {
+    if (info.isEmpty) return '-';
+    // Insert zero-width spaces after delimiters to allow graceful multiline wrapping on narrow screens.
+    return info
+        .replaceAll('/', '/\u200B')
+        .replaceAll(';', ';\u200B')
+        .replaceAll(',', ',\u200B')
+        .replaceAll('(', '(\u200B')
+        .replaceAll(')', ')\u200B')
+        .replaceAll(' ', ' \u200B');
   }
 }

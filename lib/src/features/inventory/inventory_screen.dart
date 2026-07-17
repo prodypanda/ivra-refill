@@ -832,102 +832,209 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  HoverImageTooltip(
-                    imageUrl: widget.item.product.imageUrl,
-                    child: Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: statusColor.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(20),
-                        image: (widget.item.product.imageUrl != null && widget.item.product.imageUrl!.isNotEmpty && widget.item.product.imageUrl!.startsWith('http')) 
-                            ? DecorationImage(
-                                image: NetworkImage(widget.item.product.imageUrl!),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                      ),
-                      child: (widget.item.product.imageUrl == null || widget.item.product.imageUrl!.isEmpty || !widget.item.product.imageUrl!.startsWith('http'))
-                          ? Icon(
-                              lowStock
-                                  ? Icons.priority_high_rounded
-                                  : Icons.inventory_2_outlined,
-                              color: statusColor,
-                              size: 28,
-                            )
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.item.product.label(widget.language),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w900,
-                            height: 1.1,
-                            letterSpacing: -0.3,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          widget.item.product.sku,
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+              (() {
+                final isWideScreen = MediaQuery.sizeOf(context).width >= 600;
+                if (isWideScreen) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _InventoryStatusPill(lowStock: lowStock),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.history_outlined, size: 20),
-                            tooltip: l10n.t('productHistoryTitle'),
-                            onPressed: () => _showProductHistory(context),
-                            style: IconButton.styleFrom(
-                              backgroundColor: theme.colorScheme.secondary
-                                  .withValues(alpha: 0.08),
-                              foregroundColor: theme.colorScheme.secondary,
-                              padding: const EdgeInsets.all(8),
-                              minimumSize: const Size(36, 36),
-                            ),
+                      HoverImageTooltip(
+                        imageUrl: widget.item.product.imageUrl,
+                        child: Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: statusColor.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(20),
+                            image: (widget.item.product.imageUrl != null && widget.item.product.imageUrl!.isNotEmpty && widget.item.product.imageUrl!.startsWith('http')) 
+                                ? DecorationImage(
+                                    image: NetworkImage(widget.item.product.imageUrl!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                           ),
-                          if (canManage) ...[
-                            const SizedBox(width: 8),
-                            IconButton(
-                              icon: const Icon(Icons.edit_outlined, size: 20),
-                              tooltip: l10n.t('adjustStockTitle'),
-                              onPressed: () => _adjustStock(context),
-                              style: IconButton.styleFrom(
-                                backgroundColor: theme.colorScheme.primary
-                                    .withValues(alpha: 0.08),
-                                foregroundColor: theme.colorScheme.primary,
-                                padding: const EdgeInsets.all(8),
-                                minimumSize: const Size(36, 36),
+                          child: (widget.item.product.imageUrl == null || widget.item.product.imageUrl!.isEmpty || !widget.item.product.imageUrl!.startsWith('http'))
+                              ? Icon(
+                                  lowStock
+                                      ? Icons.priority_high_rounded
+                                      : Icons.inventory_2_outlined,
+                                  color: statusColor,
+                                  size: 28,
+                                )
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.item.product.label(widget.language),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  height: 1.1,
+                                  letterSpacing: -0.3,
+                                ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              widget.item.product.sku,
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                                letterSpacing: 0.5,
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          _InventoryStatusPill(lowStock: lowStock),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.history_outlined, size: 20),
+                                tooltip: l10n.t('productHistoryTitle'),
+                                onPressed: () => _showProductHistory(context),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: theme.colorScheme.secondary
+                                      .withValues(alpha: 0.08),
+                                  foregroundColor: theme.colorScheme.secondary,
+                                  padding: const EdgeInsets.all(8),
+                                  minimumSize: const Size(36, 36),
+                                ),
+                              ),
+                              if (canManage) ...[
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  icon: const Icon(Icons.edit_outlined, size: 20),
+                                  tooltip: l10n.t('adjustStockTitle'),
+                                  onPressed: () => _adjustStock(context),
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: theme.colorScheme.primary
+                                        .withValues(alpha: 0.08),
+                                    foregroundColor: theme.colorScheme.primary,
+                                    padding: const EdgeInsets.all(8),
+                                    minimumSize: const Size(36, 36),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
                         ],
                       ),
                     ],
-                  ),
-                ],
-              ),
+                  );
+                } else {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          HoverImageTooltip(
+                            imageUrl: widget.item.product.imageUrl,
+                            child: Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: statusColor.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(20),
+                                image: (widget.item.product.imageUrl != null && widget.item.product.imageUrl!.isNotEmpty && widget.item.product.imageUrl!.startsWith('http')) 
+                                    ? DecorationImage(
+                                        image: NetworkImage(widget.item.product.imageUrl!),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
+                              ),
+                              child: (widget.item.product.imageUrl == null || widget.item.product.imageUrl!.isEmpty || !widget.item.product.imageUrl!.startsWith('http'))
+                                  ? Icon(
+                                      lowStock
+                                          ? Icons.priority_high_rounded
+                                          : Icons.inventory_2_outlined,
+                                      color: statusColor,
+                                      size: 28,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.item.product.label(widget.language),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                    height: 1.2,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  widget.item.product.sku,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _InventoryStatusPill(lowStock: lowStock),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.history_outlined, size: 20),
+                                tooltip: l10n.t('productHistoryTitle'),
+                                onPressed: () => _showProductHistory(context),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: theme.colorScheme.secondary
+                                      .withValues(alpha: 0.08),
+                                  foregroundColor: theme.colorScheme.secondary,
+                                  padding: const EdgeInsets.all(8),
+                                  minimumSize: const Size(36, 36),
+                                ),
+                              ),
+                              if (canManage) ...[
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  icon: const Icon(Icons.edit_outlined, size: 20),
+                                  tooltip: l10n.t('adjustStockTitle'),
+                                  onPressed: () => _adjustStock(context),
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: theme.colorScheme.primary
+                                        .withValues(alpha: 0.08),
+                                    foregroundColor: theme.colorScheme.primary,
+                                    padding: const EdgeInsets.all(8),
+                                    minimumSize: const Size(36, 36),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                }
+              })(),
               const Spacer(),
               // Visual Stock Indicators
               _VisualStockBar(

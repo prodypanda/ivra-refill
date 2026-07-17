@@ -606,38 +606,72 @@ class _ReportAnalytics extends StatelessWidget {
     final corrections = events.where((e) => e.type == RefillEventType.correctionRequested).length;
     final replacements = events.where((e) => e.type == RefillEventType.bottleReplaced).length;
 
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isWideScreen = screenWidth >= 600;
+    final tileWidth = screenWidth < 450
+        ? (screenWidth - 40 - 12) / 2
+        : (screenWidth < 600 ? 170.0 : 190.0);
+
     return GlassCard(
       padding: const EdgeInsets.all(20),
       borderRadius: 24,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Icon(Icons.analytics_outlined, color: theme.colorScheme.primary),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  l10n.t('reportAnalyticsTitle'),
-                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+          if (isWideScreen)
+            Row(
+              children: [
+                Icon(Icons.analytics_outlined, color: theme.colorScheme.primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.t('reportAnalyticsTitle'),
+                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                  ),
                 ),
-              ),
-              OutlinedButton.icon(
-                onPressed: onScheduleEmail,
-                icon: const Icon(Icons.schedule_send_outlined),
-                label: Text(l10n.t('scheduleReportEmail')),
-              ),
-            ],
-          ),
+                OutlinedButton.icon(
+                  onPressed: onScheduleEmail,
+                  icon: const Icon(Icons.schedule_send_outlined),
+                  label: Text(l10n.t('scheduleReportEmail')),
+                ),
+              ],
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.analytics_outlined, color: theme.colorScheme.primary),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        l10n.t('reportAnalyticsTitle'),
+                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: onScheduleEmail,
+                    icon: const Icon(Icons.schedule_send_outlined),
+                    label: Text(l10n.t('scheduleReportEmail')),
+                  ),
+                ),
+              ],
+            ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 12,
             runSpacing: 12,
             children: [
-              _KpiTile(label: l10n.t('reportKpiRefills'), value: refills.length.toString(), icon: IvraIcons.refillAction),
-              _KpiTile(label: l10n.t('reportKpiCorrections'), value: corrections.toString(), icon: Icons.assignment_late_outlined),
-              _KpiTile(label: l10n.t('reportKpiReplacements'), value: replacements.toString(), icon: IvraIcons.replaceAction),
-              _KpiTile(label: l10n.t('reportKpiActiveRooms'), value: usageByRoom.length.toString(), icon: Icons.meeting_room_outlined),
+              _KpiTile(label: l10n.t('reportKpiRefills'), value: refills.length.toString(), icon: IvraIcons.refillAction, width: tileWidth),
+              _KpiTile(label: l10n.t('reportKpiCorrections'), value: corrections.toString(), icon: Icons.assignment_late_outlined, width: tileWidth),
+              _KpiTile(label: l10n.t('reportKpiReplacements'), value: replacements.toString(), icon: IvraIcons.replaceAction, width: tileWidth),
+              _KpiTile(label: l10n.t('reportKpiActiveRooms'), value: usageByRoom.length.toString(), icon: Icons.meeting_room_outlined, width: tileWidth),
             ],
           ),
           const SizedBox(height: 16),
@@ -682,28 +716,51 @@ class _ReportAnalytics extends StatelessWidget {
 }
 
 class _KpiTile extends StatelessWidget {
-  const _KpiTile({required this.label, required this.value, required this.icon});
+  const _KpiTile({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.width,
+  });
 
   final String label;
   final String value;
   final IconData icon;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isCompact = width < 160;
     return Container(
-      width: 190,
-      padding: const EdgeInsets.all(14),
+      width: width,
+      padding: EdgeInsets.all(isCompact ? 10 : 14),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 28, color: theme.colorScheme.primary),
-          const SizedBox(width: 10),
-          Expanded(child: Text(label, maxLines: 2, overflow: TextOverflow.ellipsis)),
-          Text(value, style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900)),
+          Icon(icon, size: isCompact ? 22 : 28, color: theme.colorScheme.primary),
+          SizedBox(width: isCompact ? 6 : 10),
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: isCompact ? 11 : 13,
+                height: 1.1,
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            value,
+            style: (isCompact ? theme.textTheme.titleMedium : theme.textTheme.titleLarge)?.copyWith(
+              fontWeight: FontWeight.w900,
+            ),
+          ),
         ],
       ),
     );

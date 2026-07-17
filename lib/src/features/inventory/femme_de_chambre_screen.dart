@@ -482,6 +482,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     final l10n = AppLocalizations.of(context);
     final canManage = currentUser.role != UserRole.hotelStaff;
 
+    final isWideScreen = MediaQuery.sizeOf(context).width >= 600;
+
     return GlassCard(
       child: ExpansionTile(
         leading: HoverImageTooltip(
@@ -518,11 +520,23 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
           ),
         ),
         ),
-        title: Text(hk.fullName, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          hk.fullName,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(hk.email),
+            Text(
+              hk.email,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
             const SizedBox(height: 4),
             Consumer(
               builder: (context, ref, _) {
@@ -552,94 +566,190 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
             ),
           ],
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.history),
-              tooltip: l10n.t('allHistory'),
-              onPressed: () => _showAllHistoryDialog(context, hk.id),
-            ),
-            if (canManage)
-              PopupMenuButton<String>(
-                onSelected: (value) async {
-                  if (value == 'toggle_status') {
-                    final isActive = !hk.isActive;
-                    
-                    if (!isActive) {
-                      final activeAllocations = await _getActiveAllocations(hk.id);
-                      if (activeAllocations.isNotEmpty && context.mounted) {
-                        final result = await showDialog<String>(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text(l10n.t('hkDeactivateWithStockTitle')),
-                            content: Text(l10n.t('hkDeactivateWithStockMessage')),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop('cancel'),
-                                child: Text(l10n.t('btnCancel')),
-                              ),
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop('deactivate'),
-                                child: Text(l10n.t('btnJustDeactivate')),
-                              ),
-                              FilledButton(
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: Theme.of(context).colorScheme.error,
-                                  foregroundColor: Theme.of(context).colorScheme.onError,
+        trailing: isWideScreen
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.history),
+                    tooltip: l10n.t('allHistory'),
+                    onPressed: () => _showAllHistoryDialog(context, hk.id),
+                  ),
+                  if (canManage)
+                    PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        if (value == 'toggle_status') {
+                          final isActive = !hk.isActive;
+                          
+                          if (!isActive) {
+                            final activeAllocations = await _getActiveAllocations(hk.id);
+                            if (activeAllocations.isNotEmpty && context.mounted) {
+                              final result = await showDialog<String>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text(l10n.t('hkDeactivateWithStockTitle')),
+                                  content: Text(l10n.t('hkDeactivateWithStockMessage')),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop('cancel'),
+                                      child: Text(l10n.t('btnCancel')),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop('deactivate'),
+                                      child: Text(l10n.t('btnJustDeactivate')),
+                                    ),
+                                    FilledButton(
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: Theme.of(context).colorScheme.error,
+                                        foregroundColor: Theme.of(context).colorScheme.onError,
+                                      ),
+                                      onPressed: () => Navigator.of(context).pop('return'),
+                                      child: Text(l10n.t('btnReturnAndDeactivate')),
+                                    ),
+                                  ],
                                 ),
-                                onPressed: () => Navigator.of(context).pop('return'),
-                                child: Text(l10n.t('btnReturnAndDeactivate')),
+                              );
+
+                              if (result == null || result == 'cancel') return;
+                              if (result == 'return') {
+                                await _returnAllStock(hk.id, activeAllocations);
+                              }
+                            }
+                          }
+
+                          await ref.read(repositoryProvider).setTeamMemberActive(userId: hk.id, isActive: isActive);
+                          ref.invalidate(hotelHousekeepersProvider);
+                        } else if (value == 'delete') {
+                          List<HousekeeperAllocation> activeAllocations = await _getActiveAllocations(hk.id);
+                          String messageKey = activeAllocations.isNotEmpty ? 'hkDeleteWithStockMessage' : 'confirmDeleteUser';
+                          
+                          if (!context.mounted) return;
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (c) => PremiumConfirmDialog(
+                              title: l10n.t('confirmAction'),
+                              message: l10n.tParams(messageKey, {'userName': hk.fullName}),
+                              confirmLabel: l10n.t('deleteGeneric'),
+                              isDestructive: true,
+                            ),
+                          );
+                          if (confirm == true) {
+                            if (activeAllocations.isNotEmpty) {
+                              await _returnAllStock(hk.id, activeAllocations);
+                            }
+                            await ref.read(repositoryProvider).deleteUser(hk.id);
+                            ref.invalidate(hotelHousekeepersProvider);
+                          }
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'toggle_status',
+                          child: Text(hk.isActive ? l10n.t('teamDeactivate') : l10n.t('teamReactivate')),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text(l10n.t('deleteGeneric'), style: const TextStyle(color: Colors.red)),
+                        ),
+                      ],
+                    ),
+                ],
+              )
+            : (canManage
+                ? PopupMenuButton<String>(
+                    onSelected: (value) async {
+                      if (value == 'history') {
+                        _showAllHistoryDialog(context, hk.id);
+                      } else if (value == 'toggle_status') {
+                        final isActive = !hk.isActive;
+                        
+                        if (!isActive) {
+                          final activeAllocations = await _getActiveAllocations(hk.id);
+                          if (activeAllocations.isNotEmpty && context.mounted) {
+                            final result = await showDialog<String>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(l10n.t('hkDeactivateWithStockTitle')),
+                                content: Text(l10n.t('hkDeactivateWithStockMessage')),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop('cancel'),
+                                    child: Text(l10n.t('btnCancel')),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop('deactivate'),
+                                    child: Text(l10n.t('btnJustDeactivate')),
+                                  ),
+                                  FilledButton(
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: Theme.of(context).colorScheme.error,
+                                      foregroundColor: Theme.of(context).colorScheme.onError,
+                                    ),
+                                    onPressed: () => Navigator.of(context).pop('return'),
+                                    child: Text(l10n.t('btnReturnAndDeactivate')),
+                                  ),
+                                ],
                               ),
-                            ],
+                            );
+
+                            if (result == null || result == 'cancel') return;
+                            if (result == 'return') {
+                              await _returnAllStock(hk.id, activeAllocations);
+                            }
+                          }
+                        }
+
+                        await ref.read(repositoryProvider).setTeamMemberActive(userId: hk.id, isActive: isActive);
+                        ref.invalidate(hotelHousekeepersProvider);
+                      } else if (value == 'delete') {
+                        List<HousekeeperAllocation> activeAllocations = await _getActiveAllocations(hk.id);
+                        String messageKey = activeAllocations.isNotEmpty ? 'hkDeleteWithStockMessage' : 'confirmDeleteUser';
+                        
+                        if (!context.mounted) return;
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (c) => PremiumConfirmDialog(
+                            title: l10n.t('confirmAction'),
+                            message: l10n.tParams(messageKey, {'userName': hk.fullName}),
+                            confirmLabel: l10n.t('deleteGeneric'),
+                            isDestructive: true,
                           ),
                         );
-
-                        if (result == null || result == 'cancel') return;
-                        if (result == 'return') {
-                          await _returnAllStock(hk.id, activeAllocations);
+                        if (confirm == true) {
+                          if (activeAllocations.isNotEmpty) {
+                            await _returnAllStock(hk.id, activeAllocations);
+                          }
+                          await ref.read(repositoryProvider).deleteUser(hk.id);
+                          ref.invalidate(hotelHousekeepersProvider);
                         }
                       }
-                    }
-
-                    await ref.read(repositoryProvider).setTeamMemberActive(userId: hk.id, isActive: isActive);
-                    ref.invalidate(hotelHousekeepersProvider);
-                  } else if (value == 'delete') {
-                    List<HousekeeperAllocation> activeAllocations = await _getActiveAllocations(hk.id);
-                    String messageKey = activeAllocations.isNotEmpty ? 'hkDeleteWithStockMessage' : 'confirmDeleteUser';
-                    
-                    if (!context.mounted) return;
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (c) => PremiumConfirmDialog(
-                        title: l10n.t('confirmAction'),
-                        message: l10n.tParams(messageKey, {'userName': hk.fullName}),
-                        confirmLabel: l10n.t('deleteGeneric'),
-                        isDestructive: true,
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'history',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.history, size: 18),
+                            const SizedBox(width: 8),
+                            Text(l10n.t('allHistory')),
+                          ],
+                        ),
                       ),
-                    );
-                    if (confirm == true) {
-                      if (activeAllocations.isNotEmpty) {
-                        await _returnAllStock(hk.id, activeAllocations);
-                      }
-                      await ref.read(repositoryProvider).deleteUser(hk.id);
-                      ref.invalidate(hotelHousekeepersProvider);
-                    }
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'toggle_status',
-                    child: Text(hk.isActive ? l10n.t('teamDeactivate') : l10n.t('teamReactivate')),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Text(l10n.t('deleteGeneric'), style: const TextStyle(color: Colors.red)),
-                  ),
-                ],
-              ),
-          ],
-        ),
+                      PopupMenuItem(
+                        value: 'toggle_status',
+                        child: Text(hk.isActive ? l10n.t('teamDeactivate') : l10n.t('teamReactivate')),
+                      ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Text(l10n.t('deleteGeneric'), style: const TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.history),
+                    tooltip: l10n.t('allHistory'),
+                    onPressed: () => _showAllHistoryDialog(context, hk.id),
+                  )),
         children: [
           Container(
             padding: const EdgeInsets.all(16.0),
