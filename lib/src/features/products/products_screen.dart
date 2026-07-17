@@ -213,40 +213,39 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                         ),
                       ),
                     ),
-                    // SKU Badge
+                    // Combined Badges Top Wrap (SKU & Types) to prevent overlap on mobile
                     Positioned(
                       top: 16,
                       left: 16,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.6),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.2),
-                          ),
-                        ),
-                        child: Text(
-                          widget.product.sku,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: 'monospace',
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Product Types Tags
-                    Positioned(
-                      top: 16,
                       right: 16,
                       child: Wrap(
-                        spacing: 4,
-                        runSpacing: 4,
+                        spacing: 6,
+                        runSpacing: 6,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
+                          // SKU Badge
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.6),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            child: Text(
+                              widget.product.sku,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                fontFamily: 'monospace',
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                          // Bottle Type Badge
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4),
@@ -258,20 +257,17 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  widget.product.bottleType ==
-                                          BottleType.withPump
+                                  widget.product.bottleType == BottleType.withPump
                                       ? IvraIcons.fullBottleWithPump
                                       : IvraIcons.fullBottleWithoutPump,
-                                  size: 16,
+                                  size: 14,
                                   color: theme.colorScheme.onPrimaryContainer,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  widget.product.bottleType ==
-                                          BottleType.withPump
+                                  widget.product.bottleType == BottleType.withPump
                                       ? l10n.t('productsLabelBottleWithPump')
-                                      : l10n
-                                          .t('productsLabelBottleWithoutPump'),
+                                      : l10n.t('productsLabelBottleWithoutPump'),
                                   style: TextStyle(
                                     color: theme.colorScheme.onPrimaryContainer,
                                     fontSize: 10,
@@ -281,6 +277,7 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                               ],
                             ),
                           ),
+                          // Refillable Badge
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4),

@@ -1058,45 +1058,106 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Header: Product Info
-            Row(
-              children: [
-                HoverImageTooltip(
-                  imageUrl: allocation.product.imageUrl,
-                  child: CircleAvatar(
-                    backgroundColor: const Color(0xFFF2A900).withOpacity(0.1),
-                    backgroundImage: allocation.product.imageUrl != null && allocation.product.imageUrl!.isNotEmpty 
-                        ? NetworkImage(allocation.product.imageUrl!) 
-                        : null,
-                    child: allocation.product.imageUrl == null || allocation.product.imageUrl!.isEmpty
-                        ? const Icon(Icons.inventory_2_outlined, color: Color(0xFFF2A900))
-                        : null,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isMobileCard = constraints.maxWidth < 450;
+                if (isMobileCard) {
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        pName,
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      Row(
+                        children: [
+                          HoverImageTooltip(
+                            imageUrl: allocation.product.imageUrl,
+                            child: CircleAvatar(
+                              backgroundColor: const Color(0xFFF2A900).withOpacity(0.1),
+                              backgroundImage: allocation.product.imageUrl != null && allocation.product.imageUrl!.isNotEmpty 
+                                  ? NetworkImage(allocation.product.imageUrl!) 
+                                  : null,
+                              child: allocation.product.imageUrl == null || allocation.product.imageUrl!.isEmpty
+                                  ? const Icon(Icons.inventory_2_outlined, color: Color(0xFFF2A900))
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              pName,
+                              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: AppLocalizations.of(context).t('housekeeperStockHistory'),
+                            icon: Icon(Icons.history_rounded, color: theme.colorScheme.primary),
+                            onPressed: () => _showProductHistoryDialog(context, allocation.product, housekeeperId),
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        ],
                       ),
-                      Text(
-                        'SKU: ${allocation.product.sku}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 52.0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'SKU: ${allocation.product.sku}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.textTheme.bodySmall?.color?.withOpacity(0.8),
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'monospace',
+                            ),
+                          ),
                         ),
                       ),
                     ],
-                  ),
-                ),
-                IconButton(
-                  tooltip: AppLocalizations.of(context).t('housekeeperStockHistory'),
-                  icon: Icon(Icons.history_rounded, color: theme.colorScheme.primary),
-                  onPressed: () => _showProductHistoryDialog(context, allocation.product, housekeeperId),
-                  visualDensity: VisualDensity.compact,
-                ),
-              ],
+                  );
+                } else {
+                  return Row(
+                    children: [
+                      HoverImageTooltip(
+                        imageUrl: allocation.product.imageUrl,
+                        child: CircleAvatar(
+                          backgroundColor: const Color(0xFFF2A900).withOpacity(0.1),
+                          backgroundImage: allocation.product.imageUrl != null && allocation.product.imageUrl!.isNotEmpty 
+                              ? NetworkImage(allocation.product.imageUrl!) 
+                              : null,
+                          child: allocation.product.imageUrl == null || allocation.product.imageUrl!.isEmpty
+                              ? const Icon(Icons.inventory_2_outlined, color: Color(0xFFF2A900))
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              pName,
+                              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'SKU: ${allocation.product.sku}',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: AppLocalizations.of(context).t('housekeeperStockHistory'),
+                        icon: Icon(Icons.history_rounded, color: theme.colorScheme.primary),
+                        onPressed: () => _showProductHistoryDialog(context, allocation.product, housekeeperId),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ],
+                  );
+                }
+              },
             ),
             const Divider(height: 24),
 
@@ -1153,12 +1214,15 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
               const SizedBox(height: 16),
               // Open Bidon Volume Indicator
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '${AppLocalizations.of(context).t('openBidonVolumeLeft')}:',
-                    style: theme.textTheme.bodySmall,
+                  Expanded(
+                    child: Text(
+                      '${AppLocalizations.of(context).t('openBidonVolumeLeft')}:',
+                      style: theme.textTheme.bodySmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Text(
                     '${allocation.openBidonVolumeLeftMl.toInt()} / ${allocation.product.bidonVolumeMl} ml (${openBidonPercentage.toInt()}%)',
                     style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
