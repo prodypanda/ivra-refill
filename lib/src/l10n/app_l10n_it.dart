@@ -2992,4 +2992,44 @@ class AppL10nIt extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'Questa governante ha dell\'inventario attivo nel suo carrello. L\'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell\'hotel.\n\nSei sicuro di voler eliminare il membro del team \'$userName\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.';
   }
+
+  @override
+  String get settingsFeatureColumnLabel => 'Funzionalità';
+
+  @override
+  String settingsCurrentVersionLabel(String appVersion) {
+    return 'Versione attuale: v$appVersion';
+  }
+
+  @override
+  String get settingsLanguageEnglish => 'English';
+
+  @override
+  String get settingsLanguageFrench => 'Français';
+
+  @override
+  String get settingsLanguageArabic => 'العربية';
+
+  @override
+  String get settingsLanguageItalian => 'Italiano';
+
+  @override
+  String get inventoryHkLoading => '...';
+
+  @override
+  String shellOpenCountLabel(int count) {
+    return '$count';
+  }
+
+  @override
+  String get loginLanguageFr => 'FR';
+
+  @override
+  String get loginLanguageEn => 'EN';
+
+  @override
+  String get loginLanguageIt => 'IT';
+
+  @override
+  String get loginLanguageAr => 'AR';
 }

@@ -5431,6 +5431,78 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.'**
   String hkDeleteWithStockMessage(String userName);
+
+  /// No description provided for @settingsFeatureColumnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature'**
+  String get settingsFeatureColumnLabel;
+
+  /// No description provided for @settingsCurrentVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version: v{appVersion}'**
+  String settingsCurrentVersionLabel(String appVersion);
+
+  /// No description provided for @settingsLanguageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get settingsLanguageEnglish;
+
+  /// No description provided for @settingsLanguageFrench.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get settingsLanguageFrench;
+
+  /// No description provided for @settingsLanguageArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية'**
+  String get settingsLanguageArabic;
+
+  /// No description provided for @settingsLanguageItalian.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano'**
+  String get settingsLanguageItalian;
+
+  /// No description provided for @inventoryHkLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'...'**
+  String get inventoryHkLoading;
+
+  /// No description provided for @shellOpenCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}'**
+  String shellOpenCountLabel(int count);
+
+  /// No description provided for @loginLanguageFr.
+  ///
+  /// In en, this message translates to:
+  /// **'FR'**
+  String get loginLanguageFr;
+
+  /// No description provided for @loginLanguageEn.
+  ///
+  /// In en, this message translates to:
+  /// **'EN'**
+  String get loginLanguageEn;
+
+  /// No description provided for @loginLanguageIt.
+  ///
+  /// In en, this message translates to:
+  /// **'IT'**
+  String get loginLanguageIt;
+
+  /// No description provided for @loginLanguageAr.
+  ///
+  /// In en, this message translates to:
+  /// **'AR'**
+  String get loginLanguageAr;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

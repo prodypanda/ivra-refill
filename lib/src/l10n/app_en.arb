@@ -1692,5 +1692,31 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsFeatureColumnLabel": "Feature",
+  "settingsCurrentVersionLabel": "Current Version: v{appVersion}",
+  "@settingsCurrentVersionLabel": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageFrench": "Français",
+  "settingsLanguageArabic": "العربية",
+  "settingsLanguageItalian": "Italiano",
+  "inventoryHkLoading": "...",
+  "shellOpenCountLabel": "{count}",
+  "@shellOpenCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "loginLanguageFr": "FR",
+  "loginLanguageEn": "EN",
+  "loginLanguageIt": "IT",
+  "loginLanguageAr": "AR"
 }

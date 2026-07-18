@@ -50,7 +50,7 @@ import 'app_settings_screen.dart';
                           ),
                         ],
                       ),
-                      Text('Current Version: v$appVersion', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
+                      Text(AppLocalizations.of(context)!.tParams("settingsCurrentVersionLabel", {"appVersion": appVersion}), style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
                       const SizedBox(height: 16),
                       Expanded(
                         child: ListView(
@@ -115,11 +115,11 @@ class SettingsScreen extends ConsumerWidget {
             DropdownButtonFormField<Locale>(
               initialValue: locale,
               decoration: InputDecoration(labelText: l10n.t('language')),
-              items: const [
-                DropdownMenuItem(value: Locale('en'), child: Text('English')),
-                DropdownMenuItem(value: Locale('fr'), child: Text('Français')),
-                DropdownMenuItem(value: Locale('ar'), child: Text('العربية')),
-                DropdownMenuItem(value: Locale('it'), child: Text('Italiano')),
+              items: [
+                DropdownMenuItem(value: Locale('en'), child: Text(l10n.t('settingsLanguageEnglish'))),
+                DropdownMenuItem(value: Locale('fr'), child: Text(l10n.t('settingsLanguageFrench'))),
+                DropdownMenuItem(value: Locale('ar'), child: Text(l10n.t('settingsLanguageArabic'))),
+                DropdownMenuItem(value: Locale('it'), child: Text(l10n.t('settingsLanguageItalian'))),
               ],
               onChanged: (value) {
                 if (value != null) {
