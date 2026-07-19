@@ -43,14 +43,14 @@ import 'app_settings_screen.dart';
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("What's New", style: theme.textTheme.headlineSmall),
+                          Text(AppLocalizations.of(context)!.t('settingsWhatsNew'), style: theme.textTheme.headlineSmall),
                           IconButton(
                             icon: const Icon(Icons.close),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ],
                       ),
-                      Text('Current Version: v$appVersion', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
+                      Text(AppLocalizations.of(context)!.tParams('settingsCurrentVersion', {'version': appVersion}), style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
                       const SizedBox(height: 16),
                       Expanded(
                         child: ListView(
@@ -115,11 +115,11 @@ class SettingsScreen extends ConsumerWidget {
             DropdownButtonFormField<Locale>(
               initialValue: locale,
               decoration: InputDecoration(labelText: l10n.t('language')),
-              items: const [
-                DropdownMenuItem(value: Locale('en'), child: Text('English')),
-                DropdownMenuItem(value: Locale('fr'), child: Text('Français')),
-                DropdownMenuItem(value: Locale('ar'), child: Text('العربية')),
-                DropdownMenuItem(value: Locale('it'), child: Text('Italiano')),
+              items: [
+                DropdownMenuItem(value: const Locale('en'), child: Text(AppLocalizations.of(context)!.t('languageEnglish'))),
+                DropdownMenuItem(value: const Locale('fr'), child: Text(AppLocalizations.of(context)!.t('languageFrench'))),
+                DropdownMenuItem(value: const Locale('ar'), child: Text(AppLocalizations.of(context)!.t('languageArabic'))),
+                DropdownMenuItem(value: const Locale('it'), child: Text(AppLocalizations.of(context)!.t('languageItalian'))),
               ],
               onChanged: (value) {
                 if (value != null) {
