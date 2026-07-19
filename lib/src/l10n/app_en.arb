@@ -1692,5 +1692,22 @@
         "type": "String"
       }
     }
-  }
+  },
+  "settingsWhatsNew": "What's New",
+  "settingsCurrentVersion": "Current Version: v{version}",
+  "@settingsCurrentVersion": {
+    "description": "Current version display",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "settingsNoPermissionsFound": "No permissions found.",
+  "settingsFeature": "Feature",
+  "languageEnglish": "English",
+  "languageFrench": "Français",
+  "languageArabic": "العربية",
+  "languageItalian": "Italiano"
 }

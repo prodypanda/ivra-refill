@@ -5431,6 +5431,54 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.'**
   String hkDeleteWithStockMessage(String userName);
+
+  /// No description provided for @settingsWhatsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s New'**
+  String get settingsWhatsNew;
+
+  /// Current version display
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version: v{version}'**
+  String settingsCurrentVersion(String version);
+
+  /// No description provided for @settingsNoPermissionsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No permissions found.'**
+  String get settingsNoPermissionsFound;
+
+  /// No description provided for @settingsFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature'**
+  String get settingsFeature;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @languageFrench.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get languageFrench;
+
+  /// No description provided for @languageArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية'**
+  String get languageArabic;
+
+  /// No description provided for @languageItalian.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano'**
+  String get languageItalian;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
