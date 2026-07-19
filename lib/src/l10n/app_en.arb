@@ -1692,5 +1692,18 @@
         "type": "String"
       }
     }
-  }
+  },
+  "rolePermissionsNoPermissionsFound": "No permissions found.",
+  "rolePermissionsFeature": "Feature",
+  "settingsWhatsNew": "What's New",
+  "settingsCurrentVersion": "Current Version: v{version}",
+  "@settingsCurrentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.2.0"
+      }
+    }
+  },
+  "settingsChangelogLoadFailed": "Failed to load changelog."
 }
