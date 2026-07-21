@@ -2406,7 +2406,11 @@ class AppL10nIt extends AppL10n {
 
   @override
   String inventoryEnforceTemplateContent(
-      String total, String product, String current, String needed) {
+    String total,
+    String product,
+    String current,
+    String needed,
+  ) {
     return 'Posizionare $total bottiglia/e di $product richiede scorte. L\'stock magazzino ha solo $current. Vuoi aggiungere automaticamente $needed bottiglia/e all\'stock magazzino e procedere?';
   }
 
@@ -2417,7 +2421,10 @@ class AppL10nIt extends AppL10n {
 
   @override
   String housekeeperReplaceGetFromHotel(
-      String product, String room, String count) {
+    String product,
+    String room,
+    String count,
+  ) {
     return 'Sostituire $product in Camera $room richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario. Tuttavia, sono disponibili $count bottiglie nell\'inventario dell\'hotel. Vuoi prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?';
   }
 
@@ -2438,7 +2445,10 @@ class AppL10nIt extends AppL10n {
 
   @override
   String housekeeperRefillGetFromHotel(
-      String product, String room, String count) {
+    String product,
+    String room,
+    String count,
+  ) {
     return 'Ricaricare $product in Camera $room richiede 1 tanica piena, ma non hai alcuna tanica aperta o piena nel tuo inventario. Tuttavia, sono disponibili $count taniche nell\'inventario dell\'hotel. Vuoi prendere 1 tanica dall\'inventario dell\'hotel e procedere?';
   }
 
@@ -2992,4 +3002,18 @@ class AppL10nIt extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'Questa governante ha dell\'inventario attivo nel suo carrello. L\'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell\'hotel.\n\nSei sicuro di voler eliminare il membro del team \'$userName\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.';
   }
+
+  @override
+  String get settingsWhatsNew => 'Novità';
+
+  @override
+  String settingsCurrentVersion(String appVersion) {
+    return 'Versione attuale: v$appVersion';
+  }
+
+  @override
+  String get roleNoPermissions => 'Nessuna autorizzazione trovata.';
+
+  @override
+  String get roleFeature => 'Funzionalità';
 }
