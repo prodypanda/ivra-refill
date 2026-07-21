@@ -1,0 +1,111 @@
+Showing outdated packages.
+[*] indicates versions that are not the latest available.
+
+Package Name                                    Current               Upgradable            Resolvable            Latest
+
+direct dependencies:
+app_links                                       *6.4.1                *6.4.1                *7.0.0                7.2.1
+csv                                             *6.0.0                *6.0.0                8.0.0                 8.0.0
+device_info_plus                                *12.4.0               *12.4.0               13.2.0                13.2.0
+firebase_core                                   *4.11.0               4.12.1                4.12.1                4.12.1
+firebase_messaging                              *16.4.1               16.4.3                16.4.3                16.4.3
+flutter_local_notifications                     *21.0.0               *21.0.0               22.1.0                22.1.0
+flutter_riverpod                                *2.6.1                *2.6.1                3.3.2                 3.3.2
+flutter_secure_storage                          *9.2.4                *9.2.4                10.3.1                10.3.1
+go_router                                       *14.8.1               *14.8.1               17.3.0                17.3.0
+google_fonts                                    *8.1.0                8.2.0                 8.2.0                 8.2.0
+intl                                            *0.20.2               *0.20.2               *0.20.2               0.20.3
+local_auth                                      *3.0.1                3.0.2                 3.0.2                 3.0.2
+mobile_scanner                                  *7.2.0                7.4.0                 7.4.0                 7.4.0
+pdf                                             *3.12.0               *3.12.0               *3.12.0               3.13.0
+printing                                        *5.14.3               *5.14.3               *5.14.3               5.15.0
+share_plus                                      *11.1.0               *11.1.0               13.2.1                13.2.1
+supabase_flutter                                *2.15.4               2.16.0                2.16.0                2.16.0
+uuid                                            *4.5.3                4.6.0                 4.6.0                 4.6.0
+
+dev_dependencies:
+flutter_lints                                   *5.0.0                *5.0.0                6.0.0                 6.0.0
+flutter_native_splash                           *2.4.7                *2.4.7                *2.4.7                2.4.8
+
+transitive dependencies:
+_fe_analyzer_shared                             -                     -                     *93.0.0               105.0.0
+_flutterfire_internals                          *1.3.73               1.3.75                1.3.75                1.3.75
+analyzer                                        -                     -                     *10.0.1               14.1.0
+app_links_platform_interface                    *2.0.2                *2.0.2                *2.0.2                2.0.4
+cli_config                                      -                     -                     0.2.0                 0.2.0
+coverage                                        -                     -                     1.15.1                1.15.1
+device_info_plus_platform_interface             *7.0.3                *7.0.3                8.1.0                 8.1.0
+ffi_leak_tracker                                -                     -                     0.1.2                 0.1.2
+firebase_core_platform_interface                *7.1.0                8.0.0                 8.0.0                 8.0.0
+firebase_core_web                               *3.9.0                3.9.1                 3.9.1                 3.9.1
+firebase_messaging_platform_interface           *4.9.0                4.9.2                 4.9.2                 4.9.2
+firebase_messaging_web                          *4.2.1                4.2.3                 4.2.3                 4.2.3
+flutter_local_notifications_linux               *8.0.0                *8.0.0                8.0.1                 8.0.1
+flutter_local_notifications_platform_interface  *11.0.0               *11.0.0               12.0.1                12.0.1
+flutter_local_notifications_web                 -                     -                     1.0.0                 1.0.0
+flutter_local_notifications_windows             *3.0.0                *3.0.0                3.1.1                 3.1.1
+flutter_secure_storage_darwin                   -                     -                     *0.3.2                0.4.0
+flutter_secure_storage_linux                    *1.2.3                *1.2.3                3.0.1                 3.0.1
+flutter_secure_storage_macos                    *3.1.3                *3.1.3                -                     4.0.0
+flutter_secure_storage_platform_interface       *1.1.2                *1.1.2                2.0.1                 2.0.1
+flutter_secure_storage_web                      *1.2.1                *1.2.1                2.1.1                 2.1.1
+flutter_secure_storage_windows                  *3.1.2                *3.1.2                4.2.2                 4.2.2
+frontend_server_client                          -                     -                     4.0.0                 4.0.0
+glob                                            -                     -                     2.1.3                 2.1.3
+gotrue                                          *2.25.0               2.26.0                2.26.0                2.26.0
+hooks                                           *2.0.2                *2.0.2                *2.0.2                2.1.0
+http_multi_server                               -                     -                     3.2.2                 3.2.2
+image                                           *4.8.0                *4.8.0                *4.8.0                4.9.1
+image_picker_android                            *0.8.13+17            *0.8.13+17            *0.8.13+17            0.8.13+19
+io                                              -                     -                     1.0.5                 1.0.5
+js                                              *0.6.7                *0.6.7                -                     0.7.2               (discontinued)
+local_auth_android                              *2.0.8                *2.0.8                *2.0.8                2.0.9
+matcher                                         *0.12.19              *0.12.18              *0.12.18              0.12.20
+meta                                            *1.18.0               *1.17.0               *1.17.0               1.19.0
+node_preamble                                   -                     -                     2.0.2                 2.0.2
+package_config                                  -                     -                     *2.2.0                3.0.0
+passkeys_platform_interface                     *2.8.0                2.9.0                 2.9.0                 2.9.0
+path_provider_android                           *2.2.17 (overridden)  *2.2.17 (overridden)  *2.2.17 (overridden)  2.3.1 (overridden)
+pool                                            -                     -                     1.5.2                 1.5.2
+qr                                              *3.0.2                *3.0.2                *3.0.2                4.0.0
+realtime_client                                 *2.10.0               2.11.0                2.11.0                2.11.0
+record_use                                      *0.6.0                *0.6.0                *0.6.0                1.0.0
+riverpod                                        *2.6.1                *2.6.1                3.3.2                 3.3.2
+share_plus_platform_interface                   *6.1.0                *6.1.0                7.1.0                 7.1.0
+shared_preferences_android                      *2.4.23               *2.4.23               *2.4.23               2.4.27
+shelf                                           -                     -                     1.4.2                 1.4.2
+shelf_packages_handler                          -                     -                     3.0.2                 3.0.2
+shelf_static                                    -                     -                     1.1.3                 1.1.3
+shelf_web_socket                                -                     -                     3.0.0                 3.0.0
+source_map_stack_trace                          -                     -                     2.1.2                 2.1.2
+source_maps                                     -                     -                     0.10.13               0.10.13
+sqflite                                         *2.4.2+1              *2.4.2+1              *2.4.2+1              2.4.3
+sqflite_android                                 *2.4.2+3              *2.4.2+3              *2.4.2+3              2.4.3
+sqflite_common                                  *2.5.8                *2.5.8                *2.5.8                2.5.11
+sqflite_darwin                                  *2.4.2                *2.4.2                *2.4.2                2.4.3+1
+sqflite_platform_interface                      *2.4.0                *2.4.0                *2.4.0                2.4.1
+supabase                                        *2.13.4               2.14.0                2.14.0                2.14.0
+synchronized                                    *3.4.0+1              *3.4.0+1              *3.4.0+1              3.4.1
+test                                            -                     -                     *1.29.0               1.31.2
+test_api                                        *0.7.11               *0.7.9                *0.7.9                0.7.13
+test_core                                       -                     -                     *0.6.15               0.6.19
+url_launcher_android                            *6.3.30               *6.3.30               *6.3.30               6.3.32
+vector_math                                     *2.2.0                *2.2.0                *2.2.0                2.4.0
+watcher                                         -                     -                     1.2.1                 1.2.1
+webkit_inspection_protocol                      -                     -                     1.2.1                 1.2.1
+win32                                           *5.15.0               *5.15.0               6.3.0                 6.3.0
+win32_registry                                  *2.1.0                *2.1.0                3.0.3                 3.0.3
+xml                                             *6.6.1                *6.6.1                *6.6.1                7.0.1
+
+transitive dev_dependencies:
+cli_util                                        *0.4.2                *0.4.2                *0.4.2                0.5.1
+lints                                           *5.1.1                *5.1.1                6.1.0                 6.1.0
+
+16 upgradable dependencies are locked (in pubspec.lock) to older versions.
+To update these dependencies, use `flutter pub upgrade`.
+
+22  dependencies are constrained to versions that are older than a resolvable version.
+To update these dependencies, edit pubspec.yaml, or run `flutter pub upgrade --major-versions`.
+
+js
+    Package js has been discontinued. See https://dart.dev/go/package-discontinue
