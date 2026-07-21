@@ -896,6 +896,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'btnReturnAndDeactivate': 'Return & Deactivate',
     'btnJustDeactivate': 'Just Deactivate',
     'hkDeleteWithStockMessage': 'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.',
+    'settingsWhatsNew': 'What\'s New',
+    'settingsCurrentVersion': 'Current Version: v{appVersion}',
+    'roleNoPermissions': 'No permissions found.',
+    'roleFeature': 'Feature',
   },
   'fr': {
     'markAsRead': 'Marquer comme lu',
@@ -1786,6 +1790,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'btnReturnAndDeactivate': 'Retourner et désactiver',
     'btnJustDeactivate': 'Juste désactiver',
     'hkDeleteWithStockMessage': 'Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l\'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l\'équipe \'{userName}\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.',
+    'settingsWhatsNew': 'Nouveautés',
+    'settingsCurrentVersion': 'Version actuelle : v{appVersion}',
+    'roleNoPermissions': 'Aucune permission trouvée.',
+    'roleFeature': 'Fonctionnalité',
   },
   'ar': {
     'markAsRead': 'تحديد كمقروء',
@@ -2676,6 +2684,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'btnReturnAndDeactivate': 'إرجاع وإلغاء التنشيط',
     'btnJustDeactivate': 'إلغاء التنشيط فقط',
     'hkDeleteWithStockMessage': 'تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق \'{userName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.',
+    'settingsWhatsNew': 'ما الجديد',
+    'settingsCurrentVersion': 'الإصدار الحالي: v{appVersion}',
+    'roleNoPermissions': 'لم يتم العثور على أذونات.',
+    'roleFeature': 'الميزة',
   },
   'it': {
     'markAsRead': 'Segna come letto',
@@ -3566,5 +3578,9 @@ const Map<String, Map<String, String>> kL10nValues = {
     'btnReturnAndDeactivate': 'Restituisci e Disattiva',
     'btnJustDeactivate': 'Solo Disattiva',
     'hkDeleteWithStockMessage': 'Questa governante ha dell\'inventario attivo nel suo carrello. L\'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell\'hotel.\n\nSei sicuro di voler eliminare il membro del team \'{userName}\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.',
+    'settingsWhatsNew': 'Novità',
+    'settingsCurrentVersion': 'Versione attuale: v{appVersion}',
+    'roleNoPermissions': 'Nessuna autorizzazione trovata.',
+    'roleFeature': 'Funzionalità',
   },
 };

@@ -2416,7 +2416,11 @@ class AppL10nFr extends AppL10n {
 
   @override
   String inventoryEnforceTemplateContent(
-      String total, String product, String current, String needed) {
+    String total,
+    String product,
+    String current,
+    String needed,
+  ) {
     return 'Placer $total bouteille(s) de $product nécessite du stock. L\'stock magasin n\'en a que $current. Souhaitez-vous ajouter automatiquement $needed bouteille(s) à l\'stock magasin et continuer?';
   }
 
@@ -2427,7 +2431,10 @@ class AppL10nFr extends AppL10n {
 
   @override
   String housekeeperReplaceGetFromHotel(
-      String product, String room, String count) {
+    String product,
+    String room,
+    String count,
+  ) {
     return 'Remplacer $product dans la chambre $room nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire. Cependant, $count bouteilles sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bouteille de l\'inventaire de l\'hôtel et continuer ?';
   }
 
@@ -2448,7 +2455,10 @@ class AppL10nFr extends AppL10n {
 
   @override
   String housekeeperRefillGetFromHotel(
-      String product, String room, String count) {
+    String product,
+    String room,
+    String count,
+  ) {
     return 'Remplir $product dans la chambre $room nécessite 1 bidon plein, mais vous n\'avez pas de bidon ouvert ou plein dans votre inventaire. Cependant, $count bidons sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bidon de l\'inventaire de l\'hôtel et continuer ?';
   }
 
@@ -3003,4 +3013,18 @@ class AppL10nFr extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l\'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l\'équipe \'$userName\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.';
   }
+
+  @override
+  String get settingsWhatsNew => 'Nouveautés';
+
+  @override
+  String settingsCurrentVersion(String appVersion) {
+    return 'Version actuelle : v$appVersion';
+  }
+
+  @override
+  String get roleNoPermissions => 'Aucune permission trouvée.';
+
+  @override
+  String get roleFeature => 'Fonctionnalité';
 }

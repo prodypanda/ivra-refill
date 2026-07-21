@@ -65,7 +65,7 @@ import 'app_l10n_it.dart';
 /// property.
 abstract class AppL10n {
   AppL10n(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -87,18 +87,18 @@ abstract class AppL10n {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('fr'),
     Locale('ar'),
-    Locale('it')
+    Locale('it'),
   ];
 
   /// No description provided for @markAsRead.
@@ -4426,7 +4426,11 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Placing {total} bottle(s) of {product} requires stock. Store Stock only has {current}. Would you like to automatically add {needed} bottle(s) to the store stock and proceed?'**
   String inventoryEnforceTemplateContent(
-      String total, String product, String current, String needed);
+    String total,
+    String product,
+    String current,
+    String needed,
+  );
 
   /// No description provided for @inventoryEnforceReplaceContent.
   ///
@@ -4439,7 +4443,10 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory. However, {count} bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?'**
   String housekeeperReplaceGetFromHotel(
-      String product, String room, String count);
+    String product,
+    String room,
+    String count,
+  );
 
   /// No description provided for @housekeeperReplaceNotifyManager.
   ///
@@ -4464,7 +4471,10 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Refilling {product} in Room {room} requires 1 full bidon, but you do not have any open or full bidon in your inventory. However, {count} bidons are available in the hotel inventory. Would you like to take 1 bidon from the hotel inventory and proceed?'**
   String housekeeperRefillGetFromHotel(
-      String product, String room, String count);
+    String product,
+    String room,
+    String count,
+  );
 
   /// No description provided for @housekeeperRefillNotifyManager.
   ///
@@ -5431,6 +5441,30 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.'**
   String hkDeleteWithStockMessage(String userName);
+
+  /// No description provided for @settingsWhatsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s New'**
+  String get settingsWhatsNew;
+
+  /// No description provided for @settingsCurrentVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version: v{appVersion}'**
+  String settingsCurrentVersion(String appVersion);
+
+  /// No description provided for @roleNoPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'No permissions found.'**
+  String get roleNoPermissions;
+
+  /// No description provided for @roleFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature'**
+  String get roleFeature;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
@@ -5463,8 +5497,9 @@ AppL10n lookupAppL10n(Locale locale) {
   }
 
   throw FlutterError(
-      'AppL10n.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppL10n.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }

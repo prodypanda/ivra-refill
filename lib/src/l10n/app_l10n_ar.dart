@@ -2371,7 +2371,11 @@ class AppL10nAr extends AppL10n {
 
   @override
   String inventoryEnforceTemplateContent(
-      String total, String product, String current, String needed) {
+    String total,
+    String product,
+    String current,
+    String needed,
+  ) {
     return 'وضع $total زجاجة (زجاجات) من $product يتطلب مخزونًا للمتجر. يحتوي مخزون المتجر فقط على $current. هل ترغب في إضافة $needed زجاجة (زجاجات) تلقائيًا إلى مخزون المتجر والمتابعة؟';
   }
 
@@ -2382,7 +2386,10 @@ class AppL10nAr extends AppL10n {
 
   @override
   String housekeeperReplaceGetFromHotel(
-      String product, String room, String count) {
+    String product,
+    String room,
+    String count,
+  ) {
     return 'استبدال $product في الغرفة $room يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك. ومع ذلك، تتوفر $count زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة من مخزون الفندق والمتابعة؟';
   }
 
@@ -2403,7 +2410,10 @@ class AppL10nAr extends AppL10n {
 
   @override
   String housekeeperRefillGetFromHotel(
-      String product, String room, String count) {
+    String product,
+    String room,
+    String count,
+  ) {
     return 'إعادة تعبئة $product في الغرفة $room يتطلب عبوة ممتلئة واحدة، ولكن ليس لديك أي عبوة مفتوحة أو ممتلئة في مخزونك. ومع ذلك، تتوفر $count عبوة في مخزون الفندق. هل ترغب في أخذ عبوة واحدة من مخزون الفندق والمتابعة؟';
   }
 
@@ -2944,4 +2954,18 @@ class AppL10nAr extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق \'$userName\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.';
   }
+
+  @override
+  String get settingsWhatsNew => 'ما الجديد';
+
+  @override
+  String settingsCurrentVersion(String appVersion) {
+    return 'الإصدار الحالي: v$appVersion';
+  }
+
+  @override
+  String get roleNoPermissions => 'لم يتم العثور على أذونات.';
+
+  @override
+  String get roleFeature => 'الميزة';
 }
