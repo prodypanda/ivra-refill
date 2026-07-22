@@ -5431,6 +5431,54 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.'**
   String hkDeleteWithStockMessage(String userName);
+
+  /// No description provided for @noPermissionsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No permissions found.'**
+  String get noPermissionsFound;
+
+  /// No description provided for @featureLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature'**
+  String get featureLabel;
+
+  /// No description provided for @whatsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s New'**
+  String get whatsNew;
+
+  /// No description provided for @currentVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version: v{version}'**
+  String currentVersion(String version);
+
+  /// No description provided for @langEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get langEn;
+
+  /// No description provided for @langFr.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get langFr;
+
+  /// No description provided for @langAr.
+  ///
+  /// In en, this message translates to:
+  /// **'العربية'**
+  String get langAr;
+
+  /// No description provided for @langIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano'**
+  String get langIt;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

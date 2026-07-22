@@ -2960,4 +2960,30 @@ class AppL10nEn extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'$userName\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.';
   }
+
+  @override
+  String get noPermissionsFound => 'No permissions found.';
+
+  @override
+  String get featureLabel => 'Feature';
+
+  @override
+  String get whatsNew => 'What\'s New';
+
+  @override
+  String currentVersion(String version) {
+    return 'Current Version: v$version';
+  }
+
+  @override
+  String get langEn => 'English';
+
+  @override
+  String get langFr => 'Français';
+
+  @override
+  String get langAr => 'العربية';
+
+  @override
+  String get langIt => 'Italiano';
 }
