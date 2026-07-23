@@ -5,6 +5,7 @@ import 'package:ivra_refill/src/data/offline/offline_sync_service.dart';
 import 'package:ivra_refill/src/data/mock_ivra_repository.dart';
 import 'package:ivra_refill/src/data/report_export_service.dart';
 import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
 import 'package:ivra_refill/src/features/auth/auth_validation.dart';
 import 'package:ivra_refill/src/features/auth/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -949,5 +950,33 @@ void main() {
     expect(afterBoundaryUndo.fullBidons, 3);
     expect(afterBoundaryUndo.openBidons, 1);
     expect(afterBoundaryUndo.emptyBidons, 5);
+  });
+
+  test('RefillEvent undo boundary window test', () {
+    final now = DateTime.now();
+
+    // Exactly at 29 minutes -> valid
+    final event29m = RefillEvent(
+      id: 'event-1',
+      roomProductId: 'rp-1',
+      type: RefillEventType.refill,
+      previousRefillCount: 0,
+      newRefillCount: 1,
+      occurredAt: now.subtract(const Duration(minutes: 29)),
+      performedBy: 'user-1',
+    );
+    expect(event29m.canUndo(now, 'user-1'), isTrue, reason: '29 minutes should be within the 30 minute window');
+
+    // Exactly at 31 minutes -> invalid
+    final event31m = RefillEvent(
+      id: 'event-2',
+      roomProductId: 'rp-1',
+      type: RefillEventType.refill,
+      previousRefillCount: 0,
+      newRefillCount: 1,
+      occurredAt: now.subtract(const Duration(minutes: 31)),
+      performedBy: 'user-1',
+    );
+    expect(event31m.canUndo(now, 'user-1'), isFalse, reason: '31 minutes should be outside the 30 minute window');
   });
 }
