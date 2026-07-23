@@ -259,4 +259,33 @@ void main() {
       expect(terminal.isInBackoff(now), isFalse);
     });
   });
+
+  group('OfflineSyncService extreme backlog handling', () {
+    test('handles 50+ backlogged operations without issues', () async {
+      SharedPreferences.setMockInitialValues({});
+      final service = OfflineSyncService();
+      final repo = _ThrowingRepository(null);
+
+      // Enqueue 55 actions
+      for (var i = 0; i < 55; i++) {
+        await service.enqueue(
+          type: SyncActionType.refill,
+          payload: {'roomProductId': 'rp-$i'},
+        );
+      }
+
+      var pending = await service.pendingActions();
+      expect(pending.length, 55);
+
+      // Attempt to sync all of them
+      final summary = await service.syncPendingDetailed(repo);
+
+      expect(summary.synced, 55);
+      expect(summary.failed, 0);
+      expect(repo.recordRefillCalls, 55);
+
+      pending = await service.pendingActions();
+      expect(pending, isEmpty);
+    });
+  });
 }
