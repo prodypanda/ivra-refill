@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Performed security audit and applied minor/patch updates for flutter_cache_manager. Major version updates documented in pubspec.yaml.
 - Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and
