@@ -2992,4 +2992,18 @@ class AppL10nIt extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'Questa governante ha dell\'inventario attivo nel suo carrello. L\'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell\'hotel.\n\nSei sicuro di voler eliminare il membro del team \'$userName\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.';
   }
+
+  @override
+  String get rolePermissionsEmpty => 'Nessun permesso trovato.';
+
+  @override
+  String get rolePermissionsFeatureLabel => 'Funzionalità';
+
+  @override
+  String get settingsWhatsNew => 'Novità';
+
+  @override
+  String settingsCurrentVersion(String version) {
+    return 'Versione attuale: v$version';
+  }
 }
