@@ -1692,5 +1692,16 @@
         "type": "String"
       }
     }
+  },
+  "authNoPermissionsFound": "No permissions found.",
+  "authFeatureHeader": "Feature",
+  "settingsWhatsNewHeader": "What's New",
+  "settingsCurrentVersion": "Current Version: v{version}",
+  "@settingsCurrentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
   }
 }
