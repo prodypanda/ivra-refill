@@ -1692,5 +1692,27 @@
         "type": "String"
       }
     }
+  },
+  "settingsNoPermissions": "No permissions found.",
+  "@settingsNoPermissions": {
+    "description": "Empty state message when no permissions are found."
+  },
+  "settingsFeature": "Feature",
+  "@settingsFeature": {
+    "description": "Column label for feature name in permissions table."
+  },
+  "settingsWhatsNew": "What's New",
+  "@settingsWhatsNew": {
+    "description": "Title for the changelog modal."
+  },
+  "settingsCurrentVersion": "Current Version: v{version}",
+  "@settingsCurrentVersion": {
+    "description": "Label showing the current app version.",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.2.0"
+      }
+    }
   }
 }
