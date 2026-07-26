@@ -887,5 +887,810 @@
   "hkDeactivateWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. Vuoi restituire questo inventario al magazzino centrale dell'hotel prima di disattivare il suo account?",
   "btnReturnAndDeactivate": "Restituisci e Disattiva",
   "btnJustDeactivate": "Solo Disattiva",
-  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione."
+  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione.",
+  "@confirmDeleteHotel": {
+    "placeholders": {
+      "hotelName": {
+        "type": "String"
+      }
+    }
+  },
+  "@confirmDeleteRoom": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@confirmDeleteFloor": {
+    "placeholders": {
+      "floorNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@confirmDeleteUser": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "@confirmDeleteProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
+  "@dashboardRoomsRequireReview": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@roomsEditRoomTitle": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@roomsEditProductTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationSent": {
+    "placeholders": {
+      "successCount": {
+        "type": "String"
+      },
+      "failureCount": {
+        "type": "String"
+      }
+    }
+  },
+  "@inventoryTableFullBottlesWithPump": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@inventoryTableFullBottlesWithoutPump": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@inventoryTableEmptyBottles": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "@inventoryTableFullBidons": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@orderNewBottlesText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@orderNewBidonsText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@recycleBottlesText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@exportDownloadStarted": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "@exportSaved": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsPendingSync": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@roomsScanConfirmFromCart": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@roomsScanConfirmFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@roomsHistoryStatusChanged": {
+    "placeholders": {
+      "oldValue": {
+        "type": "String"
+      },
+      "newValue": {
+        "type": "String"
+      }
+    }
+  },
+  "@qrActionMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "@qrFloorRoom": {
+    "placeholders": {
+      "floor": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "@qrRoomFloor": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
+  "@qrHotelNotFoundMessage": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      }
+    }
+  },
+  "@qrProductNotFoundMessage": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
+  "@qrConfirmAssignMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "@scanAssignInStock": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@scanAssignAutoAddMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "@scanAssignSuccessMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
+  "@qrUnknownSku": {
+    "placeholders": {
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
+  "@adjustStockForProduct": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "@roomsMsgDuplicateRoomNumbers": {
+    "placeholders": {
+      "numbers": {
+        "type": "String"
+      }
+    }
+  },
+  "@productsImageSelected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@productsImageTooLarge": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "@offlineBannerAutoSynced": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@teamInvitationCancelled": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "@teamInvitationResent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "@teamInvitationCopied": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "@approvalsRequestedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@approvalsOldValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@approvalsNewValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertsSeverityLabel": {
+    "placeholders": {
+      "severity": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertsFilterShowing": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsActionAttempts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsActionListAttempts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsActionListError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertsRefreshedToast": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertLowBottleTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertLowBidonTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertLowBottleBody": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      },
+      "remain": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertLowBidonBody": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      },
+      "remain": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertBottleAgeLimitTitle": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertBottleAgeLimitBody": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertRefillLimitTitle": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertRefillLimitBody": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertPendingApprovalTitle": {
+    "placeholders": {
+      "request": {
+        "type": "String"
+      }
+    }
+  },
+  "@alertPendingApprovalBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsSyncedSummary": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsSyncedSummarySingular": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsSyncedWithFailures": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      },
+      "failed": {
+        "type": "String"
+      }
+    }
+  },
+  "@inviteSubtitleWithHotel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      },
+      "hotel": {
+        "type": "String"
+      }
+    }
+  },
+  "@inviteSubtitleNoHotel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "@teamMemberReactivated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@teamMemberDeactivated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@settingsActionLastTried": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
+  "@impersonationBanner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@productHistoryRefill": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@productHistoryReplacement": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@productHistoryActionBy": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "@productHistoryReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@productHistoryNewBottle": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@inventoryEnforceTemplateContent": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      },
+      "current": {
+        "type": "String"
+      },
+      "needed": {
+        "type": "String"
+      }
+    }
+  },
+  "@inventoryEnforceReplaceContent": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "@housekeeperReplaceGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@housekeeperReplaceNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "@housekeeperAddGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@housekeeperAddNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "@housekeeperRefillGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "@housekeeperRefillNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "@inventoryEnforceOnboardingContent": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "@housekeeperHotelStockAvailable": {
+    "placeholders": {
+      "bottles": {
+        "type": "String"
+      },
+      "bidons": {
+        "type": "String"
+      }
+    }
+  },
+  "@roomsConfirmRemoveProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "@errorWithArgs": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@teamHotelSubtitle": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "country": {
+        "type": "String"
+      }
+    }
+  },
+  "@productEventTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "eventLabel": {
+        "type": "String"
+      }
+    }
+  },
+  "@chipLabelValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@productSkuLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
+  "@productSkuLabelReverse": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
+  "@roomNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "@noProductsFound": {
+    "description": "Empty state message when no products are found"
+  },
+  "@markDamagedTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "@markLostTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
+  "@hkDeleteWithStockMessage": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  }
 }
