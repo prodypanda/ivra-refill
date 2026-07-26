@@ -1692,16 +1692,5 @@
         "type": "String"
       }
     }
-  },
-  "authNoPermissionsFound": "Aucune permission trouvée.",
-  "authFeatureHeader": "Fonctionnalité",
-  "settingsWhatsNewHeader": "Quoi de neuf",
-  "settingsCurrentVersion": "Version Actuelle : v{version}",
-  "@settingsCurrentVersion": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
   }
 }

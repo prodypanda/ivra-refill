@@ -51,7 +51,7 @@ class RolePermissionsScreen extends ConsumerWidget {
           final permissions = data.permissions;
           
           if (roles.isEmpty || permissions.isEmpty) {
-             return Center(child: Text(AppLocalizations.of(context)!.t('authNoPermissionsFound')));
+             return const Center(child: Text("No permissions found."));
           }
 
           // Convert sets to a distinct list of all possible permissions
@@ -70,7 +70,7 @@ class RolePermissionsScreen extends ConsumerWidget {
                 headingRowColor: WidgetStateProperty.resolveWith((states) => theme.colorScheme.surfaceContainerHighest),
                 columnSpacing: 24,
                 columns: [
-                  DataColumn(label: Text(AppLocalizations.of(context)!.t('authFeatureHeader'), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('Feature', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))),
                   for (final role in roles)
                     DataColumn(
                       label: Text(

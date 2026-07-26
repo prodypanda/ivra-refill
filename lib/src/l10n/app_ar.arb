@@ -1692,16 +1692,5 @@
         "type": "String"
       }
     }
-  },
-  "authNoPermissionsFound": "لم يتم العثور على أذونات.",
-  "authFeatureHeader": "ميزة",
-  "settingsWhatsNewHeader": "ما الجديد",
-  "settingsCurrentVersion": "الإصدار الحالي: v{version}",
-  "@settingsCurrentVersion": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
   }
 }
