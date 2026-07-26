@@ -45,6 +45,15 @@ class NetworkErrorClassifier {
     return false;
   }
 
+  /// Returns true when [error] represents a unique constraint violation that
+  /// indicates a retried request succeeded on a previous, unacknowledged attempt.
+  static bool isUniqueConstraintViolation(Object error) {
+    if (error is PostgrestException) {
+      return error.code == '23505';
+    }
+    return false;
+  }
+
   /// Returns true when [error] represents a permanent (non-retriable) failure,
   /// such as server-side validation errors or authorization/permission denials.
   /// These should not be retried automatically and should be surfaced for
