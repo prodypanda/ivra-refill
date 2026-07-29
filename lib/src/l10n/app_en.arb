@@ -1692,5 +1692,18 @@
         "type": "String"
       }
     }
+  },
+  "noPermissionsFound": "No permissions found.",
+  "feature": "Feature",
+  "whatsNew": "What's New",
+  "currentVersion": "Current Version: v{version}",
+  "@currentVersion": {
+    "description": "Current version display text",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
   }
 }

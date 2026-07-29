@@ -5431,6 +5431,30 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.'**
   String hkDeleteWithStockMessage(String userName);
+
+  /// No description provided for @noPermissionsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No permissions found.'**
+  String get noPermissionsFound;
+
+  /// No description provided for @feature.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature'**
+  String get feature;
+
+  /// No description provided for @whatsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s New'**
+  String get whatsNew;
+
+  /// Current version display text
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version: v{version}'**
+  String currentVersion(String version);
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
