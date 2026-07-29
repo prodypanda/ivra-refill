@@ -2944,4 +2944,18 @@ class AppL10nAr extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق \'$userName\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.';
   }
+
+  @override
+  String get noPermissionsFound => 'لم يتم العثور على أذونات.';
+
+  @override
+  String get feature => 'ميزة';
+
+  @override
+  String get whatsNew => 'ما الجديد';
+
+  @override
+  String currentVersion(String version) {
+    return 'الإصدار الحالي: v$version';
+  }
 }
