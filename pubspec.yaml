@@ -2,7 +2,7 @@
 name: ivra_refill
 description: Ivra hotel refill operations app for Android and web.
 publish_to: none
-version: 1.2.0+76
+version: 1.2.1+77
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -61,7 +61,7 @@ dev_dependencies:
 # TRACKING: this is a workaround, not a fix. Remove this override once a clean
 # `flutter build apk` succeeds with the unpinned transitive version (re-test
 # after each supabase_flutter / path_provider_android upgrade). Keep the pin
-# until then to avoid breaking Android builds.
+# until then to avoid breaking Android builds. (Tested on 2026-07-31)
 dependency_overrides:
   path_provider_android: 2.2.17
 
