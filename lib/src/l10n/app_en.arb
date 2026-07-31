@@ -1692,5 +1692,16 @@
         "type": "String"
       }
     }
+  },
+  "rolePermissionsEmpty": "No permissions found.",
+  "rolePermissionsFeatureLabel": "Feature",
+  "settingsWhatsNew": "What's New",
+  "settingsCurrentVersion": "Current Version: v{version}",
+  "@settingsCurrentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
   }
 }
