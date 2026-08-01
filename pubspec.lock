@@ -386,10 +386,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_cache_manager
-      sha256: "1de7849213b4c73c85aca7e0ac687a9a5d82ccdb594366b9dcc26cb6a2189cd2"
+      sha256: "400b6592f16a4409a7f2bb929a9a7e38c72cceb8ffb99ee57bbf2cb2cecf8386"
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.2"
+    version: "3.4.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -833,10 +833,10 @@ packages:
     dependency: transitive
     description:
       name: objective_c
-      sha256: b7fb95a6d9a4f009edd63dc5ac69f07420b23a16161c6dd8660290b59c602e8e
+      sha256: "6cb691c686fa2838c6deb34980d426145c2a5d537491cb83d463c33cdbc726ed"
       url: "https://pub.dev"
     source: hosted
-    version: "9.5.0"
+    version: "9.4.1"
   octo_image:
     dependency: transitive
     description:
@@ -849,10 +849,10 @@ packages:
     dependency: transitive
     description:
       name: passkeys_platform_interface
-      sha256: e810520c7b79dca629fdc266958564eedd77dc85a955f5e94430dfccb92eef68
+      sha256: "9610bd136b3382500390912ddd8517ee99505228b1af7b507b9c907f7e99a47d"
       url: "https://pub.dev"
     source: hosted
-    version: "2.9.0"
+    version: "2.8.0"
   path:
     dependency: transitive
     description:
@@ -969,10 +969,10 @@ packages:
     dependency: transitive
     description:
       name: posix
-      sha256: bc1bad54ad2b735816e31f8d4600cfde6c7839975085ddfbca48b6c9f7c4044e
+      sha256: "185ef7606574f789b40f289c233efa52e96dead518aed988e040a10737febb07"
       url: "https://pub.dev"
     source: hosted
-    version: "6.5.2"
+    version: "6.5.0"
   postgrest:
     dependency: transitive
     description:
