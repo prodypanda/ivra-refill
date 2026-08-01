@@ -1,6 +1,12 @@
 # Changelog
 
 ## Unreleased
+
+* **Security/Dependencies:**
+  * Updated safe minor/patch dependencies (`firebase_core`, `firebase_messaging`, `google_fonts`, `local_auth`, `mobile_scanner`, `supabase_flutter`, `uuid` and other transitive deps).
+  * Audited major version upgrades (`app_links`, `csv`, `device_info_plus`) and deferred them to future tickets, adding tracking comments.
+  * Re-verified `path_provider_android` compilation issue on Android; kept pin at `2.2.17`.
+
 - Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and
