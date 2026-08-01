@@ -1692,5 +1692,27 @@
         "type": "String"
       }
     }
+  },
+  "settingsWhatsNew": "What's New",
+  "@settingsWhatsNew": {
+    "description": "Title for the changelog dialog"
+  },
+  "settingsCurrentVersion": "Current Version: v{version}",
+  "@settingsCurrentVersion": {
+    "description": "Label showing the current app version",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "settingsNoPermissionsFound": "No permissions found.",
+  "@settingsNoPermissionsFound": {
+    "description": "Message when no roles/permissions are found"
+  },
+  "settingsFeature": "Feature",
+  "@settingsFeature": {
+    "description": "Column header for features in the permissions table"
   }
 }
