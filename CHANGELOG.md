@@ -1,6 +1,19 @@
 # Changelog
 
 ## Unreleased
+
+### Dependencies
+- **Security & Routine Updates**:
+  - `firebase_core` (4.13.0)
+  - `firebase_messaging` (16.5.0)
+  - `supabase_flutter` (2.17.2)
+  - `flutter_secure_storage` (11.0.0 via pending major update TODO, kept 9.2.4)
+  - `local_auth` (3.0.2)
+  - `mobile_scanner` (7.4.0)
+  - `uuid` (4.6.0)
+  - `workmanager` (0.9.3)
+  - `google_fonts` (8.2.1)
+  - Transitive and other safe updates applied.
 - Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and
