@@ -334,6 +334,10 @@ class OfflineSyncService {
       await remove(action.id);
       return true;
     } on Object catch (error) {
+      if (NetworkErrorClassifier.isUniqueConstraintViolation(error)) {
+        await remove(action.id);
+        return true;
+      }
       final permanent = NetworkErrorClassifier.isPermanent(error);
       await _replace(action.failedWith(error.toString(), permanent: permanent));
       return false;
