@@ -1,3 +1,4 @@
+import 'package:ivra_refill/src/domain/models.dart';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -564,7 +565,9 @@ void main() {
     expect(updated.maxRefillCount, 9);
   });
 
-  test('direct replacement product can be created and updated with custom maxBottleAgeDays', () async {
+  test(
+      'direct replacement product can be created and updated with custom maxBottleAgeDays',
+      () async {
     final repository = MockIvraRepository();
     final before = await repository.products();
 
@@ -607,7 +610,8 @@ void main() {
     expect(updated.maxBottleAgeDays, 90);
   });
 
-  test('direct replacement products do not generate refill limit alerts', () async {
+  test('direct replacement products do not generate refill limit alerts',
+      () async {
     final repository = MockIvraRepository();
 
     // 1. Create a direct replacement product
@@ -632,7 +636,7 @@ void main() {
     final rooms = await repository.rooms();
     final firstRoom = rooms.first;
     final hotelId = firstRoom.hotelId;
-    
+
     // Now template/place rooms (with autoAdjustInventory: true to initialize inventory item)
     await repository.createRoomsFromTemplate(
       hotelId: hotelId,
@@ -666,11 +670,14 @@ void main() {
 
     // 5. Verify no alerts of type refillLimit are generated for this hotel/product
     final alertsAfter = await repository.alerts(hotelId: hotelId);
-    final refillLimitAlerts = alertsAfter.where((a) => !a.isResolved && a.type == AlertType.refillLimit && a.productId == repProduct.id).toList();
+    final refillLimitAlerts = alertsAfter
+        .where((a) =>
+            !a.isResolved &&
+            a.type == AlertType.refillLimit &&
+            a.productId == repProduct.id)
+        .toList();
     expect(refillLimitAlerts.isEmpty, true);
   });
-
-
 
   test('offline queue syncs refill actions', () async {
     SharedPreferences.setMockInitialValues({});
@@ -884,13 +891,15 @@ void main() {
     expect(alertsPdf.length, greaterThan(100));
   });
 
-  test('percentage-based refill and undo restore volumes on MockIvraRepository', () async {
+  test('percentage-based refill and undo restore volumes on MockIvraRepository',
+      () async {
     final repository = MockIvraRepository();
-    
+
     // Find the in-memory inventory for shampoo
     final initialInvList = await repository.inventory(hotelId: 'hotel-seaside');
-    final beforeShampoo = initialInvList.firstWhere((item) => item.product.id == 'prod-shampoo');
-    
+    final beforeShampoo =
+        initialInvList.firstWhere((item) => item.product.id == 'prod-shampoo');
+
     // Check initial values
     expect(beforeShampoo.openBidonVolumeLeftMl, 2500.0);
     expect(beforeShampoo.fullBidons, 3);
@@ -913,9 +922,16 @@ void main() {
     expect(afterRefill1.emptyBidons, 5);
 
     // Record three 100% refills to trigger bidon replacement
-    await repository.recordRefill(roomProductId: 'rp-101-shampoo', notes: '[Refill: 100%]'); // leaves 1000ml
-    await repository.recordRefill(roomProductId: 'rp-101-shampoo', notes: '[Refill: 100%]'); // leaves 0ml, triggers new bidon, starts at 5000ml
-    await repository.recordRefill(roomProductId: 'rp-101-shampoo', notes: '[Refill: 100%]'); // leaves 4000ml
+    await repository.recordRefill(
+        roomProductId: 'rp-101-shampoo',
+        notes: '[Refill: 100%]'); // leaves 1000ml
+    await repository.recordRefill(
+        roomProductId: 'rp-101-shampoo',
+        notes:
+            '[Refill: 100%]'); // leaves 0ml, triggers new bidon, starts at 5000ml
+    await repository.recordRefill(
+        roomProductId: 'rp-101-shampoo',
+        notes: '[Refill: 100%]'); // leaves 4000ml
 
     final afterRefill2 = (await repository.inventory(hotelId: 'hotel-seaside'))
         .firstWhere((item) => item.product.id == 'prod-shampoo');
@@ -926,8 +942,10 @@ void main() {
 
     // Undo the last refill
     final recentEvents = await repository.recentRefillEvents();
-    final lastRefillEvent = recentEvents.firstWhere((event) => event.roomProductId == 'rp-101-shampoo' && event.type == RefillEventType.refill);
-    
+    final lastRefillEvent = recentEvents.firstWhere((event) =>
+        event.roomProductId == 'rp-101-shampoo' &&
+        event.type == RefillEventType.refill);
+
     await repository.undoRefill(refillEventId: lastRefillEvent.id);
 
     final afterUndo = (await repository.inventory(hotelId: 'hotel-seaside'))
@@ -939,15 +957,43 @@ void main() {
 
     // Undo the refill before that (which caused a new bidon to open)
     final updatedEvents = await repository.recentRefillEvents();
-    final prevRefillEvent = updatedEvents.firstWhere((event) => event.roomProductId == 'rp-101-shampoo' && event.type == RefillEventType.refill);
+    final prevRefillEvent = updatedEvents.firstWhere((event) =>
+        event.roomProductId == 'rp-101-shampoo' &&
+        event.type == RefillEventType.refill);
 
     await repository.undoRefill(refillEventId: prevRefillEvent.id);
 
-    final afterBoundaryUndo = (await repository.inventory(hotelId: 'hotel-seaside'))
-        .firstWhere((item) => item.product.id == 'prod-shampoo');
+    final afterBoundaryUndo =
+        (await repository.inventory(hotelId: 'hotel-seaside'))
+            .firstWhere((item) => item.product.id == 'prod-shampoo');
     expect(afterBoundaryUndo.openBidonVolumeLeftMl, 1000.0);
     expect(afterBoundaryUndo.fullBidons, 3);
     expect(afterBoundaryUndo.openBidons, 1);
     expect(afterBoundaryUndo.emptyBidons, 5);
+  });
+
+  test('undoRefill 30-minute window boundary checks (29 vs 31 mins)', () {
+    final now = DateTime.now();
+    final event29 = RefillEvent(
+      id: '1',
+      roomProductId: '1',
+      type: RefillEventType.refill,
+      previousRefillCount: 0,
+      newRefillCount: 1,
+      occurredAt: now.subtract(const Duration(minutes: 29)),
+      performedBy: 'user1',
+    );
+    expect(event29.canUndo(now, 'user1'), isTrue);
+
+    final event31 = RefillEvent(
+      id: '2',
+      roomProductId: '2',
+      type: RefillEventType.refill,
+      previousRefillCount: 0,
+      newRefillCount: 1,
+      occurredAt: now.subtract(const Duration(minutes: 31)),
+      performedBy: 'user1',
+    );
+    expect(event31.canUndo(now, 'user1'), isFalse);
   });
 }
