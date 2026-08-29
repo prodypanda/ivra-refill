@@ -1692,5 +1692,21 @@
         "type": "String"
       }
     }
-  }
+  },
+  "feature": "Feature",
+  "noPermissionsFound": "No permissions found.",
+  "currentVersion": "Current Version: v{version}",
+  "@currentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "whatsNew": "What's New",
+  "loadingDots": "...",
+  "langFr": "FR",
+  "langEn": "EN",
+  "langIt": "IT",
+  "langAr": "AR"
 }

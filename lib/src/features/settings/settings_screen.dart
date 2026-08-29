@@ -43,14 +43,14 @@ import 'app_settings_screen.dart';
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("What's New", style: theme.textTheme.headlineSmall),
+                          Text(l10n!.t("whatsNew"), style: theme.textTheme.headlineSmall),
                           IconButton(
                             icon: const Icon(Icons.close),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ],
                       ),
-                      Text('Current Version: v$appVersion', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
+                      Text(l10n!.tParams('currentVersion', {'version': appVersion.toString()}), style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
                       const SizedBox(height: 16),
                       Expanded(
                         child: ListView(
@@ -82,7 +82,7 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isMobile = MediaQuery.sizeOf(context).width < 720;
     final locale = ref.watch(localeProvider);
@@ -94,7 +94,7 @@ class SettingsScreen extends ConsumerWidget {
     final isAppAdmin = currentUser?.role == UserRole.appAdmin;
 
     return PageScaffold(
-      title: l10n.t('settings'),
+      title: AppLocalizations.of(context)!.t('settings'),
       onRefresh: () async {
         ref.invalidate(offlineActionsProvider);
         ref.invalidate(demoUsersProvider);
@@ -114,7 +114,7 @@ class SettingsScreen extends ConsumerWidget {
             ],
             DropdownButtonFormField<Locale>(
               initialValue: locale,
-              decoration: InputDecoration(labelText: l10n.t('language')),
+              decoration: InputDecoration(labelText: AppLocalizations.of(context)!.t('language')),
               items: const [
                 DropdownMenuItem(value: Locale('en'), child: Text('English')),
                 DropdownMenuItem(value: Locale('fr'), child: Text('Français')),
@@ -137,12 +137,12 @@ class SettingsScreen extends ConsumerWidget {
                         : Icons.science_outlined,
                   ),
                   title: Text(useSupabase
-                      ? l10n.t('settingsSupabaseConnected')
-                      : l10n.t('demoMode')),
+                      ? AppLocalizations.of(context)!.t('settingsSupabaseConnected')
+                      : AppLocalizations.of(context)!.t('demoMode')),
                   subtitle: Text(
                     useSupabase
-                        ? l10n.t('settingsSupabaseHint')
-                        : l10n.t('settingsNoSupabaseHint'),
+                        ? AppLocalizations.of(context)!.t('settingsSupabaseHint')
+                        : AppLocalizations.of(context)!.t('settingsNoSupabaseHint'),
                   ),
                 ),
               ),
@@ -165,10 +165,10 @@ class SettingsScreen extends ConsumerWidget {
               child: SwitchListTile(
                 secondary: const Icon(Icons.sync_disabled_outlined),
                 title:
-                    Text(AppLocalizations.of(context).t('settingsOfflineMode')),
+                    Text(AppLocalizations.of(context)!.t('settingsOfflineMode')),
                 subtitle: Text(offlineMode
-                    ? AppLocalizations.of(context).t('settingsOfflineQueue')
-                    : AppLocalizations.of(context).t('settingsOfflineSend')),
+                    ? AppLocalizations.of(context)!.t('settingsOfflineQueue')
+                    : AppLocalizations.of(context)!.t('settingsOfflineSend')),
                 value: offlineMode,
                 onChanged: (value) {
                   ref.read(offlineModeProvider.notifier).state = value;
@@ -192,7 +192,7 @@ class SettingsScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
                     child: Text(
-                      l10n.t('settingsScannerHeader'),
+                      AppLocalizations.of(context)!.t('settingsScannerHeader'),
                       style: theme.textTheme.titleSmall?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,
@@ -201,8 +201,8 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   SwitchListTile(
                     secondary: const Icon(Icons.center_focus_strong_outlined),
-                    title: Text(l10n.t('settingsPrecisionScanTitle')),
-                    subtitle: Text(l10n.t('settingsPrecisionScanSubtitle')),
+                    title: Text(AppLocalizations.of(context)!.t('settingsPrecisionScanTitle')),
+                    subtitle: Text(AppLocalizations.of(context)!.t('settingsPrecisionScanSubtitle')),
                     value: precisionScanWindow,
                     onChanged: (value) {
                       ref.read(precisionScanWindowEnabledProvider.notifier).state = value;
@@ -211,8 +211,8 @@ class SettingsScreen extends ConsumerWidget {
                   const Divider(height: 1),
                   SwitchListTile(
                     secondary: const Icon(Icons.touch_app_outlined),
-                    title: Text(l10n.t('settingsTapToScanTitle')),
-                    subtitle: Text(l10n.t('settingsTapToScanSubtitle')),
+                    title: Text(AppLocalizations.of(context)!.t('settingsTapToScanTitle')),
+                    subtitle: Text(AppLocalizations.of(context)!.t('settingsTapToScanSubtitle')),
                     value: tapToScan,
                     onChanged: (value) {
                       ref.read(tapToScanEnabledProvider.notifier).state = value;
@@ -235,8 +235,8 @@ class SettingsScreen extends ConsumerWidget {
                     : null,
                 child: ListTile(
                   leading: const Icon(Icons.admin_panel_settings_outlined),
-                  title: Text(l10n.t('appSettings')),
-                  subtitle: Text(l10n.t('percentageRefillTitle')),
+                  title: Text(AppLocalizations.of(context)!.t('appSettings')),
+                  subtitle: Text(AppLocalizations.of(context)!.t('percentageRefillTitle')),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push(AppSettingsScreen.route),
                 ),
@@ -260,7 +260,7 @@ class SettingsScreen extends ConsumerWidget {
                         builder: (context, constraints) {
                           final isNarrow = constraints.maxWidth < 420;
                           final title = Text(
-                            AppLocalizations.of(context).tParams(
+                            AppLocalizations.of(context)!.tParams(
                               'settingsPendingSync',
                               {'count': actions.length.toString()},
                             ),
@@ -279,7 +279,7 @@ class SettingsScreen extends ConsumerWidget {
                                     : () => _clearQueue(context, ref),
                                 icon: const Icon(Icons.delete_sweep_outlined),
                                 label: Text(
-                                  AppLocalizations.of(context).t(
+                                  AppLocalizations.of(context)!.t(
                                     'settingsBtnClear',
                                   ),
                                 ),
@@ -290,7 +290,7 @@ class SettingsScreen extends ConsumerWidget {
                                     : () => _syncQueue(context, ref),
                                 icon: const Icon(Icons.sync_outlined),
                                 label: Text(
-                                  AppLocalizations.of(context).t(
+                                  AppLocalizations.of(context)!.t(
                                     'settingsBtnSyncNow',
                                   ),
                                 ),
@@ -321,7 +321,7 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 12),
                       if (actions.isEmpty)
-                        Text(AppLocalizations.of(context)
+                        Text(AppLocalizations.of(context)!
                             .t('settingsNoPendingActions'))
                       else
                         Column(
@@ -366,15 +366,15 @@ class SettingsScreen extends ConsumerWidget {
     ref.invalidate(dashboardProvider);
 
     if (!context.mounted) return;
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final String message;
     if (summary.hasFailures) {
-      message = l10n.tParams(
+      message = AppLocalizations.of(context)!.tParams(
         'settingsSyncedWithFailures',
         {'synced': '${summary.synced}', 'failed': '${summary.failed}'},
       );
     } else {
-      message = l10n.tParams(
+      message = AppLocalizations.of(context)!.tParams(
         summary.synced == 1
             ? 'settingsSyncedSummarySingular'
             : 'settingsSyncedSummary',
@@ -409,8 +409,8 @@ class SettingsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(didSync
-            ? AppLocalizations.of(context).t('settingsActionSynced')
-            : AppLocalizations.of(context).t('settingsActionNeedsReview')),
+            ? AppLocalizations.of(context)!.t('settingsActionSynced')
+            : AppLocalizations.of(context)!.t('settingsActionNeedsReview')),
       ),
     );
   }
@@ -440,7 +440,7 @@ class SettingsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content:
-              Text(AppLocalizations.of(context).t('settingsActionUpdated'))),
+              Text(AppLocalizations.of(context)!.t('settingsActionUpdated'))),
     );
   }
 
@@ -455,7 +455,7 @@ class SettingsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content:
-              Text(AppLocalizations.of(context).t('settingsActionRemoved'))),
+              Text(AppLocalizations.of(context)!.t('settingsActionRemoved'))),
     );
   }
 
@@ -466,7 +466,7 @@ class SettingsScreen extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content:
-              Text(AppLocalizations.of(context).t('settingsQueueCleared'))),
+              Text(AppLocalizations.of(context)!.t('settingsQueueCleared'))),
     );
   }
 }
@@ -502,7 +502,7 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
   }
 
   Future<void> _onChanged(bool value) async {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
     final email = ref.read(currentUserProvider).valueOrNull?.email;
 
@@ -517,7 +517,7 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
       if (!mounted) return;
       if (!available) {
         messenger.showSnackBar(
-          SnackBar(content: Text(l10n.t('settingsBiometricUnavailable'))),
+          SnackBar(content: Text(AppLocalizations.of(context)!.t('settingsBiometricUnavailable'))),
         );
         return;
       }
@@ -526,12 +526,12 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
       try {
         final ok = await ref
             .read(biometricAuthServiceProvider)
-            .authenticate(l10n.t('authBiometricReason'));
+            .authenticate(AppLocalizations.of(context)!.t('authBiometricReason'));
         if (!ok) return;
       } catch (_) {
         if (!mounted) return;
         messenger.showSnackBar(
-          SnackBar(content: Text(l10n.t('authBiometricFailed'))),
+          SnackBar(content: Text(AppLocalizations.of(context)!.t('authBiometricFailed'))),
         );
         return;
       }
@@ -544,7 +544,7 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final biometricAccount = ref.watch(biometricAccountProvider);
     final currentEmail = ref.watch(currentUserProvider.select((s) => s.valueOrNull?.email));
@@ -561,11 +561,11 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
           : null,
       child: SwitchListTile(
         secondary: const Icon(Icons.fingerprint),
-        title: Text(l10n.t('settingsBiometricTitle')),
+        title: Text(AppLocalizations.of(context)!.t('settingsBiometricTitle')),
         subtitle: Text(
           available
-              ? l10n.t('settingsBiometricHint')
-              : l10n.t('settingsBiometricUnavailable'),
+              ? AppLocalizations.of(context)!.t('settingsBiometricHint')
+              : AppLocalizations.of(context)!.t('settingsBiometricUnavailable'),
         ),
         value: enabled && available,
         onChanged: available ? _onChanged : null,
@@ -581,7 +581,7 @@ class _SettingsMobileStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
@@ -596,12 +596,12 @@ class _SettingsMobileStatus extends StatelessWidget {
           color: colorScheme.primary,
         ),
         title: Text(useSupabase
-            ? l10n.t('settingsSupabaseConnected')
-            : l10n.t('demoMode')),
+            ? AppLocalizations.of(context)!.t('settingsSupabaseConnected')
+            : AppLocalizations.of(context)!.t('demoMode')),
         subtitle: Text(
           useSupabase
-              ? l10n.t('settingsSupabaseHint')
-              : l10n.t('settingsNoSupabaseHint'),
+              ? AppLocalizations.of(context)!.t('settingsSupabaseHint')
+              : AppLocalizations.of(context)!.t('settingsNoSupabaseHint'),
         ),
       ),
     );
@@ -623,17 +623,17 @@ class _OfflineActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final hasError = action.lastError != null;
     final summary = [
       _payloadSummary(action.payload),
       if (action.attemptCount > 0)
-        l10n.tParams(
+        AppLocalizations.of(context)!.tParams(
           'settingsActionListAttempts',
           {'count': '${action.attemptCount}'},
         ),
       if (hasError)
-        l10n.tParams(
+        AppLocalizations.of(context)!.tParams(
           'settingsActionListError',
           {'message': '${action.lastError}'},
         ),
@@ -653,20 +653,20 @@ class _OfflineActionTile extends StatelessWidget {
         children: [
           IconButton(
             tooltip: hasError
-                ? l10n.t('settingsResolveConflict')
-                : l10n.t('settingsEditAction'),
+                ? AppLocalizations.of(context)!.t('settingsResolveConflict')
+                : AppLocalizations.of(context)!.t('settingsEditAction'),
             icon: Icon(
               hasError ? Icons.tune_outlined : Icons.edit_note_outlined,
             ),
             onPressed: onEdit,
           ),
           IconButton(
-            tooltip: l10n.t('settingsRetryAction'),
+            tooltip: AppLocalizations.of(context)!.t('settingsRetryAction'),
             icon: const Icon(Icons.sync_outlined),
             onPressed: onRetry,
           ),
           IconButton(
-            tooltip: l10n.t('settingsRemoveAction'),
+            tooltip: AppLocalizations.of(context)!.t('settingsRemoveAction'),
             icon: const Icon(Icons.delete_outline),
             onPressed: onRemove,
           ),
@@ -710,7 +710,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppLocalizations.of(context).t('settingsDemoUser'),
+                AppLocalizations.of(context)!.t('settingsDemoUser'),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 12),
@@ -719,7 +719,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
                 isExpanded: true,
                 decoration: InputDecoration(
                   labelText:
-                      AppLocalizations.of(context).t('settingsTestAccessAs'),
+                      AppLocalizations.of(context)!.t('settingsTestAccessAs'),
                   prefixIcon: Icon(Icons.manage_accounts_outlined),
                 ),
                 items: [
@@ -727,7 +727,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
                     DropdownMenuItem(
                       value: user.id,
                       child: Text(
-                        '${user.fullName} (${AppLocalizations.of(context).userRoleLabel(user.role)})',
+                        '${user.fullName} (${AppLocalizations.of(context)!.userRoleLabel(user.role)})',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -745,7 +745,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
                   if (!context.mounted) return;
                   PremiumSnackbar.showSuccess(
                     context, 
-                    AppLocalizations.of(context).t('settingsDemoUserChanged'),
+                    AppLocalizations.of(context)!.t('settingsDemoUserChanged'),
                   );
                 },
               ),
@@ -793,7 +793,7 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        AppLocalizations.of(context).t(
+        AppLocalizations.of(context)!.t(
           widget.action.lastError == null
               ? 'settingsActionEditTitle'
               : 'settingsActionConflictTitle',
@@ -812,13 +812,13 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 children: [
                   Chip(
                     label: Text(
-                      AppLocalizations.of(context)
+                      AppLocalizations.of(context)!
                           .syncActionTypeLabel(widget.action.type),
                     ),
                   ),
                   Chip(
                     label: Text(
-                      AppLocalizations.of(context).tParams(
+                      AppLocalizations.of(context)!.tParams(
                         'settingsActionAttempts',
                         {'count': '${widget.action.attemptCount}'},
                       ),
@@ -827,7 +827,7 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                   if (widget.action.lastAttemptAt != null)
                     Chip(
                       label: Text(
-                        AppLocalizations.of(context).tParams(
+                        AppLocalizations.of(context)!.tParams(
                           'settingsActionLastTried',
                           {
                             'datetime':
@@ -854,7 +854,7 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 maxLines: 14,
                 decoration: InputDecoration(
                   labelText:
-                      AppLocalizations.of(context).t('settingsPayloadJson'),
+                      AppLocalizations.of(context)!.t('settingsPayloadJson'),
                   alignLabelWithHint: true,
                   errorText: _error,
                 ),
@@ -867,17 +867,17 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(AppLocalizations.of(context).t('btnCancel')),
+          child: Text(AppLocalizations.of(context)!.t('btnCancel')),
         ),
         TextButton.icon(
           onPressed: () => _submit(retryAfterSave: false),
           icon: const Icon(Icons.save_outlined),
-          label: Text(AppLocalizations.of(context).t('btnSave')),
+          label: Text(AppLocalizations.of(context)!.t('btnSave')),
         ),
         FilledButton.icon(
           onPressed: () => _submit(retryAfterSave: true),
           icon: const Icon(Icons.sync_outlined),
-          label: Text(AppLocalizations.of(context).t('settingsSaveAndRetry')),
+          label: Text(AppLocalizations.of(context)!.t('settingsSaveAndRetry')),
         ),
       ],
     );
@@ -899,7 +899,7 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
       final decoded = jsonDecode(_payloadController.text);
       if (decoded is! Map) {
         setState(() => _error =
-            AppLocalizations.of(context).t('settingsPayloadInvalidJson'));
+            AppLocalizations.of(context)!.t('settingsPayloadInvalidJson'));
         return null;
       }
       setState(() => _error = null);
