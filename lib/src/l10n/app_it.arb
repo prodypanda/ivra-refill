@@ -2,10 +2,45 @@
   "@@locale": "it",
   "markAsRead": "Segna come letto",
   "confirmDeleteHotel": "Sei sicuro di voler eliminare l'hotel '{hotelName}'? Questa azione è permanente, non può essere annullata ed eliminerà tutte le camere, assegnazioni del personale e record associati.",
+  "@confirmDeleteHotel": {
+    "placeholders": {
+      "hotelName": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteRoom": "Sei sicuro di voler eliminare la camera '{roomNumber}'? Questa azione è permanente, non può essere annullata ed eliminerà tutti i prodotti e la cronologia associati.",
+  "@confirmDeleteRoom": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteFloor": "Sei sicuro di voler eliminare il piano '{floorNumber}' e tutte le sue camere? Questa azione è permanente e non può essere annullata.",
+  "@confirmDeleteFloor": {
+    "placeholders": {
+      "floorNumber": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteUser": "Sei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione.",
+  "@confirmDeleteUser": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteProduct": "Sei sicuro di voler eliminare il prodotto '{productName}'? Questa azione è permanente, non può essere annullata e influirà sul tracciamento dell'stock magazzino.",
+  "@confirmDeleteProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteAlert": "Sei sicuro di voler eliminare questo avviso? Questa azione è permanente e non può essere annullata.",
   "confirmDeleteAllAlerts": "Sei sicuro di voler eliminare tutti gli avvisi? Questa azione è permanente, non può essere annullata e cancellerà tutte le notifiche correnti.",
   "clearAuditLogs": "Cancella registri",
@@ -40,13 +75,37 @@
   "dashboardUnusualPatterns": "Modelli insoliti",
   "dashboardNoStockData": "Nessun dato sulle scorte",
   "dashboardRoomsRequireReview": "{count} camere richiedono revisione",
+  "@dashboardRoomsRequireReview": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "dashboardNoUnusualPatterns": "Nessun modello insolito rilevato",
   "dashboardHighPriority": "Alta",
   "dashboardStable": "Stabile",
   "errorLoadingHotels": "Errore nel caricamento degli hotel",
   "sending": "Invio in corso...",
   "roomsEditRoomTitle": "Aggiorna camera {roomNumber}",
+  "@roomsEditRoomTitle": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "roomsEditProductTitle": "Aggiorna bottiglia di {productName} nella camera {roomNumber}",
+  "@roomsEditProductTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "inventory": "Stock magazzino",
   "alerts": "Avvisi",
   "approvals": "Approvazioni",
@@ -75,6 +134,16 @@
   "pleaseEnterTitleBody": "Inserisci un titolo e un corpo",
   "pleaseSelectTarget": "Seleziona un valore di destinazione",
   "notificationSent": "Inviato: {successCount} successi, {failureCount} falliti",
+  "@notificationSent": {
+    "placeholders": {
+      "successCount": {
+        "type": "String"
+      },
+      "failureCount": {
+        "type": "String"
+      }
+    }
+  },
   "dashboardShort": "Pannello",
   "dashboardHeroTitle": "Oggi in Ivra",
   "dashboardRefillActivity": "Attività ricariche (ultimi 7 giorni)",
@@ -159,14 +228,42 @@
   "inventoryTableProduct": "Prodotto",
   "inventoryTableFullBottles": "Bottiglie piene",
   "inventoryTableFullBottlesWithPump": "Bottiglie piene da {size} con pompa",
+  "@inventoryTableFullBottlesWithPump": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryTableFullBottlesWithoutPump": "Bottiglie piene da {size} senza pompa",
+  "@inventoryTableFullBottlesWithoutPump": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryTableFullBottlesWithPumpGeneric": "Bottiglie piene con pompa",
   "inventoryTableFullBottlesWithoutPumpGeneric": "Bottiglie piene senza pompa",
   "inventoryCollapseHeader": "Bottiglie vuote e aperte",
   "inventoryTableEmptyBottles": "Bottiglie sostituite dopo {months} mesi (Usate)",
+  "@inventoryTableEmptyBottles": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryTableEmptyBottlesGeneric": "Bottiglie sostituite (Usate)",
   "inventoryTableEmptyBidons": "Bottiglie di ricarica vuote",
   "inventoryTableFullBidons": "Bottiglie di ricarica piene da {size}",
+  "@inventoryTableFullBidons": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryTableFullBidonsGeneric": "Bottiglie di ricarica piene",
   "inventoryTableOpenBidons": "Bottiglie di ricarica usate",
   "inventoryTableStatus": "Stato",
@@ -186,8 +283,29 @@
   "bulkAdjustDeselectAll": "Deseleziona tutto",
   "bulkAdjustNoProductsSelected": "Seleziona almeno un prodotto.",
   "orderNewBottlesText": "Ordina {count} nuove bottiglie da 1L",
+  "@orderNewBottlesText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "orderNewBidonsText": "Ordina {count} nuove bottiglie di ricarica da 5L",
+  "@orderNewBidonsText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "recycleBottlesText": "Ricicla {count} bottiglie",
+  "@recycleBottlesText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "bottleCannotRefillRecycled": "Questa bottiglia è stata riciclata e non può essere ricaricata. Si prega di sostituirla.",
   "adjustStockTitle": "Regola stock",
   "hotelRoomsTracked": "camere tracciate",
@@ -252,8 +370,32 @@
   "authAccountDeactivated": "Questo account è stato disattivato. Contatta l'amministratore per riaccedere.",
   "settingsPayloadInvalidJson": "Il payload deve essere un oggetto JSON.",
   "exportDownloadStarted": "Download di {fileName} avviato",
+  "@exportDownloadStarted": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
   "exportSaved": "{fileName} salvato in {path}",
+  "@exportSaved": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
   "settingsPendingSync": "Sincronizzazione in attesa ({count})",
+  "@settingsPendingSync": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "splashTagline": "Soluzioni di ospitalità sostenibile",
   "accountSaveFailed": "Impossibile salvare il profilo. Riprova.",
   "accountPasswordChangeFailed": "Impossibile cambiare la password. Riprova.",
@@ -265,7 +407,27 @@
   "roomsTooltipCreateTemplate": "Crea modello camera",
   "roomsNoRoomsFound": "Nessuna camera o prodotto trovato.",
   "roomsScanConfirmFromCart": "Il prodotto \"{product}\" non è attualmente assegnato a questa camera, ma ne hai {count} nel carrello. Vuoi prenderne 1 dal carrello e assegnarlo a questa camera?",
+  "@roomsScanConfirmFromCart": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "roomsScanConfirmFromHotel": "Il prodotto \"{product}\" non è in questa camera. Ci sono {count} bottiglie nell'inventario dell'hotel. Vuoi prenderne 1 e assegnarlo a questa camera?",
+  "@roomsScanConfirmFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "roomsNoProducts": "Nessun prodotto assegnato a questa camera.",
   "roomsStatusNoProducts": "Nessun prodotto",
   "roomsSearchEmptyHint": "Prova a modificare la ricerca o i filtri.",
@@ -324,6 +486,16 @@
   "roomsHistoryRefill": "Ricaricato",
   "roomsHistoryNewBottle": "Nuova bottiglia posizionata",
   "roomsHistoryStatusChanged": "Stato modificato da {oldValue} a {newValue}",
+  "@roomsHistoryStatusChanged": {
+    "placeholders": {
+      "oldValue": {
+        "type": "String"
+      },
+      "newValue": {
+        "type": "String"
+      }
+    }
+  },
   "roomsFilterAll": "Tutti",
   "roomsDialogBottleEditTitle": "Richiesta modifica bottiglia per camera",
   "roomsLabelBottleStatus": "Stato bottiglia",
@@ -349,6 +521,13 @@
   "qrDemoCodes": "Codici QR dimostrativi",
   "qrActionPrompt": "Seleziona Azione",
   "qrActionMessage": "Cosa vorresti fare per {product}?",
+  "@qrActionMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "qrActionRefill": "Ricarica bottiglia",
   "qrActionReplace": "Sostituisci bottiglia",
   "hotelNotFound": "Hotel non trovato",
@@ -364,11 +543,51 @@
   "qrReturnRooms": "Torna alle camere",
   "qrTryScanAgain": "Riprova la scansione",
   "qrFloorRoom": "Piano {floor} • Camera {room}",
+  "@qrFloorRoom": {
+    "placeholders": {
+      "floor": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "qrRoomFloor": "Camera {room} • Piano {floor}",
+  "@qrRoomFloor": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
   "qrCameraPermission": "Permesso fotocamera negato",
   "qrCameraUnavailable": "Fotocamera non disponibile",
   "qrHotelNotFoundMessage": "Impossibile trovare l'hotel: «{hotel}»",
+  "@qrHotelNotFoundMessage": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      }
+    }
+  },
   "qrProductNotFoundMessage": "La camera {room} (piano {floor}) non contiene il prodotto SKU: «{sku}»",
+  "@qrProductNotFoundMessage": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
   "qrGenerateTabScan": "Scansiona QR",
   "qrGenerateTabGenerate": "Genera QR",
   "qrGenerateHotel": "Hotel",
@@ -389,6 +608,16 @@
   "settingsTapToScanSubtitle": "Tocca sulla casella del codice QR rilevato per scansionarlo",
   "qrConfirmAssignTitle": "Prodotto non posizionato",
   "qrConfirmAssignMessage": "Il prodotto {product} non è assegnato alla camera {room}. Aggiungere 1 pezzo all'inventario e assegnarlo alla camera?",
+  "@qrConfirmAssignMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "qrAssignSuccess": "Prodotto assegnato e ricaricato con successo",
   "qrActionCanceled": "Operazione annullata",
   "qrActionCanceledMessage": "Hai scelto di non assegnare il prodotto. Puoi scansionare un altro codice o tornare alle camere.",
@@ -396,16 +625,50 @@
   "scanAssignSuccess": "Prodotto assegnato con successo",
   "scanAssignFailed": "Assegnazione fallita",
   "scanAssignInStock": "{count} in stock — verrà dedotto 1 e assegnato alla stanza",
+  "@scanAssignInStock": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "scanAssignOutOfStock": "Esaurito — 1 unità verrà aggiunta automaticamente all'inventario e poi assegnata",
   "scanAssignDescription": "Questo prodotto non è ancora assegnato a questa stanza. Tocca qui sotto per assegnarlo.",
   "scanAssignButton": "Assegna alla stanza",
   "scanAssignAutoAdd": "Aggiungi all'inventario e assegna",
   "scanAssignAutoAddTitle": "Aggiungere all'inventario?",
   "scanAssignAutoAddMessage": "Il prodotto \"{product}\" è esaurito. Vuoi aggiungere automaticamente 1 unità all'inventario e assegnarla a questa stanza?",
+  "@scanAssignAutoAddMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "scanAssignConfirm": "Sì, aggiungi e assegna",
   "scanAssignSuccessMessage": "Il prodotto {product} è stato assegnato alla stanza {room} (Piano {floor}).",
+  "@scanAssignSuccessMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
   "qrMultipleDetected": "Rilevati più codici QR. Tocca per selezionare:",
   "qrUnknownSku": "Lo SKU \"{sku}\" non corrisponde a nessun prodotto noto.",
+  "@qrUnknownSku": {
+    "placeholders": {
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
   "goToRoom": "Vai alla stanza",
   "errorLoadingProducts": "Errore nel caricamento dei prodotti",
   "errorLoadingInventory": "Errore nel caricamento dell'inventario",
@@ -414,6 +677,13 @@
   "qrLabelScanInstructions": "Scansiona con l'app IVRA per ricaricare o sostituire",
   "roomsSearchProductPlaceholder": "Cerca prodotto per nome o SKU...",
   "adjustStockForProduct": "Regola stock per {product}",
+  "@adjustStockForProduct": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "roomsBtnRequestCorrection": "Richiedi correzione",
   "roomsLabelReason": "Motivo",
   "roomsMsgCorrectionQueued": "Richiesta correzione in coda",
@@ -422,6 +692,13 @@
   "roomsLabelProductsInRoom": "Prodotti in ciascuna camera",
   "roomsMsgSelectOneProduct": "Seleziona almeno un prodotto",
   "roomsMsgDuplicateRoomNumbers": "Questi numeri di camera esistono già in questo hotel: {numbers}. Scegli un numero iniziale o un conteggio diverso.",
+  "@roomsMsgDuplicateRoomNumbers": {
+    "placeholders": {
+      "numbers": {
+        "type": "String"
+      }
+    }
+  },
   "productsCatalogTitle": "Catalogo Prodotti",
   "productsBtnCreate": "Crea prodotto",
   "productsNoProducts": "Nessun prodotto nel catalogo ancora.",
@@ -439,12 +716,26 @@
   "productsLabelImage": "Carica Immagine",
   "productsLabelImageHint": "Seleziona un'immagine dal tuo dispositivo",
   "productsImageSelected": "Selezionato: {name}",
+  "@productsImageSelected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "productsImageSet": "Immagine impostata (tocca per cambiare)",
   "productsImageNone": "Nessuna immagine selezionata",
   "productsImageRemove": "Rimuovi immagine",
   "productsImageUploadFailed": "Caricamento immagine non riuscito. Riprova.",
   "productsImageInvalidType": "Seleziona un file immagine valido.",
   "productsImageTooLarge": "L'immagine è troppo grande (max {max} MB).",
+  "@productsImageTooLarge": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "productsAddedSuccess": "Prodotto aggiunto con successo",
   "productsUpdatedSuccess": "Prodotto aggiornato con successo",
   "productsLabelBottleMl": "Bottiglia ml",
@@ -566,14 +857,70 @@
   "offlineBannerPending": "azioni in sospeso",
   "offlineBannerSyncBtn": "Sincronizza ora",
   "offlineBannerAutoSynced": "Di nuovo online! {count} azioni sincronizzate",
+  "@offlineBannerAutoSynced": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "offlineBannerSyncFailed": "Sincronizzazione fallita per alcune azioni",
   "teamInvitationCancelled": "Invito annullato per {email}",
+  "@teamInvitationCancelled": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "teamInvitationResent": "Invito reinviato a {email}",
+  "@teamInvitationResent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "teamInvitationCopied": "Link di invito copiato per {email}",
+  "@teamInvitationCopied": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "approvalsRequestedBy": "Richiesto da {name}",
+  "@approvalsRequestedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "approvalsOldValue": "Vecchio: {value}",
+  "@approvalsOldValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "approvalsNewValue": "Nuovo: {value}",
+  "@approvalsNewValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "alertsSeverityLabel": "Gravità {severity}",
+  "@alertsSeverityLabel": {
+    "placeholders": {
+      "severity": {
+        "type": "String"
+      }
+    }
+  },
   "alertsStatusResolved": "Risolto",
   "alertsStatusOpen": "Aperto",
   "alertsMetricCritical": "Critico",
@@ -586,11 +933,42 @@
   "alertsFilterClear": "Cancella filtri",
   "alertsFilterNoMatch": "Nessun avviso corrisponde ai filtri correnti.",
   "alertsFilterShowing": "Mostrando {count} di {total}",
+  "@alertsFilterShowing": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionEditTitle": "Modifica azione in coda",
   "settingsActionConflictTitle": "Risolvi conflitto di sincronizzazione",
   "settingsActionAttempts": "Tentativi {count}",
+  "@settingsActionAttempts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionListAttempts": "Tentativi: {count}",
+  "@settingsActionListAttempts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionListError": "Errore: {message}",
+  "@settingsActionListError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "syncActionRefill": "Ricarica",
   "syncActionUndoRefill": "Annulla ricarica",
   "syncActionCorrectionRequest": "Richiesta di correzione",
@@ -622,24 +1000,125 @@
   "resolveAll": "Risolvi tutti",
   "deleteAll": "Elimina tutti",
   "alertsRefreshedToast": "{count} avvisi intelligenti creati",
+  "@alertsRefreshedToast": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "alertsEmptyTitle": "Nessun avviso al momento",
   "alertsEmptyMessage": "Aggiorna gli avvisi intelligenti per scansionare scorte, limiti di ricarica, età delle bottiglie e approvazioni in sospeso.",
   "alertsEmptyAction": "Aggiorna avvisi",
   "alertTypeLowBidonStock": "Scorte basse (bottiglie di ricarica)",
   "alertLowBottleTitle": "Scorte basse di bottiglie di {product}",
+  "@alertLowBottleTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "alertLowBidonTitle": "Scorte basse di bottiglie di ricarica di {product}",
+  "@alertLowBidonTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "alertLowBottleBody": "{hotel}: rimangono {remain} bottiglie piene. La soglia è {threshold}.",
+  "@alertLowBottleBody": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      },
+      "remain": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
   "alertLowBidonBody": "{hotel}: rimangono {remain} bottiglie di ricarica piene. La soglia è {threshold}.",
+  "@alertLowBidonBody": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      },
+      "remain": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
   "alertTypeLowBottleStock": "Scorte basse (bottiglie)",
   "alertTypeBottleAgeLimit": "Età bottiglia",
   "alertBottleAgeLimitTitle": "Camera {room}: la bottiglia di {product} è troppo vecchia",
+  "@alertBottleAgeLimitTitle": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "alertBottleAgeLimitBody": "L'età della bottiglia è di {age} giorni. Il limite è di {limit} giorni.",
+  "@alertBottleAgeLimitBody": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
   "alertTypeRefillLimit": "Limite ricariche",
   "alertRefillLimitTitle": "Camera {room}: {product} ha raggiunto il limite di ricariche",
+  "@alertRefillLimitTitle": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "alertRefillLimitBody": "{used}/{max} ricariche utilizzate. Sostituisci e ricicla la bottiglia.",
+  "@alertRefillLimitBody": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "alertTypePendingApproval": "Approvazione",
   "alertPendingApprovalTitle": "Approvazione in sospeso: {request}",
+  "@alertPendingApprovalTitle": {
+    "placeholders": {
+      "request": {
+        "type": "String"
+      }
+    }
+  },
   "alertPendingApprovalBody": "Richiesto da {name}.",
+  "@alertPendingApprovalBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "alertTypeSuspiciousActivity": "Attività sospetta",
   "alertTypeInactiveHotel": "Hotel inattivo",
   "refillEventApproved": "Approvato",
@@ -647,18 +1126,86 @@
   "teamDeactivateAccountTooltip": "Disattiva account",
   "teamReactivateAccountTooltip": "Riattiva account",
   "settingsSyncedSummary": "{synced} azioni sincronizzate",
+  "@settingsSyncedSummary": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      }
+    }
+  },
   "settingsSyncedSummarySingular": "{synced} azione sincronizzata",
+  "@settingsSyncedSummarySingular": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      }
+    }
+  },
   "settingsSyncedWithFailures": "{synced} sincronizzate, {failed} fallite",
+  "@settingsSyncedWithFailures": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      },
+      "failed": {
+        "type": "String"
+      }
+    }
+  },
   "inviteAcceptHeading": "Accetta invito Ivra",
   "inviteSubtitleWithHotel": "{name} è stato/a invitato/a come {role} per {hotel}.",
+  "@inviteSubtitleWithHotel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      },
+      "hotel": {
+        "type": "String"
+      }
+    }
+  },
   "inviteSubtitleNoHotel": "{name} è stato/a invitato/a come {role}.",
+  "@inviteSubtitleNoHotel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
   "inviteEmailMismatch": "Usa l'indirizzo email a cui è stato inviato questo invito.",
   "inviteAccountCreatedConfirm": "Account creato. Conferma la tua email, poi torna a questo link di invito e inserisci la stessa password per completare.",
   "inviteInvalidHeading": "Invito non disponibile",
   "inviteInvalidBody": "Questo invito potrebbe essere scaduto, annullato o già accettato.",
   "teamMemberReactivated": "{name} riattivato",
+  "@teamMemberReactivated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "teamMemberDeactivated": "{name} disattivato",
+  "@teamMemberDeactivated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionLastTried": "Ultimo tentativo {datetime}",
+  "@settingsActionLastTried": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionNeedsReview": "Azione ancora da rivedere",
   "teamInviteLinkUnavailable": "Il link dell'invito non è disponibile",
   "teamCopyLink": "Copia il link dell'invito",
@@ -674,6 +1221,13 @@
   "sendPushTitle": "Invia notifica",
   "teamViewAs": "Visualizza come",
   "impersonationBanner": "Visualizzazione come {name}",
+  "@impersonationBanner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "impersonationExit": "Esci",
   "pdfHeaderType": "Tipo",
   "pdfHeaderPrevious": "Precedente",
@@ -703,16 +1257,51 @@
   "productHistoryTitle": "Cronologia del prodotto",
   "productHistoryNoHistory": "Nessuna cronologia registrata per questo prodotto.",
   "productHistoryRefill": "Ricaricato nella camera {roomNumber}",
+  "@productHistoryRefill": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryReplacement": "Bottiglia sostituita nella camera {roomNumber}",
+  "@productHistoryReplacement": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryAdjustment": "Regolazione manuale delle scorte",
   "productHistoryActionBy": "Da {user}",
+  "@productHistoryActionBy": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryReason": "Motivo: {reason}",
+  "@productHistoryReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryDeltaFullBottles": "Bottiglie piene",
   "productHistoryDeltaUsedBottles": "Bottiglie usate",
   "productHistoryDeltaFullBidons": "Bottiglie di ricarica piene",
   "productHistoryDeltaOpenBidons": "Bottiglie usate e aperte",
   "productHistoryDeltaEmptyBidons": "Bottiglie usate e vuote",
   "productHistoryNewBottle": "Nuova bottiglia posizionata nella camera {roomNumber}",
+  "@productHistoryNewBottle": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryFilterAll": "Tutti",
   "productHistoryFilterRoom": "Eventi camera",
   "productHistoryFilterManual": "Regolazioni",
@@ -721,19 +1310,121 @@
   "productHistoryStatAdjustments": "Regolazioni",
   "inventoryEnforceTitle": "Scorte insufficienti",
   "inventoryEnforceTemplateContent": "Posizionare {total} bottiglia/e di {product} richiede scorte. L'stock magazzino ha solo {current}. Vuoi aggiungere automaticamente {needed} bottiglia/e all'stock magazzino e procedere?",
+  "@inventoryEnforceTemplateContent": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      },
+      "current": {
+        "type": "String"
+      },
+      "needed": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryEnforceReplaceContent": "Sostituire la bottiglia di {product} in Camera {room} richiede 1 bottiglia piena. L'stock magazzino ha 0. Vuoi aggiungere automaticamente 1 bottiglia all'stock magazzino e procedere?",
+  "@inventoryEnforceReplaceContent": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperReplaceGetFromHotel": "Sostituire {product} in Camera {room} richiede 1 bottiglia piena, ma non l'hai nel tuo inventario. Tuttavia, sono disponibili {count} bottiglie nell'inventario dell'hotel. Vuoi prendere 1 bottiglia dall'inventario dell'hotel e procedere?",
+  "@housekeeperReplaceGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperReplaceNotifyManager": "Sostituire {product} in Camera {room} richiede 1 bottiglia piena, ma non l'hai nel tuo inventario e non è disponibile nemmeno nell'inventario dell'hotel. Si prega di informare il direttore dell'hotel.",
+  "@housekeeperReplaceNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperAddGetFromHotel": "Aggiungere {product} in Camera {room} richiede 1 bottiglia piena, ma non l'hai nel tuo inventario. Tuttavia, sono disponibili {count} bottiglie nell'inventario dell'hotel. Vuoi prendere 1 bottiglia dall'inventario dell'hotel e procedere?",
+  "@housekeeperAddGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperAddNotifyManager": "Aggiungere {product} in Camera {room} richiede 1 bottiglia piena, ma non l'hai nel tuo inventario e non è disponibile nemmeno nell'inventario dell'hotel. Si prega di informare il direttore dell'hotel.",
+  "@housekeeperAddNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperRefillGetFromHotel": "Ricaricare {product} in Camera {room} richiede 1 tanica piena, ma non hai alcuna tanica aperta o piena nel tuo inventario. Tuttavia, sono disponibili {count} taniche nell'inventario dell'hotel. Vuoi prendere 1 tanica dall'inventario dell'hotel e procedere?",
+  "@housekeeperRefillGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperRefillNotifyManager": "Ricaricare {product} in Camera {room} richiede 1 tanica piena, ma non hai alcuna tanica aperta o piena nel tuo inventario e non è disponibile nemmeno nell'inventario dell'hotel. Si prega di informare il direttore dell'hotel.",
+  "@housekeeperRefillNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "btnOk": "OK",
   "inventoryEnforceBtnProceed": "Regola e procedi",
   "inventoryEnforceReasonTemplate": "Regolazione automatica per modello creazione camera",
   "inventoryEnforceReasonReplace": "Regolazione automatica per sostituzione",
   "inventoryEnforceOnboardingTitle": "Inizializza stock magazzino",
   "inventoryEnforceOnboardingContent": "Trattandosi di un nuovo hotel, non ci sono prodotti in stock magazzino. Vuoi inizializzare automaticamente l'stock magazzino con {total} bottiglie da posizionare nelle camere?",
+  "@inventoryEnforceOnboardingContent": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "authBtnCreateRole": "Crea Ruolo",
   "authCreateRoleTitle": "Crea Ruolo Personalizzato",
   "authRoleNameLabel": "Nome Ruolo (minuscolo snake_case)",
@@ -810,11 +1501,31 @@
   "stockEventRefillUse": "Usato per la ricarica",
   "stockEventReplaceUse": "Usato per la sostituzione della bottiglia",
   "housekeeperHotelStockAvailable": "Inventario hotel: {bottles} bottiglie piene, {bidons} bidoni pieni disponibili",
+  "@housekeeperHotelStockAvailable": {
+    "placeholders": {
+      "bottles": {
+        "type": "String"
+      },
+      "bidons": {
+        "type": "String"
+      }
+    }
+  },
   "sourceHousekeeperCart": "Dal carrello della cameriera",
   "sourceHotelInventory": "Dall'inventario dell'hotel",
   "userRoleHousekeeper": "Cameriera ai piani",
   "roomsBtnAddProduct": "Aggiungi prodotto",
   "roomsConfirmRemoveProduct": "Sei sicuro di voler rimuovere il prodotto '{productName}' dalla camera '{roomNumber}'?",
+  "@roomsConfirmRemoveProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "roomsProductRemoved": "Prodotto rimosso",
   "roomsProductAdded": "Prodotto aggiunto",
   "roomsAddProductTitle": "Aggiungi prodotto alla camera",
@@ -839,12 +1550,76 @@
   "dialogRefillNotesHint": "es: ricarica standard...",
   "dateFormatHint": "AAAA-MM-GG",
   "errorWithArgs": "Errore: {error}",
+  "@errorWithArgs": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "teamHotelSubtitle": "{city}, {country}",
+  "@teamHotelSubtitle": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "country": {
+        "type": "String"
+      }
+    }
+  },
   "productEventTitle": "{productName} - {eventLabel}",
+  "@productEventTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "eventLabel": {
+        "type": "String"
+      }
+    }
+  },
   "chipLabelValue": "{label}: {value}",
+  "@chipLabelValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "productSkuLabel": "{label} ({sku})",
+  "@productSkuLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
   "productSkuLabelReverse": "{sku} - {label}",
+  "@productSkuLabelReverse": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
   "roomNumberLabel": "Camera {number}",
+  "@roomNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "onboardingStep1Title": "Scansiona un QR Code",
   "onboardingStep1Desc": "Scansiona un codice QR su una bottiglia o una stanza per iniziare.",
   "onboardingStep2Title": "Ricarica una Bottiglia",
@@ -881,11 +1656,52 @@
   "helpContextReportsTitle": "Rapporti ed Esportazioni",
   "helpContextReportsDesc": "Genera ed esporta la cronologia delle ricariche, istantanee dell'inventario e riepiloghi degli avvisi. Utilizza i pulsanti di download per salvare questi dati come file CSV.",
   "noProductsFound": "Nessun prodotto trovato",
+  "@noProductsFound": {
+    "description": "Empty state message when no products are found"
+  },
   "markDamagedTitle": "Segna come danneggiato - {product} nella Stanza {room}",
+  "@markDamagedTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "markLostTitle": "Segna come perso - {product} nella Stanza {room}",
+  "@markLostTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "hkDeactivateWithStockTitle": "Inventario del Carrello",
   "hkDeactivateWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. Vuoi restituire questo inventario al magazzino centrale dell'hotel prima di disattivare il suo account?",
   "btnReturnAndDeactivate": "Restituisci e Disattiva",
   "btnJustDeactivate": "Solo Disattiva",
-  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione."
+  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione.",
+  "@hkDeleteWithStockMessage": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsNoPermissionsFound": "Nessuna autorizzazione trovata.",
+  "settingsFeatureColumn": "Funzionalità",
+  "settingsWhatsNew": "Novità",
+  "settingsCurrentVersion": "Versione attuale: v{version}",
+  "@settingsCurrentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
 }

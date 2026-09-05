@@ -2,10 +2,45 @@
   "@@locale": "ar",
   "markAsRead": "تحديد كمقروء",
   "confirmDeleteHotel": "هل أنت متأكد من رغبتك في حذف الفندق '{hotelName}'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع الغرف المرتبطة، وتعيينات الموظفين، والسجلات بشكل نهائي.",
+  "@confirmDeleteHotel": {
+    "placeholders": {
+      "hotelName": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteRoom": "هل أنت متأكد من رغبتك في حذف الغرفة '{roomNumber}'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع المنتجات والسجلات المرتبطة بشكل نهائي.",
+  "@confirmDeleteRoom": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteFloor": "هل أنت متأكد من رغبتك في حذف الطابق '{floorNumber}' وجميع غرفه؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.",
+  "@confirmDeleteFloor": {
+    "placeholders": {
+      "floorNumber": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteUser": "هل أنت متأكد من رغبتك في حذف عضو الفريق '{userName}'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.",
+  "@confirmDeleteUser": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteProduct": "هل أنت متأكد من رغبتك في حذف المنتج '{productName}'؟ لا يمكن التراجع عن هذا الإجراء وسيؤثر على تتبع مخزون المتجر.",
+  "@confirmDeleteProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
   "confirmDeleteAlert": "هل أنت متأكد من رغبتك في حذف هذا التنبيه؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.",
   "confirmDeleteAllAlerts": "هل أنت متأكد من رغبتك في حذف جميع التنبيهات؟ لا يمكن التراجع عن هذا الإجراء وسيؤدي إلى مسح جميع الإشعارات الحالية.",
   "clearAuditLogs": "مسح السجلات",
@@ -40,13 +75,37 @@
   "dashboardUnusualPatterns": "أنماط غير عادية",
   "dashboardNoStockData": "لا توجد بيانات مخزون المتجر",
   "dashboardRoomsRequireReview": "{count} غرف تحتاج إلى مراجعة",
+  "@dashboardRoomsRequireReview": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "dashboardNoUnusualPatterns": "لم يتم اكتشاف أنماط غير عادية",
   "dashboardHighPriority": "عالي",
   "dashboardStable": "مستقر",
   "errorLoadingHotels": "خطأ في تحميل الفنادق",
   "sending": "جاري الإرسال...",
   "roomsEditRoomTitle": "تحديث الغرفة {roomNumber}",
+  "@roomsEditRoomTitle": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "roomsEditProductTitle": "تحديث زجاجة {productName} في الغرفة {roomNumber}",
+  "@roomsEditProductTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "inventory": "مخزون المتجر",
   "alerts": "تنبيهات",
   "approvals": "الموافقات",
@@ -75,6 +134,16 @@
   "pleaseEnterTitleBody": "الرجاء إدخال عنوان ونص",
   "pleaseSelectTarget": "الرجاء تحديد القيمة المستهدفة",
   "notificationSent": "تم الإرسال: {successCount} نجاح، {failureCount} فشل",
+  "@notificationSent": {
+    "placeholders": {
+      "successCount": {
+        "type": "String"
+      },
+      "failureCount": {
+        "type": "String"
+      }
+    }
+  },
   "dashboardShort": "التحكم",
   "dashboardHeroTitle": "اليوم في Ivra",
   "dashboardRefillActivity": "نشاط التعبئة (آخر 7 أيام)",
@@ -159,14 +228,42 @@
   "inventoryTableProduct": "المنتج",
   "inventoryTableFullBottles": "العبوات الممتلئة",
   "inventoryTableFullBottlesWithPump": "عبوات ممتلئة بمضخة سعة {size}",
+  "@inventoryTableFullBottlesWithPump": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryTableFullBottlesWithoutPump": "عبوات ممتلئة بدون مضخة سعة {size}",
+  "@inventoryTableFullBottlesWithoutPump": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryTableFullBottlesWithPumpGeneric": "العبوات الممتلئة بمضخة",
   "inventoryTableFullBottlesWithoutPumpGeneric": "العبوات الممتلئة بدون مضخة",
   "inventoryCollapseHeader": "العبوات الفارغة والمفتوحة",
   "inventoryTableEmptyBottles": "العبوات المستبدلة بعد {months} أشهر (مستعملة)",
+  "@inventoryTableEmptyBottles": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryTableEmptyBottlesGeneric": "العبوات المستبدلة (مستعملة)",
   "inventoryTableEmptyBidons": "قوارير إعادة التعبئة الفار��ة",
   "inventoryTableFullBidons": "عبوات إعادة تعبئة ممتلئة سعة {size}",
+  "@inventoryTableFullBidons": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryTableFullBidonsGeneric": "عبوات إعادة تعبئة ممتلئة",
   "inventoryTableOpenBidons": "قوارير إعادة التعبئة المستعملة",
   "inventoryTableStatus": "الحالة",
@@ -186,8 +283,29 @@
   "bulkAdjustDeselectAll": "إلغاء تحديد الكل",
   "bulkAdjustNoProductsSelected": "يرجى تحديد منتج واحد على الأقل.",
   "orderNewBottlesText": "طلب {count} عبوات جديدة 1 لتر",
+  "@orderNewBottlesText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "orderNewBidonsText": "طلب {count} قوارير إعادة تعبئة جديدة 5 لتر",
+  "@orderNewBidonsText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "recycleBottlesText": "إعادة تدوير {count} عبوات",
+  "@recycleBottlesText": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "bottleCannotRefillRecycled": "تم إعادة تدوير هذه العبوة ولا يمكن إعادة تعبئتها. يرجى استبدالها.",
   "adjustStockTitle": "تعديل مخزون المتجر",
   "hotelRoomsTracked": "غرف متبعة",
@@ -252,8 +370,32 @@
   "authAccountDeactivated": "تمّ تعطيل هذا الحساب. تواصل مع المدير لاستعادة الوصول.",
   "settingsPayloadInvalidJson": "يجب أن تكون الحمولة كائن JSON.",
   "exportDownloadStarted": "بدأ تنزيل {fileName}",
+  "@exportDownloadStarted": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
   "exportSaved": "تمّ حفظ {fileName} في {path}",
+  "@exportSaved": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
   "settingsPendingSync": "في انتظار المزامنة ({count})",
+  "@settingsPendingSync": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "splashTagline": "حلول ضيافة مستدامة",
   "accountSaveFailed": "تعذّر حفظ ملفّك. حاول مرّة أخرى.",
   "accountPasswordChangeFailed": "تعذّر تغيير كلمة المرور. حاول مرّة أخرى.",
@@ -265,7 +407,27 @@
   "roomsTooltipCreateTemplate": "إنشاء نموذج غرفة",
   "roomsNoRoomsFound": "لم يتم العثور على غرف أو منتجات.",
   "roomsScanConfirmFromCart": "المنتج \"{product}\" غير مخصص حاليًا لهذه الغرفة، ولكن لديك {count} في عربتك. هل ترغب في أخذ زجاجة واحدة من عربتك وتخصيصها لهذه الغرفة؟",
+  "@roomsScanConfirmFromCart": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "roomsScanConfirmFromHotel": "المنتج \"{product}\" غير موجود في هذه الغرفة. تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة وتخصيصها لهذه الغرفة؟",
+  "@roomsScanConfirmFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "roomsNoProducts": "لا توجد منتجات مخصصة لهذه الغرفة.",
   "roomsStatusNoProducts": "لا توجد منتجات",
   "roomsSearchEmptyHint": "جرّب تعديل استفسار البحث أو العوامل التصفية.",
@@ -324,6 +486,16 @@
   "roomsHistoryRefill": "إعادة تعبئة",
   "roomsHistoryNewBottle": "تم وضع زجاجة جديدة",
   "roomsHistoryStatusChanged": "تغيرت الحالة من {oldValue} إلى {newValue}",
+  "@roomsHistoryStatusChanged": {
+    "placeholders": {
+      "oldValue": {
+        "type": "String"
+      },
+      "newValue": {
+        "type": "String"
+      }
+    }
+  },
   "roomsFilterAll": "الكل",
   "roomsDialogBottleEditTitle": "طلب تعديل العبوة للغرفة",
   "roomsLabelBottleStatus": "حالة العبوة",
@@ -349,6 +521,13 @@
   "qrDemoCodes": "رموز QR التجريبية",
   "qrActionPrompt": "حدد إجراءً",
   "qrActionMessage": "ماذا تريد أن تفعل لـ {product}؟",
+  "@qrActionMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "qrActionRefill": "تعبئة العبوة",
   "qrActionReplace": "استبدال العبوة",
   "hotelNotFound": "الفندق غير موجود",
@@ -364,11 +543,51 @@
   "qrReturnRooms": "العودة إلى الغرف",
   "qrTryScanAgain": "أعد المسح مرة أخرى",
   "qrFloorRoom": "الطابق {floor} • الغرفة {room}",
+  "@qrFloorRoom": {
+    "placeholders": {
+      "floor": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "qrRoomFloor": "الغرفة {room} • الطابق {floor}",
+  "@qrRoomFloor": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
   "qrCameraPermission": "تم رفض إذن الكاميرا",
   "qrCameraUnavailable": "الكاميرا غير متاحة",
   "qrHotelNotFoundMessage": "تعذر العثور على الفندق: «{hotel}»",
+  "@qrHotelNotFoundMessage": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      }
+    }
+  },
   "qrProductNotFoundMessage": "الغرفة {room} (الطابق {floor}) لا تحتوي على المنتج SKU: «{sku}»",
+  "@qrProductNotFoundMessage": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
   "qrGenerateTabScan": "مسح رمز QR",
   "qrGenerateTabGenerate": "توليد رموز QR",
   "qrGenerateHotel": "الفندق",
@@ -389,6 +608,16 @@
   "settingsTapToScanSubtitle": "انقر على مربع رمز QR المكتشف لمسحه",
   "qrConfirmAssignTitle": "المنتج غير موضوع",
   "qrConfirmAssignMessage": "المنتج {product} غير مخصص للغرفة {room}. هل تريد إضافة قطعة واحدة إلى المخزون وتخصيصها للغرفة؟",
+  "@qrConfirmAssignMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "qrAssignSuccess": "تم تخصيص المنتج وإعادة تعبئته بنجاح",
   "qrActionCanceled": "تم إلغاء العملية",
   "qrActionCanceledMessage": "اخترت عدم تخصيص المنتج. يمكنك مسح رمز آخر أو العودة إلى الغرف.",
@@ -396,16 +625,50 @@
   "scanAssignSuccess": "تم تعيين المنتج بنجاح",
   "scanAssignFailed": "فشل التعيين",
   "scanAssignInStock": "{count} في المخزون — سيتم خصم 1 وتعيينه للغرفة",
+  "@scanAssignInStock": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "scanAssignOutOfStock": "نفد المخزون — ستتم إضافة وحدة واحدة تلقائياً ثم تعيينها",
   "scanAssignDescription": "هذا المنتج غير معيّن لهذه الغرفة بعد. انقر أدناه لتعيينه.",
   "scanAssignButton": "تعيين للغرفة",
   "scanAssignAutoAdd": "إضافة للمخزون وتعيين",
   "scanAssignAutoAddTitle": "إضافة للمخزون؟",
   "scanAssignAutoAddMessage": "المنتج \"{product}\" نفد من المخزون. هل تريد إضافة وحدة واحدة تلقائياً وتعيينها لهذه الغرفة؟",
+  "@scanAssignAutoAddMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "scanAssignConfirm": "نعم، أضف وعيّن",
   "scanAssignSuccessMessage": "تم تعيين المنتج {product} للغرفة {room} (الطابق {floor}).",
+  "@scanAssignSuccessMessage": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "floor": {
+        "type": "String"
+      }
+    }
+  },
   "qrMultipleDetected": "تم اكتشاف عدة رموز QR. انقر للاختيار:",
   "qrUnknownSku": "رمز SKU \"{sku}\" لا يتطابق مع أي منتج معروف.",
+  "@qrUnknownSku": {
+    "placeholders": {
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
   "goToRoom": "الذهاب إلى الغرفة",
   "errorLoadingProducts": "خطأ في تحميل المنتجات",
   "errorLoadingInventory": "خطأ في تحميل المخزون",
@@ -414,6 +677,13 @@
   "qrLabelScanInstructions": "امسح بتطبيق IVRA لإعادة التعبئة أو الاستبدال",
   "roomsSearchProductPlaceholder": "البحث عن منتج بالاسم أو SKU...",
   "adjustStockForProduct": "تعديل مخزون المتجر لـ {product}",
+  "@adjustStockForProduct": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "roomsBtnRequestCorrection": "طلب تصحيح",
   "roomsLabelReason": "السبب",
   "roomsMsgCorrectionQueued": "تمت جدولة طلب التصحيح",
@@ -422,6 +692,13 @@
   "roomsLabelProductsInRoom": "المنتجات في كل غرفة",
   "roomsMsgSelectOneProduct": "حدد منتجاً واحداً على الأقل",
   "roomsMsgDuplicateRoomNumbers": "أرقام الغرف هذه موجودة بالفعل في هذا الفندق: {numbers}. اختر رقم بدء أو عدداً مختلفاً.",
+  "@roomsMsgDuplicateRoomNumbers": {
+    "placeholders": {
+      "numbers": {
+        "type": "String"
+      }
+    }
+  },
   "productsCatalogTitle": "كتالوج المنتجات",
   "productsBtnCreate": "إنشاء منتج",
   "productsNoProducts": "لا توجد منتجات في الكتالوج بعد.",
@@ -439,12 +716,26 @@
   "productsLabelImage": "تحميل صورة",
   "productsLabelImageHint": "اختر صورة من جهازك",
   "productsImageSelected": "المحدد: {name}",
+  "@productsImageSelected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "productsImageSet": "تم تعيين الصورة (اضغط للتغيير)",
   "productsImageNone": "لم يتم اختيار صورة",
   "productsImageRemove": "إزالة الصورة",
   "productsImageUploadFailed": "فشل تحميل الصورة. يرجى المحاولة مرة أخرى.",
   "productsImageInvalidType": "يرجى اختيار ملف صورة صالح.",
   "productsImageTooLarge": "الصورة كبيرة جدًا (الحد الأقصى {max} ميجابايت).",
+  "@productsImageTooLarge": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "productsAddedSuccess": "تمت إضافة المنتج بنجاح",
   "productsUpdatedSuccess": "تم تحديث المنتج بنجاح",
   "productsLabelBottleMl": "القارورة مل",
@@ -566,14 +857,70 @@
   "offlineBannerPending": "إجراءات معلقة",
   "offlineBannerSyncBtn": "مزامنة",
   "offlineBannerAutoSynced": "عودة للاتصال! تمت مزامنة {count} إجراءات",
+  "@offlineBannerAutoSynced": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "offlineBannerSyncFailed": "فشلت المزامنة لبعض الإجراءات",
   "teamInvitationCancelled": "تم إلغاء الدعوة لـ {email}",
+  "@teamInvitationCancelled": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "teamInvitationResent": "تمت إعادة إرسال الدعوة إلى {email}",
+  "@teamInvitationResent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "teamInvitationCopied": "تمّ نسخ رابط الدعوة لـ {email}",
+  "@teamInvitationCopied": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "approvalsRequestedBy": "طلب من قبل {name}",
+  "@approvalsRequestedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "approvalsOldValue": "القديم: {value}",
+  "@approvalsOldValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "approvalsNewValue": "الجديد: {value}",
+  "@approvalsNewValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "alertsSeverityLabel": "الخطورة {severity}",
+  "@alertsSeverityLabel": {
+    "placeholders": {
+      "severity": {
+        "type": "String"
+      }
+    }
+  },
   "alertsStatusResolved": "تمّ الحل",
   "alertsStatusOpen": "مفتوح",
   "alertsMetricCritical": "حرج",
@@ -586,11 +933,42 @@
   "alertsFilterClear": "مسح الفلاتر",
   "alertsFilterNoMatch": "لا توجد تنبيهات تطابق الفلاتر الحالية.",
   "alertsFilterShowing": "عرض {count} من أصل {total}",
+  "@alertsFilterShowing": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionEditTitle": "تعديل الإجراء المعلّق",
   "settingsActionConflictTitle": "حلّ تعارض المزامنة",
   "settingsActionAttempts": "المحاولات {count}",
+  "@settingsActionAttempts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionListAttempts": "المحاولات: {count}",
+  "@settingsActionListAttempts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionListError": "خطأ: {message}",
+  "@settingsActionListError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
   "syncActionRefill": "إعادة تعبئة",
   "syncActionUndoRefill": "تراجع عن إعادة التعبئة",
   "syncActionCorrectionRequest": "طلب تصحيح",
@@ -622,24 +1000,125 @@
   "resolveAll": "حل الكل",
   "deleteAll": "حذف الكل",
   "alertsRefreshedToast": "تمّ إنشاء {count} تنبيهات ذكيّة",
+  "@alertsRefreshedToast": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "alertsEmptyTitle": "لا توجد تنبيهات بعد",
   "alertsEmptyMessage": "حدّث التنبيهات الذكيّة لفحص مخزون المتجر وحدود إعادة التعبئة وعمر الزجاجات والموافقات المعلّقة.",
   "alertsEmptyAction": "تحديث التنبيهات",
   "alertTypeLowBidonStock": "مخزون المتجر من قوارير إعادة التعبئة منخفض",
   "alertLowBottleTitle": "انخفاض مخزون المتجر من زجاجات {product}",
+  "@alertLowBottleTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "alertLowBidonTitle": "انخفاض مخزون المتجر من قوارير إعادة التعبئة لـ {product}",
+  "@alertLowBidonTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "alertLowBottleBody": "{hotel}: تبقى {remain} زجاجات ممتلئة. الحد الأدنى هو {threshold}.",
+  "@alertLowBottleBody": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      },
+      "remain": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
   "alertLowBidonBody": "{hotel}: تبقى {remain} قوارير إعادة تعبئة ممتلئة. الحد الأدنى هو {threshold}.",
+  "@alertLowBidonBody": {
+    "placeholders": {
+      "hotel": {
+        "type": "String"
+      },
+      "remain": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
   "alertTypeLowBottleStock": "مخزون المتجر من زجاجات منخفض",
   "alertTypeBottleAgeLimit": "عمر الزجاجة",
   "alertBottleAgeLimitTitle": "غرفة {room}: زجاجة {product} قديمة جدًا",
+  "@alertBottleAgeLimitTitle": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "alertBottleAgeLimitBody": "عمر الزجاجة {age} يوم. الحد الأقصى هو {limit} يوم.",
+  "@alertBottleAgeLimitBody": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
   "alertTypeRefillLimit": "حد إعادة التعبئة",
   "alertRefillLimitTitle": "غرفة {room}: وصلت زجاجة {product} إلى الحد الأقصى لإعادة التعبئة",
+  "@alertRefillLimitTitle": {
+    "placeholders": {
+      "room": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "alertRefillLimitBody": "تم استخدام {used}/{max} من مرات إعادة التعبئة. استبدل الزجاجة وأعد تدويرها.",
+  "@alertRefillLimitBody": {
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
   "alertTypePendingApproval": "موافقة",
   "alertPendingApprovalTitle": "في انتظار الموافقة: {request}",
+  "@alertPendingApprovalTitle": {
+    "placeholders": {
+      "request": {
+        "type": "String"
+      }
+    }
+  },
   "alertPendingApprovalBody": "مطلوب بواسطة {name}.",
+  "@alertPendingApprovalBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "alertTypeSuspiciousActivity": "نشاط مشبوه",
   "alertTypeInactiveHotel": "فندق غير نشط",
   "refillEventApproved": "تمّت الموافقة",
@@ -647,18 +1126,86 @@
   "teamDeactivateAccountTooltip": "تعطيل الحساب",
   "teamReactivateAccountTooltip": "إعادة تفعيل الحساب",
   "settingsSyncedSummary": "تمّت مزامنة {synced} إجراءات",
+  "@settingsSyncedSummary": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      }
+    }
+  },
   "settingsSyncedSummarySingular": "تمّت مزامنة {synced} إجراء",
+  "@settingsSyncedSummarySingular": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      }
+    }
+  },
   "settingsSyncedWithFailures": "تمّت مزامنة {synced}، فشل {failed}",
+  "@settingsSyncedWithFailures": {
+    "placeholders": {
+      "synced": {
+        "type": "String"
+      },
+      "failed": {
+        "type": "String"
+      }
+    }
+  },
   "inviteAcceptHeading": "قبول دعوة Ivra",
   "inviteSubtitleWithHotel": "تمّت دعوة {name} بصفة {role} في {hotel}.",
+  "@inviteSubtitleWithHotel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      },
+      "hotel": {
+        "type": "String"
+      }
+    }
+  },
   "inviteSubtitleNoHotel": "تمّت دعوة {name} بصفة {role}.",
+  "@inviteSubtitleNoHotel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
   "inviteEmailMismatch": "استخدم عنوان البريد الإلكتروني الذي أُرسلت إليه هذه الدعوة.",
   "inviteAccountCreatedConfirm": "تم إنشاء الحساب. أكّد بريدك الإلكتروني، ثم عُد إلى رابط الدعوة وأدخل نفس كلمة المرور لإكمال الانضمام.",
   "inviteInvalidHeading": "الدعوة غير متاحة",
   "inviteInvalidBody": "ربّما انتهت صلاحية هذه الدعوة، أو أُلغيت، أو تم قبولها مسبقًا.",
   "teamMemberReactivated": "تم إعادة تفعيل {name}",
+  "@teamMemberReactivated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "teamMemberDeactivated": "تم تعطيل {name}",
+  "@teamMemberDeactivated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionLastTried": "آخر محاولة {datetime}",
+  "@settingsActionLastTried": {
+    "placeholders": {
+      "datetime": {
+        "type": "String"
+      }
+    }
+  },
   "settingsActionNeedsReview": "الإجراء لا يزال بحاجة للمراجعة",
   "teamInviteLinkUnavailable": "رابط الدعوة غير متاح",
   "teamCopyLink": "نسخ رابط الدعوة",
@@ -674,6 +1221,13 @@
   "sendPushTitle": "إرسال إشعار",
   "teamViewAs": "العرض بصفة",
   "impersonationBanner": "العرض بصفة {name}",
+  "@impersonationBanner": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "impersonationExit": "خروج",
   "pdfHeaderType": "النوع",
   "pdfHeaderPrevious": "السابق",
@@ -703,16 +1257,51 @@
   "productHistoryTitle": "سجل المنتج",
   "productHistoryNoHistory": "لا يوجد سجل مسجل لهذا المنتج.",
   "productHistoryRefill": "تمت إعادة التعبئة في الغرفة {roomNumber}",
+  "@productHistoryRefill": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryReplacement": "تم استبدال الزجاجة في الغرفة {roomNumber}",
+  "@productHistoryReplacement": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryAdjustment": "تعديل مخزون المتجر يدويًا",
   "productHistoryActionBy": "بواسطة {user}",
+  "@productHistoryActionBy": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryReason": "السبب: {reason}",
+  "@productHistoryReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryDeltaFullBottles": "زجاجات ممتلئة",
   "productHistoryDeltaUsedBottles": "زجاجات مستعملة",
   "productHistoryDeltaFullBidons": "زجاجات إعادة تعبئة ممتلئة",
   "productHistoryDeltaOpenBidons": "زجاجات إعادة تعبئة مفتوحة",
   "productHistoryDeltaEmptyBidons": "زجاجات إعادة تعبئة فارغة",
   "productHistoryNewBottle": "تم وضع زجاجة جديدة في الغرفة {roomNumber}",
+  "@productHistoryNewBottle": {
+    "placeholders": {
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "productHistoryFilterAll": "الكل",
   "productHistoryFilterRoom": "عمليات الغرف",
   "productHistoryFilterManual": "التعديلات",
@@ -721,19 +1310,121 @@
   "productHistoryStatAdjustments": "التعديلات",
   "inventoryEnforceTitle": "مخزون المتجر غير كافٍ",
   "inventoryEnforceTemplateContent": "وضع {total} زجاجة (زجاجات) من {product} يتطلب مخزونًا للمتجر. يحتوي مخزون المتجر فقط على {current}. هل ترغب في إضافة {needed} زجاجة (زجاجات) تلقائيًا إلى مخزون المتجر والمتابعة؟",
+  "@inventoryEnforceTemplateContent": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      },
+      "current": {
+        "type": "String"
+      },
+      "needed": {
+        "type": "String"
+      }
+    }
+  },
   "inventoryEnforceReplaceContent": "استبدال زجاجة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة. مخزون المتجر يحتوي على 0. هل ترغب في إضافة زجاجة واحدة تلقائيًا إلى مخزون المتجر والمتابعة؟",
+  "@inventoryEnforceReplaceContent": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperReplaceGetFromHotel": "استبدال {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك. ومع ذلك، تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة من مخزون الفندق والمتابعة؟",
+  "@housekeeperReplaceGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperReplaceNotifyManager": "استبدال {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.",
+  "@housekeeperReplaceNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperAddGetFromHotel": "إضافة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك. ومع ذلك، تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة من مخزون الفندق والمتابعة؟",
+  "@housekeeperAddGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperAddNotifyManager": "إضافة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.",
+  "@housekeeperAddNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperRefillGetFromHotel": "إعادة تعبئة {product} في الغرفة {room} يتطلب عبوة ممتلئة واحدة، ولكن ليس لديك أي عبوة مفتوحة أو ممتلئة في مخزونك. ومع ذلك، تتوفر {count} عبوة في مخزون الفندق. هل ترغب في أخذ عبوة واحدة من مخزون الفندق والمتابعة؟",
+  "@housekeeperRefillGetFromHotel": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
   "housekeeperRefillNotifyManager": "إعادة تعبئة {product} في الغرفة {room} يتطلب عبوة ممتلئة واحدة، ولكن ليس لديك أي عبوة مفتوحة أو ممتلئة في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.",
+  "@housekeeperRefillNotifyManager": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "btnOk": "موافق",
   "inventoryEnforceBtnProceed": "التعديل التلقائي والمتابعة",
   "inventoryEnforceReasonTemplate": "تعديل تلقائي لنموذج إنشاء الغرف",
   "inventoryEnforceReasonReplace": "تعديل تلقائي للاستبدال",
   "inventoryEnforceOnboardingTitle": "تهيئة مخزون المتجر",
   "inventoryEnforceOnboardingContent": "بما أن هذا فندق جديد، فلا توجد منتجات في مخزون المتجر. هل ترغب في تهيئة مخزون المتجر تلقائيًا بـ {total} زجاجة لوضعها في الغرف؟",
+  "@inventoryEnforceOnboardingContent": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "authBtnCreateRole": "إنشاء دور",
   "authCreateRoleTitle": "إنشاء دور مخصص",
   "authRoleNameLabel": "اسم الدور (أحرف صغيرة snake_case)",
@@ -810,11 +1501,31 @@
   "stockEventRefillUse": "استُخدم لإعادة التعبئة",
   "stockEventReplaceUse": "استُخدم لاستبدال الزجاجة",
   "housekeeperHotelStockAvailable": "مخزون الفندق: {bottles} زجاجة ممتلئة، {bidons} عبوة ممتلئة متاحة",
+  "@housekeeperHotelStockAvailable": {
+    "placeholders": {
+      "bottles": {
+        "type": "String"
+      },
+      "bidons": {
+        "type": "String"
+      }
+    }
+  },
   "sourceHousekeeperCart": "من عربة عاملة النظافة",
   "sourceHotelInventory": "من مخزون الفندق",
   "userRoleHousekeeper": "عاملة الغرف",
   "roomsBtnAddProduct": "إضافة منتج",
   "roomsConfirmRemoveProduct": "هل أنت متأكد من رغبتك في إزالة المنتج '{productName}' من الغرفة '{roomNumber}'؟",
+  "@roomsConfirmRemoveProduct": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "roomNumber": {
+        "type": "String"
+      }
+    }
+  },
   "roomsProductRemoved": "تمت إزالة المنتج",
   "roomsProductAdded": "تمت إضافة المنتج",
   "roomsAddProductTitle": "إضافة منتج إلى الغرفة",
@@ -839,12 +1550,76 @@
   "dialogRefillNotesHint": "مثال: تعبئة قياسية...",
   "dateFormatHint": "سنة-شهر-يوم",
   "errorWithArgs": "خطأ: {error}",
+  "@errorWithArgs": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "teamHotelSubtitle": "{city}، {country}",
+  "@teamHotelSubtitle": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      },
+      "country": {
+        "type": "String"
+      }
+    }
+  },
   "productEventTitle": "{productName} - {eventLabel}",
+  "@productEventTitle": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      },
+      "eventLabel": {
+        "type": "String"
+      }
+    }
+  },
   "chipLabelValue": "{label}: {value}",
+  "@chipLabelValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "productSkuLabel": "{label} ({sku})",
+  "@productSkuLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
   "productSkuLabelReverse": "{sku} - {label}",
+  "@productSkuLabelReverse": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "sku": {
+        "type": "String"
+      }
+    }
+  },
   "roomNumberLabel": "غرفة {number}",
+  "@roomNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
   "onboardingStep1Title": "مسح رمز الاستجابة السريعة",
   "onboardingStep1Desc": "قم بمسح رمز الاستجابة السريعة الموجود على زجاجة أو غرفة للبدء.",
   "onboardingStep2Title": "إعادة تعبئة الزجاجة",
@@ -881,11 +1656,52 @@
   "helpContextReportsTitle": "التقارير والتصدير",
   "helpContextReportsDesc": "إنشاء وتصدير سجل إعادة التعبئة ولقطات المخزون وملخصات التنبيهات. استخدم أزرار التنزيل لحفظ هذه البيانات كملفات CSV.",
   "noProductsFound": "لم يتم العثور على منتجات",
+  "@noProductsFound": {
+    "description": "Empty state message when no products are found"
+  },
   "markDamagedTitle": "وضع علامة كـ تالف - {product} في الغرفة {room}",
+  "@markDamagedTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "markLostTitle": "وضع علامة كـ مفقود - {product} في الغرفة {room}",
+  "@markLostTitle": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "room": {
+        "type": "String"
+      }
+    }
+  },
   "hkDeactivateWithStockTitle": "مخزون عربة عاملة النظافة",
   "hkDeactivateWithStockMessage": "تحتوي عربة عاملة النظافة هذه على مخزون نشط. هل ترغب في إعادة هذا المخزون إلى المخزون المركزي للفندق قبل إلغاء تنشيط حسابها؟",
   "btnReturnAndDeactivate": "إرجاع وإلغاء التنشيط",
   "btnJustDeactivate": "إلغاء التنشيط فقط",
-  "hkDeleteWithStockMessage": "تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق '{userName}'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور."
+  "hkDeleteWithStockMessage": "تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق '{userName}'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.",
+  "@hkDeleteWithStockMessage": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsNoPermissionsFound": "لم يتم العثور على أذونات.",
+  "settingsFeatureColumn": "الميزة",
+  "settingsWhatsNew": "ما الجديد",
+  "settingsCurrentVersion": "الإصدار الحالي: v{version}",
+  "@settingsCurrentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
 }
