@@ -887,8 +887,5 @@
   "hkDeactivateWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. Vuoi restituire questo inventario al magazzino centrale dell'hotel prima di disattivare il suo account?",
   "btnReturnAndDeactivate": "Restituisci e Disattiva",
   "btnJustDeactivate": "Solo Disattiva",
-  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione.",
-  "noPermissionsFound": "Nessun permesso trovato.",
-  "failedToLoadChangelog": "Impossibile caricare il registro delle modifiche.",
-  "invitationSent": "Invito inviato"
+  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione."
 }

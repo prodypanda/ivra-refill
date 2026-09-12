@@ -51,7 +51,7 @@ class RolePermissionsScreen extends ConsumerWidget {
           final permissions = data.permissions;
           
           if (roles.isEmpty || permissions.isEmpty) {
-             return Center(child: Text(l10n.t('noPermissionsFound')));
+             return const Center(child: Text("No permissions found."));
           }
 
           // Convert sets to a distinct list of all possible permissions

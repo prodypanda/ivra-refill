@@ -70,7 +70,7 @@ import 'app_settings_screen.dart';
       );
     } catch (e) {
       if (context.mounted) {
-        PremiumSnackbar.showError(context, l10n.t('failedToLoadChangelog'));
+        PremiumSnackbar.showError(context, 'Failed to load changelog.');
       }
     }
   }

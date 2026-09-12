@@ -883,7 +883,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                     );
                     if (context.mounted) {
                       Navigator.of(context).pop();
-                      PremiumSnackbar.show(context, l10n.t('invitationSent'), icon: Icons.check);
+                      PremiumSnackbar.show(context, 'Invitation sent', icon: Icons.check);
                       ref.invalidate(hotelHousekeepersProvider);
                     }
                   } catch (e) {
