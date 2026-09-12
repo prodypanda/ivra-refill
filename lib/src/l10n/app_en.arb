@@ -1692,5 +1692,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "noPermissionsFound": "No permissions found.",
+  "failedToLoadChangelog": "Failed to load changelog.",
+  "invitationSent": "Invitation sent"
 }
