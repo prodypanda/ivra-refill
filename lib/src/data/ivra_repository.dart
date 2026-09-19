@@ -1,13 +1,13 @@
-import '../domain/models.dart';
-import '../domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
 
-
+/// A class representing IvraRepository.
+///
+/// Provides data structure and operations for IvraRepository.
 abstract class IvraRepository {
   Future<UserProfile> currentUser();
 
-  Future<void> updateCurrentUserProfile({
-    required String fullName,
-  });
+  Future<void> updateCurrentUserProfile({required String fullName});
 
   Future<void> updateUserProfile({
     required String userId,
@@ -15,9 +15,7 @@ abstract class IvraRepository {
     UserRole? role,
   });
 
-  Future<void> changeCurrentUserPassword({
-    required String password,
-  });
+  Future<void> changeCurrentUserPassword({required String password});
 
   Future<DashboardMetrics> dashboardMetrics({String? hotelId});
   Future<List<Hotel>> hotels();
@@ -27,7 +25,10 @@ abstract class IvraRepository {
   Future<List<RoomInfo>> rooms({String? hotelId});
   Future<List<RoomProduct>> roomProducts({String? hotelId, String? roomId});
   Future<List<InventoryItem>> inventory({String? hotelId});
-  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({String? housekeeperId, String? hotelId});
+  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({
+    String? housekeeperId,
+    String? hotelId,
+  });
 
   /// Per-product movement history for a housekeeper's cart (checkouts,
   /// returns, room placements, refill/replace usages).
@@ -37,7 +38,12 @@ abstract class IvraRepository {
     String? hotelId,
     int limit = 100,
   });
-  Future<void> checkoutHousekeeperStock({required String housekeeperId, required String productId, required int fullBottles, required int fullBidons});
+  Future<void> checkoutHousekeeperStock({
+    required String housekeeperId,
+    required String productId,
+    required int fullBottles,
+    required int fullBidons,
+  });
   Future<void> returnHousekeeperStock({
     required String housekeeperId,
     required String productId,
@@ -53,7 +59,6 @@ abstract class IvraRepository {
   Future<List<AlertItem>> alerts({String? hotelId});
   Future<List<RefillEvent>> recentRefillEvents({String? hotelId});
   Future<List<InventoryEvent>> recentInventoryEvents({String? hotelId});
-
 
   /// Returns the set of `client_request_id`s the server has already applied for
   /// the given hotel (refill/replace events plus stock-adjustment events).
@@ -75,10 +80,7 @@ abstract class IvraRepository {
     required String permission,
     required bool isEnabled,
   });
-  Future<void> createRole({
-    required String name,
-    String? description,
-  });
+  Future<void> createRole({required String name, String? description});
 
   Future<void> createHotel({
     required String name,

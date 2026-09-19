@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
 
 class PremiumConfirmDialog extends StatelessWidget {
   const PremiumConfirmDialog({
@@ -48,8 +48,10 @@ class PremiumConfirmDialog extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
 
-    final highlightColor = isDestructive ? colorScheme.error : colorScheme.primary;
-    final onHighlightColor = isDestructive ? colorScheme.onError : colorScheme.onPrimary;
+    final highlightColor =
+        isDestructive ? colorScheme.error : colorScheme.primary;
+    final onHighlightColor =
+        isDestructive ? colorScheme.onError : colorScheme.onPrimary;
 
     return Center(
       child: Container(
@@ -88,7 +90,9 @@ class PremiumConfirmDialog extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        isDestructive ? Icons.warning_amber_rounded : Icons.info_outline_rounded,
+                        isDestructive
+                            ? Icons.warning_amber_rounded
+                            : Icons.info_outline_rounded,
                         color: highlightColor,
                         size: 32,
                       ),
@@ -125,7 +129,9 @@ class PremiumConfirmDialog extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               side: BorderSide(
-                                color: colorScheme.outline.withValues(alpha: 0.5),
+                                color: colorScheme.outline.withValues(
+                                  alpha: 0.5,
+                                ),
                               ),
                             ),
                             onPressed: () => Navigator.of(context).pop(false),
@@ -151,7 +157,10 @@ class PremiumConfirmDialog extends StatelessWidget {
                             ),
                             onPressed: () => Navigator.of(context).pop(true),
                             child: Text(
-                              confirmLabel ?? (isDestructive ? l10n.t('delete') : l10n.t('btnConfirm')),
+                              confirmLabel ??
+                                  (isDestructive
+                                      ? l10n.t('delete')
+                                      : l10n.t('btnConfirm')),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),

@@ -4,11 +4,13 @@ import 'dart:io' show Platform;
 import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/data/ivra_repository.dart';
 
-import '../domain/app_enums.dart';
-import '../domain/models.dart';
-import 'ivra_repository.dart';
-
+/// A class representing MockIvraRepository.
+///
+/// Provides data structure and operations for MockIvraRepository.
 class MockIvraRepository implements IvraRepository {
   MockIvraRepository() {
     _mockRolePermissions = {
@@ -53,16 +55,8 @@ class MockIvraRepository implements IvraRepository {
         'view_inventory',
         'submit_edit_requests',
       },
-      'hotel_staff': {
-        'view_alerts',
-        'view_rooms',
-        'view_inventory',
-      },
-      'housekeeper': {
-        'view_alerts',
-        'view_rooms',
-        'view_inventory',
-      },
+      'hotel_staff': {'view_alerts', 'view_rooms', 'view_inventory'},
+      'housekeeper': {'view_alerts', 'view_rooms', 'view_inventory'},
     };
     _hotels = [
       const Hotel(
@@ -347,8 +341,6 @@ class MockIvraRepository implements IvraRepository {
     }
   }
 
-
-
   final _uuid = const Uuid();
 
   final List<String> _mockRoles = [
@@ -368,7 +360,7 @@ class MockIvraRepository implements IvraRepository {
   );
 
   final _products = [
-    Product(
+    const Product(
       id: 'prod-shampoo',
       sku: 'IVR-SHA-1L',
       nameEn: 'Shampoo',
@@ -380,7 +372,7 @@ class MockIvraRepository implements IvraRepository {
       lowBottleThreshold: 12,
       lowBidonThreshold: 4,
     ),
-    Product(
+    const Product(
       id: 'prod-conditioner',
       sku: 'IVR-CON-1L',
       nameEn: 'Conditioner',
@@ -392,7 +384,7 @@ class MockIvraRepository implements IvraRepository {
       lowBottleThreshold: 12,
       lowBidonThreshold: 4,
     ),
-    Product(
+    const Product(
       id: 'prod-shower-gel',
       sku: 'IVR-GEL-1L',
       nameEn: 'Shower Gel',
@@ -404,7 +396,7 @@ class MockIvraRepository implements IvraRepository {
       lowBottleThreshold: 12,
       lowBidonThreshold: 4,
     ),
-    Product(
+    const Product(
       id: 'prod-hand-wash',
       sku: 'IVR-HWA-1L',
       nameEn: 'Hand Wash',
@@ -416,7 +408,7 @@ class MockIvraRepository implements IvraRepository {
       lowBottleThreshold: 12,
       lowBidonThreshold: 4,
     ),
-    Product(
+    const Product(
       id: 'prod-lotion',
       sku: 'IVR-LOT-1L',
       nameEn: 'Hand and Body Lotion',
@@ -445,7 +437,6 @@ class MockIvraRepository implements IvraRepository {
   final Map<String, double> _openBidonVolumeLeft = {};
   final List<HousekeeperAllocation> _housekeeperAllocations = [];
 
-
   @override
   Future<void> clearCachedData() async {}
 
@@ -464,9 +455,7 @@ class MockIvraRepository implements IvraRepository {
       (member) => member.id == _currentUser.id,
     );
     if (index != -1) {
-      _teamMembers[index] = _teamMembers[index].copyWith(
-        fullName: trimmedName,
-      );
+      _teamMembers[index] = _teamMembers[index].copyWith(fullName: trimmedName);
     }
   }
 
@@ -481,16 +470,14 @@ class MockIvraRepository implements IvraRepository {
       throw ArgumentError('Full name is required.');
     }
 
-    final index = _teamMembers.indexWhere(
-      (member) => member.id == userId,
-    );
+    final index = _teamMembers.indexWhere((member) => member.id == userId);
     if (index != -1) {
       _teamMembers[index] = _teamMembers[index].copyWith(
         fullName: trimmedName,
         role: role ?? _teamMembers[index].role,
       );
     }
-    
+
     if (_currentUser.id == userId) {
       _currentUser = _currentUser.copyWith(
         fullName: trimmedName,
@@ -553,29 +540,38 @@ class MockIvraRepository implements IvraRepository {
 
   @override
   Future<DashboardMetrics> dashboardMetrics({String? hotelId}) async {
-    final lowStock = (await inventory(hotelId: hotelId)).where(
-      (item) => item.lowBidons || item.lowBottles,
-    );
-    final roomsList = _rooms.where((room) => hotelId == null || room.hotelId == hotelId).toList();
+    final lowStock = (await inventory(
+      hotelId: hotelId,
+    ))
+        .where((item) => item.lowBidons || item.lowBottles);
+    final roomsList = _rooms
+        .where((room) => hotelId == null || room.hotelId == hotelId)
+        .toList();
 
     return DashboardMetrics(
       hotelCount: hotelId == null ? _hotels.length : 1,
       roomCount: roomsList.length,
       pendingApprovals: _approvalRequests
-          .where((item) =>
-              item.status == ApprovalStatus.pending &&
-              (hotelId == null || item.hotelId == hotelId))
+          .where(
+            (item) =>
+                item.status == ApprovalStatus.pending &&
+                (hotelId == null || item.hotelId == hotelId),
+          )
           .length,
       openAlerts: _alerts
-          .where((alert) =>
-              !alert.isResolved &&
-              (hotelId == null || alert.hotelId == hotelId))
+          .where(
+            (alert) =>
+                !alert.isResolved &&
+                (hotelId == null || alert.hotelId == hotelId),
+          )
           .length,
       bottlesToReplace: _roomProducts
-          .where((item) =>
-              (hotelId == null || item.hotelId == hotelId) &&
-              (item.status == BottleStatus.refillLimitReached ||
-                  item.status == BottleStatus.tooOld))
+          .where(
+            (item) =>
+                (hotelId == null || item.hotelId == hotelId) &&
+                (item.status == BottleStatus.refillLimitReached ||
+                    item.status == BottleStatus.tooOld),
+          )
           .length,
       lowStockProducts: lowStock.length,
     );
@@ -587,19 +583,23 @@ class MockIvraRepository implements IvraRepository {
   @override
   Future<List<UserProfile>> teamMembers({String? hotelId}) async {
     return _teamMembers
-        .where((member) =>
-            hotelId == null ||
-            member.hotelId == hotelId ||
-            member.hotelId == null)
+        .where(
+          (member) =>
+              hotelId == null ||
+              member.hotelId == hotelId ||
+              member.hotelId == null,
+        )
         .toList();
   }
 
   @override
   Future<List<TeamInvitation>> teamInvitations({String? hotelId}) async {
     return _teamInvitations
-        .where((invite) =>
-            invite.status == 'pending' &&
-            (hotelId == null || invite.hotelId == hotelId))
+        .where(
+          (invite) =>
+              invite.status == 'pending' &&
+              (hotelId == null || invite.hotelId == hotelId),
+        )
         .toList();
   }
 
@@ -632,9 +632,13 @@ class MockIvraRepository implements IvraRepository {
   }
 
   @override
-  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({String? housekeeperId, String? hotelId}) async {
+  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({
+    String? housekeeperId,
+    String? hotelId,
+  }) async {
     return _housekeeperAllocations.where((alloc) {
-      final matchHousekeeper = housekeeperId == null || alloc.housekeeperId == housekeeperId;
+      final matchHousekeeper =
+          housekeeperId == null || alloc.housekeeperId == housekeeperId;
       final matchHotel = hotelId == null || alloc.hotelId == hotelId;
       return matchHousekeeper && matchHotel;
     }).toList();
@@ -687,10 +691,12 @@ class MockIvraRepository implements IvraRepository {
     int limit = 100,
   }) async {
     return _housekeeperStockEvents
-        .where((e) =>
-            (housekeeperId == null || e.housekeeperId == housekeeperId) &&
-            (productId == null || e.product.id == productId) &&
-            (hotelId == null || e.hotelId == hotelId))
+        .where(
+          (e) =>
+              (housekeeperId == null || e.housekeeperId == housekeeperId) &&
+              (productId == null || e.product.id == productId) &&
+              (hotelId == null || e.hotelId == hotelId),
+        )
         .take(limit)
         .toList();
   }
@@ -724,12 +730,15 @@ class MockIvraRepository implements IvraRepository {
       throw Exception('Housekeeper is not assigned to a hotel');
     }
 
-    final invIndex = _inventory.indexWhere((item) => item.hotelId == hotelId && item.product.id == productId);
+    final invIndex = _inventory.indexWhere(
+      (item) => item.hotelId == hotelId && item.product.id == productId,
+    );
     if (invIndex == -1) {
       throw Exception('Product inventory not found');
     }
     final centralInv = _inventory[invIndex];
-    if (centralInv.fullBottles < fullBottles || centralInv.fullBidons < fullBidons) {
+    if (centralInv.fullBottles < fullBottles ||
+        centralInv.fullBidons < fullBidons) {
       throw Exception('Insufficient central stock');
     }
 
@@ -738,34 +747,42 @@ class MockIvraRepository implements IvraRepository {
       fullBidons: centralInv.fullBidons - fullBidons,
     );
 
-    _mockAuditLogs.insert(0, AuditLog(
-      id: DateTime.now().toIso8601String(),
-      createdAt: DateTime.now(),
-      action: 'Checked out housekeeper stock',
-      userId: housekeeperId,
-      details: {
-        'housekeeper_id': housekeeperId,
-        'product_id': productId,
-        'full_bottles': fullBottles,
-        'full_bidons': fullBidons,
-      },
-    ));
+    _mockAuditLogs.insert(
+      0,
+      AuditLog(
+        id: DateTime.now().toIso8601String(),
+        createdAt: DateTime.now(),
+        action: 'Checked out housekeeper stock',
+        userId: housekeeperId,
+        details: {
+          'housekeeper_id': housekeeperId,
+          'product_id': productId,
+          'full_bottles': fullBottles,
+          'full_bidons': fullBidons,
+        },
+      ),
+    );
 
     final product = centralInv.product;
-    final allocIndex = _housekeeperAllocations.indexWhere((alloc) => alloc.housekeeperId == housekeeperId && alloc.product.id == productId);
+    final allocIndex = _housekeeperAllocations.indexWhere(
+      (alloc) =>
+          alloc.housekeeperId == housekeeperId && alloc.product.id == productId,
+    );
     if (allocIndex == -1) {
-      _housekeeperAllocations.add(HousekeeperAllocation(
-        id: DateTime.now().toIso8601String(),
-        housekeeperId: housekeeperId,
-        hotelId: hotelId,
-        product: product,
-        fullBottles: fullBottles,
-        emptyBottles: 0,
-        fullBidons: fullBidons,
-        openBidons: 0,
-        emptyBidons: 0,
-        openBidonVolumeLeftMl: 0.0,
-      ));
+      _housekeeperAllocations.add(
+        HousekeeperAllocation(
+          id: DateTime.now().toIso8601String(),
+          housekeeperId: housekeeperId,
+          hotelId: hotelId,
+          product: product,
+          fullBottles: fullBottles,
+          emptyBottles: 0,
+          fullBidons: fullBidons,
+          openBidons: 0,
+          emptyBidons: 0,
+          openBidonVolumeLeftMl: 0.0,
+        ),
+      );
     } else {
       final existing = _housekeeperAllocations[allocIndex];
       _housekeeperAllocations[allocIndex] = existing.copyWith(
@@ -804,7 +821,10 @@ class MockIvraRepository implements IvraRepository {
       throw Exception('Housekeeper is not assigned to a hotel');
     }
 
-    final allocIndex = _housekeeperAllocations.indexWhere((alloc) => alloc.housekeeperId == housekeeperId && alloc.product.id == productId);
+    final allocIndex = _housekeeperAllocations.indexWhere(
+      (alloc) =>
+          alloc.housekeeperId == housekeeperId && alloc.product.id == productId,
+    );
     if (allocIndex == -1) {
       throw Exception('Allocation not found');
     }
@@ -825,16 +845,20 @@ class MockIvraRepository implements IvraRepository {
       fullBidons: alloc.fullBidons - fullBidons,
       openBidons: alloc.openBidons - openBidons,
       emptyBidons: alloc.emptyBidons - emptyBidons,
-      openBidonVolumeLeftMl: alloc.openBidonVolumeLeftMl - openBidonVolumeLeftMl,
+      openBidonVolumeLeftMl:
+          alloc.openBidonVolumeLeftMl - openBidonVolumeLeftMl,
     );
 
-    final invIndex = _inventory.indexWhere((item) => item.hotelId == hotelId && item.product.id == productId);
+    final invIndex = _inventory.indexWhere(
+      (item) => item.hotelId == hotelId && item.product.id == productId,
+    );
     if (invIndex == -1) {
       throw Exception('Central inventory item not found');
     }
     final centralInv = _inventory[invIndex];
 
-    double newCentralOpenVolume = centralInv.openBidonVolumeLeftMl + openBidonVolumeLeftMl;
+    double newCentralOpenVolume =
+        centralInv.openBidonVolumeLeftMl + openBidonVolumeLeftMl;
     int additionalFullBidons = 0;
     final int capacity = centralInv.product.bidonVolumeMl;
 
@@ -853,22 +877,25 @@ class MockIvraRepository implements IvraRepository {
       openBidonVolumeLeftMl: newCentralOpenVolume,
     );
 
-    _mockAuditLogs.insert(0, AuditLog(
-      id: DateTime.now().toIso8601String(),
-      createdAt: DateTime.now(),
-      action: 'Returned housekeeper stock',
-      userId: housekeeperId,
-      details: {
-        'housekeeper_id': housekeeperId,
-        'product_id': productId,
-        'full_bottles': fullBottles,
-        'empty_bottles': emptyBottles,
-        'full_bidons': fullBidons,
-        'open_bidons': openBidons,
-        'empty_bidons': emptyBidons,
-        'open_bidon_volume_left_ml': openBidonVolumeLeftMl,
-      },
-    ));
+    _mockAuditLogs.insert(
+      0,
+      AuditLog(
+        id: DateTime.now().toIso8601String(),
+        createdAt: DateTime.now(),
+        action: 'Returned housekeeper stock',
+        userId: housekeeperId,
+        details: {
+          'housekeeper_id': housekeeperId,
+          'product_id': productId,
+          'full_bottles': fullBottles,
+          'empty_bottles': emptyBottles,
+          'full_bidons': fullBidons,
+          'open_bidons': openBidons,
+          'empty_bidons': emptyBidons,
+          'open_bidon_volume_left_ml': openBidonVolumeLeftMl,
+        },
+      ),
+    );
 
     _logHousekeeperStockEvent(
       hotelId: hotelId,
@@ -890,37 +917,45 @@ class MockIvraRepository implements IvraRepository {
     return scopedInventory
         .map((item) {
           final recycleCount = _roomProducts
-              .where((roomProduct) =>
-                  roomProduct.hotelId == item.hotelId &&
-                  roomProduct.product.id == item.product.id &&
-                  (roomProduct.status == BottleStatus.refillLimitReached ||
-                      roomProduct.status == BottleStatus.tooOld ||
-                      roomProduct.status == BottleStatus.needsReplacement))
+              .where(
+                (roomProduct) =>
+                    roomProduct.hotelId == item.hotelId &&
+                    roomProduct.product.id == item.product.id &&
+                    (roomProduct.status == BottleStatus.refillLimitReached ||
+                        roomProduct.status == BottleStatus.tooOld ||
+                        roomProduct.status == BottleStatus.needsReplacement),
+              )
               .length;
           return SuggestedOrder(
             hotelId: item.hotelId,
             product: item.product,
-            bottlesToOrder:
-                max(item.product.lowBottleThreshold * 2 - item.fullBottles, 0),
+            bottlesToOrder: max(
+              item.product.lowBottleThreshold * 2 - item.fullBottles,
+              0,
+            ),
             bidonsToOrder: item.product.isRefillable
                 ? max(item.product.lowBidonThreshold * 2 - item.fullBidons, 0)
                 : 0,
             bottlesToRecycle: recycleCount,
           );
         })
-        .where((order) =>
-            order.bottlesToOrder > 0 ||
-            order.bidonsToOrder > 0 ||
-            order.bottlesToRecycle > 0)
+        .where(
+          (order) =>
+              order.bottlesToOrder > 0 ||
+              order.bidonsToOrder > 0 ||
+              order.bottlesToRecycle > 0,
+        )
         .toList();
   }
 
   @override
   Future<List<ApprovalRequest>> approvalRequests({String? hotelId}) async {
     return _approvalRequests
-        .where((item) =>
-            item.status == ApprovalStatus.pending &&
-            (hotelId == null || item.hotelId == hotelId))
+        .where(
+          (item) =>
+              item.status == ApprovalStatus.pending &&
+              (hotelId == null || item.hotelId == hotelId),
+        )
         .toList();
   }
 
@@ -975,8 +1010,8 @@ class MockIvraRepository implements IvraRepository {
     for (final roomProduct in await roomProducts(hotelId: hotelId)) {
       if (roomProduct.product.isRefillable &&
           (roomProduct.refillCount >= roomProduct.product.maxRefillCount ||
-           roomProduct.status == BottleStatus.refillLimitReached ||
-           roomProduct.status == BottleStatus.needsReplacement)) {
+              roomProduct.status == BottleStatus.refillLimitReached ||
+              roomProduct.status == BottleStatus.needsReplacement)) {
         created += _insertAlertIfMissing(
           AlertItem(
             id: _uuid.v4(),
@@ -1100,7 +1135,6 @@ class MockIvraRepository implements IvraRepository {
     return _inventoryEvents.where((event) => event.hotelId == hotelId).toList();
   }
 
-
   @override
   Future<Set<String>> appliedClientRequestIds({String? hotelId}) async {
     // The demo repository records every processed idempotency key, mirroring
@@ -1171,7 +1205,8 @@ class MockIvraRepository implements IvraRepository {
   @override
   Future<void> deleteProduct(String productId) async {
     // Cascading deletes for room products
-    final roomProductsToRemove = _roomProducts.where((rp) => rp.product.id == productId).toList();
+    final roomProductsToRemove =
+        _roomProducts.where((rp) => rp.product.id == productId).toList();
     for (final rp in roomProductsToRemove) {
       _events.removeWhere((e) => e.roomProductId == rp.id);
       _alerts.removeWhere((a) => a.roomProductId == rp.id);
@@ -1220,10 +1255,13 @@ class MockIvraRepository implements IvraRepository {
       final inventoryIndex = _inventory.indexWhere(
         (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
       );
-      final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
+      final currentStock =
+          inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
       if (currentStock < roomCount) {
         if (!autoAdjustInventory) {
-          throw StateError('Insufficient inventory for product ${product.nameEn}. Needed: $roomCount, Available: $currentStock');
+          throw StateError(
+            'Insufficient inventory for product ${product.nameEn}. Needed: $roomCount, Available: $currentStock',
+          );
         } else {
           final needed = roomCount - currentStock;
           if (inventoryIndex != -1) {
@@ -1232,16 +1270,18 @@ class MockIvraRepository implements IvraRepository {
               fullBottles: stock.fullBottles + needed,
             );
           } else {
-            _inventory.add(InventoryItem(
-              id: _uuid.v4(),
-              hotelId: hotelId,
-              product: product,
-              fullBottles: needed,
-              emptyBottles: 0,
-              fullBidons: 0,
-              openBidons: 0,
-              emptyBidons: 0,
-            ));
+            _inventory.add(
+              InventoryItem(
+                id: _uuid.v4(),
+                hotelId: hotelId,
+                product: product,
+                fullBottles: needed,
+                emptyBottles: 0,
+                fullBidons: 0,
+                openBidons: 0,
+                emptyBidons: 0,
+              ),
+            );
           }
           // Log adjustment
           _inventoryEvents.insert(
@@ -1396,8 +1436,9 @@ class MockIvraRepository implements IvraRepository {
 
   @override
   Future<void> cancelTeamInvitation({required String invitationId}) async {
-    final index =
-        _teamInvitations.indexWhere((invite) => invite.id == invitationId);
+    final index = _teamInvitations.indexWhere(
+      (invite) => invite.id == invitationId,
+    );
     if (index == -1) return;
     _teamInvitations[index] = _teamInvitations[index].copyWith(
       status: 'cancelled',
@@ -1406,8 +1447,9 @@ class MockIvraRepository implements IvraRepository {
 
   @override
   Future<void> resendTeamInvitation({required String invitationId}) async {
-    final index =
-        _teamInvitations.indexWhere((invite) => invite.id == invitationId);
+    final index = _teamInvitations.indexWhere(
+      (invite) => invite.id == invitationId,
+    );
     if (index == -1) return;
     _teamInvitations[index] = _teamInvitations[index].copyWith(
       status: 'pending',
@@ -1559,22 +1601,30 @@ class MockIvraRepository implements IvraRepository {
     if (item.product.refillType == RefillType.refillable) {
       int percentageVal = 100;
       if (notes != null) {
-        final percentageMatch = RegExp(r'\[Refill:\s*(\d+)%\]').firstMatch(notes);
+        final percentageMatch = RegExp(
+          r'\[Refill:\s*(\d+)%\]',
+        ).firstMatch(notes);
         if (percentageMatch != null) {
           percentageVal = int.parse(percentageMatch.group(1)!);
         }
       }
 
-      final double bottleVol = item.product.bottleVolumeMl > 0 ? item.product.bottleVolumeMl.toDouble() : 1000.0;
+      final double bottleVol = item.product.bottleVolumeMl > 0
+          ? item.product.bottleVolumeMl.toDouble()
+          : 1000.0;
       final double volumeAdded = (percentageVal / 100.0) * bottleVol;
 
       if (_currentUser.role == UserRole.housekeeper) {
         final allocIndex = _housekeeperAllocations.indexWhere(
-          (alloc) => alloc.housekeeperId == _currentUser.id && alloc.product.id == item.product.id,
+          (alloc) =>
+              alloc.housekeeperId == _currentUser.id &&
+              alloc.product.id == item.product.id,
         );
         if (allocIndex != -1) {
           final alloc = _housekeeperAllocations[allocIndex];
-          final double bidonVolume = alloc.product.bidonVolumeMl > 0 ? alloc.product.bidonVolumeMl.toDouble() : 5000.0;
+          final double bidonVolume = alloc.product.bidonVolumeMl > 0
+              ? alloc.product.bidonVolumeMl.toDouble()
+              : 5000.0;
 
           int fullBidons = alloc.fullBidons;
           int openBidons = alloc.openBidons;
@@ -1627,18 +1677,23 @@ class MockIvraRepository implements IvraRepository {
         }
       } else {
         final invIndex = _inventory.indexWhere(
-          (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+          (stock) =>
+              stock.hotelId == item.hotelId &&
+              stock.product.id == item.product.id,
         );
         if (invIndex != -1) {
           final invItem = _inventory[invIndex];
-          final double bidonVolume = invItem.product.bidonVolumeMl > 0 ? invItem.product.bidonVolumeMl.toDouble() : 5000.0;
+          final double bidonVolume = invItem.product.bidonVolumeMl > 0
+              ? invItem.product.bidonVolumeMl.toDouble()
+              : 5000.0;
 
           int fullBidons = invItem.fullBidons;
           int openBidons = invItem.openBidons;
           int emptyBidons = invItem.emptyBidons;
 
           // Track remaining volume of currently open bidon
-          double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? invItem.openBidonVolumeLeftMl;
+          double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ??
+              invItem.openBidonVolumeLeftMl;
           if (openBidons > 0 && currentVolumeLeft == 0.0) {
             currentVolumeLeft = bidonVolume;
           }
@@ -1718,19 +1773,27 @@ class MockIvraRepository implements IvraRepository {
     if (item.product.refillType == RefillType.refillable) {
       int percentageVal = 100;
       if (event.notes != null) {
-        final percentageMatch = RegExp(r'\[Refill:\s*(\d+)%\]').firstMatch(event.notes!);
+        final percentageMatch = RegExp(
+          r'\[Refill:\s*(\d+)%\]',
+        ).firstMatch(event.notes!);
         if (percentageMatch != null) {
           percentageVal = int.parse(percentageMatch.group(1)!);
         }
       }
 
-      final double bottleVol = item.product.bottleVolumeMl > 0 ? item.product.bottleVolumeMl.toDouble() : 1000.0;
-      final double bidonVolume = item.product.bidonVolumeMl > 0 ? item.product.bidonVolumeMl.toDouble() : 5000.0;
+      final double bottleVol = item.product.bottleVolumeMl > 0
+          ? item.product.bottleVolumeMl.toDouble()
+          : 1000.0;
+      final double bidonVolume = item.product.bidonVolumeMl > 0
+          ? item.product.bidonVolumeMl.toDouble()
+          : 5000.0;
       final double volumeToRestore = (percentageVal / 100.0) * bottleVol;
 
       if (_currentUser.role == UserRole.housekeeper) {
         final allocIndex = _housekeeperAllocations.indexWhere(
-          (alloc) => alloc.housekeeperId == _currentUser.id && alloc.product.id == item.product.id,
+          (alloc) =>
+              alloc.housekeeperId == _currentUser.id &&
+              alloc.product.id == item.product.id,
         );
         if (allocIndex != -1) {
           final alloc = _housekeeperAllocations[allocIndex];
@@ -1767,7 +1830,9 @@ class MockIvraRepository implements IvraRepository {
         }
       } else {
         final invIndex = _inventory.indexWhere(
-          (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+          (stock) =>
+              stock.hotelId == item.hotelId &&
+              stock.product.id == item.product.id,
         );
         if (invIndex != -1) {
           final invItem = _inventory[invIndex];
@@ -1776,7 +1841,8 @@ class MockIvraRepository implements IvraRepository {
           int openBidons = invItem.openBidons;
           int emptyBidons = invItem.emptyBidons;
 
-          double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ?? invItem.openBidonVolumeLeftMl;
+          double currentVolumeLeft = _openBidonVolumeLeft[invItem.product.id] ??
+              invItem.openBidonVolumeLeftMl;
 
           if (openBidons == 0 && emptyBidons > 0) {
             openBidons = 1;
@@ -1858,7 +1924,9 @@ class MockIvraRepository implements IvraRepository {
 
     if (_currentUser.role == UserRole.housekeeper) {
       final allocIndex = _housekeeperAllocations.indexWhere(
-        (alloc) => alloc.housekeeperId == _currentUser.id && alloc.product.id == item.product.id,
+        (alloc) =>
+            alloc.housekeeperId == _currentUser.id &&
+            alloc.product.id == item.product.id,
       );
       int availableBottles = 0;
       if (allocIndex != -1) {
@@ -1867,7 +1935,9 @@ class MockIvraRepository implements IvraRepository {
 
       if (availableBottles == 0) {
         if (!autoAdjustInventory) {
-          throw StateError('Insufficient checked-out allocation for product ${item.product.nameEn}. Stock is 0.');
+          throw StateError(
+            'Insufficient checked-out allocation for product ${item.product.nameEn}. Stock is 0.',
+          );
         } else {
           // Auto adjust
           if (allocIndex != -1) {
@@ -1876,18 +1946,20 @@ class MockIvraRepository implements IvraRepository {
               fullBottles: existing.fullBottles + 1,
             );
           } else {
-            _housekeeperAllocations.add(HousekeeperAllocation(
-              id: _uuid.v4(),
-              housekeeperId: _currentUser.id,
-              hotelId: item.hotelId,
-              product: item.product,
-              fullBottles: 1,
-              emptyBottles: 0,
-              fullBidons: 0,
-              openBidons: 0,
-              emptyBidons: 0,
-              openBidonVolumeLeftMl: 0.0,
-            ));
+            _housekeeperAllocations.add(
+              HousekeeperAllocation(
+                id: _uuid.v4(),
+                housekeeperId: _currentUser.id,
+                hotelId: item.hotelId,
+                product: item.product,
+                fullBottles: 1,
+                emptyBottles: 0,
+                fullBidons: 0,
+                openBidons: 0,
+                emptyBidons: 0,
+                openBidonVolumeLeftMl: 0.0,
+              ),
+            );
           }
         }
       }
@@ -1922,7 +1994,9 @@ class MockIvraRepository implements IvraRepository {
       );
 
       final finalAllocIndex = _housekeeperAllocations.indexWhere(
-        (alloc) => alloc.housekeeperId == _currentUser.id && alloc.product.id == item.product.id,
+        (alloc) =>
+            alloc.housekeeperId == _currentUser.id &&
+            alloc.product.id == item.product.id,
       );
       if (finalAllocIndex != -1) {
         final existing = _housekeeperAllocations[finalAllocIndex];
@@ -1942,13 +2016,15 @@ class MockIvraRepository implements IvraRepository {
           roomNumber: item.roomNumber,
         );
       }
-
     } else {
       // Enforce inventory check first
       final inventoryIndex = _inventory.indexWhere(
-        (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+        (stock) =>
+            stock.hotelId == item.hotelId &&
+            stock.product.id == item.product.id,
       );
-      final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
+      final currentStock =
+          inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
       if (currentStock == 0) {
         if (!autoAdjustInventory) {
           throw StateError('Insufficient inventory for replacement.');
@@ -1960,16 +2036,18 @@ class MockIvraRepository implements IvraRepository {
               fullBottles: stock.fullBottles + 1,
             );
           } else {
-            _inventory.add(InventoryItem(
-              id: _uuid.v4(),
-              hotelId: item.hotelId,
-              product: item.product,
-              fullBottles: 1,
-              emptyBottles: 0,
-              fullBidons: 0,
-              openBidons: 0,
-              emptyBidons: 0,
-            ));
+            _inventory.add(
+              InventoryItem(
+                id: _uuid.v4(),
+                hotelId: item.hotelId,
+                product: item.product,
+                fullBottles: 1,
+                emptyBottles: 0,
+                fullBidons: 0,
+                openBidons: 0,
+                emptyBidons: 0,
+              ),
+            );
           }
           // Log event
           _inventoryEvents.insert(
@@ -2022,7 +2100,9 @@ class MockIvraRepository implements IvraRepository {
 
       // Re-fetch index in case it was added
       final finalInventoryIndex = _inventory.indexWhere(
-        (stock) => stock.hotelId == item.hotelId && stock.product.id == item.product.id,
+        (stock) =>
+            stock.hotelId == item.hotelId &&
+            stock.product.id == item.product.id,
       );
       if (finalInventoryIndex != -1) {
         final stock = _inventory[finalInventoryIndex];
@@ -2145,7 +2225,6 @@ class MockIvraRepository implements IvraRepository {
     _markClientRequestProcessed(clientRequestId);
   }
 
-
   bool _hasProcessedClientRequest(String? clientRequestId) {
     if (clientRequestId == null || clientRequestId.trim().isEmpty) {
       return false;
@@ -2218,8 +2297,9 @@ class MockIvraRepository implements IvraRepository {
   void _applyApprovedChange(ApprovalRequest request) {
     switch (request.targetTable) {
       case 'hotels':
-        final index =
-            _hotels.indexWhere((hotel) => hotel.id == request.targetId);
+        final index = _hotels.indexWhere(
+          (hotel) => hotel.id == request.targetId,
+        );
         if (index == -1) return;
         final hotel = _hotels[index];
         _hotels[index] = hotel.copyWith(
@@ -2238,8 +2318,9 @@ class MockIvraRepository implements IvraRepository {
       case 'rooms':
         final roomNumber = request.newData['room_number'] as String?;
         final floorNumber = request.newData['floor_number'] as int?;
-        final roomIndex =
-            _rooms.indexWhere((room) => room.id == request.targetId);
+        final roomIndex = _rooms.indexWhere(
+          (room) => room.id == request.targetId,
+        );
         if (roomIndex != -1) {
           final room = _rooms[roomIndex];
           _rooms[roomIndex] = RoomInfo(
@@ -2264,16 +2345,19 @@ class MockIvraRepository implements IvraRepository {
         if (productIds != null) {
           final stringProductIds = productIds.cast<String>();
           // Remove products that are not in the new list
-          _roomProducts.removeWhere((rp) =>
-              rp.roomId == request.targetId! &&
-              !stringProductIds.contains(rp.product.id));
+          _roomProducts.removeWhere(
+            (rp) =>
+                rp.roomId == request.targetId! &&
+                !stringProductIds.contains(rp.product.id),
+          );
 
           final autoAdjust = request.newData['auto_adjust_inventory'] == true;
 
           // Find products that need to be added
           for (final pid in stringProductIds) {
-            final exists = _roomProducts.any((rp) =>
-                rp.roomId == request.targetId! && rp.product.id == pid);
+            final exists = _roomProducts.any(
+              (rp) => rp.roomId == request.targetId! && rp.product.id == pid,
+            );
             if (!exists) {
               final productIndex = _products.indexWhere((p) => p.id == pid);
               if (productIndex != -1) {
@@ -2281,12 +2365,18 @@ class MockIvraRepository implements IvraRepository {
 
                 // Check inventory
                 final inventoryIndex = _inventory.indexWhere(
-                  (stock) => stock.hotelId == request.hotelId && stock.product.id == pid,
+                  (stock) =>
+                      stock.hotelId == request.hotelId &&
+                      stock.product.id == pid,
                 );
-                final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
+                final currentStock = inventoryIndex != -1
+                    ? _inventory[inventoryIndex].fullBottles
+                    : 0;
                 if (currentStock == 0) {
                   if (!autoAdjust) {
-                    throw StateError('Insufficient inventory for product ${product.nameEn}. Stock is 0.');
+                    throw StateError(
+                      'Insufficient inventory for product ${product.nameEn}. Stock is 0.',
+                    );
                   } else {
                     // Auto-adjust: add 1 full bottle
                     if (inventoryIndex != -1) {
@@ -2295,16 +2385,18 @@ class MockIvraRepository implements IvraRepository {
                         fullBottles: stock.fullBottles + 1,
                       );
                     } else {
-                      _inventory.add(InventoryItem(
-                        id: _uuid.v4(),
-                        hotelId: request.hotelId,
-                        product: product,
-                        fullBottles: 1,
-                        emptyBottles: 0,
-                        fullBidons: 0,
-                        openBidons: 0,
-                        emptyBidons: 0,
-                      ));
+                      _inventory.add(
+                        InventoryItem(
+                          id: _uuid.v4(),
+                          hotelId: request.hotelId,
+                          product: product,
+                          fullBottles: 1,
+                          emptyBottles: 0,
+                          fullBidons: 0,
+                          openBidons: 0,
+                          emptyBidons: 0,
+                        ),
+                      );
                     }
                     // Log adjustment
                     _inventoryEvents.insert(
@@ -2328,7 +2420,9 @@ class MockIvraRepository implements IvraRepository {
 
                 // Decrement inventory by 1
                 final finalInventoryIndex = _inventory.indexWhere(
-                  (stock) => stock.hotelId == request.hotelId && stock.product.id == pid,
+                  (stock) =>
+                      stock.hotelId == request.hotelId &&
+                      stock.product.id == pid,
                 );
                 if (finalInventoryIndex != -1) {
                   final stock = _inventory[finalInventoryIndex];
@@ -2337,19 +2431,24 @@ class MockIvraRepository implements IvraRepository {
                   );
                 }
 
-                final roomProductId = 'rp_${DateTime.now().millisecondsSinceEpoch}_$pid';
-                _roomProducts.add(RoomProduct(
-                  id: roomProductId,
-                  hotelId: request.hotelId,
-                  roomId: request.targetId!,
-                  roomNumber: roomNumber ?? (roomIndex != -1 ? _rooms[roomIndex].roomNumber : ''),
-                  floorNumber: floorNumber ?? (roomIndex != -1 ? _rooms[roomIndex].floorNumber : 0),
-                  product: product,
-                  refillCount: 0,
-                  lastRefillAt: null,
-                  bottleStartedAt: DateTime.now(),
-                  status: BottleStatus.active,
-                ));
+                final roomProductId =
+                    'rp_${DateTime.now().millisecondsSinceEpoch}_$pid';
+                _roomProducts.add(
+                  RoomProduct(
+                    id: roomProductId,
+                    hotelId: request.hotelId,
+                    roomId: request.targetId!,
+                    roomNumber: roomNumber ??
+                        (roomIndex != -1 ? _rooms[roomIndex].roomNumber : ''),
+                    floorNumber: floorNumber ??
+                        (roomIndex != -1 ? _rooms[roomIndex].floorNumber : 0),
+                    product: product,
+                    refillCount: 0,
+                    lastRefillAt: null,
+                    bottleStartedAt: DateTime.now(),
+                    status: BottleStatus.active,
+                  ),
+                );
 
                 // Insert initial placement refill event
                 _events.insert(
@@ -2373,15 +2472,18 @@ class MockIvraRepository implements IvraRepository {
         _decrementHotelPendingEdits(request.hotelId);
         return;
       case 'room_products':
-        final index =
-            _roomProducts.indexWhere((item) => item.id == request.targetId);
+        final index = _roomProducts.indexWhere(
+          (item) => item.id == request.targetId,
+        );
         if (index == -1) return;
         final item = _roomProducts[index];
         final statusValue = request.newData['status'] as String?;
         final startValue = request.newData['bottle_started_at'] as String?;
         final proofPhotoUrl = request.newData['proof_photo_url'] as String?;
         final oldStatus = item.status;
-        final newStatus = statusValue == null ? oldStatus : BottleStatus.fromValue(statusValue);
+        final newStatus = statusValue == null
+            ? oldStatus
+            : BottleStatus.fromValue(statusValue);
 
         if (oldStatus != newStatus) {
           _events.insert(
@@ -2395,7 +2497,8 @@ class MockIvraRepository implements IvraRepository {
               occurredAt: DateTime.now(),
               performedBy: _currentUser.id,
               performedByName: _currentUser.fullName,
-              notes: 'Status changed from ${oldStatus.value} to ${newStatus.value}',
+              notes:
+                  'Status changed from ${oldStatus.value} to ${newStatus.value}',
               proofPhotoUrl: proofPhotoUrl,
             ),
           );
@@ -2470,10 +2573,7 @@ class MockIvraRepository implements IvraRepository {
   }
 
   @override
-  Future<void> createRole({
-    required String name,
-    String? description,
-  }) async {
+  Future<void> createRole({required String name, String? description}) async {
     if (!_mockRoles.contains(name)) {
       _mockRoles.add(name);
     }
@@ -2485,10 +2585,7 @@ class MockIvraRepository implements IvraRepository {
         id: 'mock_audit_${DateTime.now().millisecondsSinceEpoch}_create_role',
         userId: 'app_admin',
         action: 'Created custom role',
-        details: {
-          'role': name,
-          'description': description ?? '',
-        },
+        details: {'role': name, 'description': description ?? ''},
         createdAt: DateTime.now(),
       ),
     );
@@ -2496,7 +2593,9 @@ class MockIvraRepository implements IvraRepository {
 
   @override
   Future<void> removeProductFromRoom({required String roomProductId}) async {
-    final roomProductIndex = _roomProducts.indexWhere((rp) => rp.id == roomProductId);
+    final roomProductIndex = _roomProducts.indexWhere(
+      (rp) => rp.id == roomProductId,
+    );
     if (roomProductIndex == -1) {
       throw Exception('RoomProduct ID $roomProductId not found');
     }
@@ -2527,14 +2626,23 @@ class MockIvraRepository implements IvraRepository {
     bool autoAdjustInventory = false,
     String? deductFromHousekeeperId,
   }) async {
-    final product = _products.where((p) => p.sku.toLowerCase() == productSku.toLowerCase()).firstOrNull;
+    final product = _products
+        .where((p) => p.sku.toLowerCase() == productSku.toLowerCase())
+        .firstOrNull;
     if (product == null) {
       throw Exception('Product SKU $productSku not found');
     }
 
     final floorNum = int.tryParse(floor) ?? 0;
     // Find the room or create it if not exists
-    var room = _rooms.where((r) => r.hotelId == hotelId && r.roomNumber == roomNumber && r.floorNumber == floorNum).firstOrNull;
+    var room = _rooms
+        .where(
+          (r) =>
+              r.hotelId == hotelId &&
+              r.roomNumber == roomNumber &&
+              r.floorNumber == floorNum,
+        )
+        .firstOrNull;
     final roomId = room?.id ?? _uuid.v4();
     if (room == null) {
       room = RoomInfo(
@@ -2561,7 +2669,9 @@ class MockIvraRepository implements IvraRepository {
     // Check inventory or housekeeper allocation
     if (deductFromHousekeeperId != null) {
       final allocIndex = _housekeeperAllocations.indexWhere(
-        (alloc) => alloc.housekeeperId == deductFromHousekeeperId && alloc.product.id == product.id,
+        (alloc) =>
+            alloc.housekeeperId == deductFromHousekeeperId &&
+            alloc.product.id == product.id,
       );
       if (allocIndex != -1) {
         final existing = _housekeeperAllocations[allocIndex];
@@ -2578,7 +2688,8 @@ class MockIvraRepository implements IvraRepository {
       final inventoryIndex = _inventory.indexWhere(
         (stock) => stock.hotelId == hotelId && stock.product.id == product.id,
       );
-      final currentStock = inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
+      final currentStock =
+          inventoryIndex != -1 ? _inventory[inventoryIndex].fullBottles : 0;
 
       if (currentStock <= 0) {
         if (!autoAdjustInventory) {
@@ -2591,16 +2702,18 @@ class MockIvraRepository implements IvraRepository {
               fullBottles: stock.fullBottles + 1,
             );
           } else {
-            _inventory.add(InventoryItem(
-              id: _uuid.v4(),
-              hotelId: hotelId,
-              product: product,
-              fullBottles: 1,
-              emptyBottles: 0,
-              fullBidons: 0,
-              openBidons: 0,
-              emptyBidons: 0,
-            ));
+            _inventory.add(
+              InventoryItem(
+                id: _uuid.v4(),
+                hotelId: hotelId,
+                product: product,
+                fullBottles: 1,
+                emptyBottles: 0,
+                fullBidons: 0,
+                openBidons: 0,
+                emptyBidons: 0,
+              ),
+            );
           }
 
           // Log adjustment event (+1 bottle)

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ivra_refill/src/app/ivra_app.dart';
 import 'package:ivra_refill/src/domain/app_enums.dart';
 import 'package:ivra_refill/src/domain/models.dart';
@@ -26,7 +25,8 @@ void main() {
           room: '101',
           productName: 'Shampoo',
           productSku: 'SHA-1L',
-          url: 'https://refill.ivra-cosmetics.com/q/hotel-seaside/1/101/IVR-SHA-1L',
+          url:
+              'https://refill.ivra-cosmetics.com/q/hotel-seaside/1/101/IVR-SHA-1L',
         ),
       ];
 
@@ -40,62 +40,88 @@ void main() {
   });
 
   group('QR Screen Actions & Generator Widget Tests', () {
-    testWidgets('Toggles between Scan and Generate tabs and shows configuration form', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        currentUser: _userForRole(UserRole.hotelManager),
-      );
+    testWidgets(
+      'Toggles between Scan and Generate tabs and shows configuration form',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          currentUser: _userForRole(UserRole.hotelManager),
+        );
 
-      // Navigate to /qr
-      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
-      container.read(routerProvider).go('/qr');
-      await tester.pumpAndSettle();
+        // Navigate to /qr
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(IvraApp)),
+        );
+        container.read(routerProvider).go('/qr');
+        await tester.pumpAndSettle();
 
-      // Verify we are initially in Scan mode and the scanner viewfinder is present
-      expect(find.descendant(of: find.byType(QrActionScreen), matching: find.text('Scan QR Code')), findsAtLeastNWidgets(1));
-      // Verify Segmented Tab buttons exist by searching within the SegmentedButton
-      final segmentedButtonFinder = find.byWidgetPredicate((widget) => widget is SegmentedButton);
-      expect(segmentedButtonFinder, findsOneWidget);
+        // Verify we are initially in Scan mode and the scanner viewfinder is present
+        expect(
+          find.descendant(
+            of: find.byType(QrActionScreen),
+            matching: find.text('Scan QR Code'),
+          ),
+          findsAtLeastNWidgets(1),
+        );
+        // Verify Segmented Tab buttons exist by searching within the SegmentedButton
+        final segmentedButtonFinder = find.byWidgetPredicate(
+          (widget) => widget is SegmentedButton,
+        );
+        expect(segmentedButtonFinder, findsOneWidget);
 
-      final scanTabButton = find.descendant(of: segmentedButtonFinder, matching: find.text('Scan QR Code'));
-      final generateTabButton = find.descendant(of: segmentedButtonFinder, matching: find.text('Generate QR Codes'));
+        final scanTabButton = find.descendant(
+          of: segmentedButtonFinder,
+          matching: find.text('Scan QR Code'),
+        );
+        final generateTabButton = find.descendant(
+          of: segmentedButtonFinder,
+          matching: find.text('Generate QR Codes'),
+        );
 
-      expect(scanTabButton, findsOneWidget);
-      expect(generateTabButton, findsOneWidget);
+        expect(scanTabButton, findsOneWidget);
+        expect(generateTabButton, findsOneWidget);
 
-      // Tap on the Generate tab button
-      await tester.tap(generateTabButton);
-      await tester.pumpAndSettle();
+        // Tap on the Generate tab button
+        await tester.tap(generateTabButton);
+        await tester.pumpAndSettle();
 
-      // Verify that the view switched to the Generator form and scanner titles updated
-      expect(find.text('Generate QR Codes'), findsNWidgets(2));
-      expect(find.text('QR Label Type'), findsOneWidget);
-      expect(find.text('Room Door (No SKU)'), findsOneWidget);
-      expect(find.text('Dispenser (With SKU)'), findsOneWidget);
-      expect(find.text('Room'), findsOneWidget);
-      expect(find.text('Product'), findsOneWidget);
-      expect(find.text('Generate & Download PDF'), findsOneWidget);
-    });
+        // Verify that the view switched to the Generator form and scanner titles updated
+        expect(find.text('Generate QR Codes'), findsNWidgets(2));
+        expect(find.text('QR Label Type'), findsOneWidget);
+        expect(find.text('Room Door (No SKU)'), findsOneWidget);
+        expect(find.text('Dispenser (With SKU)'), findsOneWidget);
+        expect(find.text('Room'), findsOneWidget);
+        expect(find.text('Product'), findsOneWidget);
+        expect(find.text('Generate & Download PDF'), findsOneWidget);
+      },
+    );
 
-    testWidgets('Refilled status display appends last refill date/time correctly', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        currentUser: _userForRole(UserRole.hotelManager),
-      );
+    testWidgets(
+      'Refilled status display appends last refill date/time correctly',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          currentUser: _userForRole(UserRole.hotelManager),
+        );
 
-      // Navigate to /q/hotel-seaside/1/101/IVR-SHA-1L
-      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
-      container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-SHA-1L');
-      await tester.pumpAndSettle();
+        // Navigate to /q/hotel-seaside/1/101/IVR-SHA-1L
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(IvraApp)),
+        );
+        container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-SHA-1L');
+        await tester.pumpAndSettle();
 
-      // Verify page loaded details for the dispenser
-      expect(find.text('Dispenser Status'), findsOneWidget);
+        // Verify page loaded details for the dispenser
+        expect(find.text('Dispenser Status'), findsOneWidget);
 
-      // Verify the formatted status with refill date is rendered
-      expect(find.textContaining('Refilled ('), findsOneWidget);
-    });
+        // Verify the formatted status with refill date is rendered
+        expect(find.textContaining('Refilled ('), findsOneWidget);
+      },
+    );
 
-    testWidgets('Lost and Damaged status disables respective buttons', (tester) async {
+    testWidgets('Lost and Damaged status disables respective buttons', (
+      tester,
+    ) async {
       final damagedProduct = RoomProduct(
         id: 'rp-101-wash',
         hotelId: 'hotel-seaside',
@@ -127,7 +153,9 @@ void main() {
       );
 
       // Navigate to Room 101 / Floor 1 / SKU: IVR-HWA-1L (which has status = damaged)
-      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(IvraApp)),
+      );
       container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-HWA-1L');
       await tester.pumpAndSettle();
 
@@ -142,66 +170,102 @@ void main() {
       expect(lostButton, findsOneWidget);
 
       // Verify both buttons are disabled (onPressed is null)
-      final OutlinedButton damagedBtnWidget = tester.widget<OutlinedButton>(damagedButton);
-      final OutlinedButton lostBtnWidget = tester.widget<OutlinedButton>(lostButton);
+      final OutlinedButton damagedBtnWidget = tester.widget<OutlinedButton>(
+        damagedButton,
+      );
+      final OutlinedButton lostBtnWidget = tester.widget<OutlinedButton>(
+        lostButton,
+      );
 
       expect(damagedBtnWidget.onPressed, isNull);
       expect(lostBtnWidget.onPressed, isNull);
     });
 
-    testWidgets('Settings page allows toggling precision scan window and tap-to-scan', (tester) async {
+    testWidgets(
+      'Settings page allows toggling precision scan window and tap-to-scan',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          currentUser: _userForRole(UserRole.hotelManager),
+        );
+
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(IvraApp)),
+        );
+
+        // Verify default state is true
+        expect(container.read(precisionScanWindowEnabledProvider), isTrue);
+        expect(container.read(tapToScanEnabledProvider), isTrue);
+
+        // Navigate to /settings
+        container.read(routerProvider).go('/settings');
+        await tester.pumpAndSettle();
+        // Find the SwitchListTiles
+        final precisionTileFinder = find.widgetWithText(
+          SwitchListTile,
+          'Precision Scan Window',
+        );
+        final tapToScanTileFinder = find.widgetWithText(
+          SwitchListTile,
+          'Tap to Scan',
+        );
+
+        expect(precisionTileFinder, findsOneWidget);
+        expect(tapToScanTileFinder, findsOneWidget);
+
+        // Verify initial switch values
+        final SwitchListTile precisionTile = tester.widget<SwitchListTile>(
+          precisionTileFinder,
+        );
+        final SwitchListTile tapToScanTile = tester.widget<SwitchListTile>(
+          tapToScanTileFinder,
+        );
+        expect(precisionTile.value, isTrue);
+        expect(tapToScanTile.value, isTrue);
+
+        // Tap precision scan window switch
+        await tester.tap(
+          find.descendant(
+            of: precisionTileFinder,
+            matching: find.byType(Switch),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(container.read(precisionScanWindowEnabledProvider), isFalse);
+
+        // Tap tap to scan switch
+        await tester.tap(
+          find.descendant(
+            of: tapToScanTileFinder,
+            matching: find.byType(Switch),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(container.read(tapToScanEnabledProvider), isFalse);
+      },
+    );
+
+    testWidgets('Scan & Assign - In Stock Flow successfully assigns product', (
+      tester,
+    ) async {
       await _pumpIvraApp(
         tester,
         currentUser: _userForRole(UserRole.hotelManager),
       );
 
-      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
-
-      // Verify default state is true
-      expect(container.read(precisionScanWindowEnabledProvider), isTrue);
-      expect(container.read(tapToScanEnabledProvider), isTrue);
-
-      // Navigate to /settings
-      container.read(routerProvider).go('/settings');
-      await tester.pumpAndSettle();
-      // Find the SwitchListTiles
-      final precisionTileFinder = find.widgetWithText(SwitchListTile, 'Precision Scan Window');
-      final tapToScanTileFinder = find.widgetWithText(SwitchListTile, 'Tap to Scan');
-
-      expect(precisionTileFinder, findsOneWidget);
-      expect(tapToScanTileFinder, findsOneWidget);
-
-      // Verify initial switch values
-      final SwitchListTile precisionTile = tester.widget<SwitchListTile>(precisionTileFinder);
-      final SwitchListTile tapToScanTile = tester.widget<SwitchListTile>(tapToScanTileFinder);
-      expect(precisionTile.value, isTrue);
-      expect(tapToScanTile.value, isTrue);
-
-      // Tap precision scan window switch
-      await tester.tap(find.descendant(of: precisionTileFinder, matching: find.byType(Switch)));
-      await tester.pumpAndSettle();
-      expect(container.read(precisionScanWindowEnabledProvider), isFalse);
-
-      // Tap tap to scan switch
-      await tester.tap(find.descendant(of: tapToScanTileFinder, matching: find.byType(Switch)));
-      await tester.pumpAndSettle();
-      expect(container.read(tapToScanEnabledProvider), isFalse);
-    });
-
-    testWidgets('Scan & Assign - In Stock Flow successfully assigns product', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        currentUser: _userForRole(UserRole.hotelManager),
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(IvraApp)),
       );
-
-      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
       // Navigate to Room 101 with IVR-GEL-1L (which is not in Room 101, but is in stock = 22)
       container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-GEL-1L');
       await tester.pumpAndSettle();
 
       // Verify Scan & Assign screen is shown
       expect(find.text('Assign Product to Room'), findsOneWidget);
-      expect(find.textContaining('22 in stock — will deduct 1 and assign to room'), findsOneWidget);
+      expect(
+        find.textContaining('22 in stock — will deduct 1 and assign to room'),
+        findsOneWidget,
+      );
 
       // Find the Assign button
       final assignButton = find.widgetWithText(FilledButton, 'Assign to Room');
@@ -213,77 +277,114 @@ void main() {
 
       // Verify success card is displayed
       expect(find.text('Action Successful'), findsOneWidget);
-      expect(find.textContaining('Product IVR-GEL-1L has been assigned to Room 101 (Floor 1).'), findsOneWidget);
-    });
-
-    testWidgets('Scan & Assign - Out of Stock Flow: Confirm Add successfully adds and assigns', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        currentUser: _userForRole(UserRole.hotelManager),
+      expect(
+        find.textContaining(
+          'Product IVR-GEL-1L has been assigned to Room 101 (Floor 1).',
+        ),
+        findsOneWidget,
       );
-
-      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
-      // Navigate to Room 101 with IVR-CON-1L (not in room, out of stock)
-      container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-CON-1L');
-      await tester.pumpAndSettle();
-
-      // Verify Scan & Assign screen for out of stock
-      expect(find.text('Assign Product to Room'), findsOneWidget);
-      expect(find.textContaining('Out of stock — 1 unit will be auto-added to inventory then assigned'), findsOneWidget);
-
-      // Find the "Add to Inventory & Assign" button
-      final autoAddButton = find.widgetWithText(FilledButton, 'Add to Inventory & Assign');
-      expect(autoAddButton, findsOneWidget);
-
-      // Tap it to show confirmation dialog
-      await tester.tap(autoAddButton);
-      await tester.pumpAndSettle();
-
-      // Verify AlertDialog is shown
-      expect(find.text('Add to Inventory?'), findsOneWidget);
-      expect(find.textContaining('Product "Conditioner" is out of stock.'), findsOneWidget);
-
-      // Find the Confirm button in dialog
-      final confirmButton = find.widgetWithText(FilledButton, 'Yes, add & assign');
-      expect(confirmButton, findsOneWidget);
-
-      // Tap confirm
-      await tester.tap(confirmButton);
-      await tester.pumpAndSettle();
-
-      // Verify success card
-      expect(find.text('Action Successful'), findsOneWidget);
-      expect(find.textContaining('Product IVR-CON-1L has been assigned to Room 101 (Floor 1).'), findsOneWidget);
     });
 
-    testWidgets('Scan & Assign - Out of Stock Flow: Cancel does not perform assign', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        currentUser: _userForRole(UserRole.hotelManager),
-      );
+    testWidgets(
+      'Scan & Assign - Out of Stock Flow: Confirm Add successfully adds and assigns',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          currentUser: _userForRole(UserRole.hotelManager),
+        );
 
-      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
-      // Navigate to Room 101 with IVR-CON-1L (not in room, out of stock)
-      container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-CON-1L');
-      await tester.pumpAndSettle();
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(IvraApp)),
+        );
+        // Navigate to Room 101 with IVR-CON-1L (not in room, out of stock)
+        container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-CON-1L');
+        await tester.pumpAndSettle();
 
-      final autoAddButton = find.widgetWithText(FilledButton, 'Add to Inventory & Assign');
-      await tester.tap(autoAddButton);
-      await tester.pumpAndSettle();
+        // Verify Scan & Assign screen for out of stock
+        expect(find.text('Assign Product to Room'), findsOneWidget);
+        expect(
+          find.textContaining(
+            'Out of stock — 1 unit will be auto-added to inventory then assigned',
+          ),
+          findsOneWidget,
+        );
 
-      // Find the Cancel button in dialog
-      final cancelButton = find.widgetWithText(TextButton, 'Cancel');
-      expect(cancelButton, findsOneWidget);
+        // Find the "Add to Inventory & Assign" button
+        final autoAddButton = find.widgetWithText(
+          FilledButton,
+          'Add to Inventory & Assign',
+        );
+        expect(autoAddButton, findsOneWidget);
 
-      // Tap Cancel
-      await tester.tap(cancelButton);
-      await tester.pumpAndSettle();
+        // Tap it to show confirmation dialog
+        await tester.tap(autoAddButton);
+        await tester.pumpAndSettle();
 
-      // Verify dialog is dismissed but we are still on the assign screen and no success card
-      expect(find.text('Add to Inventory?'), findsNothing);
-      expect(find.text('Assign Product to Room'), findsOneWidget);
-      expect(find.text('Action Successful'), findsNothing);
-    });
+        // Verify AlertDialog is shown
+        expect(find.text('Add to Inventory?'), findsOneWidget);
+        expect(
+          find.textContaining('Product "Conditioner" is out of stock.'),
+          findsOneWidget,
+        );
+
+        // Find the Confirm button in dialog
+        final confirmButton = find.widgetWithText(
+          FilledButton,
+          'Yes, add & assign',
+        );
+        expect(confirmButton, findsOneWidget);
+
+        // Tap confirm
+        await tester.tap(confirmButton);
+        await tester.pumpAndSettle();
+
+        // Verify success card
+        expect(find.text('Action Successful'), findsOneWidget);
+        expect(
+          find.textContaining(
+            'Product IVR-CON-1L has been assigned to Room 101 (Floor 1).',
+          ),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'Scan & Assign - Out of Stock Flow: Cancel does not perform assign',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          currentUser: _userForRole(UserRole.hotelManager),
+        );
+
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(IvraApp)),
+        );
+        // Navigate to Room 101 with IVR-CON-1L (not in room, out of stock)
+        container.read(routerProvider).go('/q/hotel-seaside/1/101/IVR-CON-1L');
+        await tester.pumpAndSettle();
+
+        final autoAddButton = find.widgetWithText(
+          FilledButton,
+          'Add to Inventory & Assign',
+        );
+        await tester.tap(autoAddButton);
+        await tester.pumpAndSettle();
+
+        // Find the Cancel button in dialog
+        final cancelButton = find.widgetWithText(TextButton, 'Cancel');
+        expect(cancelButton, findsOneWidget);
+
+        // Tap Cancel
+        await tester.tap(cancelButton);
+        await tester.pumpAndSettle();
+
+        // Verify dialog is dismissed but we are still on the assign screen and no success card
+        expect(find.text('Add to Inventory?'), findsNothing);
+        expect(find.text('Assign Product to Room'), findsOneWidget);
+        expect(find.text('Action Successful'), findsNothing);
+      },
+    );
   });
 }
 
@@ -337,7 +438,9 @@ Future<void> _pumpIvraApp(
         if (currentUser != null)
           currentUserProvider.overrideWith((ref) async => currentUser),
         if (allRoomProductsOverride != null)
-          allRoomProductsProvider.overrideWith((ref) async => allRoomProductsOverride),
+          allRoomProductsProvider.overrideWith(
+            (ref) async => allRoomProductsOverride,
+          ),
         notificationServiceProvider.overrideWith(
           (ref) => _FakeNotificationService(null as dynamic, ref),
         ),

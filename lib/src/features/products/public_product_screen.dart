@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../domain/models.dart';
-import '../../domain/app_enums.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../shared/async_value_view.dart';
-import '../shared/product_image.dart';
-import '../shared/glass_card.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/product_image.dart';
+import 'package:ivra_refill/src/features/shared/glass_card.dart';
 
 class PublicProductScreen extends ConsumerWidget {
   const PublicProductScreen({super.key, required this.sku});
@@ -39,13 +39,18 @@ class PublicProductScreen extends ConsumerWidget {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back_ios_new),
-                      onPressed: () => context.canPop() ? context.pop() : context.go('/login'),
+                      onPressed: () => context.canPop()
+                          ? context.pop()
+                          : context.go('/login'),
                       tooltip: l10n.t('btnBack'),
                     ),
                     Image.asset(
@@ -112,7 +117,10 @@ class PublicProductScreen extends ConsumerWidget {
 
                     return SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 16,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -126,7 +134,9 @@ class PublicProductScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(24),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: theme.shadowColor.withValues(alpha: 0.08),
+                                      color: theme.shadowColor.withValues(
+                                        alpha: 0.08,
+                                      ),
                                       blurRadius: 20,
                                       offset: const Offset(0, 10),
                                     ),
@@ -149,15 +159,20 @@ class PublicProductScreen extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: theme.colorScheme.primaryContainer,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
                                     product.sku,
-                                    style: theme.textTheme.labelMedium?.copyWith(
-                                      color: theme.colorScheme.onPrimaryContainer,
+                                    style:
+                                        theme.textTheme.labelMedium?.copyWith(
+                                      color:
+                                          theme.colorScheme.onPrimaryContainer,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1,
                                     ),
@@ -166,7 +181,8 @@ class PublicProductScreen extends ConsumerWidget {
                                 const SizedBox(height: 12),
                                 Text(
                                   productName,
-                                  style: theme.textTheme.headlineMedium?.copyWith(
+                                  style:
+                                      theme.textTheme.headlineMedium?.copyWith(
                                     fontWeight: FontWeight.w800,
                                     color: theme.colorScheme.onSurface,
                                   ),
@@ -183,7 +199,8 @@ class PublicProductScreen extends ConsumerWidget {
                                 Divider(color: theme.dividerColor),
                                 const SizedBox(height: 16),
                                 Text(
-                                  l10n.t('productDetails') ?? 'Product Specifications',
+                                  l10n.t('productDetails') ??
+                                      'Product Specifications',
                                   style: theme.textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -192,32 +209,48 @@ class PublicProductScreen extends ConsumerWidget {
                                 _buildSpecRow(
                                   context,
                                   icon: Icons.local_drink_outlined,
-                                  label: l10n.t('productLabelVolume') ?? 'Bottle Volume',
+                                  label: l10n.t('productLabelVolume') ??
+                                      'Bottle Volume',
                                   value: '${product.bottleVolumeMl} ml',
                                 ),
                                 _buildSpecRow(
                                   context,
                                   icon: Icons.science_outlined,
-                                  label: l10n.t('productLabelBidonVolume') ?? 'Refill Bidon Size',
+                                  label: l10n.t('productLabelBidonVolume') ??
+                                      'Refill Bidon Size',
                                   value: '${product.bidonVolumeMl} ml',
                                 ),
                                 _buildSpecRow(
                                   context,
-                                  icon: product.bottleType == BottleType.withPump
-                                      ? Icons.sanitizer_outlined
-                                      : Icons.opacity,
-                                  label: l10n.t('productLabelBottleType') ?? 'Dispenser Type',
-                                  value: product.bottleType == BottleType.withPump
-                                      ? (l10n.t('productBottleTypeWithPump') ?? 'With Pump')
-                                      : (l10n.t('productBottleTypeWithoutPump') ?? 'Without Pump'),
+                                  icon:
+                                      product.bottleType == BottleType.withPump
+                                          ? Icons.sanitizer_outlined
+                                          : Icons.opacity,
+                                  label: l10n.t('productLabelBottleType') ??
+                                      'Dispenser Type',
+                                  value: product.bottleType ==
+                                          BottleType.withPump
+                                      ? (l10n.t('productBottleTypeWithPump') ??
+                                          'With Pump')
+                                      : (l10n.t(
+                                            'productBottleTypeWithoutPump',
+                                          ) ??
+                                          'Without Pump'),
                                 ),
                                 _buildSpecRow(
                                   context,
                                   icon: Icons.autorenew_outlined,
-                                  label: l10n.t('productLabelRefillType') ?? 'System Type',
+                                  label: l10n.t('productLabelRefillType') ??
+                                      'System Type',
                                   value: product.isRefillable
-                                      ? (l10n.t('productRefillTypeRefillable') ?? 'Refillable')
-                                      : (l10n.t('productRefillTypeDirectReplacement') ?? 'Direct Replacement'),
+                                      ? (l10n.t(
+                                            'productRefillTypeRefillable',
+                                          ) ??
+                                          'Refillable')
+                                      : (l10n.t(
+                                            'productRefillTypeDirectReplacement',
+                                          ) ??
+                                          'Direct Replacement'),
                                 ),
                               ],
                             ),
@@ -243,11 +276,14 @@ class PublicProductScreen extends ConsumerWidget {
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        l10n.t('ecoFriendlyTitle') ?? 'Sustainable Luxury',
-                                        style: theme.textTheme.titleSmall?.copyWith(
+                                        l10n.t('ecoFriendlyTitle') ??
+                                            'Sustainable Luxury',
+                                        style: theme.textTheme.titleSmall
+                                            ?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.green.shade800,
                                         ),
@@ -256,8 +292,10 @@ class PublicProductScreen extends ConsumerWidget {
                                       Text(
                                         l10n.t('ecoFriendlyDesc') ??
                                             'By refilling dispensers, this hotel prevents plastic waste and preserves our planet\'s natural beauty.',
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: theme.colorScheme.onSurfaceVariant,
+                                        style:
+                                            theme.textTheme.bodySmall?.copyWith(
+                                          color: theme
+                                              .colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ],

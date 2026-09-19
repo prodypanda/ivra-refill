@@ -3,18 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../domain/models.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../dashboard/dashboard_screen.dart';
-import 'auth_validation.dart';
-import 'login_screen.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/dashboard/dashboard_screen.dart';
+import 'package:ivra_refill/src/features/auth/auth_validation.dart';
+import 'package:ivra_refill/src/features/auth/login_screen.dart';
 
 class AcceptInvitationScreen extends ConsumerStatefulWidget {
-  const AcceptInvitationScreen({
-    required this.token,
-    super.key,
-  });
+  const AcceptInvitationScreen({required this.token, super.key});
 
   static const route = '/accept-invite';
 
@@ -142,8 +139,9 @@ class _AcceptInvitationScreenState
         if (Supabase.instance.client.auth.currentSession == null) {
           if (!mounted) return;
           setState(() {
-            _message =
-                AppLocalizations.of(context).t('inviteAccountCreatedConfirm');
+            _message = AppLocalizations.of(
+              context,
+            ).t('inviteAccountCreatedConfirm');
           });
           return;
         }
@@ -157,10 +155,9 @@ class _AcceptInvitationScreenState
       context.go(DashboardScreen.route);
     } catch (error) {
       if (!mounted) return;
-      setState(() => _error = localizeAuthError(
-            AppLocalizations.of(context),
-            error,
-          ));
+      setState(
+        () => _error = localizeAuthError(AppLocalizations.of(context), error),
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -185,10 +182,11 @@ class _AcceptInvitationScreenState
     if (base.hasScheme && (base.scheme == 'http' || base.scheme == 'https')) {
       redirectUrl = base
           .replace(
-              path: '/',
-              query: '',
-              fragment:
-                  '${AcceptInvitationScreen.route}?token=${widget.token.trim()}')
+            path: '/',
+            query: '',
+            fragment:
+                '${AcceptInvitationScreen.route}?token=${widget.token.trim()}',
+          )
           .toString();
     } else {
       // Mobile / native build: hand Supabase the registered custom
@@ -242,31 +240,29 @@ class _InvitationForm extends StatelessWidget {
       children: [
         Text(
           AppLocalizations.of(context).t('inviteAcceptHeading'),
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 12),
         Text(
           invitation.hotelName == null
-              ? AppLocalizations.of(context).tParams(
-                  'inviteSubtitleNoHotel',
-                  {
-                    'name': invitation.fullName,
-                    'role': AppLocalizations.of(context)
-                        .userRoleLabel(invitation.role),
-                  },
-                )
-              : AppLocalizations.of(context).tParams(
-                  'inviteSubtitleWithHotel',
-                  {
-                    'name': invitation.fullName,
-                    'role': AppLocalizations.of(context)
-                        .userRoleLabel(invitation.role),
-                    'hotel': invitation.hotelName!,
-                  },
-                ),
+              ? AppLocalizations.of(context).tParams('inviteSubtitleNoHotel', {
+                  'name': invitation.fullName,
+                  'role': AppLocalizations.of(
+                    context,
+                  ).userRoleLabel(invitation.role),
+                })
+              : AppLocalizations.of(
+                  context,
+                ).tParams('inviteSubtitleWithHotel', {
+                  'name': invitation.fullName,
+                  'role': AppLocalizations.of(
+                    context,
+                  ).userRoleLabel(invitation.role),
+                  'hotel': invitation.hotelName!,
+                }),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
@@ -303,10 +299,7 @@ class _InvitationForm extends StatelessWidget {
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
         ],
-        if (message != null) ...[
-          const SizedBox(height: 12),
-          Text(message!),
-        ],
+        if (message != null) ...[const SizedBox(height: 12), Text(message!)],
         const SizedBox(height: 20),
         FilledButton.icon(
           onPressed: isSaving ? null : onAccept,
@@ -321,8 +314,9 @@ class _InvitationForm extends StatelessWidget {
         const SizedBox(height: 8),
         TextButton(
           onPressed: isSaving ? null : onBackToLogin,
-          child:
-              Text(AppLocalizations.of(context).t('inviteAlreadyHaveAccount')),
+          child: Text(
+            AppLocalizations.of(context).t('inviteAlreadyHaveAccount'),
+          ),
         ),
       ],
     );
@@ -344,9 +338,9 @@ class _InvalidInvitation extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           AppLocalizations.of(context).t('inviteInvalidHeading'),
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),

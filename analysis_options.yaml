@@ -2,6 +2,10 @@ include: package:flutter_lints/flutter.yaml
 
 linter:
   rules:
+    avoid_print: true
     prefer_single_quotes: true
+    unawaited_futures: true
+    cancel_subscriptions: true
+    always_use_package_imports: true
+    prefer_const_constructors: true
     sort_child_properties_last: false
-

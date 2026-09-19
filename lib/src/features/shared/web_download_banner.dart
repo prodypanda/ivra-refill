@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
 
 class WebDownloadBanner extends ConsumerWidget {
   const WebDownloadBanner({super.key});
@@ -20,7 +20,9 @@ class WebDownloadBanner extends ConsumerWidget {
     if (isCollapsed) {
       return InkWell(
         onTap: () {
-          ref.read(downloadBannerCollapsedProvider.notifier).setCollapsed(false);
+          ref
+              .read(downloadBannerCollapsedProvider.notifier)
+              .setCollapsed(false);
         },
         child: Container(
           width: double.infinity,
@@ -106,7 +108,9 @@ class WebDownloadBanner extends ConsumerWidget {
               const SizedBox(width: 16),
               FilledButton.icon(
                 onPressed: () async {
-                  final url = Uri.parse('https://github.com/prodypanda/ivra-refill/releases/latest/download/iVRA_Refill.apk');
+                  final url = Uri.parse(
+                    'https://github.com/prodypanda/ivra-refill/releases/latest/download/iVRA_Refill.apk',
+                  );
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url, mode: LaunchMode.externalApplication);
                   }
@@ -124,10 +128,16 @@ class WebDownloadBanner extends ConsumerWidget {
               const SizedBox(width: 8),
               IconButton(
                 icon: const Icon(Icons.close_rounded, size: 20),
-                color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
-                hoverColor: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.1),
+                color: theme.colorScheme.onPrimaryContainer.withValues(
+                  alpha: 0.7,
+                ),
+                hoverColor: theme.colorScheme.onPrimaryContainer.withValues(
+                  alpha: 0.1,
+                ),
                 onPressed: () {
-                  ref.read(downloadBannerCollapsedProvider.notifier).setCollapsed(true);
+                  ref
+                      .read(downloadBannerCollapsedProvider.notifier)
+                      .setCollapsed(true);
                 },
               ),
             ],

@@ -42,7 +42,8 @@ class _CenteredFormSheetDialog extends StatefulWidget {
   final bool scrollable;
 
   @override
-  State<_CenteredFormSheetDialog> createState() => _CenteredFormSheetDialogState();
+  State<_CenteredFormSheetDialog> createState() =>
+      _CenteredFormSheetDialogState();
 }
 
 class _CenteredFormSheetDialogState extends State<_CenteredFormSheetDialog> {
@@ -66,7 +67,8 @@ class _CenteredFormSheetDialogState extends State<_CenteredFormSheetDialog> {
     final media = MediaQuery.of(context);
     final bottomInset = media.viewInsets.bottom;
     // Keep the popup within the visible area, leaving room for the keyboard.
-    final maxHeight = media.size.height - media.padding.vertical - 48 - bottomInset;
+    final maxHeight =
+        media.size.height - media.padding.vertical - 48 - bottomInset;
 
     final childWidget = widget.scrollable
         ? Scrollbar(

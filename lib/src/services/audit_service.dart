@@ -1,9 +1,13 @@
+import 'package:ivra_refill/src/utils/app_logger.dart';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// A class representing AuditService.
+///
+/// Provides data structure and operations for AuditService.
 class AuditService {
   final SupabaseClient _supabase;
   String? _deviceInfoCache;
@@ -22,10 +26,12 @@ class AuditService {
         info = 'Web (${webInfo.browserName.name} ${webInfo.appVersion ?? ''})';
       } else if (Platform.isAndroid) {
         final androidInfo = await deviceInfoPlugin.androidInfo;
-        info = 'Android ${androidInfo.version.release} (${androidInfo.manufacturer} ${androidInfo.model})';
+        info =
+            'Android ${androidInfo.version.release} (${androidInfo.manufacturer} ${androidInfo.model})';
       } else if (Platform.isIOS) {
         final iosInfo = await deviceInfoPlugin.iosInfo;
-        info = 'iOS ${iosInfo.systemVersion} (${iosInfo.name} ${iosInfo.model})';
+        info =
+            'iOS ${iosInfo.systemVersion} (${iosInfo.name} ${iosInfo.model})';
       }
     } catch (e) {
       info = 'Error getting device info: $e';
@@ -54,12 +60,12 @@ class AuditService {
           'p_device_info': deviceInfo,
         },
       );
-      debugPrint('Audit Log: $action');
+      AppLogger.debug('Audit Log: $action');
       return true;
     } catch (e, stackTrace) {
       // Best-effort: never disrupt the user flow because audit logging failed,
       // but make sure the failure is always visible in logs.
-      debugPrint('Failed to log audit action "$action": $e');
+      AppLogger.error('Failed to log audit action "$action": $e', error: e);
       debugPrintStack(stackTrace: stackTrace, label: 'AuditService.logAction');
       return false;
     }

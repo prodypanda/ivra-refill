@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import '../shared/shimmer_loading.dart';
+import 'package:ivra_refill/src/features/shared/shimmer_loading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../domain/models.dart';
-import '../../domain/app_enums.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
 
 class SendNotificationScreen extends ConsumerStatefulWidget {
   const SendNotificationScreen({super.key});
@@ -15,18 +14,20 @@ class SendNotificationScreen extends ConsumerStatefulWidget {
   static const route = '/notifications/send';
 
   @override
-  ConsumerState<SendNotificationScreen> createState() => _SendNotificationScreenState();
+  ConsumerState<SendNotificationScreen> createState() =>
+      _SendNotificationScreenState();
 }
 
-class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen> {
+class _SendNotificationScreenState
+    extends ConsumerState<SendNotificationScreen> {
   final _titleController = TextEditingController();
   final _bodyController = TextEditingController();
-  
+
   String _targetType = 'all'; // 'all', 'role', 'hotel', 'user'
   String? _targetValue;
   String? _targetPage;
   final List<String> _actionButtons = [];
-  
+
   bool _isSending = false;
 
   @override
@@ -37,18 +38,19 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
   }
 
   Future<void> _sendNotification() async {
-    final loc = AppLocalizations.of(context)!;
-    if (_titleController.text.trim().isEmpty || _bodyController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.t('pleaseEnterTitleBody'))),
-      );
+    final loc = AppLocalizations.of(context);
+    if (_titleController.text.trim().isEmpty ||
+        _bodyController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.t('pleaseEnterTitleBody'))));
       return;
     }
 
     if (_targetType != 'all' && _targetValue == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.t('pleaseSelectTarget'))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.t('pleaseSelectTarget'))));
       return;
     }
 
@@ -71,10 +73,12 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
         final data = response.data;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(loc.tParams('notificationSent', {
-              'successCount': data['successCount']?.toString() ?? '0',
-              'failureCount': data['failureCount']?.toString() ?? '0'
-            })),
+            content: Text(
+              loc.tParams('notificationSent', {
+                'successCount': data['successCount']?.toString() ?? '0',
+                'failureCount': data['failureCount']?.toString() ?? '0',
+              }),
+            ),
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
@@ -101,14 +105,11 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context);
     final hotelsAsync = ref.watch(hotelsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(loc.t('sendPushTitle')),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(loc.t('sendPushTitle')), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Center(
@@ -119,7 +120,9 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
                 side: BorderSide(
-                  color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                  color: theme.colorScheme.outlineVariant.withValues(
+                    alpha: 0.3,
+                  ),
                 ),
               ),
               child: Padding(
@@ -219,20 +222,34 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                       ],
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Dynamic Target Selector
                     if (_targetType == 'role') ...[
                       DropdownButtonFormField<String>(
-                        value: _targetValue,
+                        initialValue: _targetValue,
                         decoration: InputDecoration(
                           labelText: loc.t('selectRole'),
                           border: const OutlineInputBorder(),
                         ),
                         items: [
-                          DropdownMenuItem(value: 'app_admin', child: Text(loc.userRoleLabel(UserRole.appAdmin))),
-                          DropdownMenuItem(value: 'app_manager', child: Text(loc.userRoleLabel(UserRole.appManager))),
-                          DropdownMenuItem(value: 'hotel_manager', child: Text(loc.userRoleLabel(UserRole.hotelManager))),
-                          DropdownMenuItem(value: 'hotel_staff', child: Text(loc.userRoleLabel(UserRole.hotelStaff))),
+                          DropdownMenuItem(
+                            value: 'app_admin',
+                            child: Text(loc.userRoleLabel(UserRole.appAdmin)),
+                          ),
+                          DropdownMenuItem(
+                            value: 'app_manager',
+                            child: Text(loc.userRoleLabel(UserRole.appManager)),
+                          ),
+                          DropdownMenuItem(
+                            value: 'hotel_manager',
+                            child: Text(
+                              loc.userRoleLabel(UserRole.hotelManager),
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'hotel_staff',
+                            child: Text(loc.userRoleLabel(UserRole.hotelStaff)),
+                          ),
                         ],
                         onChanged: (val) => setState(() => _targetValue = val),
                       ),
@@ -240,20 +257,29 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                       hotelsAsync.when(
                         data: (hotels) {
                           return DropdownButtonFormField<String>(
-                            value: _targetValue,
+                            initialValue: _targetValue,
                             decoration: InputDecoration(
                               labelText: loc.t('selectHotel'),
                               border: const OutlineInputBorder(),
                             ),
-                            items: hotels.map((h) => DropdownMenuItem(
-                              value: h.id,
-                              child: Text(h.name),
-                            )).toList(),
-                            onChanged: (val) => setState(() => _targetValue = val),
+                            items: hotels
+                                .map(
+                                  (h) => DropdownMenuItem(
+                                    value: h.id,
+                                    child: Text(h.name),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (val) =>
+                                setState(() => _targetValue = val),
                           );
                         },
-                        loading: () => Padding(padding: EdgeInsets.symmetric(vertical: 8), child: ShimmerLoading(width: 200, height: 48)),
-                        error: (err, stack) => Text('${loc.t('errorLoadingHotels')}: $err'),
+                        loading: () => const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: ShimmerLoading(width: 200, height: 48),
+                        ),
+                        error: (err, stack) =>
+                            Text('${loc.t('errorLoadingHotels')}: $err'),
                       ),
                     ] else if (_targetType == 'user') ...[
                       TextField(
@@ -277,22 +303,40 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: _targetPage,
+                      initialValue: _targetPage,
                       decoration: InputDecoration(
                         labelText: loc.t('openSpecificPage'),
                         border: const OutlineInputBorder(),
                       ),
                       items: [
-                        DropdownMenuItem(value: null, child: Text(loc.t('defaultNoPage'))),
-                        DropdownMenuItem(value: '/', child: Text(loc.t('dashboard'))),
-                        DropdownMenuItem(value: '/inventory', child: Text(loc.t('inventory'))),
-                        DropdownMenuItem(value: '/alerts', child: Text(loc.t('alerts'))),
-                        DropdownMenuItem(value: '/approvals', child: Text(loc.t('approvals'))),
+                        DropdownMenuItem(
+                          value: null,
+                          child: Text(loc.t('defaultNoPage')),
+                        ),
+                        DropdownMenuItem(
+                          value: '/',
+                          child: Text(loc.t('dashboard')),
+                        ),
+                        DropdownMenuItem(
+                          value: '/inventory',
+                          child: Text(loc.t('inventory')),
+                        ),
+                        DropdownMenuItem(
+                          value: '/alerts',
+                          child: Text(loc.t('alerts')),
+                        ),
+                        DropdownMenuItem(
+                          value: '/approvals',
+                          child: Text(loc.t('approvals')),
+                        ),
                       ],
                       onChanged: (val) => setState(() => _targetPage = val),
                     ),
                     const SizedBox(height: 16),
-                    Text(loc.t('actionButtonsAndroid'), style: theme.textTheme.titleSmall),
+                    Text(
+                      loc.t('actionButtonsAndroid'),
+                      style: theme.textTheme.titleSmall,
+                    ),
                     Wrap(
                       spacing: 8,
                       children: [
@@ -301,7 +345,9 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                           selected: _actionButtons.contains('Dismiss'),
                           onSelected: (val) {
                             setState(() {
-                              val ? _actionButtons.add('Dismiss') : _actionButtons.remove('Dismiss');
+                              val
+                                  ? _actionButtons.add('Dismiss')
+                                  : _actionButtons.remove('Dismiss');
                             });
                           },
                         ),
@@ -310,7 +356,9 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                           selected: _actionButtons.contains('Acknowledge'),
                           onSelected: (val) {
                             setState(() {
-                              val ? _actionButtons.add('Acknowledge') : _actionButtons.remove('Acknowledge');
+                              val
+                                  ? _actionButtons.add('Acknowledge')
+                                  : _actionButtons.remove('Acknowledge');
                             });
                           },
                         ),
@@ -319,7 +367,9 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                           selected: _actionButtons.contains('Open App'),
                           onSelected: (val) {
                             setState(() {
-                              val ? _actionButtons.add('Open App') : _actionButtons.remove('Open App');
+                              val
+                                  ? _actionButtons.add('Open App')
+                                  : _actionButtons.remove('Open App');
                             });
                           },
                         ),
@@ -328,7 +378,9 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                           selected: _actionButtons.contains('Mark as Read'),
                           onSelected: (val) {
                             setState(() {
-                              val ? _actionButtons.add('Mark as Read') : _actionButtons.remove('Mark as Read');
+                              val
+                                  ? _actionButtons.add('Mark as Read')
+                                  : _actionButtons.remove('Mark as Read');
                             });
                           },
                         ),
@@ -342,12 +394,20 @@ class _SendNotificationScreenState extends ConsumerState<SendNotificationScreen>
                           ? const SizedBox(
                               width: 24,
                               height: 24,
-                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
                             )
                           : const Icon(Icons.send_rounded),
                       label: Text(
-                        _isSending ? loc.t('sending') : loc.t('dispatchNotification'),
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        _isSending
+                            ? loc.t('sending')
+                            : loc.t('dispatchNotification'),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 20),

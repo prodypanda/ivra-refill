@@ -4,15 +4,15 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 
-import '../domain/app_enums.dart';
-import '../domain/models.dart';
-import '../features/shared/premium_loading.dart';
-import '../l10n/app_localizations.dart';
-import '../routing/app_router.dart';
-import '../state/app_state.dart';
-import '../services/notification_service.dart';
-import 'deep_link_listener.dart';
-import 'theme.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/features/shared/premium_loading.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/routing/app_router.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/services/notification_service.dart';
+import 'package:ivra_refill/src/app/deep_link_listener.dart';
+import 'package:ivra_refill/src/app/theme.dart';
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -95,7 +95,7 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
           invalidateAccountScopedData(ref);
         });
       }
-      
+
       if (nextUser != null && prevUserId != nextUser.id) {
         ref.read(notificationServiceProvider).initialize();
       }
@@ -118,14 +118,21 @@ class _GlobalSplashGateState extends ConsumerState<_GlobalSplashGate> {
         final summary = next == null
             ? l10n.dailyRefillSummaryLabel(DailyRefillStatus.noRooms, null)
             : l10n.dailyRefillSummaryLabel(
-                next.status, next.nextPriorityRoomNumber);
-        HomeWidget.saveWidgetData<int>('refilled_rooms_count', next?.refilledRoomsCount ?? 0);
-        HomeWidget.saveWidgetData<int>('total_rooms_count', next?.totalRoomsCount ?? 0);
+                next.status,
+                next.nextPriorityRoomNumber,
+              );
+        HomeWidget.saveWidgetData<int>(
+          'refilled_rooms_count',
+          next?.refilledRoomsCount ?? 0,
+        );
+        HomeWidget.saveWidgetData<int>(
+          'total_rooms_count',
+          next?.totalRoomsCount ?? 0,
+        );
         HomeWidget.saveWidgetData<String>('next_priority_room', summary);
         HomeWidget.updateWidget(androidName: 'DailyRefillWidgetProvider');
       }
     });
-
 
     final currentUserAsync = ref.watch(currentUserProvider);
 

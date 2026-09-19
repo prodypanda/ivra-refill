@@ -9,22 +9,31 @@
 const Map<String, Map<String, String>> kL10nValues = {
   'en': {
     'markAsRead': 'Mark as Read',
-    'confirmDeleteHotel': 'Are you sure you want to delete the hotel \'{hotelName}\'? This action is permanent, cannot be undone, and will permanently remove all associated rooms, staff assignments, and records.',
-    'confirmDeleteRoom': 'Are you sure you want to delete room \'{roomNumber}\'? This action is permanent, cannot be undone, and will permanently remove all associated products and history.',
-    'confirmDeleteFloor': 'Are you sure you want to delete floor \'{floorNumber}\' and all of its rooms? This action is permanent and cannot be undone.',
-    'confirmDeleteUser': 'Are you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.',
-    'confirmDeleteProduct': 'Are you sure you want to delete product \'{productName}\'? This action is permanent, cannot be undone, and will affect store stock tracking.',
-    'confirmDeleteAlert': 'Are you sure you want to delete this alert? This action is permanent and cannot be undone.',
-    'confirmDeleteAllAlerts': 'Are you sure you want to delete all alerts? This action is permanent, cannot be undone, and will clear all current notifications.',
+    'confirmDeleteHotel':
+        'Are you sure you want to delete the hotel \'{hotelName}\'? This action is permanent, cannot be undone, and will permanently remove all associated rooms, staff assignments, and records.',
+    'confirmDeleteRoom':
+        'Are you sure you want to delete room \'{roomNumber}\'? This action is permanent, cannot be undone, and will permanently remove all associated products and history.',
+    'confirmDeleteFloor':
+        'Are you sure you want to delete floor \'{floorNumber}\' and all of its rooms? This action is permanent and cannot be undone.',
+    'confirmDeleteUser':
+        'Are you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.',
+    'confirmDeleteProduct':
+        'Are you sure you want to delete product \'{productName}\'? This action is permanent, cannot be undone, and will affect store stock tracking.',
+    'confirmDeleteAlert':
+        'Are you sure you want to delete this alert? This action is permanent and cannot be undone.',
+    'confirmDeleteAllAlerts':
+        'Are you sure you want to delete all alerts? This action is permanent, cannot be undone, and will clear all current notifications.',
     'clearAuditLogs': 'Clear Logs',
     'confirmAction': 'Confirm Action',
-    'confirmClearLogs': 'Are you sure you want to clear all audit logs? This action is permanent and cannot be undone.',
+    'confirmClearLogs':
+        'Are you sure you want to clear all audit logs? This action is permanent and cannot be undone.',
     'btnConfirm': 'Confirm',
     'composeMessage': 'Compose Message',
     'notificationTitle': 'Notification Title',
     'notificationDefaultTitle': 'New Notification',
     'notificationChannelName': 'High Importance Notifications',
-    'notificationChannelDescription': 'This channel is used for important notifications.',
+    'notificationChannelDescription':
+        'This channel is used for important notifications.',
     'notificationTitleHint': 'e.g. New Feature Alert!',
     'notificationBody': 'Notification Body',
     'notificationBodyHint': 'Enter the message here...',
@@ -134,20 +143,26 @@ const Map<String, Map<String, String>> kL10nValues = {
     'downloadCsv': 'Download CSV',
     'downloadPdf': 'Download PDF',
     'reportRefillHistoryTitle': 'Refill history',
-    'reportRefillHistoryBody': 'Export recent refill activity by hotel, room, product, user, and time.',
-    'reportSuggestedOrdersBody': 'Export bottles, refill bottles, and recycling recommendations.',
+    'reportRefillHistoryBody':
+        'Export recent refill activity by hotel, room, product, user, and time.',
+    'reportSuggestedOrdersBody':
+        'Export bottles, refill bottles, and recycling recommendations.',
     'reportInventorySnapshotTitle': 'Store Stock snapshot',
-    'reportInventorySnapshotBody': 'Export current bottle and refill bottle stock by hotel and product.',
+    'reportInventorySnapshotBody':
+        'Export current bottle and refill bottle stock by hotel and product.',
     'reportOpenAlertsTitle': 'Open alerts',
-    'reportOpenAlertsBody': 'Export low stock, replacement, inactivity, and suspicious activity alerts.',
+    'reportOpenAlertsBody':
+        'Export low stock, replacement, inactivity, and suspicious activity alerts.',
     'scheduleReportEmail': 'Schedule report email',
-    'scheduleReportEmailHint': 'We will send a summary of this report to this address every Monday.',
+    'scheduleReportEmailHint':
+        'We will send a summary of this report to this address every Monday.',
     'scheduledReportEmailDrafted': 'Email report scheduled successfully',
     'reportFilterDateRange': 'Filter by Date Range',
     'reportAllProducts': 'All products',
     'reportAllRooms': 'All rooms',
     'reportClearFilters': 'Clear Filters',
-    'reportFiltersApplyExports': 'Note: Filters apply to both screen metrics and downloaded exports.',
+    'reportFiltersApplyExports':
+        'Note: Filters apply to both screen metrics and downloaded exports.',
     'reportAnalyticsTitle': 'Analytics Overview',
     'reportKpiRefills': 'Total Refills',
     'reportKpiCorrections': 'Stock Corrections',
@@ -171,7 +186,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'inventoryTableFullBottlesWithPumpGeneric': 'Full bottles with pump',
     'inventoryTableFullBottlesWithoutPumpGeneric': 'Full bottles without pump',
     'inventoryCollapseHeader': 'Empty & Open Bottles',
-    'inventoryTableEmptyBottles': 'Replaced bottles after {months} months (Used)',
+    'inventoryTableEmptyBottles':
+        'Replaced bottles after {months} months (Used)',
     'inventoryTableEmptyBottlesGeneric': 'Replaced bottles (Used)',
     'inventoryTableEmptyBidons': 'Empty refill bottles',
     'inventoryTableFullBidons': 'Full {size} refill bottles',
@@ -180,7 +196,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'inventoryTableStatus': 'Status',
     'errorUniqueViolation': 'This record already exists.',
     'errorForeignKeyViolation': 'Related record not found.',
-    'errorPermissionDenied': 'You do not have permission to perform this action.',
+    'errorPermissionDenied':
+        'You do not have permission to perform this action.',
     'errorGeneric': 'An unexpected error occurred. Please try again.',
     'inventoryStatusHealthy': 'Healthy',
     'inventoryStatusLowStock': 'Low stock',
@@ -196,7 +213,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'orderNewBottlesText': 'Order {count} new 1L bottles',
     'orderNewBidonsText': 'Order {count} new 5L refill bottles',
     'recycleBottlesText': 'Recycle {count} bottles',
-    'bottleCannotRefillRecycled': 'This bottle has been recycled and cannot be refilled. Please replace it.',
+    'bottleCannotRefillRecycled':
+        'This bottle has been recycled and cannot be refilled. Please replace it.',
     'adjustStockTitle': 'Adjust stock',
     'hotelRoomsTracked': 'rooms tracked',
     'hotelPendingChip': 'pending',
@@ -213,8 +231,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'btnCancel': 'Cancel',
     'btnSave': 'Save',
     'btnSubmitRequest': 'Submit request',
-    'demoModeDescription': 'Local simulations using offline database templates.',
-    'offlineModeDescription': 'Queues actions when disconnected and syncs later.',
+    'demoModeDescription':
+        'Local simulations using offline database templates.',
+    'offlineModeDescription':
+        'Queues actions when disconnected and syncs later.',
     'syncQueueHeader': 'Sync Queue',
     'syncNow': 'Sync now',
     'itemsToSync': 'actions pending sync',
@@ -237,7 +257,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authBtnForgotPassword': 'Forgot password?',
     'authResetPasswordTitle': 'Reset password',
     'setPasswordTitle': 'Set your password',
-    'setPasswordBody': 'Please set a secure password for your account to complete your registration.',
+    'setPasswordBody':
+        'Please set a secure password for your account to complete your registration.',
     'setPasswordButton': 'Set Password',
     'authBtnSendResetLink': 'Send reset link',
     'authResetLinkSent': 'Password reset link sent to',
@@ -252,33 +273,43 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authBtnUpdatePassword': 'Update password',
     'authBtnReturnToApp': 'Return to app',
     'authPasswordUpdatedSuccess': 'Password updated successfully.',
-    'authUnexpectedError': 'Something went wrong. Please try again, or contact support if the problem persists.',
+    'authUnexpectedError':
+        'Something went wrong. Please try again, or contact support if the problem persists.',
     'asyncErrorTitle': 'Could not load this section',
     'btnRetry': 'Retry',
     'authProfileLoadErrorTitle': 'We couldn\'t load your profile.',
-    'authProfileLoadErrorBody': 'This is usually a temporary connection issue. Please retry.',
-    'authAccountDeactivated': 'This account has been deactivated. Contact your administrator for access.',
+    'authProfileLoadErrorBody':
+        'This is usually a temporary connection issue. Please retry.',
+    'authAccountDeactivated':
+        'This account has been deactivated. Contact your administrator for access.',
     'settingsPayloadInvalidJson': 'Payload must be a JSON object.',
     'exportDownloadStarted': '{fileName} download started',
     'exportSaved': 'Saved {fileName} to {path}',
     'settingsPendingSync': 'Pending sync ({count})',
     'splashTagline': 'Sustainable Hospitality Solutions',
     'accountSaveFailed': 'Could not save your profile. Please try again.',
-    'accountPasswordChangeFailed': 'Could not change your password. Please try again.',
-    'accountSignOutFailed': 'Could not sign out. Check your connection and try again.',
+    'accountPasswordChangeFailed':
+        'Could not change your password. Please try again.',
+    'accountSignOutFailed':
+        'Could not sign out. Check your connection and try again.',
     'hotelCreateFailed': 'Could not create the hotel. Please try again.',
     'hotelUpdateFailed': 'Could not update the hotel. Please try again.',
     'teamInviteFailed': 'Could not send the invitation. Please try again.',
-    'teamHotelsUpdateFailed': 'Could not update hotel assignments. Please try again.',
+    'teamHotelsUpdateFailed':
+        'Could not update hotel assignments. Please try again.',
     'roomsTooltipCreateTemplate': 'Create room template',
     'roomsNoRoomsFound': 'No rooms or products found.',
-    'roomsScanConfirmFromCart': 'Product "{product}" is not currently assigned to this room, but you have {count} in your cart. Would you like to take 1 from your cart and assign it to this room?',
-    'roomsScanConfirmFromHotel': 'Product "{product}" is not in this room. There are {count} bottles in the hotel inventory. Would you like to get 1 and assign it to this room?',
+    'roomsScanConfirmFromCart':
+        'Product "{product}" is not currently assigned to this room, but you have {count} in your cart. Would you like to take 1 from your cart and assign it to this room?',
+    'roomsScanConfirmFromHotel':
+        'Product "{product}" is not in this room. There are {count} bottles in the hotel inventory. Would you like to get 1 and assign it to this room?',
     'roomsNoProducts': 'No products assigned to this room.',
     'roomsStatusNoProducts': 'No products',
     'roomsSearchEmptyHint': 'Try adjusting your search query or filters.',
-    'roomsEmptyHotelWithTemplate': 'Add your first room using the template button above.',
-    'roomsEmptyHotelNoTemplate': 'No rooms have been assigned to this hotel yet.',
+    'roomsEmptyHotelWithTemplate':
+        'Add your first room using the template button above.',
+    'roomsEmptyHotelNoTemplate':
+        'No rooms have been assigned to this hotel yet.',
     'roomsLabelRoom': 'Room',
     'bottleStatusActive': 'Active',
     'bottleStatusNeedsRefill': 'Needs refill',
@@ -361,7 +392,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrActionReplace': 'Replace Bottle',
     'hotelNotFound': 'Hotel Not Found',
     'productNotFound': 'Product Not Found',
-    'qrAccessDeniedMessage': 'You are not authorized to perform actions at this hotel.',
+    'qrAccessDeniedMessage':
+        'You are not authorized to perform actions at this hotel.',
     'roomsFillCount': 'Refill Count',
     'roomsBottleStatus': 'Dispenser Status',
     'btnBack': 'Back',
@@ -376,7 +408,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrCameraPermission': 'Camera permission denied',
     'qrCameraUnavailable': 'Camera unavailable',
     'qrHotelNotFoundMessage': 'Could not match hotel: "{hotel}"',
-    'qrProductNotFoundMessage': 'Room {room} (Floor {floor}) does not contain product SKU: "{sku}"',
+    'qrProductNotFoundMessage':
+        'Room {room} (Floor {floor}) does not contain product SKU: "{sku}"',
     'qrGenerateTabScan': 'Scan QR Code',
     'qrGenerateTabGenerate': 'Generate QR Codes',
     'qrGenerateHotel': 'Hotel',
@@ -392,26 +425,33 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrGenerateSuccess': 'PDF generated and downloaded successfully',
     'settingsScannerHeader': 'Scanner Settings',
     'settingsPrecisionScanTitle': 'Precision Scan Window',
-    'settingsPrecisionScanSubtitle': 'Only scan codes aligned in the viewfinder center',
+    'settingsPrecisionScanSubtitle':
+        'Only scan codes aligned in the viewfinder center',
     'settingsTapToScanTitle': 'Tap to Scan',
     'settingsTapToScanSubtitle': 'Tap on a detected QR code box to scan it',
     'qrConfirmAssignTitle': 'Product Not Placed',
-    'qrConfirmAssignMessage': 'Product {product} is not assigned to Room {room}. Add 1 piece to inventory and assign it to the room?',
+    'qrConfirmAssignMessage':
+        'Product {product} is not assigned to Room {room}. Add 1 piece to inventory and assign it to the room?',
     'qrAssignSuccess': 'Product assigned and refilled successfully',
     'qrActionCanceled': 'Operation Canceled',
-    'qrActionCanceledMessage': 'You chose not to assign the product. You can scan another code or return to rooms.',
+    'qrActionCanceledMessage':
+        'You chose not to assign the product. You can scan another code or return to rooms.',
     'scanAssignTitle': 'Assign Product to Room',
     'scanAssignSuccess': 'Product Assigned Successfully',
     'scanAssignFailed': 'Assignment Failed',
     'scanAssignInStock': '{count} in stock — will deduct 1 and assign to room',
-    'scanAssignOutOfStock': 'Out of stock — 1 unit will be auto-added to inventory then assigned',
-    'scanAssignDescription': 'This product is not yet assigned to this room. Tap below to assign it.',
+    'scanAssignOutOfStock':
+        'Out of stock — 1 unit will be auto-added to inventory then assigned',
+    'scanAssignDescription':
+        'This product is not yet assigned to this room. Tap below to assign it.',
     'scanAssignButton': 'Assign to Room',
     'scanAssignAutoAdd': 'Add to Inventory & Assign',
     'scanAssignAutoAddTitle': 'Add to Inventory?',
-    'scanAssignAutoAddMessage': 'Product "{product}" is out of stock. Would you like to automatically add 1 unit to inventory and assign it to this room?',
+    'scanAssignAutoAddMessage':
+        'Product "{product}" is out of stock. Would you like to automatically add 1 unit to inventory and assign it to this room?',
     'scanAssignConfirm': 'Yes, add & assign',
-    'scanAssignSuccessMessage': 'Product {product} has been assigned to Room {room} (Floor {floor}).',
+    'scanAssignSuccessMessage':
+        'Product {product} has been assigned to Room {room} (Floor {floor}).',
     'qrMultipleDetected': 'Multiple QR codes detected. Tap to select:',
     'qrUnknownSku': 'SKU "{sku}" does not match any known product.',
     'goToRoom': 'Go to Room',
@@ -429,7 +469,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsBtnCreateRooms': 'Create rooms',
     'roomsLabelProductsInRoom': 'Products in each room',
     'roomsMsgSelectOneProduct': 'Select at least one product',
-    'roomsMsgDuplicateRoomNumbers': 'These room numbers already exist in this hotel: {numbers}. Choose a different starting number or count.',
+    'roomsMsgDuplicateRoomNumbers':
+        'These room numbers already exist in this hotel: {numbers}. Choose a different starting number or count.',
     'productsCatalogTitle': 'Product Catalog',
     'productsBtnCreate': 'Create product',
     'productsNoProducts': 'No products in the catalog yet.',
@@ -475,9 +516,11 @@ const Map<String, Map<String, String>> kL10nValues = {
     'inventoryAddHotelHint': 'Add a hotel to get started.',
     'inventoryNoItemsToAdjust': 'No store stock items available to adjust.',
     'inventoryNoInventoryYet': 'No store stock yet',
-    'inventoryNoProductsInInventory': 'There are no products in the store stock.',
+    'inventoryNoProductsInInventory':
+        'There are no products in the store stock.',
     'inventoryNoSuggestedOrders': 'No suggested orders',
-    'inventoryLevelsSufficient': 'Your store stock levels are currently sufficient.',
+    'inventoryLevelsSufficient':
+        'Your store stock levels are currently sufficient.',
     'teamAccounts': 'Team accounts',
     'teamNoMembers': 'No team members found.',
     'teamTableColumnName': 'Name',
@@ -495,11 +538,13 @@ const Map<String, Map<String, String>> kL10nValues = {
     'settingsOfflineSend': 'Send actions',
     'settingsBiometricTitle': 'Biometric unlock',
     'settingsBiometricHint': 'Use your fingerprint or face to sign in.',
-    'settingsBiometricUnavailable': 'Biometric unlock is not available on this device.',
+    'settingsBiometricUnavailable':
+        'Biometric unlock is not available on this device.',
     'authBtnBiometricLogin': 'Biometric login',
     'authBiometricReason': 'Authenticate to access Ivra',
     'authBiometricNeedsLogin': 'Please sign in once to enable biometric login.',
-    'authBiometricOfflineNoSession': 'You are offline. Connect to the internet to sign in.',
+    'authBiometricOfflineNoSession':
+        'You are offline. Connect to the internet to sign in.',
     'authBiometricFailed': 'Biometric authentication failed.',
     'settingsBtnClear': 'Clear',
     'settingsBtnSyncNow': 'Sync now',
@@ -546,7 +591,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'approvalsApproveQueued': 'Approval queued for sync.',
     'approvalsRejectQueued': 'Rejection queued for sync.',
     'approvalsAccessDenied': 'Access denied. Only admins can review approvals.',
-    'approvalsRequestNotFound': 'Approval request not found or already processed.',
+    'approvalsRequestNotFound':
+        'Approval request not found or already processed.',
     'inviteAcceptTitle': 'Accept invitation',
     'inviteAlreadyHaveAccount': 'I already have an account',
     'inviteBackToSignIn': 'Back to sign in',
@@ -624,27 +670,33 @@ const Map<String, Map<String, String>> kL10nValues = {
     'notificationAcknowledgedToast': 'Acknowledged',
     'notificationMoreInfo': 'More info',
     'bulkAdjustStockTitle': 'Bulk stock adjustment',
-    'bulkAdjustStockHint': 'Enter quantity adjustments that will apply to ALL products.',
+    'bulkAdjustStockHint':
+        'Enter quantity adjustments that will apply to ALL products.',
     'bulkAdjustStockSuccess': 'Bulk stock adjustment successfully applied',
     'bulkAdjustStockOfflineQueued': 'Bulk adjustments queued for offline sync',
     'resolveAll': 'Resolve all',
     'deleteAll': 'Delete all',
     'alertsRefreshedToast': '{count} smart alerts created',
     'alertsEmptyTitle': 'No alerts yet',
-    'alertsEmptyMessage': 'Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.',
+    'alertsEmptyMessage':
+        'Refresh smart alerts to scan stock, refill limits, bottle age, and pending approvals.',
     'alertsEmptyAction': 'Refresh alerts',
     'alertTypeLowBidonStock': 'Low refill bottle stock',
     'alertLowBottleTitle': 'Low {product} bottle stock',
     'alertLowBidonTitle': 'Low {product} refill bottle stock',
-    'alertLowBottleBody': '{hotel}: {remain} full bottles remain. Threshold is {threshold}.',
-    'alertLowBidonBody': '{hotel}: {remain} full refill bottles remain. Threshold is {threshold}.',
+    'alertLowBottleBody':
+        '{hotel}: {remain} full bottles remain. Threshold is {threshold}.',
+    'alertLowBidonBody':
+        '{hotel}: {remain} full refill bottles remain. Threshold is {threshold}.',
     'alertTypeLowBottleStock': 'Low bottles',
     'alertTypeBottleAgeLimit': 'Bottle age',
     'alertBottleAgeLimitTitle': 'Room {room} {product} bottle is too old',
-    'alertBottleAgeLimitBody': 'Bottle age is {age} days. Limit is {limit} days.',
+    'alertBottleAgeLimitBody':
+        'Bottle age is {age} days. Limit is {limit} days.',
     'alertTypeRefillLimit': 'Refill limit',
     'alertRefillLimitTitle': 'Room {room} {product} reached refill limit',
-    'alertRefillLimitBody': '{used}/{max} refills used. Replace and recycle the bottle.',
+    'alertRefillLimitBody':
+        '{used}/{max} refills used. Replace and recycle the bottle.',
     'alertTypePendingApproval': 'Approval',
     'alertPendingApprovalTitle': 'Pending approval: {request}',
     'alertPendingApprovalBody': 'Requested by {name}.',
@@ -661,9 +713,11 @@ const Map<String, Map<String, String>> kL10nValues = {
     'inviteSubtitleWithHotel': '{name} was invited as {role} for {hotel}.',
     'inviteSubtitleNoHotel': '{name} was invited as {role}.',
     'inviteEmailMismatch': 'Use the email address this invitation was sent to.',
-    'inviteAccountCreatedConfirm': 'Account created. Confirm your email, then return to this invitation link and enter the same password to finish joining.',
+    'inviteAccountCreatedConfirm':
+        'Account created. Confirm your email, then return to this invitation link and enter the same password to finish joining.',
     'inviteInvalidHeading': 'Invitation unavailable',
-    'inviteInvalidBody': 'This invitation may have expired, been cancelled, or already been accepted.',
+    'inviteInvalidBody':
+        'This invitation may have expired, been cancelled, or already been accepted.',
     'teamMemberReactivated': '{name} reactivated',
     'teamMemberDeactivated': '{name} deactivated',
     'settingsActionLastTried': 'Last tried {datetime}',
@@ -675,9 +729,11 @@ const Map<String, Map<String, String>> kL10nValues = {
     'teamCannotInviteSelf': 'You cannot invite yourself',
     'btnUpdate': 'Update',
     'notFoundTitle': 'Page Not Found',
-    'notFoundBody': 'The page you are looking for does not exist or has been moved.',
+    'notFoundBody':
+        'The page you are looking for does not exist or has been moved.',
     'notFoundButton': 'Back to Dashboard',
-    'downloadAppBannerText': 'For the best experience, download our Android App.',
+    'downloadAppBannerText':
+        'For the best experience, download our Android App.',
     'downloadAppBannerButton': 'Download App',
     'sendPushTitle': 'Send Notification',
     'teamViewAs': 'View as',
@@ -728,24 +784,35 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productHistoryStatReplacements': 'Replacements',
     'productHistoryStatAdjustments': 'Adjustments',
     'inventoryEnforceTitle': 'Insufficient Stock',
-    'inventoryEnforceTemplateContent': 'Placing {total} bottle(s) of {product} requires stock. Store Stock only has {current}. Would you like to automatically add {needed} bottle(s) to the store stock and proceed?',
-    'inventoryEnforceReplaceContent': 'Replacing the bottle of {product} in Room {room} requires 1 full bottle. Store Stock has 0. Would you like to automatically add 1 bottle to the store stock and proceed?',
-    'housekeeperReplaceGetFromHotel': 'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory. However, {count} bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?',
-    'housekeeperReplaceNotifyManager': 'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.',
-    'housekeeperAddGetFromHotel': 'Adding {product} to Room {room} requires 1 full bottle, but you do not have it in your inventory. However, {count} bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?',
-    'housekeeperAddNotifyManager': 'Adding {product} to Room {room} requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.',
-    'housekeeperRefillGetFromHotel': 'Refilling {product} in Room {room} requires 1 full bidon, but you do not have any open or full bidon in your inventory. However, {count} bidons are available in the hotel inventory. Would you like to take 1 bidon from the hotel inventory and proceed?',
-    'housekeeperRefillNotifyManager': 'Refilling {product} in Room {room} requires 1 full bidon, but you do not have any open or full bidon in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.',
+    'inventoryEnforceTemplateContent':
+        'Placing {total} bottle(s) of {product} requires stock. Store Stock only has {current}. Would you like to automatically add {needed} bottle(s) to the store stock and proceed?',
+    'inventoryEnforceReplaceContent':
+        'Replacing the bottle of {product} in Room {room} requires 1 full bottle. Store Stock has 0. Would you like to automatically add 1 bottle to the store stock and proceed?',
+    'housekeeperReplaceGetFromHotel':
+        'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory. However, {count} bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?',
+    'housekeeperReplaceNotifyManager':
+        'Replacing {product} in Room {room} requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.',
+    'housekeeperAddGetFromHotel':
+        'Adding {product} to Room {room} requires 1 full bottle, but you do not have it in your inventory. However, {count} bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?',
+    'housekeeperAddNotifyManager':
+        'Adding {product} to Room {room} requires 1 full bottle, but you do not have it in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.',
+    'housekeeperRefillGetFromHotel':
+        'Refilling {product} in Room {room} requires 1 full bidon, but you do not have any open or full bidon in your inventory. However, {count} bidons are available in the hotel inventory. Would you like to take 1 bidon from the hotel inventory and proceed?',
+    'housekeeperRefillNotifyManager':
+        'Refilling {product} in Room {room} requires 1 full bidon, but you do not have any open or full bidon in your inventory, and it is not available in the hotel inventory either. Please inform the hotel manager.',
     'btnOk': 'OK',
     'inventoryEnforceBtnProceed': 'Auto-Adjust & Proceed',
-    'inventoryEnforceReasonTemplate': 'Auto-adjusted for room creation template',
+    'inventoryEnforceReasonTemplate':
+        'Auto-adjusted for room creation template',
     'inventoryEnforceReasonReplace': 'Auto-adjusted for replacement',
     'inventoryEnforceOnboardingTitle': 'Initialize Store Stock',
-    'inventoryEnforceOnboardingContent': 'Since this is a new hotel, there are no products in the store stock. Would you like to automatically initialize the store stock with {total} bottles to place in the rooms?',
+    'inventoryEnforceOnboardingContent':
+        'Since this is a new hotel, there are no products in the store stock. Would you like to automatically initialize the store stock with {total} bottles to place in the rooms?',
     'authBtnCreateRole': 'Create Role',
     'authCreateRoleTitle': 'Create Custom Role',
     'authRoleNameLabel': 'Role Name (lowercase snake_case)',
-    'authRoleNameError': 'Role name must be lowercase snake_case (e.g., night_auditor)',
+    'authRoleNameError':
+        'Role name must be lowercase snake_case (e.g., night_auditor)',
     'authRoleDisplayNameLabel': 'Friendly Display Name (e.g., Night Auditor)',
     'authRoleDisplayNameError': 'Display name cannot be empty',
     'authRoleDescLabel': 'Description',
@@ -760,7 +827,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authSearchHint': 'Search permissions...',
     'authorizationsTitle': 'Authorizations Matrix',
     'authorizationsHeader': 'Authorizations Matrix',
-    'authorizationsSubtitle': 'Manage application features and action permissions by user role.',
+    'authorizationsSubtitle':
+        'Manage application features and action permissions by user role.',
     'authorizationsPermission': 'Permission',
     'authorizationsUpdatedSuccessfully': 'Authorizations updated successfully.',
     'roleAppAdmin': 'App Admin',
@@ -776,9 +844,11 @@ const Map<String, Map<String, String>> kL10nValues = {
     'permManageTeam': 'Manage Team',
     'permManageTeamDesc': 'Invite and manage team members and roles',
     'permSubmitEditRequests': 'Submit Edit Requests',
-    'permSubmitEditRequestsDesc': 'Submit room, bottle, and stock modification requests',
+    'permSubmitEditRequestsDesc':
+        'Submit room, bottle, and stock modification requests',
     'permApproveCorrections': 'Approve Corrections',
-    'permApproveCorrectionsDesc': 'Approve or reject pending change and correction requests',
+    'permApproveCorrectionsDesc':
+        'Approve or reject pending change and correction requests',
     'permViewApprovals': 'View Approvals',
     'permViewApprovalsDesc': 'Access the approvals dashboard screen',
     'permViewAlerts': 'View Alerts',
@@ -788,13 +858,16 @@ const Map<String, Map<String, String>> kL10nValues = {
     'permSendNotifications': 'Send Push Notifications',
     'permSendNotificationsDesc': 'Compose and broadcast app push notifications',
     'permViewAuditLogs': 'View Security Audit Logs',
-    'permViewAuditLogsDesc': 'Inspect detailed operation and login history logs',
+    'permViewAuditLogsDesc':
+        'Inspect detailed operation and login history logs',
     'permViewRooms': 'View Rooms',
     'permViewRoomsDesc': 'View room refill status list and details',
     'permViewInventory': 'View Inventory',
-    'permViewInventoryDesc': 'View hotel inventory stock status and suggest orders',
+    'permViewInventoryDesc':
+        'View hotel inventory stock status and suggest orders',
     'permViewAuthorizations': 'View Authorizations',
-    'permViewAuthorizationsDesc': 'Access and manage role-based permission settings screen',
+    'permViewAuthorizationsDesc':
+        'Access and manage role-based permission settings screen',
     'dialogRefillTitle': 'Refill Dispenser',
     'dialogRefillSliderLabel': 'Refill percentage (added volume):',
     'dialogRefillPreExisting': 'Already Full:',
@@ -811,18 +884,21 @@ const Map<String, Map<String, String>> kL10nValues = {
     'housekeeperStockCheckedOut': 'Stock checked out successfully!',
     'housekeeperStockReturned': 'Stock returned successfully!',
     'housekeeperStockHistory': 'History',
-    'housekeeperStockHistoryEmpty': 'No movements recorded yet for this product.',
+    'housekeeperStockHistoryEmpty':
+        'No movements recorded yet for this product.',
     'stockEventCheckout': 'Taken from hotel inventory',
     'stockEventReturn': 'Returned to hotel inventory',
     'stockEventRoomPlacement': 'Placed in room',
     'stockEventRefillUse': 'Used for refill',
     'stockEventReplaceUse': 'Used for bottle replacement',
-    'housekeeperHotelStockAvailable': 'Hotel inventory: {bottles} full bottles, {bidons} full bidons available',
+    'housekeeperHotelStockAvailable':
+        'Hotel inventory: {bottles} full bottles, {bidons} full bidons available',
     'sourceHousekeeperCart': 'From housekeeper cart',
     'sourceHotelInventory': 'From hotel inventory',
     'userRoleHousekeeper': 'Housekeeper',
     'roomsBtnAddProduct': 'Add product',
-    'roomsConfirmRemoveProduct': 'Are you sure you want to remove the product \'{productName}\' from room \'{roomNumber}\'?',
+    'roomsConfirmRemoveProduct':
+        'Are you sure you want to remove the product \'{productName}\' from room \'{roomNumber}\'?',
     'roomsProductRemoved': 'Product removed',
     'roomsProductAdded': 'Product added',
     'roomsAddProductTitle': 'Add product to room',
@@ -856,65 +932,90 @@ const Map<String, Map<String, String>> kL10nValues = {
     'onboardingStep1Title': 'Scan a QR Code',
     'onboardingStep1Desc': 'Scan a QR code on a bottle or room to start.',
     'onboardingStep2Title': 'Refill a Bottle',
-    'onboardingStep2Desc': 'Easily track product refills and keep inventory up to date.',
+    'onboardingStep2Desc':
+        'Easily track product refills and keep inventory up to date.',
     'onboardingStep3Title': 'Pending Actions',
-    'onboardingStep3Desc': 'Check your dashboard for any pending alerts or tasks.',
+    'onboardingStep3Desc':
+        'Check your dashboard for any pending alerts or tasks.',
     'onboardingStep4Title': 'Switch Language',
-    'onboardingStep4Desc': 'Change your preferred language in the Settings menu at any time.',
+    'onboardingStep4Desc':
+        'Change your preferred language in the Settings menu at any time.',
     'onboardingStep5Title': 'View Inventory',
-    'onboardingStep5Desc': 'Keep track of your hotel\'s stock levels and incoming orders.',
+    'onboardingStep5Desc':
+        'Keep track of your hotel\'s stock levels and incoming orders.',
     'onboardingStep6Title': 'Approve Requests',
-    'onboardingStep6Desc': 'Review and approve pending stock requests from your staff.',
+    'onboardingStep6Desc':
+        'Review and approve pending stock requests from your staff.',
     'onboardingStep7Title': 'Check Alerts',
-    'onboardingStep7Desc': 'Stay informed about low inventory or operational alerts.',
+    'onboardingStep7Desc':
+        'Stay informed about low inventory or operational alerts.',
     'onboardingStep8Title': 'Manage Hotels',
-    'onboardingStep8Desc': 'Add and configure multiple hotels under your management.',
+    'onboardingStep8Desc':
+        'Add and configure multiple hotels under your management.',
     'onboardingStep9Title': 'Invite Team',
-    'onboardingStep9Desc': 'Invite managers and staff members to join your workspace.',
+    'onboardingStep9Desc':
+        'Invite managers and staff members to join your workspace.',
     'onboardingStep10Title': 'View Reports',
-    'onboardingStep10Desc': 'Generate detailed reports and export data across all hotels.',
+    'onboardingStep10Desc':
+        'Generate detailed reports and export data across all hotels.',
     'onboardingSkip': 'Skip',
     'onboardingNext': 'Next',
     'onboardingDone': 'Done',
-    'onboardingResetMessage': 'Onboarding tour reset. It will be shown on the dashboard.',
+    'onboardingResetMessage':
+        'Onboarding tour reset. It will be shown on the dashboard.',
     'replayOnboarding': 'Replay onboarding tour',
     'rolePermissionsGuide': 'Role & Permissions Guide',
     'help': 'Help',
     'helpContextDashboardTitle': 'Dashboard Overview',
-    'helpContextDashboardDesc': 'This screen shows a summary of your hotel\'s refill operations for today. You can quickly see recent activities, pending approvals, and low stock alerts.',
+    'helpContextDashboardDesc':
+        'This screen shows a summary of your hotel\'s refill operations for today. You can quickly see recent activities, pending approvals, and low stock alerts.',
     'helpContextInventoryTitle': 'Inventory Management',
-    'helpContextInventoryDesc': 'Manage your product stock levels. Tap a product card to see details or adjust quantities for your current hotel.',
+    'helpContextInventoryDesc':
+        'Manage your product stock levels. Tap a product card to see details or adjust quantities for your current hotel.',
     'helpContextRoomsTitle': 'Rooms Status',
-    'helpContextRoomsDesc': 'View all rooms and their product status. Tap a room to refill or replace bottles directly, or scan a QR code to jump straight to the correct room.',
+    'helpContextRoomsDesc':
+        'View all rooms and their product status. Tap a room to refill or replace bottles directly, or scan a QR code to jump straight to the correct room.',
     'helpContextReportsTitle': 'Reports & Exports',
-    'helpContextReportsDesc': 'Generate and export refill history, inventory snapshots, and alert summaries. Use the download buttons to save this data as CSV files.',
+    'helpContextReportsDesc':
+        'Generate and export refill history, inventory snapshots, and alert summaries. Use the download buttons to save this data as CSV files.',
     'noProductsFound': 'No products found',
     'markDamagedTitle': 'Mark damaged - {product} in Room {room}',
     'markLostTitle': 'Mark lost - {product} in Room {room}',
     'hkDeactivateWithStockTitle': 'Housekeeper Cart Inventory',
-    'hkDeactivateWithStockMessage': 'This housekeeper has active inventory in their cart. Would you like to return this inventory to the hotel\'s central inventory before deactivating their account?',
+    'hkDeactivateWithStockMessage':
+        'This housekeeper has active inventory in their cart. Would you like to return this inventory to the hotel\'s central inventory before deactivating their account?',
     'btnReturnAndDeactivate': 'Return & Deactivate',
     'btnJustDeactivate': 'Just Deactivate',
-    'hkDeleteWithStockMessage': 'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.',
+    'hkDeleteWithStockMessage':
+        'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.',
   },
   'fr': {
     'markAsRead': 'Marquer comme lu',
-    'confirmDeleteHotel': 'Voulez-vous vraiment supprimer l\'hôtel \'{hotelName}\' ? Cette action est irréversible et supprimera définitivement toutes les chambres, affectations de personnel et enregistrements associés.',
-    'confirmDeleteRoom': 'Voulez-vous vraiment supprimer la chambre \'{roomNumber}\' ? Cette action est irréversible et supprimera définitivement tous les produits et l\'historique associés.',
-    'confirmDeleteFloor': 'Voulez-vous vraiment supprimer l\'étage \'{floorNumber}\' et toutes ses chambres ? Cette action est irréversible.',
-    'confirmDeleteUser': 'Voulez-vous vraiment supprimer le membre de l\'équipe \'{userName}\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.',
-    'confirmDeleteProduct': 'Voulez-vous vraiment supprimer le produit \'{productName}\' ? Cette action est irréversible et affectera le suivi des stocks.',
-    'confirmDeleteAlert': 'Voulez-vous vraiment supprimer cette alerte ? Cette action est irréversible.',
-    'confirmDeleteAllAlerts': 'Voulez-vous vraiment supprimer toutes les alertes ? Cette action est irréversible et effacera toutes les notifications actuelles.',
+    'confirmDeleteHotel':
+        'Voulez-vous vraiment supprimer l\'hôtel \'{hotelName}\' ? Cette action est irréversible et supprimera définitivement toutes les chambres, affectations de personnel et enregistrements associés.',
+    'confirmDeleteRoom':
+        'Voulez-vous vraiment supprimer la chambre \'{roomNumber}\' ? Cette action est irréversible et supprimera définitivement tous les produits et l\'historique associés.',
+    'confirmDeleteFloor':
+        'Voulez-vous vraiment supprimer l\'étage \'{floorNumber}\' et toutes ses chambres ? Cette action est irréversible.',
+    'confirmDeleteUser':
+        'Voulez-vous vraiment supprimer le membre de l\'équipe \'{userName}\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.',
+    'confirmDeleteProduct':
+        'Voulez-vous vraiment supprimer le produit \'{productName}\' ? Cette action est irréversible et affectera le suivi des stocks.',
+    'confirmDeleteAlert':
+        'Voulez-vous vraiment supprimer cette alerte ? Cette action est irréversible.',
+    'confirmDeleteAllAlerts':
+        'Voulez-vous vraiment supprimer toutes les alertes ? Cette action est irréversible et effacera toutes les notifications actuelles.',
     'clearAuditLogs': 'Effacer les journaux',
     'confirmAction': 'Confirmer l\'action',
-    'confirmClearLogs': 'Voulez-vous vraiment effacer tous les journaux d\'audit ? Cette action est irréversible.',
+    'confirmClearLogs':
+        'Voulez-vous vraiment effacer tous les journaux d\'audit ? Cette action est irréversible.',
     'btnConfirm': 'Confirmer',
     'composeMessage': 'Rédiger le message',
     'notificationTitle': 'Titre de la notification',
     'notificationDefaultTitle': 'Nouvelle notification',
     'notificationChannelName': 'Notifications importantes',
-    'notificationChannelDescription': 'Ce canal est utilisé pour les notifications importantes.',
+    'notificationChannelDescription':
+        'Ce canal est utilisé pour les notifications importantes.',
     'notificationTitleHint': 'ex: Nouvelle fonctionnalité!',
     'notificationBody': 'Corps de la notification',
     'notificationBodyHint': 'Entrez le message ici...',
@@ -944,7 +1045,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'errorLoadingHotels': 'Erreur lors du chargement des hôtels',
     'sending': 'Envoi en cours...',
     'roomsEditRoomTitle': 'Mettre à jour la chambre {roomNumber}',
-    'roomsEditProductTitle': 'Mettre à jour la bouteille de {productName} dans la chambre {roomNumber}',
+    'roomsEditProductTitle':
+        'Mettre à jour la bouteille de {productName} dans la chambre {roomNumber}',
     'inventory': 'Stock magasin',
     'alerts': 'Alertes',
     'approvals': 'Approbations',
@@ -1024,26 +1126,33 @@ const Map<String, Map<String, String>> kL10nValues = {
     'downloadCsv': 'Télécharger CSV',
     'downloadPdf': 'Télécharger PDF',
     'reportRefillHistoryTitle': 'Historique de recharge',
-    'reportRefillHistoryBody': 'Exporter les recharges récentes par hôtel, chambre, produit, utilisateur et heure.',
-    'reportSuggestedOrdersBody': 'Exporter les bouteilles, bouteilles de recharge et recommandations de recyclage.',
+    'reportRefillHistoryBody':
+        'Exporter les recharges récentes par hôtel, chambre, produit, utilisateur et heure.',
+    'reportSuggestedOrdersBody':
+        'Exporter les bouteilles, bouteilles de recharge et recommandations de recyclage.',
     'reportInventorySnapshotTitle': 'Instantané du stock',
-    'reportInventorySnapshotBody': 'Exporter le stock actuel de bouteilles et bouteilles de recharge par hôtel et produit.',
+    'reportInventorySnapshotBody':
+        'Exporter le stock actuel de bouteilles et bouteilles de recharge par hôtel et produit.',
     'reportOpenAlertsTitle': 'Alertes ouvertes',
-    'reportOpenAlertsBody': 'Exporter les alertes de stock bas, remplacement, inactivité et activité suspecte.',
+    'reportOpenAlertsBody':
+        'Exporter les alertes de stock bas, remplacement, inactivité et activité suspecte.',
     'scheduleReportEmail': 'Planifier le rapport par e-mail',
-    'scheduleReportEmailHint': 'Nous enverrons un résumé de ce rapport à cette adresse chaque lundi.',
+    'scheduleReportEmailHint':
+        'Nous enverrons un résumé de ce rapport à cette adresse chaque lundi.',
     'scheduledReportEmailDrafted': 'Rapport par e-mail planifié avec succès',
     'reportFilterDateRange': 'Filtrer par plage de dates',
     'reportAllProducts': 'Tous les produits',
     'reportAllRooms': 'Toutes les chambres',
     'reportClearFilters': 'Effacer les filtres',
-    'reportFiltersApplyExports': 'Remarque : Les filtres s\'appliquent à la fois aux indicateurs de l\'écran et aux exports téléchargés.',
+    'reportFiltersApplyExports':
+        'Remarque : Les filtres s\'appliquent à la fois aux indicateurs de l\'écran et aux exports téléchargés.',
     'reportAnalyticsTitle': 'Aperçu analytique',
     'reportKpiRefills': 'Recharges totales',
     'reportKpiCorrections': 'Corrections de stock',
     'reportKpiReplacements': 'Remplacements',
     'reportKpiActiveRooms': 'Chambres actives',
-    'reportTrendChart': 'Tendance de l\'activité de recharge (14 derniers jours)',
+    'reportTrendChart':
+        'Tendance de l\'activité de recharge (14 derniers jours)',
     'reportUsageByProduct': 'Recharges par produit',
     'reportUsageByRoom': 'Recharges par chambre',
     'reportNoAnalyticsData': 'Aucune activité enregistrée pour cette période.',
@@ -1056,12 +1165,16 @@ const Map<String, Map<String, String>> kL10nValues = {
     'metricLowStockProducts': 'Produits en stock bas',
     'inventoryTableProduct': 'Produit',
     'inventoryTableFullBottles': 'Bouteilles pleines',
-    'inventoryTableFullBottlesWithPump': 'Bouteilles pleines de {size} avec pompe',
-    'inventoryTableFullBottlesWithoutPump': 'Bouteilles pleines de {size} sans pompe',
+    'inventoryTableFullBottlesWithPump':
+        'Bouteilles pleines de {size} avec pompe',
+    'inventoryTableFullBottlesWithoutPump':
+        'Bouteilles pleines de {size} sans pompe',
     'inventoryTableFullBottlesWithPumpGeneric': 'Bouteilles pleines avec pompe',
-    'inventoryTableFullBottlesWithoutPumpGeneric': 'Bouteilles pleines sans pompe',
+    'inventoryTableFullBottlesWithoutPumpGeneric':
+        'Bouteilles pleines sans pompe',
     'inventoryCollapseHeader': 'Bouteilles vides & ouvertes',
-    'inventoryTableEmptyBottles': 'Bouteilles remplacées après {months} mois (Utilisées)',
+    'inventoryTableEmptyBottles':
+        'Bouteilles remplacées après {months} mois (Utilisées)',
     'inventoryTableEmptyBottlesGeneric': 'Bouteilles remplacées (Utilisées)',
     'inventoryTableEmptyBidons': 'Bouteilles de recharge vides',
     'inventoryTableFullBidons': 'Bouteilles de recharge pleines de {size}',
@@ -1070,8 +1183,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'inventoryTableStatus': 'Statut',
     'errorUniqueViolation': 'Cet enregistrement existe déjà.',
     'errorForeignKeyViolation': 'Enregistrement associé introuvable.',
-    'errorPermissionDenied': 'Vous n\'avez pas la permission d\'effectuer cette action.',
-    'errorGeneric': 'Une erreur inattendue s\'est produite. Veuillez réessayer.',
+    'errorPermissionDenied':
+        'Vous n\'avez pas la permission d\'effectuer cette action.',
+    'errorGeneric':
+        'Une erreur inattendue s\'est produite. Veuillez réessayer.',
     'inventoryStatusHealthy': 'Sain',
     'inventoryStatusLowStock': 'Stock bas',
     'auditFilterAllActions': 'Toutes les actions',
@@ -1082,11 +1197,14 @@ const Map<String, Map<String, String>> kL10nValues = {
     'bulkAdjustSelectProducts': 'Sélectionner les produits',
     'bulkAdjustSelectAll': 'Tout sélectionner',
     'bulkAdjustDeselectAll': 'Tout désélectionner',
-    'bulkAdjustNoProductsSelected': 'Veuillez sélectionner au moins un produit.',
+    'bulkAdjustNoProductsSelected':
+        'Veuillez sélectionner au moins un produit.',
     'orderNewBottlesText': 'Commander {count} nouvelles bouteilles 1L',
-    'orderNewBidonsText': 'Commander {count} nouvelles bouteilles de recharge 5L',
+    'orderNewBidonsText':
+        'Commander {count} nouvelles bouteilles de recharge 5L',
     'recycleBottlesText': 'Recycler {count} bouteilles',
-    'bottleCannotRefillRecycled': 'Cette bouteille a été recyclée et ne peut pas être rechargée. Veuillez la remplacer.',
+    'bottleCannotRefillRecycled':
+        'Cette bouteille a été recyclée et ne peut pas être rechargée. Veuillez la remplacer.',
     'adjustStockTitle': 'Ajuster le stock',
     'hotelRoomsTracked': 'chambres suivies',
     'hotelPendingChip': 'en attente',
@@ -1103,8 +1221,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'btnCancel': 'Annuler',
     'btnSave': 'Enregistrer',
     'btnSubmitRequest': 'Soumettre la demande',
-    'demoModeDescription': 'Simulations locales utilisant des modèles de base de données.',
-    'offlineModeDescription': 'File d\'attente des actions hors ligne pour synchronisation ultérieure.',
+    'demoModeDescription':
+        'Simulations locales utilisant des modèles de base de données.',
+    'offlineModeDescription':
+        'File d\'attente des actions hors ligne pour synchronisation ultérieure.',
     'syncQueueHeader': 'File de synchronisation',
     'syncNow': 'Synchroniser',
     'itemsToSync': 'actions en attente',
@@ -1116,7 +1236,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'enterNumberError': 'Entrez un nombre',
     'createHotel': 'Créer un hôtel',
     'requestHotelEdit': 'Demander la modification',
-    'authTitleCannotAccess': 'Ce compte nécessite une invitation pour accéder à Ivra.',
+    'authTitleCannotAccess':
+        'Ce compte nécessite une invitation pour accéder à Ivra.',
     'authBtnGoogleSignIn': 'Se connecter avec Google',
     'authBtnSignOut': 'Se déconnecter',
     'authLabelEmail': 'E-mail',
@@ -1127,48 +1248,62 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authBtnForgotPassword': 'Mot de passe oublié ?',
     'authResetPasswordTitle': 'Réinitialiser le mot de passe',
     'setPasswordTitle': 'Définir votre mot de passe',
-    'setPasswordBody': 'Veuillez définir un mot de passe sécurisé pour votre compte afin de finaliser votre inscription.',
+    'setPasswordBody':
+        'Veuillez définir un mot de passe sécurisé pour votre compte afin de finaliser votre inscription.',
     'setPasswordButton': 'Définir le mot de passe',
     'authBtnSendResetLink': 'Envoyer le lien de réinitialisation',
     'authResetLinkSent': 'Lien de réinitialisation envoyé à',
     'authValidationEmailRequired': 'L\'e-mail est requis',
     'authValidationEmailInvalid': 'Entrez une adresse e-mail valide',
     'authValidationPasswordRequired': 'Le mot de passe est requis',
-    'authValidationPasswordTooShort': 'Le mot de passe doit comporter au moins 8 caractères',
-    'authValidationPasswordsDoNotMatch': 'Les mots de passe ne correspondent pas',
+    'authValidationPasswordTooShort':
+        'Le mot de passe doit comporter au moins 8 caractères',
+    'authValidationPasswordsDoNotMatch':
+        'Les mots de passe ne correspondent pas',
     'authResetNewPasswordTitle': 'Créer un nouveau mot de passe',
     'authLabelNewPassword': 'Nouveau mot de passe',
     'authLabelConfirmPassword': 'Confirmer le mot de passe',
     'authBtnUpdatePassword': 'Mettre à jour le mot de passe',
     'authBtnReturnToApp': 'Retourner à l\'application',
     'authPasswordUpdatedSuccess': 'Mot de passe mis à jour avec succès.',
-    'authUnexpectedError': 'Une erreur est survenue. Réessayez ou contactez le support si le problème persiste.',
+    'authUnexpectedError':
+        'Une erreur est survenue. Réessayez ou contactez le support si le problème persiste.',
     'asyncErrorTitle': 'Impossible de charger cette section',
     'btnRetry': 'Réessayer',
     'authProfileLoadErrorTitle': 'Impossible de charger votre profil.',
-    'authProfileLoadErrorBody': 'Il s\'agit généralement d\'un problème de connexion temporaire. Veuillez réessayer.',
-    'authAccountDeactivated': 'Ce compte a été désactivé. Contactez votre administrateur pour y accéder.',
+    'authProfileLoadErrorBody':
+        'Il s\'agit généralement d\'un problème de connexion temporaire. Veuillez réessayer.',
+    'authAccountDeactivated':
+        'Ce compte a été désactivé. Contactez votre administrateur pour y accéder.',
     'settingsPayloadInvalidJson': 'La charge utile doit être un objet JSON.',
     'exportDownloadStarted': 'Téléchargement de {fileName} commencé',
     'exportSaved': '{fileName} enregistré dans {path}',
     'settingsPendingSync': 'Synchronisation en attente ({count})',
     'splashTagline': 'Solutions d\'hôtellerie durable',
     'accountSaveFailed': 'Impossible d\'enregistrer votre profil. Réessayez.',
-    'accountPasswordChangeFailed': 'Impossible de changer votre mot de passe. Réessayez.',
-    'accountSignOutFailed': 'Impossible de se déconnecter. Vérifiez votre connexion et réessayez.',
+    'accountPasswordChangeFailed':
+        'Impossible de changer votre mot de passe. Réessayez.',
+    'accountSignOutFailed':
+        'Impossible de se déconnecter. Vérifiez votre connexion et réessayez.',
     'hotelCreateFailed': 'Impossible de créer l\'hôtel. Réessayez.',
     'hotelUpdateFailed': 'Impossible de mettre à jour l\'hôtel. Réessayez.',
     'teamInviteFailed': 'Impossible d\'envoyer l\'invitation. Réessayez.',
-    'teamHotelsUpdateFailed': 'Impossible de mettre à jour les affectations d\'hôtels. Réessayez.',
+    'teamHotelsUpdateFailed':
+        'Impossible de mettre à jour les affectations d\'hôtels. Réessayez.',
     'roomsTooltipCreateTemplate': 'Créer un modèle de chambre',
     'roomsNoRoomsFound': 'Aucune chambre ni produit trouvé.',
-    'roomsScanConfirmFromCart': 'Le produit "{product}" n\'est pas actuellement assigné à cette chambre, mais vous en avez {count} dans votre panier. Souhaitez-vous en prendre 1 dans votre panier et l\'assigner à cette chambre ?',
-    'roomsScanConfirmFromHotel': 'Le produit "{product}" n\'est pas dans cette chambre. Il y a {count} bouteilles dans l\'inventaire de l\'hôtel. Souhaitez-vous en prendre 1 et l\'assigner à cette chambre ?',
+    'roomsScanConfirmFromCart':
+        'Le produit "{product}" n\'est pas actuellement assigné à cette chambre, mais vous en avez {count} dans votre panier. Souhaitez-vous en prendre 1 dans votre panier et l\'assigner à cette chambre ?',
+    'roomsScanConfirmFromHotel':
+        'Le produit "{product}" n\'est pas dans cette chambre. Il y a {count} bouteilles dans l\'inventaire de l\'hôtel. Souhaitez-vous en prendre 1 et l\'assigner à cette chambre ?',
     'roomsNoProducts': 'Aucun produit attribué à cette chambre.',
     'roomsStatusNoProducts': 'Aucun produit',
-    'roomsSearchEmptyHint': 'Essayez de modifier votre recherche ou vos filtres.',
-    'roomsEmptyHotelWithTemplate': 'Ajoutez votre première chambre via le bouton de modèle ci-dessus.',
-    'roomsEmptyHotelNoTemplate': 'Aucune chambre n\'a encore été attribuée à cet hôtel.',
+    'roomsSearchEmptyHint':
+        'Essayez de modifier votre recherche ou vos filtres.',
+    'roomsEmptyHotelWithTemplate':
+        'Ajoutez votre première chambre via le bouton de modèle ci-dessus.',
+    'roomsEmptyHotelNoTemplate':
+        'Aucune chambre n\'a encore été attribuée à cet hôtel.',
     'roomsLabelRoom': 'Chambre',
     'bottleStatusActive': 'Active',
     'bottleStatusNeedsRefill': 'À recharger',
@@ -1197,7 +1332,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsNotesOptional': 'Notes (Optionnel)',
     'roomsLabelUploadedProof': 'Preuve téléchargée',
     'roomsUploadProofAction': 'Télécharger une photo',
-    'roomsReplacementQueued': 'Remplacement de bouteille mis en attente pour la chambre',
+    'roomsReplacementQueued':
+        'Remplacement de bouteille mis en attente pour la chambre',
     'roomsReplacementRecorded': 'Bouteille remplacée pour la chambre',
     'roomsReplacementNotes': 'Bouteille remplacée depuis le flux chambre',
     'roomsStatusAllOk': 'Tout est OK',
@@ -1209,7 +1345,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsGestionExpressQr': 'Gestion Express (QR)',
     'roomsGestionQr': 'Gestion des QR Codes',
     'expressQrTitle': 'Gestion Express (QR)',
-    'expressQrSubtitle': 'Autoriser le scan direct des QR codes au niveau du distributeur',
+    'expressQrSubtitle':
+        'Autoriser le scan direct des QR codes au niveau du distributeur',
     'roomsSelectHotelFirst': 'Sélectionner un hôtel...',
     'roomsViewDetailed': 'Vue détaillée',
     'roomsViewCompact': 'Vue compacte',
@@ -1223,22 +1360,27 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsHistoryNewBottle': 'Nouvelle bouteille placée',
     'roomsHistoryStatusChanged': 'Statut modifié de {oldValue} à {newValue}',
     'roomsFilterAll': 'Tout',
-    'roomsDialogBottleEditTitle': 'Demander la modification de bouteille pour la chambre',
+    'roomsDialogBottleEditTitle':
+        'Demander la modification de bouteille pour la chambre',
     'roomsLabelBottleStatus': 'Statut de la bouteille',
     'roomsLabelBottleStartDate': 'Date de début de la bouteille',
     'roomsValidationEnterValidDate': 'Entrez une date valide',
-    'roomsMsgEditRequestQueued': 'Demande de modification de bouteille mise en attente',
+    'roomsMsgEditRequestQueued':
+        'Demande de modification de bouteille mise en attente',
     'roomsMsgDetailsUpdated': 'Détails de la bouteille mis à jour',
-    'roomsMsgEditRequestSubmitted': 'Demande de modification de bouteille soumise',
+    'roomsMsgEditRequestSubmitted':
+        'Demande de modification de bouteille soumise',
     'roomsDialogRoomEditTitle': 'Demander la modification pour la chambre',
     'roomsLabelRoomNumber': 'Numéro de chambre',
     'roomsLabelFloorNumber': 'Numéro d\'étage',
-    'roomsMsgRoomEditQueued': 'Demande de modification de chambre mise en attente',
+    'roomsMsgRoomEditQueued':
+        'Demande de modification de chambre mise en attente',
     'roomsMsgRoomDetailsUpdated': 'Détails de la chambre mis à jour',
     'roomsMsgRoomEditSubmitted': 'Demande de modification de chambre soumise',
     'roomsMsgRequestRoomEdit': 'Mettre à jour la chambre',
     'roomsDialogHistoryTitle': 'historique',
-    'roomsNoHistoryRecorded': 'Aucun historique de recharge n\'a encore été enregistré.',
+    'roomsNoHistoryRecorded':
+        'Aucun historique de recharge n\'a encore été enregistré.',
     'roomsMsgUndoQueued': 'Annulation mise en attente',
     'roomsMsgRefillUndone': 'Recharge annulée',
     'roomsBtnClose': 'Fermer',
@@ -1251,7 +1393,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrActionReplace': 'Remplacer la bouteille',
     'hotelNotFound': 'Hôtel introuvable',
     'productNotFound': 'Produit introuvable',
-    'qrAccessDeniedMessage': 'Vous n\'êtes pas autorisé à effectuer des actions dans cet hôtel.',
+    'qrAccessDeniedMessage':
+        'Vous n\'êtes pas autorisé à effectuer des actions dans cet hôtel.',
     'roomsFillCount': 'Nombre de recharges',
     'roomsBottleStatus': 'État du distributeur',
     'btnBack': 'Retour',
@@ -1266,7 +1409,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrCameraPermission': 'Permission caméra refusée',
     'qrCameraUnavailable': 'Caméra non disponible',
     'qrHotelNotFoundMessage': 'Impossible de trouver l\'hôtel : « {hotel} »',
-    'qrProductNotFoundMessage': 'La chambre {room} (étage {floor}) ne contient pas le produit SKU : « {sku} »',
+    'qrProductNotFoundMessage':
+        'La chambre {room} (étage {floor}) ne contient pas le produit SKU : « {sku} »',
     'qrGenerateTabScan': 'Scanner code QR',
     'qrGenerateTabGenerate': 'Générer codes QR',
     'qrGenerateHotel': 'Hôtel',
@@ -1282,34 +1426,45 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrGenerateSuccess': 'PDF généré et téléchargé avec succès',
     'settingsScannerHeader': 'Paramètres du scanner',
     'settingsPrecisionScanTitle': 'Fenêtre de scan de précision',
-    'settingsPrecisionScanSubtitle': 'Scanner uniquement les codes alignés au centre du viseur',
+    'settingsPrecisionScanSubtitle':
+        'Scanner uniquement les codes alignés au centre du viseur',
     'settingsTapToScanTitle': 'Appuyer pour scanner',
-    'settingsTapToScanSubtitle': 'Appuyez sur un cadre de code QR détecté pour le scanner',
+    'settingsTapToScanSubtitle':
+        'Appuyez sur un cadre de code QR détecté pour le scanner',
     'qrConfirmAssignTitle': 'Produit non placé',
-    'qrConfirmAssignMessage': 'Le produit {product} n\'est pas attribué à la chambre {room}. Ajouter 1 pièce à l\'inventaire et l\'attribuer à la chambre ?',
+    'qrConfirmAssignMessage':
+        'Le produit {product} n\'est pas attribué à la chambre {room}. Ajouter 1 pièce à l\'inventaire et l\'attribuer à la chambre ?',
     'qrAssignSuccess': 'Produit attribué et rechargé avec succès',
     'qrActionCanceled': 'Opération annulée',
-    'qrActionCanceledMessage': 'Vous avez choisi de ne pas attribuer le produit. Vous pouvez scanner un autre code ou revenir aux chambres.',
+    'qrActionCanceledMessage':
+        'Vous avez choisi de ne pas attribuer le produit. Vous pouvez scanner un autre code ou revenir aux chambres.',
     'scanAssignTitle': 'Assigner le produit à la chambre',
     'scanAssignSuccess': 'Produit assigné avec succès',
     'scanAssignFailed': 'Échec de l\'assignation',
-    'scanAssignInStock': '{count} en stock — 1 sera déduit et assigné à la chambre',
-    'scanAssignOutOfStock': 'Rupture de stock — 1 unité sera auto-ajoutée à l\'inventaire puis assignée',
-    'scanAssignDescription': 'Ce produit n\'est pas encore assigné à cette chambre. Appuyez ci-dessous pour l\'assigner.',
+    'scanAssignInStock':
+        '{count} en stock — 1 sera déduit et assigné à la chambre',
+    'scanAssignOutOfStock':
+        'Rupture de stock — 1 unité sera auto-ajoutée à l\'inventaire puis assignée',
+    'scanAssignDescription':
+        'Ce produit n\'est pas encore assigné à cette chambre. Appuyez ci-dessous pour l\'assigner.',
     'scanAssignButton': 'Assigner à la chambre',
     'scanAssignAutoAdd': 'Ajouter à l\'inventaire et assigner',
     'scanAssignAutoAddTitle': 'Ajouter à l\'inventaire ?',
-    'scanAssignAutoAddMessage': 'Le produit "{product}" est en rupture de stock. Voulez-vous ajouter automatiquement 1 unité à l\'inventaire et l\'assigner à cette chambre ?',
+    'scanAssignAutoAddMessage':
+        'Le produit "{product}" est en rupture de stock. Voulez-vous ajouter automatiquement 1 unité à l\'inventaire et l\'assigner à cette chambre ?',
     'scanAssignConfirm': 'Oui, ajouter et assigner',
-    'scanAssignSuccessMessage': 'Le produit {product} a été assigné à la chambre {room} (Étage {floor}).',
-    'qrMultipleDetected': 'Plusieurs codes QR détectés. Appuyez pour sélectionner :',
+    'scanAssignSuccessMessage':
+        'Le produit {product} a été assigné à la chambre {room} (Étage {floor}).',
+    'qrMultipleDetected':
+        'Plusieurs codes QR détectés. Appuyez pour sélectionner :',
     'qrUnknownSku': 'Le SKU "{sku}" ne correspond à aucun produit connu.',
     'goToRoom': 'Aller à la chambre',
     'errorLoadingProducts': 'Erreur de chargement des produits',
     'errorLoadingInventory': 'Erreur de chargement de l\'inventaire',
     'qrGenAllRoomProducts': 'Tous les produits de la chambre sélectionnée',
     'qrGenAllInventoryProducts': 'Tous les produits de l\'inventaire',
-    'qrLabelScanInstructions': 'Scanner avec l\'application IVRA pour remplir ou remplacer',
+    'qrLabelScanInstructions':
+        'Scanner avec l\'application IVRA pour remplir ou remplacer',
     'roomsSearchProductPlaceholder': 'Rechercher un produit par nom ou SKU...',
     'adjustStockForProduct': 'Ajuster le stock pour {product}',
     'roomsBtnRequestCorrection': 'Demander une correction',
@@ -1319,7 +1474,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsBtnCreateRooms': 'Créer les chambres',
     'roomsLabelProductsInRoom': 'Produits dans chaque chambre',
     'roomsMsgSelectOneProduct': 'Sélectionnez au moins un produit',
-    'roomsMsgDuplicateRoomNumbers': 'Ces numéros de chambre existent déjà dans cet hôtel : {numbers}. Choisissez un numéro de départ ou un nombre différent.',
+    'roomsMsgDuplicateRoomNumbers':
+        'Ces numéros de chambre existent déjà dans cet hôtel : {numbers}. Choisissez un numéro de départ ou un nombre différent.',
     'productsCatalogTitle': 'Catalogue des produits',
     'productsBtnCreate': 'Créer un produit',
     'productsNoProducts': 'Aucun produit dans le catalogue.',
@@ -1340,8 +1496,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productsImageSet': 'Image définie (appuyez pour changer)',
     'productsImageNone': 'Aucune image sélectionnée',
     'productsImageRemove': 'Supprimer l\'image',
-    'productsImageUploadFailed': 'Échec du téléversement de l\'image. Veuillez réessayer.',
-    'productsImageInvalidType': 'Veuillez sélectionner un fichier image valide.',
+    'productsImageUploadFailed':
+        'Échec du téléversement de l\'image. Veuillez réessayer.',
+    'productsImageInvalidType':
+        'Veuillez sélectionner un fichier image valide.',
     'productsImageTooLarge': 'L\'image est trop volumineuse (max {max} Mo).',
     'productsAddedSuccess': 'Produit ajouté avec succès',
     'productsUpdatedSuccess': 'Produit mis à jour avec succès',
@@ -1365,9 +1523,11 @@ const Map<String, Map<String, String>> kL10nValues = {
     'inventoryAddHotelHint': 'Ajoutez un hôtel pour commencer.',
     'inventoryNoItemsToAdjust': 'Aucun article de stock disponible à ajuster.',
     'inventoryNoInventoryYet': 'Pas encore de stock',
-    'inventoryNoProductsInInventory': 'Il n\'y a pas de produits dans le stock.',
+    'inventoryNoProductsInInventory':
+        'Il n\'y a pas de produits dans le stock.',
     'inventoryNoSuggestedOrders': 'Aucune commande suggérée',
-    'inventoryLevelsSufficient': 'Vos niveaux de stock sont actuellement suffisants.',
+    'inventoryLevelsSufficient':
+        'Vos niveaux de stock sont actuellement suffisants.',
     'teamAccounts': 'Comptes d\'équipe',
     'teamNoMembers': 'Aucun membre d\'équipe trouvé.',
     'teamTableColumnName': 'Nom',
@@ -1384,12 +1544,16 @@ const Map<String, Map<String, String>> kL10nValues = {
     'settingsOfflineQueue': 'Mettre en file d\'attente',
     'settingsOfflineSend': 'Envoyer les actions',
     'settingsBiometricTitle': 'Déverrouillage biométrique',
-    'settingsBiometricHint': 'Utilisez votre empreinte ou votre visage pour vous connecter.',
-    'settingsBiometricUnavailable': 'Le déverrouillage biométrique n\'est pas disponible sur cet appareil.',
+    'settingsBiometricHint':
+        'Utilisez votre empreinte ou votre visage pour vous connecter.',
+    'settingsBiometricUnavailable':
+        'Le déverrouillage biométrique n\'est pas disponible sur cet appareil.',
     'authBtnBiometricLogin': 'Connexion biométrique',
     'authBiometricReason': 'Authentifiez-vous pour accéder à Ivra',
-    'authBiometricNeedsLogin': 'Connectez-vous une fois pour activer la connexion biométrique.',
-    'authBiometricOfflineNoSession': 'Vous êtes hors ligne. Connectez-vous à Internet pour vous identifier.',
+    'authBiometricNeedsLogin':
+        'Connectez-vous une fois pour activer la connexion biométrique.',
+    'authBiometricOfflineNoSession':
+        'Vous êtes hors ligne. Connectez-vous à Internet pour vous identifier.',
     'authBiometricFailed': 'Échec de l\'authentification biométrique.',
     'settingsBtnClear': 'Effacer',
     'settingsBtnSyncNow': 'Synchroniser',
@@ -1409,7 +1573,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'accountFullNameRequired': 'Le nom complet est requis',
     'accountNewPassword': 'Nouveau mot de passe',
     'accountConfirmPassword': 'Confirmer le mot de passe',
-    'accountPasswordHintSupabase': 'Met à jour le mot de passe de votre compte.',
+    'accountPasswordHintSupabase':
+        'Met à jour le mot de passe de votre compte.',
     'accountPasswordHintDemo': 'Le mode démo accepte le changement localement.',
     'accountSignOutHint': 'Terminer la session en cours sur cet appareil.',
     'accountSignOut': 'Se déconnecter',
@@ -1427,7 +1592,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'alertsResolve': 'Résoudre',
     'delete': 'Supprimer',
     'approvalsEmpty': 'Aucune approbation en attente',
-    'approvalsEmptySubtitle': 'Toutes les demandes d\'approbation ont été traitées.',
+    'approvalsEmptySubtitle':
+        'Toutes les demandes d\'approbation ont été traitées.',
     'approvalsApprove': 'Approuver',
     'approvalsReject': 'Rejeter',
     'approvalsActionFailed': 'L\'action a échoué. Réessayez.',
@@ -1435,7 +1601,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'approvalsRejected': 'Demande rejetée.',
     'approvalsApproveQueued': 'Approbation mise en file d\'attente.',
     'approvalsRejectQueued': 'Rejet mis en file d\'attente.',
-    'approvalsAccessDenied': 'Accès refusé. Seuls les admins peuvent approuver.',
+    'approvalsAccessDenied':
+        'Accès refusé. Seuls les admins peuvent approuver.',
     'approvalsRequestNotFound': 'Demande introuvable ou déjà traitée.',
     'inviteAcceptTitle': 'Accepter l\'invitation',
     'inviteAlreadyHaveAccount': 'J\'ai déjà un compte',
@@ -1463,8 +1630,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'offlineBannerSubtitle': 'Les données peuvent ne pas être à jour',
     'offlineBannerPending': 'actions en attente',
     'offlineBannerSyncBtn': 'Synchroniser',
-    'offlineBannerAutoSynced': 'De retour en ligne ! {count} actions synchronisées',
-    'offlineBannerSyncFailed': 'La synchronisation a échoué pour certaines actions',
+    'offlineBannerAutoSynced':
+        'De retour en ligne ! {count} actions synchronisées',
+    'offlineBannerSyncFailed':
+        'La synchronisation a échoué pour certaines actions',
     'teamInvitationCancelled': 'Invitation annulée pour {email}',
     'teamInvitationResent': 'Invitation renvoyée à {email}',
     'teamInvitationCopied': 'Lien d\'invitation copié pour {email}',
@@ -1509,32 +1678,44 @@ const Map<String, Map<String, String>> kL10nValues = {
     'invitationStatusExpired': 'Expirée',
     'alertResolvedToast': 'Alerte résolue',
     'alertDeletedToast': 'Alerte supprimée',
-    'alertResolveFailedToast': 'Impossible de résoudre l\'alerte. Veuillez réessayer.',
-    'alertDeleteFailedToast': 'Impossible de supprimer l\'alerte. Veuillez réessayer.',
+    'alertResolveFailedToast':
+        'Impossible de résoudre l\'alerte. Veuillez réessayer.',
+    'alertDeleteFailedToast':
+        'Impossible de supprimer l\'alerte. Veuillez réessayer.',
     'notificationAcknowledgedToast': 'Confirmé',
     'notificationMoreInfo': 'Plus d\'infos',
     'bulkAdjustStockTitle': 'Ajustement en masse',
-    'bulkAdjustStockHint': 'Saisissez les ajustements qui s\'appliqueront à TOUS les produits.',
-    'bulkAdjustStockSuccess': 'Ajustement de stock en masse appliqué avec succès',
-    'bulkAdjustStockOfflineQueued': 'Ajustements en masse mis en file d\'attente pour la synchronisation hors ligne',
+    'bulkAdjustStockHint':
+        'Saisissez les ajustements qui s\'appliqueront à TOUS les produits.',
+    'bulkAdjustStockSuccess':
+        'Ajustement de stock en masse appliqué avec succès',
+    'bulkAdjustStockOfflineQueued':
+        'Ajustements en masse mis en file d\'attente pour la synchronisation hors ligne',
     'resolveAll': 'Tout résoudre',
     'deleteAll': 'Tout supprimer',
     'alertsRefreshedToast': '{count} alertes intelligentes créées',
     'alertsEmptyTitle': 'Aucune alerte pour le moment',
-    'alertsEmptyMessage': 'Actualisez les alertes intelligentes pour analyser le stock, les limites de recharge, l\'âge des bouteilles et les approbations en attente.',
+    'alertsEmptyMessage':
+        'Actualisez les alertes intelligentes pour analyser le stock, les limites de recharge, l\'âge des bouteilles et les approbations en attente.',
     'alertsEmptyAction': 'Actualiser les alertes',
     'alertTypeLowBidonStock': 'Stock bas (bouteilles de recharge)',
     'alertLowBottleTitle': 'Stock de bouteilles faible ({product})',
     'alertLowBidonTitle': 'Stock de bouteilles de recharge faible ({product})',
-    'alertLowBottleBody': '{hotel} : il reste {remain} bouteilles pleines. Le seuil est {threshold}.',
-    'alertLowBidonBody': '{hotel} : il reste {remain} bouteilles de recharge pleines. Le seuil est {threshold}.',
+    'alertLowBottleBody':
+        '{hotel} : il reste {remain} bouteilles pleines. Le seuil est {threshold}.',
+    'alertLowBidonBody':
+        '{hotel} : il reste {remain} bouteilles de recharge pleines. Le seuil est {threshold}.',
     'alertTypeLowBottleStock': 'Stock bas (bouteilles)',
     'alertTypeBottleAgeLimit': 'Âge bouteille',
-    'alertBottleAgeLimitTitle': 'Chambre {room} : la bouteille de {product} est trop vieille',
-    'alertBottleAgeLimitBody': 'L\'âge de la bouteille est de {age} jours. La limite est de {limit} jours.',
+    'alertBottleAgeLimitTitle':
+        'Chambre {room} : la bouteille de {product} est trop vieille',
+    'alertBottleAgeLimitBody':
+        'L\'âge de la bouteille est de {age} jours. La limite est de {limit} jours.',
     'alertTypeRefillLimit': 'Limite de recharges',
-    'alertRefillLimitTitle': 'Chambre {room} : {product} a atteint la limite de recharges',
-    'alertRefillLimitBody': '{used}/{max} recharges utilisées. Remplacez et recyclez la bouteille.',
+    'alertRefillLimitTitle':
+        'Chambre {room} : {product} a atteint la limite de recharges',
+    'alertRefillLimitBody':
+        '{used}/{max} recharges utilisées. Remplacez et recyclez la bouteille.',
     'alertTypePendingApproval': 'Approbation',
     'alertPendingApprovalTitle': 'Approbation en attente : {request}',
     'alertPendingApprovalBody': 'Demandé par {name}.',
@@ -1548,12 +1729,16 @@ const Map<String, Map<String, String>> kL10nValues = {
     'settingsSyncedSummarySingular': '{synced} action synchronisée',
     'settingsSyncedWithFailures': '{synced} synchronisées, {failed} échec(s)',
     'inviteAcceptHeading': 'Accepter l\'invitation Ivra',
-    'inviteSubtitleWithHotel': '{name} a été invité(e) en tant que {role} pour {hotel}.',
+    'inviteSubtitleWithHotel':
+        '{name} a été invité(e) en tant que {role} pour {hotel}.',
     'inviteSubtitleNoHotel': '{name} a été invité(e) en tant que {role}.',
-    'inviteEmailMismatch': 'Utilisez l\'adresse e-mail à laquelle cette invitation a été envoyée.',
-    'inviteAccountCreatedConfirm': 'Compte créé. Confirmez votre e-mail, puis revenez à ce lien d\'invitation et entrez le même mot de passe pour terminer.',
+    'inviteEmailMismatch':
+        'Utilisez l\'adresse e-mail à laquelle cette invitation a été envoyée.',
+    'inviteAccountCreatedConfirm':
+        'Compte créé. Confirmez votre e-mail, puis revenez à ce lien d\'invitation et entrez le même mot de passe pour terminer.',
     'inviteInvalidHeading': 'Invitation indisponible',
-    'inviteInvalidBody': 'Cette invitation a peut-être expiré, été annulée ou déjà acceptée.',
+    'inviteInvalidBody':
+        'Cette invitation a peut-être expiré, été annulée ou déjà acceptée.',
     'teamMemberReactivated': '{name} réactivé',
     'teamMemberDeactivated': '{name} désactivé',
     'settingsActionLastTried': 'Dernière tentative {datetime}',
@@ -1565,9 +1750,11 @@ const Map<String, Map<String, String>> kL10nValues = {
     'teamCannotInviteSelf': 'Vous ne pouvez pas vous inviter vous-même',
     'btnUpdate': 'Mettre à jour',
     'notFoundTitle': 'Page Introuvable',
-    'notFoundBody': 'La page que vous recherchez n\'existe pas ou a été déplacée.',
+    'notFoundBody':
+        'La page que vous recherchez n\'existe pas ou a été déplacée.',
     'notFoundButton': 'Retour au Tableau de Bord',
-    'downloadAppBannerText': 'Pour une meilleure expérience, téléchargez notre application Android.',
+    'downloadAppBannerText':
+        'Pour une meilleure expérience, téléchargez notre application Android.',
     'downloadAppBannerButton': 'Télécharger l\'App',
     'sendPushTitle': 'Envoyer notification',
     'teamViewAs': 'Voir en tant que',
@@ -1601,7 +1788,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productHistoryTitle': 'Historique du produit',
     'productHistoryNoHistory': 'Aucun historique enregistré pour ce produit.',
     'productHistoryRefill': 'Rempli dans la chambre {roomNumber}',
-    'productHistoryReplacement': 'Bouteille remplacée dans la chambre {roomNumber}',
+    'productHistoryReplacement':
+        'Bouteille remplacée dans la chambre {roomNumber}',
     'productHistoryAdjustment': 'Ajustement manuel du stock',
     'productHistoryActionBy': 'Par {user}',
     'productHistoryReason': 'Raison: {reason}',
@@ -1610,7 +1798,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productHistoryDeltaFullBidons': 'Bouteilles de recharge pleines',
     'productHistoryDeltaOpenBidons': 'Bouteilles utilisées et ouvertes',
     'productHistoryDeltaEmptyBidons': 'Bouteilles utilisées et vides',
-    'productHistoryNewBottle': 'Nouvelle bouteille placée dans la chambre {roomNumber}',
+    'productHistoryNewBottle':
+        'Nouvelle bouteille placée dans la chambre {roomNumber}',
     'productHistoryFilterAll': 'Tout',
     'productHistoryFilterRoom': 'Événements de chambre',
     'productHistoryFilterManual': 'Ajustements',
@@ -1618,25 +1807,38 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productHistoryStatReplacements': 'Remplacements',
     'productHistoryStatAdjustments': 'Ajustements',
     'inventoryEnforceTitle': 'Stock insuffisant',
-    'inventoryEnforceTemplateContent': 'Placer {total} bouteille(s) de {product} nécessite du stock. L\'stock magasin n\'en a que {current}. Souhaitez-vous ajouter automatiquement {needed} bouteille(s) à l\'stock magasin et continuer?',
-    'inventoryEnforceReplaceContent': 'Remplacer la bouteille de {product} dans la chambre {room} nécessite 1 bouteille pleine. L\'stock magasin en a 0. Souhaitez-vous ajouter automatiquement 1 bouteille à l\'stock magasin et continuer?',
-    'housekeeperReplaceGetFromHotel': 'Remplacer {product} dans la chambre {room} nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire. Cependant, {count} bouteilles sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bouteille de l\'inventaire de l\'hôtel et continuer ?',
-    'housekeeperReplaceNotifyManager': 'Remplacer {product} dans la chambre {room} nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire et elle n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.',
-    'housekeeperAddGetFromHotel': 'Ajouter {product} dans la chambre {room} nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire. Cependant, {count} bouteilles sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bouteille de l\'inventaire de l\'hôtel et continuer ?',
-    'housekeeperAddNotifyManager': 'Ajouter {product} dans la chambre {room} nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire et elle n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.',
-    'housekeeperRefillGetFromHotel': 'Remplir {product} dans la chambre {room} nécessite 1 bidon plein, mais vous n\'avez pas de bidon ouvert ou plein dans votre inventaire. Cependant, {count} bidons sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bidon de l\'inventaire de l\'hôtel et continuer ?',
-    'housekeeperRefillNotifyManager': 'Remplir {product} dans la chambre {room} nécessite 1 bidon plein, mais vous n\'avez pas de bidon ouvert ou plein dans votre inventaire et il n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.',
+    'inventoryEnforceTemplateContent':
+        'Placer {total} bouteille(s) de {product} nécessite du stock. L\'stock magasin n\'en a que {current}. Souhaitez-vous ajouter automatiquement {needed} bouteille(s) à l\'stock magasin et continuer?',
+    'inventoryEnforceReplaceContent':
+        'Remplacer la bouteille de {product} dans la chambre {room} nécessite 1 bouteille pleine. L\'stock magasin en a 0. Souhaitez-vous ajouter automatiquement 1 bouteille à l\'stock magasin et continuer?',
+    'housekeeperReplaceGetFromHotel':
+        'Remplacer {product} dans la chambre {room} nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire. Cependant, {count} bouteilles sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bouteille de l\'inventaire de l\'hôtel et continuer ?',
+    'housekeeperReplaceNotifyManager':
+        'Remplacer {product} dans la chambre {room} nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire et elle n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.',
+    'housekeeperAddGetFromHotel':
+        'Ajouter {product} dans la chambre {room} nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire. Cependant, {count} bouteilles sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bouteille de l\'inventaire de l\'hôtel et continuer ?',
+    'housekeeperAddNotifyManager':
+        'Ajouter {product} dans la chambre {room} nécessite 1 bouteille pleine, mais vous ne l\'avez pas dans votre inventaire et elle n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.',
+    'housekeeperRefillGetFromHotel':
+        'Remplir {product} dans la chambre {room} nécessite 1 bidon plein, mais vous n\'avez pas de bidon ouvert ou plein dans votre inventaire. Cependant, {count} bidons sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bidon de l\'inventaire de l\'hôtel et continuer ?',
+    'housekeeperRefillNotifyManager':
+        'Remplir {product} dans la chambre {room} nécessite 1 bidon plein, mais vous n\'avez pas de bidon ouvert ou plein dans votre inventaire et il n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.',
     'btnOk': 'OK',
     'inventoryEnforceBtnProceed': 'Ajuster et continuer',
-    'inventoryEnforceReasonTemplate': 'Ajusté automatiquement pour le modèle de création de chambre',
-    'inventoryEnforceReasonReplace': 'Ajusté automatiquement pour le remplacement',
+    'inventoryEnforceReasonTemplate':
+        'Ajusté automatiquement pour le modèle de création de chambre',
+    'inventoryEnforceReasonReplace':
+        'Ajusté automatiquement pour le remplacement',
     'inventoryEnforceOnboardingTitle': 'Initialiser l\'stock magasin',
-    'inventoryEnforceOnboardingContent': 'Puisqu\'il s\'agit d\'un nouvel hôtel, il n\'y a aucun produit dans l\'stock magasin. Souhaitez-vous initialiser automatiquement l\'stock magasin avec {total} bouteilles à placer dans les chambres?',
+    'inventoryEnforceOnboardingContent':
+        'Puisqu\'il s\'agit d\'un nouvel hôtel, il n\'y a aucun produit dans l\'stock magasin. Souhaitez-vous initialiser automatiquement l\'stock magasin avec {total} bouteilles à placer dans les chambres?',
     'authBtnCreateRole': 'Créer un Rôle',
     'authCreateRoleTitle': 'Créer un Rôle Personnalisé',
     'authRoleNameLabel': 'Nom du Rôle (minuscules snake_case)',
-    'authRoleNameError': 'Le nom du rôle doit être en minuscules snake_case (ex. night_auditor)',
-    'authRoleDisplayNameLabel': 'Nom d\'Affichage Convivial (ex. Night Auditor)',
+    'authRoleNameError':
+        'Le nom du rôle doit être en minuscules snake_case (ex. night_auditor)',
+    'authRoleDisplayNameLabel':
+        'Nom d\'Affichage Convivial (ex. Night Auditor)',
     'authRoleDisplayNameError': 'Le nom d\'affichage ne peut pas être vide',
     'authRoleDescLabel': 'Description',
     'authCategoryCore': 'Opérations de Base',
@@ -1650,41 +1852,57 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authSearchHint': 'Rechercher des permissions...',
     'authorizationsTitle': 'Matrice des Autorisations',
     'authorizationsHeader': 'Matrice des Autorisations',
-    'authorizationsSubtitle': 'Gérer les fonctionnalités de l\'application et les permissions d\'action par rôle d\'utilisateur.',
+    'authorizationsSubtitle':
+        'Gérer les fonctionnalités de l\'application et les permissions d\'action par rôle d\'utilisateur.',
     'authorizationsPermission': 'Permission',
-    'authorizationsUpdatedSuccessfully': 'Autorisations mises à jour avec succès.',
+    'authorizationsUpdatedSuccessfully':
+        'Autorisations mises à jour avec succès.',
     'roleAppAdmin': 'Admin de l\'App',
     'roleAppManager': 'Manager de l\'App',
     'roleHotelManager': 'Manager d\'Hôtel',
     'roleHotelStaff': 'Personnel d\'Hôtel',
     'permManageHotels': 'Gérer les Hôtels',
-    'permManageHotelsDesc': 'Créer, modifier et supprimer les établissements hôteliers',
+    'permManageHotelsDesc':
+        'Créer, modifier et supprimer les établissements hôteliers',
     'permManageRooms': 'Gérer les Chambres',
-    'permManageRoomsDesc': 'Ajouter, modifier et supprimer des chambres et des étages',
+    'permManageRoomsDesc':
+        'Ajouter, modifier et supprimer des chambres et des étages',
     'permManageProducts': 'Gérer les Produits',
-    'permManageProductsDesc': 'Configurer les types de produits globaux et les catalogues',
+    'permManageProductsDesc':
+        'Configurer les types de produits globaux et les catalogues',
     'permManageTeam': 'Gérer l\'Équipe',
-    'permManageTeamDesc': 'Inviter et gérer les membres de l\'équipe et les rôles',
+    'permManageTeamDesc':
+        'Inviter et gérer les membres de l\'équipe et les rôles',
     'permSubmitEditRequests': 'Soumettre des Demandes de Modification',
-    'permSubmitEditRequestsDesc': 'Soumettre des demandes de modification de chambres, de bouteilles et de stocks',
+    'permSubmitEditRequestsDesc':
+        'Soumettre des demandes de modification de chambres, de bouteilles et de stocks',
     'permApproveCorrections': 'Approuver les Corrections',
-    'permApproveCorrectionsDesc': 'Approuver ou rejeter les demandes de modification et de correction en attente',
+    'permApproveCorrectionsDesc':
+        'Approuver ou rejeter les demandes de modification et de correction en attente',
     'permViewApprovals': 'Voir les Approbations',
-    'permViewApprovalsDesc': 'Accéder à l\'écran du tableau de bord des approbations',
+    'permViewApprovalsDesc':
+        'Accéder à l\'écran du tableau de bord des approbations',
     'permViewAlerts': 'Voir les Alertes',
-    'permViewAlertsDesc': 'Visualiser et surveiller les alertes de fonctionnement',
+    'permViewAlertsDesc':
+        'Visualiser et surveiller les alertes de fonctionnement',
     'permViewReports': 'Voir les Rapports',
-    'permViewReportsDesc': 'Accéder aux rapports analytiques et aux graphiques de performance',
+    'permViewReportsDesc':
+        'Accéder aux rapports analytiques et aux graphiques de performance',
     'permSendNotifications': 'Envoyer des Notifications Push',
-    'permSendNotificationsDesc': 'Rédiger et diffuser des notifications push de l\'application',
+    'permSendNotificationsDesc':
+        'Rédiger et diffuser des notifications push de l\'application',
     'permViewAuditLogs': 'Voir les Journaux d\'Audit de Sécurité',
-    'permViewAuditLogsDesc': 'Inspecter les journaux détaillés de l\'historique des opérations et des connexions',
+    'permViewAuditLogsDesc':
+        'Inspecter les journaux détaillés de l\'historique des opérations et des connexions',
     'permViewRooms': 'Voir les Chambres',
-    'permViewRoomsDesc': 'Voir la liste des statuts de recharge des chambres et les détails',
+    'permViewRoomsDesc':
+        'Voir la liste des statuts de recharge des chambres et les détails',
     'permViewInventory': 'Voir les Stocks',
-    'permViewInventoryDesc': 'Visualiser le statut des stocks de l\'hôtel et suggérer des commandes',
+    'permViewInventoryDesc':
+        'Visualiser le statut des stocks de l\'hôtel et suggérer des commandes',
     'permViewAuthorizations': 'Voir les Autorisations',
-    'permViewAuthorizationsDesc': 'Accéder et gérer l\'écran des paramètres d\'autorisation basés sur les rôles',
+    'permViewAuthorizationsDesc':
+        'Accéder et gérer l\'écran des paramètres d\'autorisation basés sur les rôles',
     'dialogRefillTitle': 'Remplir le distributeur',
     'dialogRefillSliderLabel': 'Pourcentage de recharge (volume ajouté) :',
     'dialogRefillPreExisting': 'Liquide préexistant :',
@@ -1695,24 +1913,28 @@ const Map<String, Map<String, String>> kL10nValues = {
     'checkoutStock': 'Sortie de stock',
     'returnStock': 'Retour de stock',
     'housekeeperCart': 'Mon chariot',
-    'noAllocations': 'Aucune allocation active. Sortez du stock pour commencer.',
+    'noAllocations':
+        'Aucune allocation active. Sortez du stock pour commencer.',
     'fullBottles': 'Bouteilles pleines',
     'openBidonVolumeLeft': 'Volume restant',
     'housekeeperStockCheckedOut': 'Stock sorti avec succès !',
     'housekeeperStockReturned': 'Stock retourné avec succès !',
     'housekeeperStockHistory': 'Historique',
-    'housekeeperStockHistoryEmpty': 'Aucun mouvement enregistré pour ce produit.',
+    'housekeeperStockHistoryEmpty':
+        'Aucun mouvement enregistré pour ce produit.',
     'stockEventCheckout': 'Pris de l\'inventaire de l\'hôtel',
     'stockEventReturn': 'Retourné à l\'inventaire de l\'hôtel',
     'stockEventRoomPlacement': 'Placé dans la chambre',
     'stockEventRefillUse': 'Utilisé pour le remplissage',
     'stockEventReplaceUse': 'Utilisé pour le remplacement de bouteille',
-    'housekeeperHotelStockAvailable': 'Inventaire de l\'hôtel : {bottles} bouteilles pleines, {bidons} bidons pleins disponibles',
+    'housekeeperHotelStockAvailable':
+        'Inventaire de l\'hôtel : {bottles} bouteilles pleines, {bidons} bidons pleins disponibles',
     'sourceHousekeeperCart': 'Du chariot de la femme de chambre',
     'sourceHotelInventory': 'De l\'inventaire de l\'hôtel',
     'userRoleHousekeeper': 'Femme de chambre',
     'roomsBtnAddProduct': 'Ajouter un produit',
-    'roomsConfirmRemoveProduct': 'Êtes-vous sûr de vouloir retirer le produit \'{productName}\' de la chambre \'{roomNumber}\' ?',
+    'roomsConfirmRemoveProduct':
+        'Êtes-vous sûr de vouloir retirer le produit \'{productName}\' de la chambre \'{roomNumber}\' ?',
     'roomsProductRemoved': 'Produit retiré',
     'roomsProductAdded': 'Produit ajouté',
     'roomsAddProductTitle': 'Ajouter un produit à la chambre',
@@ -1744,61 +1966,87 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productSkuLabelReverse': '{sku} - {label}',
     'roomNumberLabel': 'Chambre {number}',
     'onboardingStep1Title': 'Scanner un QR Code',
-    'onboardingStep1Desc': 'Scannez un code QR sur une bouteille ou une chambre pour commencer.',
+    'onboardingStep1Desc':
+        'Scannez un code QR sur une bouteille ou une chambre pour commencer.',
     'onboardingStep2Title': 'Recharger une Bouteille',
-    'onboardingStep2Desc': 'Suivez facilement les recharges de produits et maintenez l\'inventaire à jour.',
+    'onboardingStep2Desc':
+        'Suivez facilement les recharges de produits et maintenez l\'inventaire à jour.',
     'onboardingStep3Title': 'Actions en Attente',
-    'onboardingStep3Desc': 'Consultez votre tableau de bord pour les alertes ou tâches en attente.',
+    'onboardingStep3Desc':
+        'Consultez votre tableau de bord pour les alertes ou tâches en attente.',
     'onboardingStep4Title': 'Changer de Langue',
-    'onboardingStep4Desc': 'Modifiez votre langue préférée dans le menu Paramètres à tout moment.',
+    'onboardingStep4Desc':
+        'Modifiez votre langue préférée dans le menu Paramètres à tout moment.',
     'onboardingStep5Title': 'Voir l\'Inventaire',
-    'onboardingStep5Desc': 'Gardez une trace des niveaux de stock de votre hôtel et des commandes à venir.',
+    'onboardingStep5Desc':
+        'Gardez une trace des niveaux de stock de votre hôtel et des commandes à venir.',
     'onboardingStep6Title': 'Approuver les Demandes',
-    'onboardingStep6Desc': 'Examinez et approuvez les demandes de stock en attente de votre personnel.',
+    'onboardingStep6Desc':
+        'Examinez et approuvez les demandes de stock en attente de votre personnel.',
     'onboardingStep7Title': 'Vérifier les Alertes',
-    'onboardingStep7Desc': 'Restez informé des alertes de stock faible ou opérationnelles.',
+    'onboardingStep7Desc':
+        'Restez informé des alertes de stock faible ou opérationnelles.',
     'onboardingStep8Title': 'Gérer les Hôtels',
-    'onboardingStep8Desc': 'Ajoutez et configurez plusieurs hôtels sous votre gestion.',
+    'onboardingStep8Desc':
+        'Ajoutez et configurez plusieurs hôtels sous votre gestion.',
     'onboardingStep9Title': 'Inviter l\'Équipe',
-    'onboardingStep9Desc': 'Invitez des gestionnaires et des membres du personnel à rejoindre votre espace de travail.',
+    'onboardingStep9Desc':
+        'Invitez des gestionnaires et des membres du personnel à rejoindre votre espace de travail.',
     'onboardingStep10Title': 'Voir les Rapports',
-    'onboardingStep10Desc': 'Générez des rapports détaillés et exportez les données de tous les hôtels.',
+    'onboardingStep10Desc':
+        'Générez des rapports détaillés et exportez les données de tous les hôtels.',
     'onboardingSkip': 'Passer',
     'onboardingNext': 'Suivant',
     'onboardingDone': 'Terminé',
-    'onboardingResetMessage': 'Visite d\'intégration réinitialisée. Elle sera affichée sur le tableau de bord.',
+    'onboardingResetMessage':
+        'Visite d\'intégration réinitialisée. Elle sera affichée sur le tableau de bord.',
     'replayOnboarding': 'Rejouer la visite guidée',
     'rolePermissionsGuide': 'Guide des Rôles & Permissions',
     'help': 'Aide',
     'helpContextDashboardTitle': 'Aperçu du Tableau de Bord',
-    'helpContextDashboardDesc': 'Cet écran affiche un résumé des opérations de recharge de votre hôtel pour aujourd\'hui. Vous pouvez voir rapidement les activités récentes, les approbations en attente et les alertes de stock faible.',
+    'helpContextDashboardDesc':
+        'Cet écran affiche un résumé des opérations de recharge de votre hôtel pour aujourd\'hui. Vous pouvez voir rapidement les activités récentes, les approbations en attente et les alertes de stock faible.',
     'helpContextInventoryTitle': 'Gestion de l\'Inventaire',
-    'helpContextInventoryDesc': 'Gérez les niveaux de stock de vos produits. Appuyez sur une carte de produit pour voir les détails ou ajuster les quantités.',
+    'helpContextInventoryDesc':
+        'Gérez les niveaux de stock de vos produits. Appuyez sur une carte de produit pour voir les détails ou ajuster les quantités.',
     'helpContextRoomsTitle': 'Statut des Chambres',
-    'helpContextRoomsDesc': 'Affichez toutes les chambres et le statut de leurs produits. Appuyez sur une chambre pour recharger ou remplacer des bouteilles, ou scannez un QR code pour y accéder directement.',
+    'helpContextRoomsDesc':
+        'Affichez toutes les chambres et le statut de leurs produits. Appuyez sur une chambre pour recharger ou remplacer des bouteilles, ou scannez un QR code pour y accéder directement.',
     'helpContextReportsTitle': 'Rapports & Exports',
-    'helpContextReportsDesc': 'Générez et exportez l\'historique des recharges, des instantanés d\'inventaire et des résumés d\'alertes.',
+    'helpContextReportsDesc':
+        'Générez et exportez l\'historique des recharges, des instantanés d\'inventaire et des résumés d\'alertes.',
     'noProductsFound': 'Aucun produit trouvé',
-    'markDamagedTitle': 'Marquer comme endommagé - {product} dans la chambre {room}',
+    'markDamagedTitle':
+        'Marquer comme endommagé - {product} dans la chambre {room}',
     'markLostTitle': 'Marquer comme perdu - {product} dans la chambre {room}',
     'hkDeactivateWithStockTitle': 'Inventaire de la femme de chambre',
-    'hkDeactivateWithStockMessage': 'Cette femme de chambre a des produits dans son chariot. Voulez-vous retourner cet inventaire au stock central de l\'hôtel avant de désactiver son compte ?',
+    'hkDeactivateWithStockMessage':
+        'Cette femme de chambre a des produits dans son chariot. Voulez-vous retourner cet inventaire au stock central de l\'hôtel avant de désactiver son compte ?',
     'btnReturnAndDeactivate': 'Retourner et désactiver',
     'btnJustDeactivate': 'Juste désactiver',
-    'hkDeleteWithStockMessage': 'Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l\'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l\'équipe \'{userName}\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.',
+    'hkDeleteWithStockMessage':
+        'Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l\'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l\'équipe \'{userName}\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.',
   },
   'ar': {
     'markAsRead': 'تحديد كمقروء',
-    'confirmDeleteHotel': 'هل أنت متأكد من رغبتك في حذف الفندق \'{hotelName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع الغرف المرتبطة، وتعيينات الموظفين، والسجلات بشكل نهائي.',
-    'confirmDeleteRoom': 'هل أنت متأكد من رغبتك في حذف الغرفة \'{roomNumber}\'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع المنتجات والسجلات المرتبطة بشكل نهائي.',
-    'confirmDeleteFloor': 'هل أنت متأكد من رغبتك في حذف الطابق \'{floorNumber}\' وجميع غرفه؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.',
-    'confirmDeleteUser': 'هل أنت متأكد من رغبتك في حذف عضو الفريق \'{userName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.',
-    'confirmDeleteProduct': 'هل أنت متأكد من رغبتك في حذف المنتج \'{productName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيؤثر على تتبع مخزون المتجر.',
-    'confirmDeleteAlert': 'هل أنت متأكد من رغبتك في حذف هذا التنبيه؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.',
-    'confirmDeleteAllAlerts': 'هل أنت متأكد من رغبتك في حذف جميع التنبيهات؟ لا يمكن التراجع عن هذا الإجراء وسيؤدي إلى مسح جميع الإشعارات الحالية.',
+    'confirmDeleteHotel':
+        'هل أنت متأكد من رغبتك في حذف الفندق \'{hotelName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع الغرف المرتبطة، وتعيينات الموظفين، والسجلات بشكل نهائي.',
+    'confirmDeleteRoom':
+        'هل أنت متأكد من رغبتك في حذف الغرفة \'{roomNumber}\'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع المنتجات والسجلات المرتبطة بشكل نهائي.',
+    'confirmDeleteFloor':
+        'هل أنت متأكد من رغبتك في حذف الطابق \'{floorNumber}\' وجميع غرفه؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.',
+    'confirmDeleteUser':
+        'هل أنت متأكد من رغبتك في حذف عضو الفريق \'{userName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.',
+    'confirmDeleteProduct':
+        'هل أنت متأكد من رغبتك في حذف المنتج \'{productName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيؤثر على تتبع مخزون المتجر.',
+    'confirmDeleteAlert':
+        'هل أنت متأكد من رغبتك في حذف هذا التنبيه؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.',
+    'confirmDeleteAllAlerts':
+        'هل أنت متأكد من رغبتك في حذف جميع التنبيهات؟ لا يمكن التراجع عن هذا الإجراء وسيؤدي إلى مسح جميع الإشعارات الحالية.',
     'clearAuditLogs': 'مسح السجلات',
     'confirmAction': 'تأكيد الإجراء',
-    'confirmClearLogs': 'هل أنت متأكد من رغبتك في مسح جميع سجلات التدقيق؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.',
+    'confirmClearLogs':
+        'هل أنت متأكد من رغبتك في مسح جميع سجلات التدقيق؟ لا يمكن التراجع عن هذا الإجراء بشكل نهائي.',
     'btnConfirm': 'تأكيد',
     'composeMessage': 'كتابة الرسالة',
     'notificationTitle': 'عنوان الإشعار',
@@ -1914,20 +2162,26 @@ const Map<String, Map<String, String>> kL10nValues = {
     'downloadCsv': 'تحميل CSV',
     'downloadPdf': 'تحميل PDF',
     'reportRefillHistoryTitle': 'سجل التعبئة',
-    'reportRefillHistoryBody': 'تصدير عمليات التعبئة الحديثة حسب الفندق والغرفة والمنتج والمستخدم والوقت.',
-    'reportSuggestedOrdersBody': 'تصدير توصيات العبوات والجالونات وإعادة التدوير.',
+    'reportRefillHistoryBody':
+        'تصدير عمليات التعبئة الحديثة حسب الفندق والغرفة والمنتج والمستخدم والوقت.',
+    'reportSuggestedOrdersBody':
+        'تصدير توصيات العبوات والجالونات وإعادة التدوير.',
     'reportInventorySnapshotTitle': 'لقطة مخزون المتجر',
-    'reportInventorySnapshotBody': 'تصدير مخزون المتجر للعبوات والجالونات الحالي حسب الفندق والمنتج.',
+    'reportInventorySnapshotBody':
+        'تصدير مخزون المتجر للعبوات والجالونات الحالي حسب الفندق والمنتج.',
     'reportOpenAlertsTitle': 'التنبيهات المفتوحة',
-    'reportOpenAlertsBody': 'تصدير تنبيهات انخفاض مخزون المتجر والاستبدال والخمول والنشاط المشبوه.',
+    'reportOpenAlertsBody':
+        'تصدير تنبيهات انخفاض مخزون المتجر والاستبدال والخمول والنشاط المشبوه.',
     'scheduleReportEmail': 'جدولة تقرير البريد الإلكتروني',
-    'scheduleReportEmailHint': 'سنرسل ملخصًا لهذا التقرير إلى هذا العنوان كل يوم اثنين.',
+    'scheduleReportEmailHint':
+        'سنرسل ملخصًا لهذا التقرير إلى هذا العنوان كل يوم اثنين.',
     'scheduledReportEmailDrafted': 'تم جدولة تقرير البريد الإلكتروني بنجاح',
     'reportFilterDateRange': 'تصفية حسب النطاق الزمني',
     'reportAllProducts': 'جميع المنتجات',
     'reportAllRooms': 'جميع الغرف',
     'reportClearFilters': 'مسح الفلاتر',
-    'reportFiltersApplyExports': 'ملاحظة: تنطبق الفلاتر على كل من مقاييس الشاشة والصادرات التي تم تنزيلها.',
+    'reportFiltersApplyExports':
+        'ملاحظة: تنطبق الفلاتر على كل من مقاييس الشاشة والصادرات التي تم تنزيلها.',
     'reportAnalyticsTitle': 'نظرة عامة على التحليلات',
     'reportKpiRefills': 'إجمالي عمليات إعادة التعبئة',
     'reportKpiCorrections': 'تصحيحات مخزون المتجر',
@@ -1951,7 +2205,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'inventoryTableFullBottlesWithPumpGeneric': 'العبوات الممتلئة بمضخة',
     'inventoryTableFullBottlesWithoutPumpGeneric': 'العبوات الممتلئة بدون مضخة',
     'inventoryCollapseHeader': 'العبوات الفارغة والمفتوحة',
-    'inventoryTableEmptyBottles': 'العبوات المستبدلة بعد {months} أشهر (مستعملة)',
+    'inventoryTableEmptyBottles':
+        'العبوات المستبدلة بعد {months} أشهر (مستعملة)',
     'inventoryTableEmptyBottlesGeneric': 'العبوات المستبدلة (مستعملة)',
     'inventoryTableEmptyBidons': 'قوارير إعادة التعبئة الفار��ة',
     'inventoryTableFullBidons': 'عبوات إعادة تعبئة ممتلئة سعة {size}',
@@ -1976,7 +2231,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'orderNewBottlesText': 'طلب {count} عبوات جديدة 1 لتر',
     'orderNewBidonsText': 'طلب {count} قوارير إعادة تعبئة جديدة 5 لتر',
     'recycleBottlesText': 'إعادة تدوير {count} عبوات',
-    'bottleCannotRefillRecycled': 'تم إعادة تدوير هذه العبوة ولا يمكن إعادة تعبئتها. يرجى استبدالها.',
+    'bottleCannotRefillRecycled':
+        'تم إعادة تدوير هذه العبوة ولا يمكن إعادة تعبئتها. يرجى استبدالها.',
     'adjustStockTitle': 'تعديل مخزون المتجر',
     'hotelRoomsTracked': 'غرف متبعة',
     'hotelPendingChip': 'قيد الانتظار',
@@ -1994,7 +2250,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'btnSave': 'حفظ',
     'btnSubmitRequest': 'تقديم الطلب',
     'demoModeDescription': 'محاكاة محلية باستخدام قواعد البيانات الافتراضية.',
-    'offlineModeDescription': 'جدولة العمليات عند انقطاع الاتصال ومزامنتها لاحقاً.',
+    'offlineModeDescription':
+        'جدولة العمليات عند انقطاع الاتصال ومزامنتها لاحقاً.',
     'syncQueueHeader': 'قائمة الانتظار',
     'syncNow': 'مزامنة الآن',
     'itemsToSync': 'عمليات قيد المزامنة',
@@ -2024,7 +2281,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authValidationEmailRequired': 'البريد الإلكتروني مطلوب',
     'authValidationEmailInvalid': 'أدخل بريداً إلكترونياً صالحاً',
     'authValidationPasswordRequired': 'كلمة المرور مطلوبة',
-    'authValidationPasswordTooShort': 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل',
+    'authValidationPasswordTooShort':
+        'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل',
     'authValidationPasswordsDoNotMatch': 'كلمات المرور غير متطابقة',
     'authResetNewPasswordTitle': 'إنشاء كلمة مرور جديدة',
     'authLabelNewPassword': 'كلمة المرور الجديدة',
@@ -2032,12 +2290,15 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authBtnUpdatePassword': 'تحديث كلمة المرور',
     'authBtnReturnToApp': 'العودة إلى التطبيق',
     'authPasswordUpdatedSuccess': 'تم تحديث كلمة المرور بنجاح.',
-    'authUnexpectedError': 'حدث خطأ غير متوقّع. حاول مرّة أخرى أو تواصل مع الدّعم إذا استمرّت المشكلة.',
+    'authUnexpectedError':
+        'حدث خطأ غير متوقّع. حاول مرّة أخرى أو تواصل مع الدّعم إذا استمرّت المشكلة.',
     'asyncErrorTitle': 'تعذّر تحميل هذا القسم',
     'btnRetry': 'إعادة المحاولة',
     'authProfileLoadErrorTitle': 'تعذّر تحميل ملفّك الشخصي.',
-    'authProfileLoadErrorBody': 'عادةً ما تكون هذه مشكلة اتّصال مؤقّتة. يرجى إعادة المحاولة.',
-    'authAccountDeactivated': 'تمّ تعطيل هذا الحساب. تواصل مع المدير لاستعادة الوصول.',
+    'authProfileLoadErrorBody':
+        'عادةً ما تكون هذه مشكلة اتّصال مؤقّتة. يرجى إعادة المحاولة.',
+    'authAccountDeactivated':
+        'تمّ تعطيل هذا الحساب. تواصل مع المدير لاستعادة الوصول.',
     'settingsPayloadInvalidJson': 'يجب أن تكون الحمولة كائن JSON.',
     'exportDownloadStarted': 'بدأ تنزيل {fileName}',
     'exportSaved': 'تمّ حفظ {fileName} في {path}',
@@ -2045,19 +2306,23 @@ const Map<String, Map<String, String>> kL10nValues = {
     'splashTagline': 'حلول ضيافة مستدامة',
     'accountSaveFailed': 'تعذّر حفظ ملفّك. حاول مرّة أخرى.',
     'accountPasswordChangeFailed': 'تعذّر تغيير كلمة المرور. حاول مرّة أخرى.',
-    'accountSignOutFailed': 'تعذّر تسجيل الخروج. تحقّق من الاتّصال ثمّ أعد المحاولة.',
+    'accountSignOutFailed':
+        'تعذّر تسجيل الخروج. تحقّق من الاتّصال ثمّ أعد المحاولة.',
     'hotelCreateFailed': 'تعذّر إنشاء الفندق. حاول مرّة أخرى.',
     'hotelUpdateFailed': 'تعذّر تحديث بيانات الفندق. حاول مرّة أخرى.',
     'teamInviteFailed': 'تعذّر إرسال الدّعوة. حاول مرّة أخرى.',
     'teamHotelsUpdateFailed': 'تعذّر تحديث تعيينات الفنادق. حاول مرّة أخرى.',
     'roomsTooltipCreateTemplate': 'إنشاء نموذج غرفة',
     'roomsNoRoomsFound': 'لم يتم العثور على غرف أو منتجات.',
-    'roomsScanConfirmFromCart': 'المنتج "{product}" غير مخصص حاليًا لهذه الغرفة، ولكن لديك {count} في عربتك. هل ترغب في أخذ زجاجة واحدة من عربتك وتخصيصها لهذه الغرفة؟',
-    'roomsScanConfirmFromHotel': 'المنتج "{product}" غير موجود في هذه الغرفة. تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة وتخصيصها لهذه الغرفة؟',
+    'roomsScanConfirmFromCart':
+        'المنتج "{product}" غير مخصص حاليًا لهذه الغرفة، ولكن لديك {count} في عربتك. هل ترغب في أخذ زجاجة واحدة من عربتك وتخصيصها لهذه الغرفة؟',
+    'roomsScanConfirmFromHotel':
+        'المنتج "{product}" غير موجود في هذه الغرفة. تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة وتخصيصها لهذه الغرفة؟',
     'roomsNoProducts': 'لا توجد منتجات مخصصة لهذه الغرفة.',
     'roomsStatusNoProducts': 'لا توجد منتجات',
     'roomsSearchEmptyHint': 'جرّب تعديل استفسار البحث أو العوامل التصفية.',
-    'roomsEmptyHotelWithTemplate': 'أضف غرفتك الأولى باستخدام زر القالب في الأعلى.',
+    'roomsEmptyHotelWithTemplate':
+        'أضف غرفتك الأولى باستخدام زر القالب في الأعلى.',
     'roomsEmptyHotelNoTemplate': 'لم يتمّ تعيين أي غرفة لهذا الفندق بعد.',
     'roomsLabelRoom': 'غرفة',
     'bottleStatusActive': 'نشطة',
@@ -2156,7 +2421,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrCameraPermission': 'تم رفض إذن الكاميرا',
     'qrCameraUnavailable': 'الكاميرا غير متاحة',
     'qrHotelNotFoundMessage': 'تعذر العثور على الفندق: «{hotel}»',
-    'qrProductNotFoundMessage': 'الغرفة {room} (الطابق {floor}) لا تحتوي على المنتج SKU: «{sku}»',
+    'qrProductNotFoundMessage':
+        'الغرفة {room} (الطابق {floor}) لا تحتوي على المنتج SKU: «{sku}»',
     'qrGenerateTabScan': 'مسح رمز QR',
     'qrGenerateTabGenerate': 'توليد رموز QR',
     'qrGenerateHotel': 'الفندق',
@@ -2176,22 +2442,28 @@ const Map<String, Map<String, String>> kL10nValues = {
     'settingsTapToScanTitle': 'النقر للمسح',
     'settingsTapToScanSubtitle': 'انقر على مربع رمز QR المكتشف لمسحه',
     'qrConfirmAssignTitle': 'المنتج غير موضوع',
-    'qrConfirmAssignMessage': 'المنتج {product} غير مخصص للغرفة {room}. هل تريد إضافة قطعة واحدة إلى المخزون وتخصيصها للغرفة؟',
+    'qrConfirmAssignMessage':
+        'المنتج {product} غير مخصص للغرفة {room}. هل تريد إضافة قطعة واحدة إلى المخزون وتخصيصها للغرفة؟',
     'qrAssignSuccess': 'تم تخصيص المنتج وإعادة تعبئته بنجاح',
     'qrActionCanceled': 'تم إلغاء العملية',
-    'qrActionCanceledMessage': 'اخترت عدم تخصيص المنتج. يمكنك مسح رمز آخر أو العودة إلى الغرف.',
+    'qrActionCanceledMessage':
+        'اخترت عدم تخصيص المنتج. يمكنك مسح رمز آخر أو العودة إلى الغرف.',
     'scanAssignTitle': 'تعيين المنتج للغرفة',
     'scanAssignSuccess': 'تم تعيين المنتج بنجاح',
     'scanAssignFailed': 'فشل التعيين',
     'scanAssignInStock': '{count} في المخزون — سيتم خصم 1 وتعيينه للغرفة',
-    'scanAssignOutOfStock': 'نفد المخزون — ستتم إضافة وحدة واحدة تلقائياً ثم تعيينها',
-    'scanAssignDescription': 'هذا المنتج غير معيّن لهذه الغرفة بعد. انقر أدناه لتعيينه.',
+    'scanAssignOutOfStock':
+        'نفد المخزون — ستتم إضافة وحدة واحدة تلقائياً ثم تعيينها',
+    'scanAssignDescription':
+        'هذا المنتج غير معيّن لهذه الغرفة بعد. انقر أدناه لتعيينه.',
     'scanAssignButton': 'تعيين للغرفة',
     'scanAssignAutoAdd': 'إضافة للمخزون وتعيين',
     'scanAssignAutoAddTitle': 'إضافة للمخزون؟',
-    'scanAssignAutoAddMessage': 'المنتج "{product}" نفد من المخزون. هل تريد إضافة وحدة واحدة تلقائياً وتعيينها لهذه الغرفة؟',
+    'scanAssignAutoAddMessage':
+        'المنتج "{product}" نفد من المخزون. هل تريد إضافة وحدة واحدة تلقائياً وتعيينها لهذه الغرفة؟',
     'scanAssignConfirm': 'نعم، أضف وعيّن',
-    'scanAssignSuccessMessage': 'تم تعيين المنتج {product} للغرفة {room} (الطابق {floor}).',
+    'scanAssignSuccessMessage':
+        'تم تعيين المنتج {product} للغرفة {room} (الطابق {floor}).',
     'qrMultipleDetected': 'تم اكتشاف عدة رموز QR. انقر للاختيار:',
     'qrUnknownSku': 'رمز SKU "{sku}" لا يتطابق مع أي منتج معروف.',
     'goToRoom': 'الذهاب إلى الغرفة',
@@ -2209,7 +2481,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsBtnCreateRooms': 'إنشاء الغرف',
     'roomsLabelProductsInRoom': 'المنتجات في كل غرفة',
     'roomsMsgSelectOneProduct': 'حدد منتجاً واحداً على الأقل',
-    'roomsMsgDuplicateRoomNumbers': 'أرقام الغرف هذه موجودة بالفعل في هذا الفندق: {numbers}. اختر رقم بدء أو عدداً مختلفاً.',
+    'roomsMsgDuplicateRoomNumbers':
+        'أرقام الغرف هذه موجودة بالفعل في هذا الفندق: {numbers}. اختر رقم بدء أو عدداً مختلفاً.',
     'productsCatalogTitle': 'كتالوج المنتجات',
     'productsBtnCreate': 'إنشاء منتج',
     'productsNoProducts': 'لا توجد منتجات في الكتالوج بعد.',
@@ -2278,8 +2551,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'settingsBiometricUnavailable': 'الفتح بالبصمة غير متاح على هذا الجهاز.',
     'authBtnBiometricLogin': 'تسجيل الدخول بالبصمة',
     'authBiometricReason': 'قم بالمصادقة للوصول إلى Ivra',
-    'authBiometricNeedsLogin': 'يرجى تسجيل الدخول مرة واحدة لتفعيل الدخول بالبصمة.',
-    'authBiometricOfflineNoSession': 'أنت غير متصل بالإنترنت. اتصل بالإنترنت لتسجيل الدخول.',
+    'authBiometricNeedsLogin':
+        'يرجى تسجيل الدخول مرة واحدة لتفعيل الدخول بالبصمة.',
+    'authBiometricOfflineNoSession':
+        'أنت غير متصل بالإنترنت. اتصل بالإنترنت لتسجيل الدخول.',
     'authBiometricFailed': 'فشلت المصادقة بالبصمة.',
     'settingsBtnClear': 'مسح',
     'settingsBtnSyncNow': 'مزامنة',
@@ -2406,25 +2681,33 @@ const Map<String, Map<String, String>> kL10nValues = {
     'bulkAdjustStockTitle': 'تعديل مخزون المتجر بالجملة',
     'bulkAdjustStockHint': 'أدخل تعديلات الكمية التي ستنطبق على جميع المنتجات.',
     'bulkAdjustStockSuccess': 'تم تطبيق تعديل مخزون المتجر بالجملة بنجاح',
-    'bulkAdjustStockOfflineQueued': 'تمت إضافة التعديلات بالجملة إلى قائمة المزامنة',
+    'bulkAdjustStockOfflineQueued':
+        'تمت إضافة التعديلات بالجملة إلى قائمة المزامنة',
     'resolveAll': 'حل الكل',
     'deleteAll': 'حذف الكل',
     'alertsRefreshedToast': 'تمّ إنشاء {count} تنبيهات ذكيّة',
     'alertsEmptyTitle': 'لا توجد تنبيهات بعد',
-    'alertsEmptyMessage': 'حدّث التنبيهات الذكيّة لفحص مخزون المتجر وحدود إعادة التعبئة وعمر الزجاجات والموافقات المعلّقة.',
+    'alertsEmptyMessage':
+        'حدّث التنبيهات الذكيّة لفحص مخزون المتجر وحدود إعادة التعبئة وعمر الزجاجات والموافقات المعلّقة.',
     'alertsEmptyAction': 'تحديث التنبيهات',
     'alertTypeLowBidonStock': 'مخزون المتجر من قوارير إعادة التعبئة منخفض',
     'alertLowBottleTitle': 'انخفاض مخزون المتجر من زجاجات {product}',
-    'alertLowBidonTitle': 'انخفاض مخزون المتجر من قوارير إعادة التعبئة لـ {product}',
-    'alertLowBottleBody': '{hotel}: تبقى {remain} زجاجات ممتلئة. الحد الأدنى هو {threshold}.',
-    'alertLowBidonBody': '{hotel}: تبقى {remain} قوارير إعادة تعبئة ممتلئة. الحد الأدنى هو {threshold}.',
+    'alertLowBidonTitle':
+        'انخفاض مخزون المتجر من قوارير إعادة التعبئة لـ {product}',
+    'alertLowBottleBody':
+        '{hotel}: تبقى {remain} زجاجات ممتلئة. الحد الأدنى هو {threshold}.',
+    'alertLowBidonBody':
+        '{hotel}: تبقى {remain} قوارير إعادة تعبئة ممتلئة. الحد الأدنى هو {threshold}.',
     'alertTypeLowBottleStock': 'مخزون المتجر من زجاجات منخفض',
     'alertTypeBottleAgeLimit': 'عمر الزجاجة',
     'alertBottleAgeLimitTitle': 'غرفة {room}: زجاجة {product} قديمة جدًا',
-    'alertBottleAgeLimitBody': 'عمر الزجاجة {age} يوم. الحد الأقصى هو {limit} يوم.',
+    'alertBottleAgeLimitBody':
+        'عمر الزجاجة {age} يوم. الحد الأقصى هو {limit} يوم.',
     'alertTypeRefillLimit': 'حد إعادة التعبئة',
-    'alertRefillLimitTitle': 'غرفة {room}: وصلت زجاجة {product} إلى الحد الأقصى لإعادة التعبئة',
-    'alertRefillLimitBody': 'تم استخدام {used}/{max} من مرات إعادة التعبئة. استبدل الزجاجة وأعد تدويرها.',
+    'alertRefillLimitTitle':
+        'غرفة {room}: وصلت زجاجة {product} إلى الحد الأقصى لإعادة التعبئة',
+    'alertRefillLimitBody':
+        'تم استخدام {used}/{max} من مرات إعادة التعبئة. استبدل الزجاجة وأعد تدويرها.',
     'alertTypePendingApproval': 'موافقة',
     'alertPendingApprovalTitle': 'في انتظار الموافقة: {request}',
     'alertPendingApprovalBody': 'مطلوب بواسطة {name}.',
@@ -2440,10 +2723,13 @@ const Map<String, Map<String, String>> kL10nValues = {
     'inviteAcceptHeading': 'قبول دعوة Ivra',
     'inviteSubtitleWithHotel': 'تمّت دعوة {name} بصفة {role} في {hotel}.',
     'inviteSubtitleNoHotel': 'تمّت دعوة {name} بصفة {role}.',
-    'inviteEmailMismatch': 'استخدم عنوان البريد الإلكتروني الذي أُرسلت إليه هذه الدعوة.',
-    'inviteAccountCreatedConfirm': 'تم إنشاء الحساب. أكّد بريدك الإلكتروني، ثم عُد إلى رابط الدعوة وأدخل نفس كلمة المرور لإكمال الانضمام.',
+    'inviteEmailMismatch':
+        'استخدم عنوان البريد الإلكتروني الذي أُرسلت إليه هذه الدعوة.',
+    'inviteAccountCreatedConfirm':
+        'تم إنشاء الحساب. أكّد بريدك الإلكتروني، ثم عُد إلى رابط الدعوة وأدخل نفس كلمة المرور لإكمال الانضمام.',
     'inviteInvalidHeading': 'الدعوة غير متاحة',
-    'inviteInvalidBody': 'ربّما انتهت صلاحية هذه الدعوة، أو أُلغيت، أو تم قبولها مسبقًا.',
+    'inviteInvalidBody':
+        'ربّما انتهت صلاحية هذه الدعوة، أو أُلغيت، أو تم قبولها مسبقًا.',
     'teamMemberReactivated': 'تم إعادة تفعيل {name}',
     'teamMemberDeactivated': 'تم تعطيل {name}',
     'settingsActionLastTried': 'آخر محاولة {datetime}',
@@ -2457,7 +2743,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'notFoundTitle': 'الصفحة غير موجودة',
     'notFoundBody': 'الصفحة التي تبحث عنها غير موجودة أو تم نقلها.',
     'notFoundButton': 'العودة إلى لوحة القيادة',
-    'downloadAppBannerText': 'للحصول على أفضل تجربة، قم بتنزيل تطبيق Android الخاص بنا.',
+    'downloadAppBannerText':
+        'للحصول على أفضل تجربة، قم بتنزيل تطبيق Android الخاص بنا.',
     'downloadAppBannerButton': 'تنزيل التطبيق',
     'sendPushTitle': 'إرسال إشعار',
     'teamViewAs': 'العرض بصفة',
@@ -2508,24 +2795,34 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productHistoryStatReplacements': 'الاستبدالات',
     'productHistoryStatAdjustments': 'التعديلات',
     'inventoryEnforceTitle': 'مخزون المتجر غير كافٍ',
-    'inventoryEnforceTemplateContent': 'وضع {total} زجاجة (زجاجات) من {product} يتطلب مخزونًا للمتجر. يحتوي مخزون المتجر فقط على {current}. هل ترغب في إضافة {needed} زجاجة (زجاجات) تلقائيًا إلى مخزون المتجر والمتابعة؟',
-    'inventoryEnforceReplaceContent': 'استبدال زجاجة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة. مخزون المتجر يحتوي على 0. هل ترغب في إضافة زجاجة واحدة تلقائيًا إلى مخزون المتجر والمتابعة؟',
-    'housekeeperReplaceGetFromHotel': 'استبدال {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك. ومع ذلك، تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة من مخزون الفندق والمتابعة؟',
-    'housekeeperReplaceNotifyManager': 'استبدال {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.',
-    'housekeeperAddGetFromHotel': 'إضافة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك. ومع ذلك، تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة من مخزون الفندق والمتابعة؟',
-    'housekeeperAddNotifyManager': 'إضافة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.',
-    'housekeeperRefillGetFromHotel': 'إعادة تعبئة {product} في الغرفة {room} يتطلب عبوة ممتلئة واحدة، ولكن ليس لديك أي عبوة مفتوحة أو ممتلئة في مخزونك. ومع ذلك، تتوفر {count} عبوة في مخزون الفندق. هل ترغب في أخذ عبوة واحدة من مخزون الفندق والمتابعة؟',
-    'housekeeperRefillNotifyManager': 'إعادة تعبئة {product} في الغرفة {room} يتطلب عبوة ممتلئة واحدة، ولكن ليس لديك أي عبوة مفتوحة أو ممتلئة في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.',
+    'inventoryEnforceTemplateContent':
+        'وضع {total} زجاجة (زجاجات) من {product} يتطلب مخزونًا للمتجر. يحتوي مخزون المتجر فقط على {current}. هل ترغب في إضافة {needed} زجاجة (زجاجات) تلقائيًا إلى مخزون المتجر والمتابعة؟',
+    'inventoryEnforceReplaceContent':
+        'استبدال زجاجة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة. مخزون المتجر يحتوي على 0. هل ترغب في إضافة زجاجة واحدة تلقائيًا إلى مخزون المتجر والمتابعة؟',
+    'housekeeperReplaceGetFromHotel':
+        'استبدال {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك. ومع ذلك، تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة من مخزون الفندق والمتابعة؟',
+    'housekeeperReplaceNotifyManager':
+        'استبدال {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.',
+    'housekeeperAddGetFromHotel':
+        'إضافة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك. ومع ذلك، تتوفر {count} زجاجة في مخزون الفندق. هل ترغب في أخذ زجاجة واحدة من مخزون الفندق والمتابعة؟',
+    'housekeeperAddNotifyManager':
+        'إضافة {product} في الغرفة {room} يتطلب زجاجة ممتلئة واحدة، ولكنها ليست في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.',
+    'housekeeperRefillGetFromHotel':
+        'إعادة تعبئة {product} في الغرفة {room} يتطلب عبوة ممتلئة واحدة، ولكن ليس لديك أي عبوة مفتوحة أو ممتلئة في مخزونك. ومع ذلك، تتوفر {count} عبوة في مخزون الفندق. هل ترغب في أخذ عبوة واحدة من مخزون الفندق والمتابعة؟',
+    'housekeeperRefillNotifyManager':
+        'إعادة تعبئة {product} في الغرفة {room} يتطلب عبوة ممتلئة واحدة، ولكن ليس لديك أي عبوة مفتوحة أو ممتلئة في مخزونك، وهي غير متوفرة في مخزون الفندق أيضًا. يرجى إبلاغ مدير الفندق.',
     'btnOk': 'موافق',
     'inventoryEnforceBtnProceed': 'التعديل التلقائي والمتابعة',
     'inventoryEnforceReasonTemplate': 'تعديل تلقائي لنموذج إنشاء الغرف',
     'inventoryEnforceReasonReplace': 'تعديل تلقائي للاستبدال',
     'inventoryEnforceOnboardingTitle': 'تهيئة مخزون المتجر',
-    'inventoryEnforceOnboardingContent': 'بما أن هذا فندق جديد، فلا توجد منتجات في مخزون المتجر. هل ترغب في تهيئة مخزون المتجر تلقائيًا بـ {total} زجاجة لوضعها في الغرف؟',
+    'inventoryEnforceOnboardingContent':
+        'بما أن هذا فندق جديد، فلا توجد منتجات في مخزون المتجر. هل ترغب في تهيئة مخزون المتجر تلقائيًا بـ {total} زجاجة لوضعها في الغرف؟',
     'authBtnCreateRole': 'إنشاء دور',
     'authCreateRoleTitle': 'إنشاء دور مخصص',
     'authRoleNameLabel': 'اسم الدور (أحرف صغيرة snake_case)',
-    'authRoleNameError': 'يجب أن يكون اسم الدور snake_case وبأحرف صغيرة (مثال: night_auditor)',
+    'authRoleNameError':
+        'يجب أن يكون اسم الدور snake_case وبأحرف صغيرة (مثال: night_auditor)',
     'authRoleDisplayNameLabel': 'اسم العرض المألوف (مثال: Night Auditor)',
     'authRoleDisplayNameError': 'اسم العرض لا يمكن أن يكون فارغاً',
     'authRoleDescLabel': 'الوصف',
@@ -2540,7 +2837,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authSearchHint': 'البحث في الصلاحيات...',
     'authorizationsTitle': 'مصفوفة الصلاحيات',
     'authorizationsHeader': 'مصفوفة الصلاحيات',
-    'authorizationsSubtitle': 'إدارة ميزات التطبيق وصلاحيات الإجراءات حسب دور المستخدم.',
+    'authorizationsSubtitle':
+        'إدارة ميزات التطبيق وصلاحيات الإجراءات حسب دور المستخدم.',
     'authorizationsPermission': 'الصلاحية',
     'authorizationsUpdatedSuccessfully': 'تم تحديث الصلاحيات بنجاح.',
     'roleAppAdmin': 'مدير التطبيق',
@@ -2558,7 +2856,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'permSubmitEditRequests': 'تقديم طلبات التعديل',
     'permSubmitEditRequestsDesc': 'تقديم طلبات تعديل الغرف والزجاجات والمخزون',
     'permApproveCorrections': 'اعتماد التصحيحات',
-    'permApproveCorrectionsDesc': 'الموافقة على طلبات التغيير والتصحيح المعلقة أو رفضها',
+    'permApproveCorrectionsDesc':
+        'الموافقة على طلبات التغيير والتصحيح المعلقة أو رفضها',
     'permViewApprovals': 'عرض الموافقات',
     'permViewApprovalsDesc': 'الوصول إلى شاشة لوحة تحكم الموافقات',
     'permViewAlerts': 'عرض التنبيهات',
@@ -2574,7 +2873,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'permViewInventory': 'عرض المخزون',
     'permViewInventoryDesc': 'عرض حالة مخزون الفندق واقتراح الطلبات',
     'permViewAuthorizations': 'عرض الصلاحيات',
-    'permViewAuthorizationsDesc': 'الوصول إلى شاشة إعدادات صلاحيات الأدوار وإدارتها',
+    'permViewAuthorizationsDesc':
+        'الوصول إلى شاشة إعدادات صلاحيات الأدوار وإدارتها',
     'dialogRefillTitle': 'إعادة ملء الموزع',
     'dialogRefillSliderLabel': 'نسبة إعادة التعبئة (الحجم المضاف):',
     'dialogRefillPreExisting': 'السائل الموجود مسبقًا:',
@@ -2597,12 +2897,14 @@ const Map<String, Map<String, String>> kL10nValues = {
     'stockEventRoomPlacement': 'وُضع في الغرفة',
     'stockEventRefillUse': 'استُخدم لإعادة التعبئة',
     'stockEventReplaceUse': 'استُخدم لاستبدال الزجاجة',
-    'housekeeperHotelStockAvailable': 'مخزون الفندق: {bottles} زجاجة ممتلئة، {bidons} عبوة ممتلئة متاحة',
+    'housekeeperHotelStockAvailable':
+        'مخزون الفندق: {bottles} زجاجة ممتلئة، {bidons} عبوة ممتلئة متاحة',
     'sourceHousekeeperCart': 'من عربة عاملة النظافة',
     'sourceHotelInventory': 'من مخزون الفندق',
     'userRoleHousekeeper': 'عاملة الغرف',
     'roomsBtnAddProduct': 'إضافة منتج',
-    'roomsConfirmRemoveProduct': 'هل أنت متأكد من رغبتك في إزالة المنتج \'{productName}\' من الغرفة \'{roomNumber}\'؟',
+    'roomsConfirmRemoveProduct':
+        'هل أنت متأكد من رغبتك في إزالة المنتج \'{productName}\' من الغرفة \'{roomNumber}\'؟',
     'roomsProductRemoved': 'تمت إزالة المنتج',
     'roomsProductAdded': 'تمت إضافة المنتج',
     'roomsAddProductTitle': 'إضافة منتج إلى الغرفة',
@@ -2634,67 +2936,91 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productSkuLabelReverse': '{sku} - {label}',
     'roomNumberLabel': 'غرفة {number}',
     'onboardingStep1Title': 'مسح رمز الاستجابة السريعة',
-    'onboardingStep1Desc': 'قم بمسح رمز الاستجابة السريعة الموجود على زجاجة أو غرفة للبدء.',
+    'onboardingStep1Desc':
+        'قم بمسح رمز الاستجابة السريعة الموجود على زجاجة أو غرفة للبدء.',
     'onboardingStep2Title': 'إعادة تعبئة الزجاجة',
-    'onboardingStep2Desc': 'تتبع عمليات إعادة تعبئة المنتجات بسهولة وحافظ على تحديث المخزون.',
+    'onboardingStep2Desc':
+        'تتبع عمليات إعادة تعبئة المنتجات بسهولة وحافظ على تحديث المخزون.',
     'onboardingStep3Title': 'الإجراءات المعلقة',
-    'onboardingStep3Desc': 'تحقق من لوحة القيادة الخاصة بك لمعرفة أي تنبيهات أو مهام معلقة.',
+    'onboardingStep3Desc':
+        'تحقق من لوحة القيادة الخاصة بك لمعرفة أي تنبيهات أو مهام معلقة.',
     'onboardingStep4Title': 'تغيير اللغة',
-    'onboardingStep4Desc': 'قم بتغيير لغتك المفضلة في قائمة الإعدادات في أي وقت.',
+    'onboardingStep4Desc':
+        'قم بتغيير لغتك المفضلة في قائمة الإعدادات في أي وقت.',
     'onboardingStep5Title': 'عرض المخزون',
     'onboardingStep5Desc': 'تتبع مستويات المخزون في فندقك والطلبات الواردة.',
     'onboardingStep6Title': 'الموافقة على الطلبات',
-    'onboardingStep6Desc': 'مراجعة والموافقة على طلبات المخزون المعلقة من موظفيك.',
+    'onboardingStep6Desc':
+        'مراجعة والموافقة على طلبات المخزون المعلقة من موظفيك.',
     'onboardingStep7Title': 'التحقق من التنبيهات',
-    'onboardingStep7Desc': 'ابق على اطلاع بتنبيهات انخفاض المخزون أو التنبيهات التشغيلية.',
+    'onboardingStep7Desc':
+        'ابق على اطلاع بتنبيهات انخفاض المخزون أو التنبيهات التشغيلية.',
     'onboardingStep8Title': 'إدارة الفنادق',
     'onboardingStep8Desc': 'إضافة وتكوين فنادق متعددة تحت إدارتك.',
     'onboardingStep9Title': 'دعوة فريق',
-    'onboardingStep9Desc': 'دعوة المديرين والموظفين للانضمام إلى مساحة العمل الخاصة بك.',
+    'onboardingStep9Desc':
+        'دعوة المديرين والموظفين للانضمام إلى مساحة العمل الخاصة بك.',
     'onboardingStep10Title': 'عرض التقارير',
-    'onboardingStep10Desc': 'إنشاء تقارير مفصلة وتصدير البيانات عبر جميع الفنادق.',
+    'onboardingStep10Desc':
+        'إنشاء تقارير مفصلة وتصدير البيانات عبر جميع الفنادق.',
     'onboardingSkip': 'تخطي',
     'onboardingNext': 'التالي',
     'onboardingDone': 'تم',
-    'onboardingResetMessage': 'تمت إعادة تعيين جولة التعريف. سيتم عرضها على لوحة القيادة.',
+    'onboardingResetMessage':
+        'تمت إعادة تعيين جولة التعريف. سيتم عرضها على لوحة القيادة.',
     'replayOnboarding': 'إعادة تشغيل الجولة التعريفية',
     'rolePermissionsGuide': 'دليل الأدوار والصلاحيات',
     'help': 'مساعدة',
     'helpContextDashboardTitle': 'نظرة عامة على لوحة القيادة',
-    'helpContextDashboardDesc': 'تعرض هذه الشاشة ملخصًا لعمليات إعادة التعبئة في فندقك لهذا اليوم. يمكنك رؤية الأنشطة الحديثة والموافقات المعلقة وتنبيهات انخفاض المخزون بسرعة.',
+    'helpContextDashboardDesc':
+        'تعرض هذه الشاشة ملخصًا لعمليات إعادة التعبئة في فندقك لهذا اليوم. يمكنك رؤية الأنشطة الحديثة والموافقات المعلقة وتنبيهات انخفاض المخزون بسرعة.',
     'helpContextInventoryTitle': 'إدارة المخزون',
-    'helpContextInventoryDesc': 'إدارة مستويات مخزون منتجاتك. اضغط على بطاقة المنتج لرؤية التفاصيل أو تعديل الكميات.',
+    'helpContextInventoryDesc':
+        'إدارة مستويات مخزون منتجاتك. اضغط على بطاقة المنتج لرؤية التفاصيل أو تعديل الكميات.',
     'helpContextRoomsTitle': 'حالة الغرف',
-    'helpContextRoomsDesc': 'عرض جميع الغرف وحالة منتجاتها. اضغط على غرفة لإعادة تعبئة الزجاجات أو استبدالها، أو قم بمسح رمز الاستجابة السريعة للانتقال مباشرة إلى الغرفة الصحيحة.',
+    'helpContextRoomsDesc':
+        'عرض جميع الغرف وحالة منتجاتها. اضغط على غرفة لإعادة تعبئة الزجاجات أو استبدالها، أو قم بمسح رمز الاستجابة السريعة للانتقال مباشرة إلى الغرفة الصحيحة.',
     'helpContextReportsTitle': 'التقارير والتصدير',
-    'helpContextReportsDesc': 'إنشاء وتصدير سجل إعادة التعبئة ولقطات المخزون وملخصات التنبيهات. استخدم أزرار التنزيل لحفظ هذه البيانات كملفات CSV.',
+    'helpContextReportsDesc':
+        'إنشاء وتصدير سجل إعادة التعبئة ولقطات المخزون وملخصات التنبيهات. استخدم أزرار التنزيل لحفظ هذه البيانات كملفات CSV.',
     'noProductsFound': 'لم يتم العثور على منتجات',
     'markDamagedTitle': 'وضع علامة كـ تالف - {product} في الغرفة {room}',
     'markLostTitle': 'وضع علامة كـ مفقود - {product} في الغرفة {room}',
     'hkDeactivateWithStockTitle': 'مخزون عربة عاملة النظافة',
-    'hkDeactivateWithStockMessage': 'تحتوي عربة عاملة النظافة هذه على مخزون نشط. هل ترغب في إعادة هذا المخزون إلى المخزون المركزي للفندق قبل إلغاء تنشيط حسابها؟',
+    'hkDeactivateWithStockMessage':
+        'تحتوي عربة عاملة النظافة هذه على مخزون نشط. هل ترغب في إعادة هذا المخزون إلى المخزون المركزي للفندق قبل إلغاء تنشيط حسابها؟',
     'btnReturnAndDeactivate': 'إرجاع وإلغاء التنشيط',
     'btnJustDeactivate': 'إلغاء التنشيط فقط',
-    'hkDeleteWithStockMessage': 'تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق \'{userName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.',
+    'hkDeleteWithStockMessage':
+        'تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق \'{userName}\'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.',
   },
   'it': {
     'markAsRead': 'Segna come letto',
-    'confirmDeleteHotel': 'Sei sicuro di voler eliminare l\'hotel \'{hotelName}\'? Questa azione è permanente, non può essere annullata ed eliminerà tutte le camere, assegnazioni del personale e record associati.',
-    'confirmDeleteRoom': 'Sei sicuro di voler eliminare la camera \'{roomNumber}\'? Questa azione è permanente, non può essere annullata ed eliminerà tutti i prodotti e la cronologia associati.',
-    'confirmDeleteFloor': 'Sei sicuro di voler eliminare il piano \'{floorNumber}\' e tutte le sue camere? Questa azione è permanente e non può essere annullata.',
-    'confirmDeleteUser': 'Sei sicuro di voler eliminare il membro del team \'{userName}\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.',
-    'confirmDeleteProduct': 'Sei sicuro di voler eliminare il prodotto \'{productName}\'? Questa azione è permanente, non può essere annullata e influirà sul tracciamento dell\'stock magazzino.',
-    'confirmDeleteAlert': 'Sei sicuro di voler eliminare questo avviso? Questa azione è permanente e non può essere annullata.',
-    'confirmDeleteAllAlerts': 'Sei sicuro di voler eliminare tutti gli avvisi? Questa azione è permanente, non può essere annullata e cancellerà tutte le notifiche correnti.',
+    'confirmDeleteHotel':
+        'Sei sicuro di voler eliminare l\'hotel \'{hotelName}\'? Questa azione è permanente, non può essere annullata ed eliminerà tutte le camere, assegnazioni del personale e record associati.',
+    'confirmDeleteRoom':
+        'Sei sicuro di voler eliminare la camera \'{roomNumber}\'? Questa azione è permanente, non può essere annullata ed eliminerà tutti i prodotti e la cronologia associati.',
+    'confirmDeleteFloor':
+        'Sei sicuro di voler eliminare il piano \'{floorNumber}\' e tutte le sue camere? Questa azione è permanente e non può essere annullata.',
+    'confirmDeleteUser':
+        'Sei sicuro di voler eliminare il membro del team \'{userName}\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.',
+    'confirmDeleteProduct':
+        'Sei sicuro di voler eliminare il prodotto \'{productName}\'? Questa azione è permanente, non può essere annullata e influirà sul tracciamento dell\'stock magazzino.',
+    'confirmDeleteAlert':
+        'Sei sicuro di voler eliminare questo avviso? Questa azione è permanente e non può essere annullata.',
+    'confirmDeleteAllAlerts':
+        'Sei sicuro di voler eliminare tutti gli avvisi? Questa azione è permanente, non può essere annullata e cancellerà tutte le notifiche correnti.',
     'clearAuditLogs': 'Cancella registri',
     'confirmAction': 'Conferma azione',
-    'confirmClearLogs': 'Sei sicuro di voler cancellare tutti i registri di controllo? Questa azione è permanente e non può essere annullata.',
+    'confirmClearLogs':
+        'Sei sicuro di voler cancellare tutti i registri di controllo? Questa azione è permanente e non può essere annullata.',
     'btnConfirm': 'Conferma',
     'composeMessage': 'Componi messaggio',
     'notificationTitle': 'Titolo della notifica',
     'notificationDefaultTitle': 'Nuova notifica',
     'notificationChannelName': 'Notifiche importanti',
-    'notificationChannelDescription': 'Questo canale è utilizzato per le notifiche importanti.',
+    'notificationChannelDescription':
+        'Questo canale è utilizzato per le notifiche importanti.',
     'notificationTitleHint': 'es: Nuova funzione!',
     'notificationBody': 'Corpo della notifica',
     'notificationBodyHint': 'Inserisci il messaggio qui...',
@@ -2724,7 +3050,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'errorLoadingHotels': 'Errore nel caricamento degli hotel',
     'sending': 'Invio in corso...',
     'roomsEditRoomTitle': 'Aggiorna camera {roomNumber}',
-    'roomsEditProductTitle': 'Aggiorna bottiglia di {productName} nella camera {roomNumber}',
+    'roomsEditProductTitle':
+        'Aggiorna bottiglia di {productName} nella camera {roomNumber}',
     'inventory': 'Stock magazzino',
     'alerts': 'Avvisi',
     'approvals': 'Approvazioni',
@@ -2752,7 +3079,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'dispatchNotification': 'Invia la notifica',
     'pleaseEnterTitleBody': 'Inserisci un titolo e un corpo',
     'pleaseSelectTarget': 'Seleziona un valore di destinazione',
-    'notificationSent': 'Inviato: {successCount} successi, {failureCount} falliti',
+    'notificationSent':
+        'Inviato: {successCount} successi, {failureCount} falliti',
     'dashboardShort': 'Pannello',
     'dashboardHeroTitle': 'Oggi in Ivra',
     'dashboardRefillActivity': 'Attività ricariche (ultimi 7 giorni)',
@@ -2804,26 +3132,34 @@ const Map<String, Map<String, String>> kL10nValues = {
     'downloadCsv': 'Scarica CSV',
     'downloadPdf': 'Scarica PDF',
     'reportRefillHistoryTitle': 'Cronologia ricariche',
-    'reportRefillHistoryBody': 'Esporta le recenti attività di ricarica per hotel, camera, prodotto, utente e ora.',
-    'reportSuggestedOrdersBody': 'Esporta bottiglie, bottiglie di ricarica e raccomandazioni di riciclaggio.',
+    'reportRefillHistoryBody':
+        'Esporta le recenti attività di ricarica per hotel, camera, prodotto, utente e ora.',
+    'reportSuggestedOrdersBody':
+        'Esporta bottiglie, bottiglie di ricarica e raccomandazioni di riciclaggio.',
     'reportInventorySnapshotTitle': 'Istantanea stock magazzino',
-    'reportInventorySnapshotBody': 'Esporta lo stock attuale di bottiglie e bottiglie di ricarica per hotel e prodotto.',
+    'reportInventorySnapshotBody':
+        'Esporta lo stock attuale di bottiglie e bottiglie di ricarica per hotel e prodotto.',
     'reportOpenAlertsTitle': 'Avvisi aperti',
-    'reportOpenAlertsBody': 'Esporta avvisi di stock basso, sostituzione, inattività e attività sospette.',
+    'reportOpenAlertsBody':
+        'Esporta avvisi di stock basso, sostituzione, inattività e attività sospette.',
     'scheduleReportEmail': 'Pianifica l\'invio del rapporto via e-mail',
-    'scheduleReportEmailHint': 'Invieremo un riepilogo di questo rapporto a questo indirizzo ogni lunedì.',
-    'scheduledReportEmailDrafted': 'Rapporto via e-mail pianificato con successo',
+    'scheduleReportEmailHint':
+        'Invieremo un riepilogo di questo rapporto a questo indirizzo ogni lunedì.',
+    'scheduledReportEmailDrafted':
+        'Rapporto via e-mail pianificato con successo',
     'reportFilterDateRange': 'Filtra per intervallo di date',
     'reportAllProducts': 'Tutti i prodotti',
     'reportAllRooms': 'Tutte le camere',
     'reportClearFilters': 'Cancella filtri',
-    'reportFiltersApplyExports': 'Nota: I filtri si applicano sia alle metriche sullo schermo che alle esportazioni scaricate.',
+    'reportFiltersApplyExports':
+        'Nota: I filtri si applicano sia alle metriche sullo schermo che alle esportazioni scaricate.',
     'reportAnalyticsTitle': 'Panoramica delle analisi',
     'reportKpiRefills': 'Ricariche totali',
     'reportKpiCorrections': 'Correzioni di magazzino',
     'reportKpiReplacements': 'Sostituzioni',
     'reportKpiActiveRooms': 'Camere attive',
-    'reportTrendChart': 'Andamento dell\'attività di ricarica (ultimi 14 giorni)',
+    'reportTrendChart':
+        'Andamento dell\'attività di ricarica (ultimi 14 giorni)',
     'reportUsageByProduct': 'Ricariche per prodotto',
     'reportUsageByRoom': 'Ricariche per camera',
     'reportNoAnalyticsData': 'Nessuna attività registrata per questo periodo.',
@@ -2837,11 +3173,14 @@ const Map<String, Map<String, String>> kL10nValues = {
     'inventoryTableProduct': 'Prodotto',
     'inventoryTableFullBottles': 'Bottiglie piene',
     'inventoryTableFullBottlesWithPump': 'Bottiglie piene da {size} con pompa',
-    'inventoryTableFullBottlesWithoutPump': 'Bottiglie piene da {size} senza pompa',
+    'inventoryTableFullBottlesWithoutPump':
+        'Bottiglie piene da {size} senza pompa',
     'inventoryTableFullBottlesWithPumpGeneric': 'Bottiglie piene con pompa',
-    'inventoryTableFullBottlesWithoutPumpGeneric': 'Bottiglie piene senza pompa',
+    'inventoryTableFullBottlesWithoutPumpGeneric':
+        'Bottiglie piene senza pompa',
     'inventoryCollapseHeader': 'Bottiglie vuote e aperte',
-    'inventoryTableEmptyBottles': 'Bottiglie sostituite dopo {months} mesi (Usate)',
+    'inventoryTableEmptyBottles':
+        'Bottiglie sostituite dopo {months} mesi (Usate)',
     'inventoryTableEmptyBottlesGeneric': 'Bottiglie sostituite (Usate)',
     'inventoryTableEmptyBidons': 'Bottiglie di ricarica vuote',
     'inventoryTableFullBidons': 'Bottiglie di ricarica piene da {size}',
@@ -2866,7 +3205,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'orderNewBottlesText': 'Ordina {count} nuove bottiglie da 1L',
     'orderNewBidonsText': 'Ordina {count} nuove bottiglie di ricarica da 5L',
     'recycleBottlesText': 'Ricicla {count} bottiglie',
-    'bottleCannotRefillRecycled': 'Questa bottiglia è stata riciclata e non può essere ricaricata. Si prega di sostituirla.',
+    'bottleCannotRefillRecycled':
+        'Questa bottiglia è stata riciclata e non può essere ricaricata. Si prega di sostituirla.',
     'adjustStockTitle': 'Regola stock',
     'hotelRoomsTracked': 'camere tracciate',
     'hotelPendingChip': 'in attesa',
@@ -2883,8 +3223,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'btnCancel': 'Annulla',
     'btnSave': 'Salva',
     'btnSubmitRequest': 'Invia richiesta',
-    'demoModeDescription': 'Simulazioni locali che utilizzano database offline.',
-    'offlineModeDescription': 'Mette in coda le azioni offline e le sincronizza in seguito.',
+    'demoModeDescription':
+        'Simulazioni locali che utilizzano database offline.',
+    'offlineModeDescription':
+        'Mette in coda le azioni offline e le sincronizza in seguito.',
     'syncQueueHeader': 'Coda di sincronizzazione',
     'syncNow': 'Sincronizza ora',
     'itemsToSync': 'azioni in attesa di sincronizzazione',
@@ -2896,7 +3238,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'enterNumberError': 'Inserisci un numero',
     'createHotel': 'Crea hotel',
     'requestHotelEdit': 'Richiedi modifica hotel',
-    'authTitleCannotAccess': 'Questo account richiede un invito per accedere a Ivra.',
+    'authTitleCannotAccess':
+        'Questo account richiede un invito per accedere a Ivra.',
     'authBtnGoogleSignIn': 'Accedi con Google',
     'authBtnSignOut': 'Disconnettersi',
     'authLabelEmail': 'E-mail',
@@ -2907,14 +3250,16 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authBtnForgotPassword': 'Password dimenticata?',
     'authResetPasswordTitle': 'Reimposta la password',
     'setPasswordTitle': 'Imposta la tua password',
-    'setPasswordBody': 'Imposta una password sicura per il tuo account per completare la registrazione.',
+    'setPasswordBody':
+        'Imposta una password sicura per il tuo account per completare la registrazione.',
     'setPasswordButton': 'Imposta password',
     'authBtnSendResetLink': 'Invia link di ripristino',
     'authResetLinkSent': 'Link di reimpostazione della password inviato a',
     'authValidationEmailRequired': 'L\'e-mail è richiesta',
     'authValidationEmailInvalid': 'Inserisci un indirizzo e-mail valido',
     'authValidationPasswordRequired': 'La password è richiesta',
-    'authValidationPasswordTooShort': 'La password deve contenere almeno 8 caratteri',
+    'authValidationPasswordTooShort':
+        'La password deve contenere almeno 8 caratteri',
     'authValidationPasswordsDoNotMatch': 'Le password non corrispondono',
     'authResetNewPasswordTitle': 'Crea una nuova password',
     'authLabelNewPassword': 'Nuova password',
@@ -2922,12 +3267,15 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authBtnUpdatePassword': 'Aggiorna password',
     'authBtnReturnToApp': 'Torna all\'applicazione',
     'authPasswordUpdatedSuccess': 'Password aggiornata con successo.',
-    'authUnexpectedError': 'Si è verificato un errore. Riprova o contatta l\'assistenza se il problema persiste.',
+    'authUnexpectedError':
+        'Si è verificato un errore. Riprova o contatta l\'assistenza se il problema persiste.',
     'asyncErrorTitle': 'Impossibile caricare questa sezione',
     'btnRetry': 'Riprova',
     'authProfileLoadErrorTitle': 'Impossibile caricare il tuo profilo.',
-    'authProfileLoadErrorBody': 'Di solito è un problema di connessione temporaneo. Riprova.',
-    'authAccountDeactivated': 'Questo account è stato disattivato. Contatta l\'amministratore per riaccedere.',
+    'authProfileLoadErrorBody':
+        'Di solito è un problema di connessione temporaneo. Riprova.',
+    'authAccountDeactivated':
+        'Questo account è stato disattivato. Contatta l\'amministratore per riaccedere.',
     'settingsPayloadInvalidJson': 'Il payload deve essere un oggetto JSON.',
     'exportDownloadStarted': 'Download di {fileName} avviato',
     'exportSaved': '{fileName} salvato in {path}',
@@ -2935,20 +3283,26 @@ const Map<String, Map<String, String>> kL10nValues = {
     'splashTagline': 'Soluzioni di ospitalità sostenibile',
     'accountSaveFailed': 'Impossibile salvare il profilo. Riprova.',
     'accountPasswordChangeFailed': 'Impossibile cambiare la password. Riprova.',
-    'accountSignOutFailed': 'Impossibile uscire. Controlla la connessione e riprova.',
+    'accountSignOutFailed':
+        'Impossibile uscire. Controlla la connessione e riprova.',
     'hotelCreateFailed': 'Impossibile creare l\'hotel. Riprova.',
     'hotelUpdateFailed': 'Impossibile aggiornare l\'hotel. Riprova.',
     'teamInviteFailed': 'Impossibile inviare l\'invito. Riprova.',
-    'teamHotelsUpdateFailed': 'Impossibile aggiornare le assegnazioni hotel. Riprova.',
+    'teamHotelsUpdateFailed':
+        'Impossibile aggiornare le assegnazioni hotel. Riprova.',
     'roomsTooltipCreateTemplate': 'Crea modello camera',
     'roomsNoRoomsFound': 'Nessuna camera o prodotto trovato.',
-    'roomsScanConfirmFromCart': 'Il prodotto "{product}" non è attualmente assegnato a questa camera, ma ne hai {count} nel carrello. Vuoi prenderne 1 dal carrello e assegnarlo a questa camera?',
-    'roomsScanConfirmFromHotel': 'Il prodotto "{product}" non è in questa camera. Ci sono {count} bottiglie nell\'inventario dell\'hotel. Vuoi prenderne 1 e assegnarlo a questa camera?',
+    'roomsScanConfirmFromCart':
+        'Il prodotto "{product}" non è attualmente assegnato a questa camera, ma ne hai {count} nel carrello. Vuoi prenderne 1 dal carrello e assegnarlo a questa camera?',
+    'roomsScanConfirmFromHotel':
+        'Il prodotto "{product}" non è in questa camera. Ci sono {count} bottiglie nell\'inventario dell\'hotel. Vuoi prenderne 1 e assegnarlo a questa camera?',
     'roomsNoProducts': 'Nessun prodotto assegnato a questa camera.',
     'roomsStatusNoProducts': 'Nessun prodotto',
     'roomsSearchEmptyHint': 'Prova a modificare la ricerca o i filtri.',
-    'roomsEmptyHotelWithTemplate': 'Aggiungi la tua prima camera con il pulsante modello in alto.',
-    'roomsEmptyHotelNoTemplate': 'Nessuna camera è ancora stata assegnata a questo hotel.',
+    'roomsEmptyHotelWithTemplate':
+        'Aggiungi la tua prima camera con il pulsante modello in alto.',
+    'roomsEmptyHotelNoTemplate':
+        'Nessuna camera è ancora stata assegnata a questo hotel.',
     'roomsLabelRoom': 'Camera',
     'bottleStatusActive': 'Attiva',
     'bottleStatusNeedsRefill': 'Da ricaricare',
@@ -2989,7 +3343,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsGestionExpressQr': 'Gestione Espressa (QR)',
     'roomsGestionQr': 'Gestione Codici QR',
     'expressQrTitle': 'Gestione Espressa (QR)',
-    'expressQrSubtitle': 'Consenti la scansione diretta dei codici QR del distributore',
+    'expressQrSubtitle':
+        'Consenti la scansione diretta dei codici QR del distributore',
     'roomsSelectHotelFirst': 'Seleziona hotel...',
     'roomsViewDetailed': 'Vista dettagliata',
     'roomsViewCompact': 'Vista compatta',
@@ -3031,7 +3386,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrActionReplace': 'Sostituisci bottiglia',
     'hotelNotFound': 'Hotel non trovato',
     'productNotFound': 'Prodotto non trovato',
-    'qrAccessDeniedMessage': 'Non sei autorizzato a eseguire azioni in questo hotel.',
+    'qrAccessDeniedMessage':
+        'Non sei autorizzato a eseguire azioni in questo hotel.',
     'roomsFillCount': 'Conteggio ricariche',
     'roomsBottleStatus': 'Stato dispensatore',
     'btnBack': 'Indietro',
@@ -3046,7 +3402,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrCameraPermission': 'Permesso fotocamera negato',
     'qrCameraUnavailable': 'Fotocamera non disponibile',
     'qrHotelNotFoundMessage': 'Impossibile trovare l\'hotel: «{hotel}»',
-    'qrProductNotFoundMessage': 'La camera {room} (piano {floor}) non contiene il prodotto SKU: «{sku}»',
+    'qrProductNotFoundMessage':
+        'La camera {room} (piano {floor}) non contiene il prodotto SKU: «{sku}»',
     'qrGenerateTabScan': 'Scansiona QR',
     'qrGenerateTabGenerate': 'Genera QR',
     'qrGenerateHotel': 'Hotel',
@@ -3062,26 +3419,35 @@ const Map<String, Map<String, String>> kL10nValues = {
     'qrGenerateSuccess': 'PDF generato e scaricato con successo',
     'settingsScannerHeader': 'Impostazioni dello scanner',
     'settingsPrecisionScanTitle': 'Finestra di scansione di precisione',
-    'settingsPrecisionScanSubtitle': 'Scansiona solo i codici allineati al centro del mirino',
+    'settingsPrecisionScanSubtitle':
+        'Scansiona solo i codici allineati al centro del mirino',
     'settingsTapToScanTitle': 'Tocca per scansionare',
-    'settingsTapToScanSubtitle': 'Tocca sulla casella del codice QR rilevato per scansionarlo',
+    'settingsTapToScanSubtitle':
+        'Tocca sulla casella del codice QR rilevato per scansionarlo',
     'qrConfirmAssignTitle': 'Prodotto non posizionato',
-    'qrConfirmAssignMessage': 'Il prodotto {product} non è assegnato alla camera {room}. Aggiungere 1 pezzo all\'inventario e assegnarlo alla camera?',
+    'qrConfirmAssignMessage':
+        'Il prodotto {product} non è assegnato alla camera {room}. Aggiungere 1 pezzo all\'inventario e assegnarlo alla camera?',
     'qrAssignSuccess': 'Prodotto assegnato e ricaricato con successo',
     'qrActionCanceled': 'Operazione annullata',
-    'qrActionCanceledMessage': 'Hai scelto di non assegnare il prodotto. Puoi scansionare un altro codice o tornare alle camere.',
+    'qrActionCanceledMessage':
+        'Hai scelto di non assegnare il prodotto. Puoi scansionare un altro codice o tornare alle camere.',
     'scanAssignTitle': 'Assegna prodotto alla stanza',
     'scanAssignSuccess': 'Prodotto assegnato con successo',
     'scanAssignFailed': 'Assegnazione fallita',
-    'scanAssignInStock': '{count} in stock — verrà dedotto 1 e assegnato alla stanza',
-    'scanAssignOutOfStock': 'Esaurito — 1 unità verrà aggiunta automaticamente all\'inventario e poi assegnata',
-    'scanAssignDescription': 'Questo prodotto non è ancora assegnato a questa stanza. Tocca qui sotto per assegnarlo.',
+    'scanAssignInStock':
+        '{count} in stock — verrà dedotto 1 e assegnato alla stanza',
+    'scanAssignOutOfStock':
+        'Esaurito — 1 unità verrà aggiunta automaticamente all\'inventario e poi assegnata',
+    'scanAssignDescription':
+        'Questo prodotto non è ancora assegnato a questa stanza. Tocca qui sotto per assegnarlo.',
     'scanAssignButton': 'Assegna alla stanza',
     'scanAssignAutoAdd': 'Aggiungi all\'inventario e assegna',
     'scanAssignAutoAddTitle': 'Aggiungere all\'inventario?',
-    'scanAssignAutoAddMessage': 'Il prodotto "{product}" è esaurito. Vuoi aggiungere automaticamente 1 unità all\'inventario e assegnarla a questa stanza?',
+    'scanAssignAutoAddMessage':
+        'Il prodotto "{product}" è esaurito. Vuoi aggiungere automaticamente 1 unità all\'inventario e assegnarla a questa stanza?',
     'scanAssignConfirm': 'Sì, aggiungi e assegna',
-    'scanAssignSuccessMessage': 'Il prodotto {product} è stato assegnato alla stanza {room} (Piano {floor}).',
+    'scanAssignSuccessMessage':
+        'Il prodotto {product} è stato assegnato alla stanza {room} (Piano {floor}).',
     'qrMultipleDetected': 'Rilevati più codici QR. Tocca per selezionare:',
     'qrUnknownSku': 'Lo SKU "{sku}" non corrisponde a nessun prodotto noto.',
     'goToRoom': 'Vai alla stanza',
@@ -3089,7 +3455,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'errorLoadingInventory': 'Errore nel caricamento dell\'inventario',
     'qrGenAllRoomProducts': 'Tutti i prodotti nella camera selezionata',
     'qrGenAllInventoryProducts': 'Tutti i prodotti nell\'inventario',
-    'qrLabelScanInstructions': 'Scansiona con l\'app IVRA per ricaricare o sostituire',
+    'qrLabelScanInstructions':
+        'Scansiona con l\'app IVRA per ricaricare o sostituire',
     'roomsSearchProductPlaceholder': 'Cerca prodotto per nome o SKU...',
     'adjustStockForProduct': 'Regola stock per {product}',
     'roomsBtnRequestCorrection': 'Richiedi correzione',
@@ -3099,7 +3466,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'roomsBtnCreateRooms': 'Crea camere',
     'roomsLabelProductsInRoom': 'Prodotti in ciascuna camera',
     'roomsMsgSelectOneProduct': 'Seleziona almeno un prodotto',
-    'roomsMsgDuplicateRoomNumbers': 'Questi numeri di camera esistono già in questo hotel: {numbers}. Scegli un numero iniziale o un conteggio diverso.',
+    'roomsMsgDuplicateRoomNumbers':
+        'Questi numeri di camera esistono già in questo hotel: {numbers}. Scegli un numero iniziale o un conteggio diverso.',
     'productsCatalogTitle': 'Catalogo Prodotti',
     'productsBtnCreate': 'Crea prodotto',
     'productsNoProducts': 'Nessun prodotto nel catalogo ancora.',
@@ -3143,11 +3511,14 @@ const Map<String, Map<String, String>> kL10nValues = {
     'refills': 'ricariche',
     'inventoryNoHotels': 'Nessun hotel trovato',
     'inventoryAddHotelHint': 'Aggiungi un hotel per iniziare.',
-    'inventoryNoItemsToAdjust': 'Nessun articolo di stock magazzino disponibile da regolare.',
+    'inventoryNoItemsToAdjust':
+        'Nessun articolo di stock magazzino disponibile da regolare.',
     'inventoryNoInventoryYet': 'Nessun stock magazzino ancora',
-    'inventoryNoProductsInInventory': 'Non ci sono prodotti nell\'stock magazzino.',
+    'inventoryNoProductsInInventory':
+        'Non ci sono prodotti nell\'stock magazzino.',
     'inventoryNoSuggestedOrders': 'Nessun ordine suggerito',
-    'inventoryLevelsSufficient': 'I tuoi livelli di stock magazzino sono attualmente sufficienti.',
+    'inventoryLevelsSufficient':
+        'I tuoi livelli di stock magazzino sono attualmente sufficienti.',
     'teamAccounts': 'Account del team',
     'teamNoMembers': 'Nessun membro del team trovato.',
     'teamTableColumnName': 'Nome',
@@ -3165,11 +3536,14 @@ const Map<String, Map<String, String>> kL10nValues = {
     'settingsOfflineSend': 'Invia azioni',
     'settingsBiometricTitle': 'Sblocco biometrico',
     'settingsBiometricHint': 'Usa la tua impronta o il volto per accedere.',
-    'settingsBiometricUnavailable': 'Lo sblocco biometrico non è disponibile su questo dispositivo.',
+    'settingsBiometricUnavailable':
+        'Lo sblocco biometrico non è disponibile su questo dispositivo.',
     'authBtnBiometricLogin': 'Accesso biometrico',
     'authBiometricReason': 'Autenticati per accedere a Ivra',
-    'authBiometricNeedsLogin': 'Accedi una volta per abilitare l\'accesso biometrico.',
-    'authBiometricOfflineNoSession': 'Sei offline. Connettiti a Internet per accedere.',
+    'authBiometricNeedsLogin':
+        'Accedi una volta per abilitare l\'accesso biometrico.',
+    'authBiometricOfflineNoSession':
+        'Sei offline. Connettiti a Internet per accedere.',
     'authBiometricFailed': 'Autenticazione biometrica non riuscita.',
     'settingsBtnClear': 'Pulisci',
     'settingsBtnSyncNow': 'Sincronizza',
@@ -3189,8 +3563,10 @@ const Map<String, Map<String, String>> kL10nValues = {
     'accountFullNameRequired': 'Il nome completo è obbligatorio',
     'accountNewPassword': 'Nuova password',
     'accountConfirmPassword': 'Conferma nuova password',
-    'accountPasswordHintSupabase': 'Aggiorna la password di accesso del tuo account.',
-    'accountPasswordHintDemo': 'La modalità demo accetta la modifica localmente.',
+    'accountPasswordHintSupabase':
+        'Aggiorna la password di accesso del tuo account.',
+    'accountPasswordHintDemo':
+        'La modalità demo accetta la modifica localmente.',
     'accountSignOutHint': 'Termina la sessione corrente su questo dispositivo.',
     'accountSignOut': 'Esci',
     'accountEmail': 'Email',
@@ -3207,7 +3583,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'alertsResolve': 'Risolvi',
     'delete': 'Elimina',
     'approvalsEmpty': 'Nessuna approvazione in sospeso',
-    'approvalsEmptySubtitle': 'Tutte le richieste di approvazione sono state elaborate.',
+    'approvalsEmptySubtitle':
+        'Tutte le richieste di approvazione sono state elaborate.',
     'approvalsApprove': 'Approva',
     'approvalsReject': 'Rifiuta',
     'approvalsActionFailed': 'L\'azione non è riuscita. Riprova.',
@@ -3215,7 +3592,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'approvalsRejected': 'Richiesta rifiutata.',
     'approvalsApproveQueued': 'Approvazione in coda per la sincronizzazione.',
     'approvalsRejectQueued': 'Rifiuto in coda per la sincronizzazione.',
-    'approvalsAccessDenied': 'Accesso negato. Solo gli admin possono approvare.',
+    'approvalsAccessDenied':
+        'Accesso negato. Solo gli admin possono approvare.',
     'approvalsRequestNotFound': 'Richiesta non trovata o già elaborata.',
     'inviteAcceptTitle': 'Accetta l\'invito',
     'inviteAlreadyHaveAccount': 'Ho già un account',
@@ -3294,27 +3672,36 @@ const Map<String, Map<String, String>> kL10nValues = {
     'notificationAcknowledgedToast': 'Confermato',
     'notificationMoreInfo': 'Più info',
     'bulkAdjustStockTitle': 'Regolazione di massa',
-    'bulkAdjustStockHint': 'Inserisci le regolazioni che si applicheranno a TUTTI i prodotti.',
+    'bulkAdjustStockHint':
+        'Inserisci le regolazioni che si applicheranno a TUTTI i prodotti.',
     'bulkAdjustStockSuccess': 'Regolazione di massa applicata con successo',
-    'bulkAdjustStockOfflineQueued': 'Regolazioni di massa messe in coda per la sincronizzazione offline',
+    'bulkAdjustStockOfflineQueued':
+        'Regolazioni di massa messe in coda per la sincronizzazione offline',
     'resolveAll': 'Risolvi tutti',
     'deleteAll': 'Elimina tutti',
     'alertsRefreshedToast': '{count} avvisi intelligenti creati',
     'alertsEmptyTitle': 'Nessun avviso al momento',
-    'alertsEmptyMessage': 'Aggiorna gli avvisi intelligenti per scansionare scorte, limiti di ricarica, età delle bottiglie e approvazioni in sospeso.',
+    'alertsEmptyMessage':
+        'Aggiorna gli avvisi intelligenti per scansionare scorte, limiti di ricarica, età delle bottiglie e approvazioni in sospeso.',
     'alertsEmptyAction': 'Aggiorna avvisi',
     'alertTypeLowBidonStock': 'Scorte basse (bottiglie di ricarica)',
     'alertLowBottleTitle': 'Scorte basse di bottiglie di {product}',
     'alertLowBidonTitle': 'Scorte basse di bottiglie di ricarica di {product}',
-    'alertLowBottleBody': '{hotel}: rimangono {remain} bottiglie piene. La soglia è {threshold}.',
-    'alertLowBidonBody': '{hotel}: rimangono {remain} bottiglie di ricarica piene. La soglia è {threshold}.',
+    'alertLowBottleBody':
+        '{hotel}: rimangono {remain} bottiglie piene. La soglia è {threshold}.',
+    'alertLowBidonBody':
+        '{hotel}: rimangono {remain} bottiglie di ricarica piene. La soglia è {threshold}.',
     'alertTypeLowBottleStock': 'Scorte basse (bottiglie)',
     'alertTypeBottleAgeLimit': 'Età bottiglia',
-    'alertBottleAgeLimitTitle': 'Camera {room}: la bottiglia di {product} è troppo vecchia',
-    'alertBottleAgeLimitBody': 'L\'età della bottiglia è di {age} giorni. Il limite è di {limit} giorni.',
+    'alertBottleAgeLimitTitle':
+        'Camera {room}: la bottiglia di {product} è troppo vecchia',
+    'alertBottleAgeLimitBody':
+        'L\'età della bottiglia è di {age} giorni. Il limite è di {limit} giorni.',
     'alertTypeRefillLimit': 'Limite ricariche',
-    'alertRefillLimitTitle': 'Camera {room}: {product} ha raggiunto il limite di ricariche',
-    'alertRefillLimitBody': '{used}/{max} ricariche utilizzate. Sostituisci e ricicla la bottiglia.',
+    'alertRefillLimitTitle':
+        'Camera {room}: {product} ha raggiunto il limite di ricariche',
+    'alertRefillLimitBody':
+        '{used}/{max} ricariche utilizzate. Sostituisci e ricicla la bottiglia.',
     'alertTypePendingApproval': 'Approvazione',
     'alertPendingApprovalTitle': 'Approvazione in sospeso: {request}',
     'alertPendingApprovalBody': 'Richiesto da {name}.',
@@ -3328,12 +3715,16 @@ const Map<String, Map<String, String>> kL10nValues = {
     'settingsSyncedSummarySingular': '{synced} azione sincronizzata',
     'settingsSyncedWithFailures': '{synced} sincronizzate, {failed} fallite',
     'inviteAcceptHeading': 'Accetta invito Ivra',
-    'inviteSubtitleWithHotel': '{name} è stato/a invitato/a come {role} per {hotel}.',
+    'inviteSubtitleWithHotel':
+        '{name} è stato/a invitato/a come {role} per {hotel}.',
     'inviteSubtitleNoHotel': '{name} è stato/a invitato/a come {role}.',
-    'inviteEmailMismatch': 'Usa l\'indirizzo email a cui è stato inviato questo invito.',
-    'inviteAccountCreatedConfirm': 'Account creato. Conferma la tua email, poi torna a questo link di invito e inserisci la stessa password per completare.',
+    'inviteEmailMismatch':
+        'Usa l\'indirizzo email a cui è stato inviato questo invito.',
+    'inviteAccountCreatedConfirm':
+        'Account creato. Conferma la tua email, poi torna a questo link di invito e inserisci la stessa password per completare.',
     'inviteInvalidHeading': 'Invito non disponibile',
-    'inviteInvalidBody': 'Questo invito potrebbe essere scaduto, annullato o già accettato.',
+    'inviteInvalidBody':
+        'Questo invito potrebbe essere scaduto, annullato o già accettato.',
     'teamMemberReactivated': '{name} riattivato',
     'teamMemberDeactivated': '{name} disattivato',
     'settingsActionLastTried': 'Ultimo tentativo {datetime}',
@@ -3345,9 +3736,11 @@ const Map<String, Map<String, String>> kL10nValues = {
     'teamCannotInviteSelf': 'Non puoi invitare te stesso',
     'btnUpdate': 'Aggiorna',
     'notFoundTitle': 'Pagina Non Trovata',
-    'notFoundBody': 'La pagina che stai cercando non esiste o è stata spostata.',
+    'notFoundBody':
+        'La pagina che stai cercando non esiste o è stata spostata.',
     'notFoundButton': 'Torna alla Dashboard',
-    'downloadAppBannerText': 'Per la migliore esperienza, scarica la nostra App Android.',
+    'downloadAppBannerText':
+        'Per la migliore esperienza, scarica la nostra App Android.',
     'downloadAppBannerButton': 'Scarica App',
     'sendPushTitle': 'Invia notifica',
     'teamViewAs': 'Visualizza come',
@@ -3379,9 +3772,11 @@ const Map<String, Map<String, String>> kL10nValues = {
     'pdfTitleRefillHistory': 'Cronologia ricariche Ivra',
     'pdfTitleOpenAlerts': 'Avvisi aperti Ivra',
     'productHistoryTitle': 'Cronologia del prodotto',
-    'productHistoryNoHistory': 'Nessuna cronologia registrata per questo prodotto.',
+    'productHistoryNoHistory':
+        'Nessuna cronologia registrata per questo prodotto.',
     'productHistoryRefill': 'Ricaricato nella camera {roomNumber}',
-    'productHistoryReplacement': 'Bottiglia sostituita nella camera {roomNumber}',
+    'productHistoryReplacement':
+        'Bottiglia sostituita nella camera {roomNumber}',
     'productHistoryAdjustment': 'Regolazione manuale delle scorte',
     'productHistoryActionBy': 'Da {user}',
     'productHistoryReason': 'Motivo: {reason}',
@@ -3390,7 +3785,8 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productHistoryDeltaFullBidons': 'Bottiglie di ricarica piene',
     'productHistoryDeltaOpenBidons': 'Bottiglie usate e aperte',
     'productHistoryDeltaEmptyBidons': 'Bottiglie usate e vuote',
-    'productHistoryNewBottle': 'Nuova bottiglia posizionata nella camera {roomNumber}',
+    'productHistoryNewBottle':
+        'Nuova bottiglia posizionata nella camera {roomNumber}',
     'productHistoryFilterAll': 'Tutti',
     'productHistoryFilterRoom': 'Eventi camera',
     'productHistoryFilterManual': 'Regolazioni',
@@ -3398,25 +3794,37 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productHistoryStatReplacements': 'Sostituzioni',
     'productHistoryStatAdjustments': 'Regolazioni',
     'inventoryEnforceTitle': 'Scorte insufficienti',
-    'inventoryEnforceTemplateContent': 'Posizionare {total} bottiglia/e di {product} richiede scorte. L\'stock magazzino ha solo {current}. Vuoi aggiungere automaticamente {needed} bottiglia/e all\'stock magazzino e procedere?',
-    'inventoryEnforceReplaceContent': 'Sostituire la bottiglia di {product} in Camera {room} richiede 1 bottiglia piena. L\'stock magazzino ha 0. Vuoi aggiungere automaticamente 1 bottiglia all\'stock magazzino e procedere?',
-    'housekeeperReplaceGetFromHotel': 'Sostituire {product} in Camera {room} richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario. Tuttavia, sono disponibili {count} bottiglie nell\'inventario dell\'hotel. Vuoi prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?',
-    'housekeeperReplaceNotifyManager': 'Sostituire {product} in Camera {room} richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.',
-    'housekeeperAddGetFromHotel': 'Aggiungere {product} in Camera {room} richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario. Tuttavia, sono disponibili {count} bottiglie nell\'inventario dell\'hotel. Vuoi prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?',
-    'housekeeperAddNotifyManager': 'Aggiungere {product} in Camera {room} richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.',
-    'housekeeperRefillGetFromHotel': 'Ricaricare {product} in Camera {room} richiede 1 tanica piena, ma non hai alcuna tanica aperta o piena nel tuo inventario. Tuttavia, sono disponibili {count} taniche nell\'inventario dell\'hotel. Vuoi prendere 1 tanica dall\'inventario dell\'hotel e procedere?',
-    'housekeeperRefillNotifyManager': 'Ricaricare {product} in Camera {room} richiede 1 tanica piena, ma non hai alcuna tanica aperta o piena nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.',
+    'inventoryEnforceTemplateContent':
+        'Posizionare {total} bottiglia/e di {product} richiede scorte. L\'stock magazzino ha solo {current}. Vuoi aggiungere automaticamente {needed} bottiglia/e all\'stock magazzino e procedere?',
+    'inventoryEnforceReplaceContent':
+        'Sostituire la bottiglia di {product} in Camera {room} richiede 1 bottiglia piena. L\'stock magazzino ha 0. Vuoi aggiungere automaticamente 1 bottiglia all\'stock magazzino e procedere?',
+    'housekeeperReplaceGetFromHotel':
+        'Sostituire {product} in Camera {room} richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario. Tuttavia, sono disponibili {count} bottiglie nell\'inventario dell\'hotel. Vuoi prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?',
+    'housekeeperReplaceNotifyManager':
+        'Sostituire {product} in Camera {room} richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.',
+    'housekeeperAddGetFromHotel':
+        'Aggiungere {product} in Camera {room} richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario. Tuttavia, sono disponibili {count} bottiglie nell\'inventario dell\'hotel. Vuoi prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?',
+    'housekeeperAddNotifyManager':
+        'Aggiungere {product} in Camera {room} richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.',
+    'housekeeperRefillGetFromHotel':
+        'Ricaricare {product} in Camera {room} richiede 1 tanica piena, ma non hai alcuna tanica aperta o piena nel tuo inventario. Tuttavia, sono disponibili {count} taniche nell\'inventario dell\'hotel. Vuoi prendere 1 tanica dall\'inventario dell\'hotel e procedere?',
+    'housekeeperRefillNotifyManager':
+        'Ricaricare {product} in Camera {room} richiede 1 tanica piena, ma non hai alcuna tanica aperta o piena nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.',
     'btnOk': 'OK',
     'inventoryEnforceBtnProceed': 'Regola e procedi',
-    'inventoryEnforceReasonTemplate': 'Regolazione automatica per modello creazione camera',
+    'inventoryEnforceReasonTemplate':
+        'Regolazione automatica per modello creazione camera',
     'inventoryEnforceReasonReplace': 'Regolazione automatica per sostituzione',
     'inventoryEnforceOnboardingTitle': 'Inizializza stock magazzino',
-    'inventoryEnforceOnboardingContent': 'Trattandosi di un nuovo hotel, non ci sono prodotti in stock magazzino. Vuoi inizializzare automaticamente l\'stock magazzino con {total} bottiglie da posizionare nelle camere?',
+    'inventoryEnforceOnboardingContent':
+        'Trattandosi di un nuovo hotel, non ci sono prodotti in stock magazzino. Vuoi inizializzare automaticamente l\'stock magazzino con {total} bottiglie da posizionare nelle camere?',
     'authBtnCreateRole': 'Crea Ruolo',
     'authCreateRoleTitle': 'Crea Ruolo Personalizzato',
     'authRoleNameLabel': 'Nome Ruolo (minuscolo snake_case)',
-    'authRoleNameError': 'Il nome del ruolo deve essere minuscolo in formato snake_case (es. night_auditor)',
-    'authRoleDisplayNameLabel': 'Nome Visualizzato descrittivo (es. Night Auditor)',
+    'authRoleNameError':
+        'Il nome del ruolo deve essere minuscolo in formato snake_case (es. night_auditor)',
+    'authRoleDisplayNameLabel':
+        'Nome Visualizzato descrittivo (es. Night Auditor)',
     'authRoleDisplayNameError': 'Il nome visualizzato non può essere vuoto',
     'authRoleDescLabel': 'Descrizione',
     'authCategoryCore': 'Operazioni Principali',
@@ -3430,9 +3838,11 @@ const Map<String, Map<String, String>> kL10nValues = {
     'authSearchHint': 'Cerca autorizzazioni...',
     'authorizationsTitle': 'Matrice delle Autorizzazioni',
     'authorizationsHeader': 'Matrice delle Autorizzazioni',
-    'authorizationsSubtitle': 'Gestisci le funzionalità dell\'applicazione e le autorizzazioni delle azioni per ruolo utente.',
+    'authorizationsSubtitle':
+        'Gestisci le funzionalità dell\'applicazione e le autorizzazioni delle azioni per ruolo utente.',
     'authorizationsPermission': 'Autorizzazione',
-    'authorizationsUpdatedSuccessfully': 'Autorizzazioni aggiornate con successo.',
+    'authorizationsUpdatedSuccessfully':
+        'Autorizzazioni aggiornate con successo.',
     'roleAppAdmin': 'Amministratore app',
     'roleAppManager': 'Responsabile app',
     'roleHotelManager': 'Responsabile hotel',
@@ -3446,25 +3856,32 @@ const Map<String, Map<String, String>> kL10nValues = {
     'permManageTeam': 'Gestisci Team',
     'permManageTeamDesc': 'Invita e gestisci membri del team e ruoli',
     'permSubmitEditRequests': 'Invia Richieste di Modifica',
-    'permSubmitEditRequestsDesc': 'Invia richieste di modifica di camere, bottiglie e scorte',
+    'permSubmitEditRequestsDesc':
+        'Invia richieste di modifica di camere, bottiglie e scorte',
     'permApproveCorrections': 'Approva Correzioni',
-    'permApproveCorrectionsDesc': 'Approva o rifiuta richieste di modifica e correzione in attesa',
+    'permApproveCorrectionsDesc':
+        'Approva o rifiuta richieste di modifica e correzione in attesa',
     'permViewApprovals': 'Visualizza Approvazioni',
     'permViewApprovalsDesc': 'Accedi alla schermata delle approvazioni',
     'permViewAlerts': 'Visualizza Avvisi',
     'permViewAlertsDesc': 'Visualizza e monitora gli avvisi operativi',
     'permViewReports': 'Visualizza Report',
-    'permViewReportsDesc': 'Accedi ai report analitici e ai grafici delle prestazioni',
+    'permViewReportsDesc':
+        'Accedi ai report analitici e ai grafici delle prestazioni',
     'permSendNotifications': 'Invia Notifiche Push',
     'permSendNotificationsDesc': 'Componi e trasmetti notifiche push dell\'app',
     'permViewAuditLogs': 'Visualizza Registri di Controllo di Sicurezza',
-    'permViewAuditLogsDesc': 'Ispeziona i registri dettagliati della cronologia delle operazioni e degli accessi',
+    'permViewAuditLogsDesc':
+        'Ispeziona i registri dettagliati della cronologia delle operazioni e degli accessi',
     'permViewRooms': 'Visualizza Camere',
-    'permViewRoomsDesc': 'Visualizza l\'elenco e i dettagli dello stato di ricarica delle camere',
+    'permViewRoomsDesc':
+        'Visualizza l\'elenco e i dettagli dello stato di ricarica delle camere',
     'permViewInventory': 'Visualizza Inventario',
-    'permViewInventoryDesc': 'Visualizza lo stato delle scorte dell\'hotel e suggerisci ordini',
+    'permViewInventoryDesc':
+        'Visualizza lo stato delle scorte dell\'hotel e suggerisci ordini',
     'permViewAuthorizations': 'Visualizza Autorizzazioni',
-    'permViewAuthorizationsDesc': 'Accedi e gestisci la schermata delle impostazioni di autorizzazione basata sui ruoli',
+    'permViewAuthorizationsDesc':
+        'Accedi e gestisci la schermata delle impostazioni di autorizzazione basata sui ruoli',
     'dialogRefillTitle': 'Ricarica erogatore',
     'dialogRefillSliderLabel': 'Percentuale di ricarica (volume aggiunto):',
     'dialogRefillPreExisting': 'Liquido preesistente:',
@@ -3481,18 +3898,21 @@ const Map<String, Map<String, String>> kL10nValues = {
     'housekeeperStockCheckedOut': 'Stock prelevato con successo!',
     'housekeeperStockReturned': 'Stock ritornato con successo!',
     'housekeeperStockHistory': 'Cronologia',
-    'housekeeperStockHistoryEmpty': 'Nessun movimento registrato per questo prodotto.',
+    'housekeeperStockHistoryEmpty':
+        'Nessun movimento registrato per questo prodotto.',
     'stockEventCheckout': 'Prelevato dall\'inventario dell\'hotel',
     'stockEventReturn': 'Restituito all\'inventario dell\'hotel',
     'stockEventRoomPlacement': 'Posizionato in camera',
     'stockEventRefillUse': 'Usato per la ricarica',
     'stockEventReplaceUse': 'Usato per la sostituzione della bottiglia',
-    'housekeeperHotelStockAvailable': 'Inventario hotel: {bottles} bottiglie piene, {bidons} bidoni pieni disponibili',
+    'housekeeperHotelStockAvailable':
+        'Inventario hotel: {bottles} bottiglie piene, {bidons} bidoni pieni disponibili',
     'sourceHousekeeperCart': 'Dal carrello della cameriera',
     'sourceHotelInventory': 'Dall\'inventario dell\'hotel',
     'userRoleHousekeeper': 'Cameriera ai piani',
     'roomsBtnAddProduct': 'Aggiungi prodotto',
-    'roomsConfirmRemoveProduct': 'Sei sicuro di voler rimuovere il prodotto \'{productName}\' dalla camera \'{roomNumber}\'?',
+    'roomsConfirmRemoveProduct':
+        'Sei sicuro di voler rimuovere il prodotto \'{productName}\' dalla camera \'{roomNumber}\'?',
     'roomsProductRemoved': 'Prodotto rimosso',
     'roomsProductAdded': 'Prodotto aggiunto',
     'roomsAddProductTitle': 'Aggiungi prodotto alla camera',
@@ -3524,47 +3944,65 @@ const Map<String, Map<String, String>> kL10nValues = {
     'productSkuLabelReverse': '{sku} - {label}',
     'roomNumberLabel': 'Camera {number}',
     'onboardingStep1Title': 'Scansiona un QR Code',
-    'onboardingStep1Desc': 'Scansiona un codice QR su una bottiglia o una stanza per iniziare.',
+    'onboardingStep1Desc':
+        'Scansiona un codice QR su una bottiglia o una stanza per iniziare.',
     'onboardingStep2Title': 'Ricarica una Bottiglia',
-    'onboardingStep2Desc': 'Tieni facilmente traccia delle ricariche dei prodotti e mantieni aggiornato l\'inventario.',
+    'onboardingStep2Desc':
+        'Tieni facilmente traccia delle ricariche dei prodotti e mantieni aggiornato l\'inventario.',
     'onboardingStep3Title': 'Azioni in Sospeso',
-    'onboardingStep3Desc': 'Controlla la tua dashboard per eventuali avvisi o attività in sospeso.',
+    'onboardingStep3Desc':
+        'Controlla la tua dashboard per eventuali avvisi o attività in sospeso.',
     'onboardingStep4Title': 'Cambia Lingua',
-    'onboardingStep4Desc': 'Cambia la lingua preferita nel menu Impostazioni in qualsiasi momento.',
+    'onboardingStep4Desc':
+        'Cambia la lingua preferita nel menu Impostazioni in qualsiasi momento.',
     'onboardingStep5Title': 'Visualizza Inventario',
-    'onboardingStep5Desc': 'Tieni traccia dei livelli delle scorte del tuo hotel e degli ordini in arrivo.',
+    'onboardingStep5Desc':
+        'Tieni traccia dei livelli delle scorte del tuo hotel e degli ordini in arrivo.',
     'onboardingStep6Title': 'Approva Richieste',
-    'onboardingStep6Desc': 'Rivedi e approva le richieste di scorte in sospeso dal tuo personale.',
+    'onboardingStep6Desc':
+        'Rivedi e approva le richieste di scorte in sospeso dal tuo personale.',
     'onboardingStep7Title': 'Controlla Avvisi',
-    'onboardingStep7Desc': 'Tieniti informato su avvisi di scorte in esaurimento o operativi.',
+    'onboardingStep7Desc':
+        'Tieniti informato su avvisi di scorte in esaurimento o operativi.',
     'onboardingStep8Title': 'Gestisci Hotel',
-    'onboardingStep8Desc': 'Aggiungi e configura più hotel sotto la tua gestione.',
+    'onboardingStep8Desc':
+        'Aggiungi e configura più hotel sotto la tua gestione.',
     'onboardingStep9Title': 'Invita Team',
-    'onboardingStep9Desc': 'Invita manager e membri dello staff a unirsi al tuo spazio di lavoro.',
+    'onboardingStep9Desc':
+        'Invita manager e membri dello staff a unirsi al tuo spazio di lavoro.',
     'onboardingStep10Title': 'Visualizza Rapporti',
-    'onboardingStep10Desc': 'Genera rapporti dettagliati ed esporta dati per tutti gli hotel.',
+    'onboardingStep10Desc':
+        'Genera rapporti dettagliati ed esporta dati per tutti gli hotel.',
     'onboardingSkip': 'Salta',
     'onboardingNext': 'Avanti',
     'onboardingDone': 'Fatto',
-    'onboardingResetMessage': 'Tour di onboarding ripristinato. Verrà mostrato nella dashboard.',
+    'onboardingResetMessage':
+        'Tour di onboarding ripristinato. Verrà mostrato nella dashboard.',
     'replayOnboarding': 'Riproduci tour di onboarding',
     'rolePermissionsGuide': 'Guida a Ruoli e Permessi',
     'help': 'Aiuto',
     'helpContextDashboardTitle': 'Panoramica della Dashboard',
-    'helpContextDashboardDesc': 'Questa schermata mostra un riepilogo delle operazioni di ricarica del tuo hotel per oggi. Puoi visualizzare rapidamente le attività recenti, le approvazioni in sospeso e gli avvisi di esaurimento scorte.',
+    'helpContextDashboardDesc':
+        'Questa schermata mostra un riepilogo delle operazioni di ricarica del tuo hotel per oggi. Puoi visualizzare rapidamente le attività recenti, le approvazioni in sospeso e gli avvisi di esaurimento scorte.',
     'helpContextInventoryTitle': 'Gestione dell\'Inventario',
-    'helpContextInventoryDesc': 'Gestisci i livelli delle scorte dei tuoi prodotti. Tocca una scheda prodotto per visualizzare i dettagli o regolare le quantità.',
+    'helpContextInventoryDesc':
+        'Gestisci i livelli delle scorte dei tuoi prodotti. Tocca una scheda prodotto per visualizzare i dettagli o regolare le quantità.',
     'helpContextRoomsTitle': 'Stato delle Camere',
-    'helpContextRoomsDesc': 'Visualizza tutte le camere e lo stato dei loro prodotti. Tocca una camera per ricaricare o sostituire le bottiglie, oppure scansiona un codice QR per passare direttamente alla camera corretta.',
+    'helpContextRoomsDesc':
+        'Visualizza tutte le camere e lo stato dei loro prodotti. Tocca una camera per ricaricare o sostituire le bottiglie, oppure scansiona un codice QR per passare direttamente alla camera corretta.',
     'helpContextReportsTitle': 'Rapporti ed Esportazioni',
-    'helpContextReportsDesc': 'Genera ed esporta la cronologia delle ricariche, istantanee dell\'inventario e riepiloghi degli avvisi. Utilizza i pulsanti di download per salvare questi dati come file CSV.',
+    'helpContextReportsDesc':
+        'Genera ed esporta la cronologia delle ricariche, istantanee dell\'inventario e riepiloghi degli avvisi. Utilizza i pulsanti di download per salvare questi dati come file CSV.',
     'noProductsFound': 'Nessun prodotto trovato',
-    'markDamagedTitle': 'Segna come danneggiato - {product} nella Stanza {room}',
+    'markDamagedTitle':
+        'Segna come danneggiato - {product} nella Stanza {room}',
     'markLostTitle': 'Segna come perso - {product} nella Stanza {room}',
     'hkDeactivateWithStockTitle': 'Inventario del Carrello',
-    'hkDeactivateWithStockMessage': 'Questa governante ha dell\'inventario attivo nel suo carrello. Vuoi restituire questo inventario al magazzino centrale dell\'hotel prima di disattivare il suo account?',
+    'hkDeactivateWithStockMessage':
+        'Questa governante ha dell\'inventario attivo nel suo carrello. Vuoi restituire questo inventario al magazzino centrale dell\'hotel prima di disattivare il suo account?',
     'btnReturnAndDeactivate': 'Restituisci e Disattiva',
     'btnJustDeactivate': 'Solo Disattiva',
-    'hkDeleteWithStockMessage': 'Questa governante ha dell\'inventario attivo nel suo carrello. L\'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell\'hotel.\n\nSei sicuro di voler eliminare il membro del team \'{userName}\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.',
+    'hkDeleteWithStockMessage':
+        'Questa governante ha dell\'inventario attivo nel suo carrello. L\'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell\'hotel.\n\nSei sicuro di voler eliminare il membro del team \'{userName}\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.',
   },
 };

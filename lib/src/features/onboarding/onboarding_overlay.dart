@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../domain/app_enums.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
 
 class OnboardingOverlay extends ConsumerStatefulWidget {
   const OnboardingOverlay({super.key});
@@ -38,7 +38,9 @@ class _OnboardingOverlayState extends ConsumerState<OnboardingOverlay> {
       ),
     ];
 
-    if (role == UserRole.hotelManager || role == UserRole.appManager || role == UserRole.appAdmin) {
+    if (role == UserRole.hotelManager ||
+        role == UserRole.appManager ||
+        role == UserRole.appAdmin) {
       steps.addAll([
         _OnboardingStep(
           title: l10n.t('onboardingStep5Title'),
@@ -56,7 +58,7 @@ class _OnboardingOverlayState extends ConsumerState<OnboardingOverlay> {
     }
 
     if (role == UserRole.appManager || role == UserRole.appAdmin) {
-       steps.addAll([
+      steps.addAll([
         _OnboardingStep(
           title: l10n.t('onboardingStep8Title'),
           description: l10n.t('onboardingStep8Desc'),
@@ -127,7 +129,9 @@ class _OnboardingOverlayState extends ConsumerState<OnboardingOverlay> {
                 children: [
                   Text(
                     currentStep.title,
-                    style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -168,7 +172,7 @@ class _OnboardingOverlayState extends ConsumerState<OnboardingOverlay> {
                             ),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ],

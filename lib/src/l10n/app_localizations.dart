@@ -1,10 +1,8 @@
-import 'dart:ui' show PlatformDispatcher;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../domain/app_enums.dart';
-import 'app_localizations_values.g.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/l10n/app_localizations_values.g.dart';
 
 /// Backwards-compatibility shim over the ARB + `gen_l10n` localization system.
 ///
@@ -59,8 +57,7 @@ class AppLocalizations {
   }
 
   static String _resolveDeviceLanguageCode() {
-    final supported =
-        supportedLocales.map((l) => l.languageCode).toSet();
+    final supported = supportedLocales.map((l) => l.languageCode).toSet();
     for (final locale in PlatformDispatcher.instance.locales) {
       if (supported.contains(locale.languageCode)) {
         return locale.languageCode;
@@ -159,10 +156,7 @@ class AppLocalizations {
   /// daily-refill home widget. The provider returns language-neutral data
   /// ([DailyRefillStatus] + a raw room number); this builds the displayed
   /// string for the active locale instead of hard-coding English.
-  String dailyRefillSummaryLabel(
-    DailyRefillStatus status,
-    String? roomNumber,
-  ) {
+  String dailyRefillSummaryLabel(DailyRefillStatus status, String? roomNumber) {
     switch (status) {
       case DailyRefillStatus.noRooms:
         return _dailyNone();
@@ -248,15 +242,15 @@ class AppLocalizations {
   }
 }
 
-
 class _AppLocalizationsDelegate
     extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) {
-    return AppLocalizations.supportedLocales
-        .any((supported) => supported.languageCode == locale.languageCode);
+    return AppLocalizations.supportedLocales.any(
+      (supported) => supported.languageCode == locale.languageCode,
+    );
   }
 
   @override

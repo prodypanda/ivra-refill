@@ -5,15 +5,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/models.dart';
-import '../../domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
 
-import '../../ui/ivra_icons.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../auth/auth_validation.dart';
-import '../shared/glass_card.dart';
-import '../shared/page_scaffold.dart';
+import 'package:ivra_refill/src/ui/ivra_icons.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/auth/auth_validation.dart';
+import 'package:ivra_refill/src/features/shared/glass_card.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -33,10 +33,18 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final events = ref.watch(refillEventsProvider.select((s) => s.valueOrNull ?? const []));
-    final roomProducts = ref.watch(roomProductsProvider.select((s) => s.valueOrNull ?? const []));
-    final hotels = ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const []));
-    final products = ref.watch(productsProvider.select((s) => s.valueOrNull ?? const []));
+    final events = ref.watch(
+      refillEventsProvider.select((s) => s.valueOrNull ?? const []),
+    );
+    final roomProducts = ref.watch(
+      roomProductsProvider.select((s) => s.valueOrNull ?? const []),
+    );
+    final hotels = ref.watch(
+      hotelsProvider.select((s) => s.valueOrNull ?? const []),
+    );
+    final products = ref.watch(
+      productsProvider.select((s) => s.valueOrNull ?? const []),
+    );
     final filteredEvents = _filteredEvents(events, roomProducts);
 
     return PageScaffold(
@@ -89,219 +97,229 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             spacing: 16,
             runSpacing: 16,
             children: [
-          _ReportAction(
-            title: l10n.t('reportRefillHistoryTitle'),
-            body: l10n.t('reportRefillHistoryBody'),
-            icon: Icons.history_outlined,
-            actions: [
-              _ReportButton(
-                label: l10n.t('downloadCsv'),
-                icon: Icons.table_view_outlined,
-                onPressed: () async {
-                  final events = _filteredEvents(
-                    await ref.read(refillEventsProvider.future),
-                    ref.read(roomProductsProvider).valueOrNull ?? const [],
-                  );
-                  final csv = ref
-                      .read(reportExportServiceProvider)
-                      .refillHistoryCsv(events);
-                  if (!context.mounted) return;
-                  await _saveTextExport(
-                    context,
-                    ref,
-                    fileName: _fileName('ivra-refill-history', 'csv'),
-                    text: csv,
-                    mimeType: 'text/csv;charset=utf-8',
-                  );
-                },
-              ),
-              _ReportButton(
-                label: l10n.t('downloadPdf'),
-                icon: Icons.picture_as_pdf_outlined,
-                onPressed: () async {
-                  final languageCode =
-                      Localizations.localeOf(context).languageCode;
-                  final events = _filteredEvents(
-                    await ref.read(refillEventsProvider.future),
-                    ref.read(roomProductsProvider).valueOrNull ?? const [],
-                  );
-                  final pdf = await ref
-                      .read(reportExportServiceProvider)
-                      .refillHistoryPdf(
-                        events,
-                        languageCode: languageCode,
+              _ReportAction(
+                title: l10n.t('reportRefillHistoryTitle'),
+                body: l10n.t('reportRefillHistoryBody'),
+                icon: Icons.history_outlined,
+                actions: [
+                  _ReportButton(
+                    label: l10n.t('downloadCsv'),
+                    icon: Icons.table_view_outlined,
+                    onPressed: () async {
+                      final events = _filteredEvents(
+                        await ref.read(refillEventsProvider.future),
+                        ref.read(roomProductsProvider).valueOrNull ?? const [],
                       );
-                  if (!context.mounted) return;
-                  await _saveBinaryExport(
-                    context,
-                    ref,
-                    fileName: _fileName('ivra-refill-history', 'pdf'),
-                    bytes: pdf,
-                    mimeType: 'application/pdf',
-                  );
-                },
-              ),
-            ],
-          ),
-          _ReportAction(
-            title: l10n.t('suggestedOrders'),
-            body: l10n.t('reportSuggestedOrdersBody'),
-            icon: Icons.request_quote_outlined,
-            actions: [
-              _ReportButton(
-                label: l10n.t('downloadCsv'),
-                icon: Icons.table_view_outlined,
-                onPressed: () async {
-                  final orders = await ref.read(suggestedOrdersProvider.future);
-                  final csv = ref
-                      .read(reportExportServiceProvider)
-                      .suggestedOrdersCsv(
-                        orders,
-                        languageCode: Localizations.localeOf(context).languageCode,
+                      final csv = ref
+                          .read(reportExportServiceProvider)
+                          .refillHistoryCsv(events);
+                      if (!context.mounted) return;
+                      await _saveTextExport(
+                        context,
+                        ref,
+                        fileName: _fileName('ivra-refill-history', 'csv'),
+                        text: csv,
+                        mimeType: 'text/csv;charset=utf-8',
                       );
-                  if (!context.mounted) return;
-                  await _saveTextExport(
-                    context,
-                    ref,
-                    fileName: _fileName('ivra-suggested-orders', 'csv'),
-                    text: csv,
-                    mimeType: 'text/csv;charset=utf-8',
-                  );
-                },
-              ),
-              _ReportButton(
-                label: l10n.t('downloadPdf'),
-                icon: Icons.picture_as_pdf_outlined,
-                onPressed: () async {
-                  final languageCode =
-                      Localizations.localeOf(context).languageCode;
-                  final orders = await ref.read(suggestedOrdersProvider.future);
-                  final pdf = await ref
-                      .read(reportExportServiceProvider)
-                      .suggestedOrdersPdf(
-                        orders,
-                        languageCode: languageCode,
+                    },
+                  ),
+                  _ReportButton(
+                    label: l10n.t('downloadPdf'),
+                    icon: Icons.picture_as_pdf_outlined,
+                    onPressed: () async {
+                      final languageCode = Localizations.localeOf(
+                        context,
+                      ).languageCode;
+                      final events = _filteredEvents(
+                        await ref.read(refillEventsProvider.future),
+                        ref.read(roomProductsProvider).valueOrNull ?? const [],
                       );
-                  if (!context.mounted) return;
-                  await _saveBinaryExport(
-                    context,
-                    ref,
-                    fileName: _fileName('ivra-suggested-orders', 'pdf'),
-                    bytes: pdf,
-                    mimeType: 'application/pdf',
-                  );
-                },
-              ),
-            ],
-          ),
-          _ReportAction(
-            title: l10n.t('reportInventorySnapshotTitle'),
-            body: l10n.t('reportInventorySnapshotBody'),
-            icon: Icons.inventory_2_outlined,
-            actions: [
-              _ReportButton(
-                label: l10n.t('downloadCsv'),
-                icon: Icons.table_view_outlined,
-                onPressed: () async {
-                  final inventory = await ref.read(inventoryProvider.future);
-                  final csv = ref
-                      .read(reportExportServiceProvider)
-                      .inventoryCsv(
-                        inventory,
-                        languageCode: Localizations.localeOf(context).languageCode,
+                      final pdf = await ref
+                          .read(reportExportServiceProvider)
+                          .refillHistoryPdf(events, languageCode: languageCode);
+                      if (!context.mounted) return;
+                      await _saveBinaryExport(
+                        context,
+                        ref,
+                        fileName: _fileName('ivra-refill-history', 'pdf'),
+                        bytes: pdf,
+                        mimeType: 'application/pdf',
                       );
-                  if (!context.mounted) return;
-                  await _saveTextExport(
-                    context,
-                    ref,
-                    fileName: _fileName('ivra-inventory-snapshot', 'csv'),
-                    text: csv,
-                    mimeType: 'text/csv;charset=utf-8',
-                  );
-                },
+                    },
+                  ),
+                ],
               ),
-              _ReportButton(
-                label: l10n.t('downloadPdf'),
-                icon: Icons.picture_as_pdf_outlined,
-                onPressed: () async {
-                  final languageCode =
-                      Localizations.localeOf(context).languageCode;
-                  final inventory = await ref.read(inventoryProvider.future);
-                  final pdf =
-                      await ref.read(reportExportServiceProvider).inventoryPdf(
-                            inventory,
+              _ReportAction(
+                title: l10n.t('suggestedOrders'),
+                body: l10n.t('reportSuggestedOrdersBody'),
+                icon: Icons.request_quote_outlined,
+                actions: [
+                  _ReportButton(
+                    label: l10n.t('downloadCsv'),
+                    icon: Icons.table_view_outlined,
+                    onPressed: () async {
+                      final orders = await ref.read(
+                        suggestedOrdersProvider.future,
+                      );
+                      final csv = ref
+                          .read(reportExportServiceProvider)
+                          .suggestedOrdersCsv(
+                            orders,
+                            languageCode: Localizations.localeOf(
+                              context,
+                            ).languageCode,
+                          );
+                      if (!context.mounted) return;
+                      await _saveTextExport(
+                        context,
+                        ref,
+                        fileName: _fileName('ivra-suggested-orders', 'csv'),
+                        text: csv,
+                        mimeType: 'text/csv;charset=utf-8',
+                      );
+                    },
+                  ),
+                  _ReportButton(
+                    label: l10n.t('downloadPdf'),
+                    icon: Icons.picture_as_pdf_outlined,
+                    onPressed: () async {
+                      final languageCode = Localizations.localeOf(
+                        context,
+                      ).languageCode;
+                      final orders = await ref.read(
+                        suggestedOrdersProvider.future,
+                      );
+                      final pdf = await ref
+                          .read(reportExportServiceProvider)
+                          .suggestedOrdersPdf(
+                            orders,
                             languageCode: languageCode,
                           );
-                  if (!context.mounted) return;
-                  await _saveBinaryExport(
-                    context,
-                    ref,
-                    fileName: _fileName('ivra-inventory-snapshot', 'pdf'),
-                    bytes: pdf,
-                    mimeType: 'application/pdf',
-                  );
-                },
+                      if (!context.mounted) return;
+                      await _saveBinaryExport(
+                        context,
+                        ref,
+                        fileName: _fileName('ivra-suggested-orders', 'pdf'),
+                        bytes: pdf,
+                        mimeType: 'application/pdf',
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-          _ReportAction(
-            title: l10n.t('reportOpenAlertsTitle'),
-            body: l10n.t('reportOpenAlertsBody'),
-            icon: Icons.notification_important_outlined,
-            actions: [
-              _ReportButton(
-                label: l10n.t('downloadCsv'),
-                icon: Icons.table_view_outlined,
-                onPressed: () async {
-                  final alerts = await ref.read(alertsProvider.future);
-                  final openAlerts =
-                      alerts.where((alert) => !alert.isResolved).toList();
-                  final csv = ref
-                      .read(reportExportServiceProvider)
-                      .alertsCsv(openAlerts);
-                  if (!context.mounted) return;
-                  await _saveTextExport(
-                    context,
-                    ref,
-                    fileName: _fileName('ivra-open-alerts', 'csv'),
-                    text: csv,
-                    mimeType: 'text/csv;charset=utf-8',
-                  );
-                },
+              _ReportAction(
+                title: l10n.t('reportInventorySnapshotTitle'),
+                body: l10n.t('reportInventorySnapshotBody'),
+                icon: Icons.inventory_2_outlined,
+                actions: [
+                  _ReportButton(
+                    label: l10n.t('downloadCsv'),
+                    icon: Icons.table_view_outlined,
+                    onPressed: () async {
+                      final inventory = await ref.read(
+                        inventoryProvider.future,
+                      );
+                      final csv =
+                          ref.read(reportExportServiceProvider).inventoryCsv(
+                                inventory,
+                                languageCode: Localizations.localeOf(
+                                  context,
+                                ).languageCode,
+                              );
+                      if (!context.mounted) return;
+                      await _saveTextExport(
+                        context,
+                        ref,
+                        fileName: _fileName('ivra-inventory-snapshot', 'csv'),
+                        text: csv,
+                        mimeType: 'text/csv;charset=utf-8',
+                      );
+                    },
+                  ),
+                  _ReportButton(
+                    label: l10n.t('downloadPdf'),
+                    icon: Icons.picture_as_pdf_outlined,
+                    onPressed: () async {
+                      final languageCode = Localizations.localeOf(
+                        context,
+                      ).languageCode;
+                      final inventory = await ref.read(
+                        inventoryProvider.future,
+                      );
+                      final pdf = await ref
+                          .read(reportExportServiceProvider)
+                          .inventoryPdf(inventory, languageCode: languageCode);
+                      if (!context.mounted) return;
+                      await _saveBinaryExport(
+                        context,
+                        ref,
+                        fileName: _fileName('ivra-inventory-snapshot', 'pdf'),
+                        bytes: pdf,
+                        mimeType: 'application/pdf',
+                      );
+                    },
+                  ),
+                ],
               ),
-              _ReportButton(
-                label: l10n.t('downloadPdf'),
-                icon: Icons.picture_as_pdf_outlined,
-                onPressed: () async {
-                  final languageCode =
-                      Localizations.localeOf(context).languageCode;
-                  final alerts = await ref.read(alertsProvider.future);
-                  final openAlerts =
-                      alerts.where((alert) => !alert.isResolved).toList();
-                  final pdf =
-                      await ref.read(reportExportServiceProvider).alertsPdf(
-                            openAlerts,
-                            languageCode: languageCode,
-                            products: products,
-                            roomProducts: roomProducts,
-                          );
-                  if (!context.mounted) return;
-                  await _saveBinaryExport(
-                    context,
-                    ref,
-                    fileName: _fileName('ivra-open-alerts', 'pdf'),
-                    bytes: pdf,
-                    mimeType: 'application/pdf',
-                  );
-                },
+              _ReportAction(
+                title: l10n.t('reportOpenAlertsTitle'),
+                body: l10n.t('reportOpenAlertsBody'),
+                icon: Icons.notification_important_outlined,
+                actions: [
+                  _ReportButton(
+                    label: l10n.t('downloadCsv'),
+                    icon: Icons.table_view_outlined,
+                    onPressed: () async {
+                      final alerts = await ref.read(alertsProvider.future);
+                      final openAlerts =
+                          alerts.where((alert) => !alert.isResolved).toList();
+                      final csv = ref
+                          .read(reportExportServiceProvider)
+                          .alertsCsv(openAlerts);
+                      if (!context.mounted) return;
+                      await _saveTextExport(
+                        context,
+                        ref,
+                        fileName: _fileName('ivra-open-alerts', 'csv'),
+                        text: csv,
+                        mimeType: 'text/csv;charset=utf-8',
+                      );
+                    },
+                  ),
+                  _ReportButton(
+                    label: l10n.t('downloadPdf'),
+                    icon: Icons.picture_as_pdf_outlined,
+                    onPressed: () async {
+                      final languageCode = Localizations.localeOf(
+                        context,
+                      ).languageCode;
+                      final alerts = await ref.read(alertsProvider.future);
+                      final openAlerts =
+                          alerts.where((alert) => !alert.isResolved).toList();
+                      final pdf =
+                          await ref.read(reportExportServiceProvider).alertsPdf(
+                                openAlerts,
+                                languageCode: languageCode,
+                                products: products,
+                                roomProducts: roomProducts,
+                              );
+                      if (!context.mounted) return;
+                      await _saveBinaryExport(
+                        context,
+                        ref,
+                        fileName: _fileName('ivra-open-alerts', 'pdf'),
+                        bytes: pdf,
+                        mimeType: 'application/pdf',
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
         ],
       ),
-    ],
-  ),
-);
+    );
   }
 
   List<RefillEvent> _filteredEvents(
@@ -396,34 +414,31 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     required String mimeType,
   }) async {
     try {
-      final result = await ref.read(exportFileServiceProvider).saveBytes(
-            fileName: fileName,
-            bytes: bytes,
-            mimeType: mimeType,
-          );
+      final result = await ref
+          .read(exportFileServiceProvider)
+          .saveBytes(fileName: fileName, bytes: bytes, mimeType: mimeType);
       if (!context.mounted) return;
       final l10n = AppLocalizations.of(context);
       final message = result.path == null
-          ? l10n.tParams(
-              'exportDownloadStarted',
-              {'fileName': result.fileName},
-            )
-          : l10n.tParams(
-              'exportSaved',
-              {'fileName': result.fileName, 'path': result.path!},
-            );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+          ? l10n.tParams('exportDownloadStarted', {'fileName': result.fileName})
+          : l10n.tParams('exportSaved', {
+              'fileName': result.fileName,
+              'path': result.path!,
+            });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(localizeAuthError(
-            AppLocalizations.of(context),
-            error,
-            fallbackKey: 'exportFailed',
-          )),
+          content: Text(
+            localizeAuthError(
+              AppLocalizations.of(context),
+              error,
+              fallbackKey: 'exportFailed',
+            ),
+          ),
         ),
       );
     }
@@ -504,9 +519,11 @@ class _ReportFilters extends StatelessWidget {
                 onDateRangeChanged(picked);
               },
               icon: const Icon(Icons.date_range_outlined),
-              label: Text(dateRange == null
-                  ? l10n.t('reportFilterDateRange')
-                  : '${_fmt(dateRange!.start)} → ${_fmt(dateRange!.end)}'),
+              label: Text(
+                dateRange == null
+                    ? l10n.t('reportFilterDateRange')
+                    : '${_fmt(dateRange!.start)} → ${_fmt(dateRange!.end)}',
+              ),
             ),
           ),
           SizedBox(
@@ -530,11 +547,18 @@ class _ReportFilters extends StatelessWidget {
               initialValue: productId,
               decoration: InputDecoration(labelText: l10n.t('products')),
               items: [
-                DropdownMenuItem(value: null, child: Text(l10n.t('reportAllProducts'))),
+                DropdownMenuItem(
+                  value: null,
+                  child: Text(l10n.t('reportAllProducts')),
+                ),
                 for (final product in products)
                   DropdownMenuItem(
                     value: product.id,
-                    child: Text(product.label(Localizations.localeOf(context).languageCode)),
+                    child: Text(
+                      product.label(
+                        Localizations.localeOf(context).languageCode,
+                      ),
+                    ),
                   ),
               ],
               onChanged: onProductChanged,
@@ -547,9 +571,15 @@ class _ReportFilters extends StatelessWidget {
               initialValue: roomId,
               decoration: InputDecoration(labelText: l10n.t('rooms')),
               items: [
-                DropdownMenuItem(value: null, child: Text(l10n.t('reportAllRooms'))),
+                DropdownMenuItem(
+                  value: null,
+                  child: Text(l10n.t('reportAllRooms')),
+                ),
                 for (final room in rooms)
-                  DropdownMenuItem(value: room.roomId, child: Text(room.roomNumber)),
+                  DropdownMenuItem(
+                    value: room.roomId,
+                    child: Text(room.roomNumber),
+                  ),
               ],
               onChanged: onRoomChanged,
             ),
@@ -590,21 +620,31 @@ class _ReportAnalytics extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final roomProductById = {for (final item in roomProducts) item.id: item};
-    final refills = events.where((e) => e.type == RefillEventType.refill).toList();
+    final refills =
+        events.where((e) => e.type == RefillEventType.refill).toList();
     final usageByProduct = <String, int>{};
     final usageByRoom = <String, int>{};
     final daily = <DateTime, int>{};
     for (final event in refills) {
       final item = roomProductById[event.roomProductId];
-      final day = DateTime(event.occurredAt.year, event.occurredAt.month, event.occurredAt.day);
+      final day = DateTime(
+        event.occurredAt.year,
+        event.occurredAt.month,
+        event.occurredAt.day,
+      );
       daily[day] = (daily[day] ?? 0) + 1;
       if (item == null) continue;
-      final product = item.product.label(Localizations.localeOf(context).languageCode);
+      final product = item.product.label(
+        Localizations.localeOf(context).languageCode,
+      );
       usageByProduct[product] = (usageByProduct[product] ?? 0) + 1;
       usageByRoom[item.roomNumber] = (usageByRoom[item.roomNumber] ?? 0) + 1;
     }
-    final corrections = events.where((e) => e.type == RefillEventType.correctionRequested).length;
-    final replacements = events.where((e) => e.type == RefillEventType.bottleReplaced).length;
+    final corrections = events
+        .where((e) => e.type == RefillEventType.correctionRequested)
+        .length;
+    final replacements =
+        events.where((e) => e.type == RefillEventType.bottleReplaced).length;
 
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isWideScreen = screenWidth >= 600;
@@ -621,12 +661,17 @@ class _ReportAnalytics extends StatelessWidget {
           if (isWideScreen)
             Row(
               children: [
-                Icon(Icons.analytics_outlined, color: theme.colorScheme.primary),
+                Icon(
+                  Icons.analytics_outlined,
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     l10n.t('reportAnalyticsTitle'),
-                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ),
                 OutlinedButton.icon(
@@ -642,12 +687,17 @@ class _ReportAnalytics extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.analytics_outlined, color: theme.colorScheme.primary),
+                    Icon(
+                      Icons.analytics_outlined,
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         l10n.t('reportAnalyticsTitle'),
-                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     ),
                   ],
@@ -668,10 +718,30 @@ class _ReportAnalytics extends StatelessWidget {
             spacing: 12,
             runSpacing: 12,
             children: [
-              _KpiTile(label: l10n.t('reportKpiRefills'), value: refills.length.toString(), icon: IvraIcons.refillAction, width: tileWidth),
-              _KpiTile(label: l10n.t('reportKpiCorrections'), value: corrections.toString(), icon: Icons.assignment_late_outlined, width: tileWidth),
-              _KpiTile(label: l10n.t('reportKpiReplacements'), value: replacements.toString(), icon: IvraIcons.replaceAction, width: tileWidth),
-              _KpiTile(label: l10n.t('reportKpiActiveRooms'), value: usageByRoom.length.toString(), icon: Icons.meeting_room_outlined, width: tileWidth),
+              _KpiTile(
+                label: l10n.t('reportKpiRefills'),
+                value: refills.length.toString(),
+                icon: IvraIcons.refillAction,
+                width: tileWidth,
+              ),
+              _KpiTile(
+                label: l10n.t('reportKpiCorrections'),
+                value: corrections.toString(),
+                icon: Icons.assignment_late_outlined,
+                width: tileWidth,
+              ),
+              _KpiTile(
+                label: l10n.t('reportKpiReplacements'),
+                value: replacements.toString(),
+                icon: IvraIcons.replaceAction,
+                width: tileWidth,
+              ),
+              _KpiTile(
+                label: l10n.t('reportKpiActiveRooms'),
+                value: usageByRoom.length.toString(),
+                icon: Icons.meeting_room_outlined,
+                width: tileWidth,
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -680,16 +750,24 @@ class _ReportAnalytics extends StatelessWidget {
               final wide = constraints.maxWidth >= 900;
               final children = [
                 _TrendChart(title: l10n.t('reportTrendChart'), values: daily),
-                _TopList(title: l10n.t('reportUsageByProduct'), rows: _topRows(usageByProduct)),
-                _TopList(title: l10n.t('reportUsageByRoom'), rows: _topRows(usageByRoom)),
+                _TopList(
+                  title: l10n.t('reportUsageByProduct'),
+                  rows: _topRows(usageByProduct),
+                ),
+                _TopList(
+                  title: l10n.t('reportUsageByRoom'),
+                  rows: _topRows(usageByRoom),
+                ),
               ];
               if (!wide) {
                 return Column(
                   children: children
-                      .map((child) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: child,
-                          ))
+                      .map(
+                        (child) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: child,
+                        ),
+                      )
                       .toList(),
                 );
               }
@@ -699,7 +777,10 @@ class _ReportAnalytics extends StatelessWidget {
                 children: [
                   SizedBox(width: constraints.maxWidth, child: children.first),
                   for (final child in children.skip(1))
-                    SizedBox(width: (constraints.maxWidth - 12) / 2, child: child),
+                    SizedBox(
+                      width: (constraints.maxWidth - 12) / 2,
+                      child: child,
+                    ),
                 ],
               );
             },
@@ -710,7 +791,8 @@ class _ReportAnalytics extends StatelessWidget {
   }
 
   List<MapEntry<String, int>> _topRows(Map<String, int> values) {
-    final rows = values.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    final rows = values.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
     return rows.take(6).toList();
   }
 }
@@ -741,7 +823,11 @@ class _KpiTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, size: isCompact ? 22 : 28, color: theme.colorScheme.primary),
+          Icon(
+            icon,
+            size: isCompact ? 22 : 28,
+            color: theme.colorScheme.primary,
+          ),
           SizedBox(width: isCompact ? 6 : 10),
           Expanded(
             child: Text(
@@ -757,9 +843,10 @@ class _KpiTile extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             value,
-            style: (isCompact ? theme.textTheme.titleMedium : theme.textTheme.titleLarge)?.copyWith(
-              fontWeight: FontWeight.w900,
-            ),
+            style: (isCompact
+                    ? theme.textTheme.titleMedium
+                    : theme.textTheme.titleLarge)
+                ?.copyWith(fontWeight: FontWeight.w900),
           ),
         ],
       ),
@@ -779,9 +866,17 @@ class _TrendChart extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final days = List.generate(14, (index) {
       final now = DateTime.now();
-      return DateTime(now.year, now.month, now.day).subtract(Duration(days: 13 - index));
+      return DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).subtract(Duration(days: 13 - index));
     });
-    final maxValue = days.fold<int>(1, (max, day) => values[day] != null && values[day]! > max ? values[day]! : max);
+    final maxValue = days.fold<int>(
+      1,
+      (max, day) =>
+          values[day] != null && values[day]! > max ? values[day]! : max,
+    );
 
     final double maxY;
     if (maxValue < 5) {
@@ -834,7 +929,10 @@ class _TrendChart extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -923,7 +1021,8 @@ class _TrendChart extends StatelessWidget {
                   borderData: FlBorderData(show: false),
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
-                      getTooltipColor: (group) => theme.colorScheme.primaryContainer,
+                      getTooltipColor: (group) =>
+                          theme.colorScheme.primaryContainer,
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         final day = days[group.x.toInt()];
                         final dateStr = '${day.day}/${day.month}';
@@ -947,7 +1046,9 @@ class _TrendChart extends StatelessWidget {
                             gradient: LinearGradient(
                               colors: [
                                 theme.colorScheme.primary,
-                                theme.colorScheme.primary.withValues(alpha: 0.7),
+                                theme.colorScheme.primary.withValues(
+                                  alpha: 0.7,
+                                ),
                               ],
                               begin: Alignment.bottomCenter,
                               end: Alignment.topCenter,
@@ -960,7 +1061,9 @@ class _TrendChart extends StatelessWidget {
                             backDrawRodData: BackgroundBarChartRodData(
                               show: true,
                               toY: maxY,
-                              color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                              color: theme.colorScheme.primary.withValues(
+                                alpha: 0.05,
+                              ),
                             ),
                           ),
                         ],
@@ -991,7 +1094,12 @@ class _TopList extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+            Text(
+              title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
             const SizedBox(height: 8),
             if (rows.isEmpty)
               Text(AppLocalizations.of(context).t('reportNoAnalyticsData'))
@@ -1001,8 +1109,15 @@ class _TopList extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Row(
                     children: [
-                      Expanded(child: Text(row.key, overflow: TextOverflow.ellipsis)),
-                      Text(row.value.toString(), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w900)),
+                      Expanded(
+                        child: Text(row.key, overflow: TextOverflow.ellipsis),
+                      ),
+                      Text(
+                        row.value.toString(),
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1063,8 +1178,9 @@ class _ReportActionState extends State<_ReportAction> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary
-                      .withValues(alpha: _isHovered ? 0.15 : 0.0),
+                  color: theme.colorScheme.primary.withValues(
+                    alpha: _isHovered ? 0.15 : 0.0,
+                  ),
                   blurRadius: _isHovered ? 20 : 0,
                   spreadRadius: _isHovered ? 2 : 0,
                 ),
@@ -1073,8 +1189,9 @@ class _ReportActionState extends State<_ReportAction> {
             child: GlassCard(
               padding: EdgeInsets.zero,
               borderRadius: 20,
-              borderColor: theme.colorScheme.outline
-                  .withValues(alpha: _isHovered ? 0.3 : 0.1),
+              borderColor: theme.colorScheme.outline.withValues(
+                alpha: _isHovered ? 0.3 : 0.1,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1083,10 +1200,12 @@ class _ReportActionState extends State<_ReportAction> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          theme.colorScheme.primaryContainer
-                              .withValues(alpha: 0.6),
-                          theme.colorScheme.primaryContainer
-                              .withValues(alpha: 0.1),
+                          theme.colorScheme.primaryContainer.withValues(
+                            alpha: 0.6,
+                          ),
+                          theme.colorScheme.primaryContainer.withValues(
+                            alpha: 0.1,
+                          ),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -1101,12 +1220,16 @@ class _ReportActionState extends State<_ReportAction> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary
-                                .withValues(alpha: 0.1),
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.1,
+                            ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Icon(widget.icon,
-                              size: 32, color: theme.colorScheme.primary),
+                          child: Icon(
+                            widget.icon,
+                            size: 32,
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -1145,7 +1268,9 @@ class _ReportActionState extends State<_ReportAction> {
                                 label: Text(action.label),
                                 style: FilledButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),

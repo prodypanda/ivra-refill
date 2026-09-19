@@ -1,79 +1,90 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/mock_ivra_repository.dart';
-import '../../data/offline/offline_sync_service.dart';
-import '../../domain/app_enums.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
+import 'package:ivra_refill/src/data/mock_ivra_repository.dart';
+import 'package:ivra_refill/src/data/offline/offline_sync_service.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
 import 'package:go_router/go_router.dart';
-import '../auth/biometric_auth.dart';
-import '../shared/async_value_view.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/premium_snackbar.dart';
-import '../../version.dart';
-import 'app_settings_screen.dart';
+import 'package:ivra_refill/src/features/auth/biometric_auth.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/version.dart';
+import 'package:ivra_refill/src/features/settings/app_settings_screen.dart';
 
+void _showChangelog(BuildContext context, AppLocalizations l10n) async {
+  try {
+    final changelogData = await rootBundle.loadString('CHANGELOG.md');
+    if (!context.mounted) return;
 
-  void _showChangelog(BuildContext context, AppLocalizations l10n) async {
-    try {
-      final changelogData = await rootBundle.loadString('CHANGELOG.md');
-      if (!context.mounted) return;
-      
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          final theme = Theme.of(context);
-          return DraggableScrollableSheet(
-            expand: false,
-            initialChildSize: 0.8,
-            minChildSize: 0.5,
-            maxChildSize: 0.95,
-            builder: (context, scrollController) {
-              return SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.8,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "What's New",
+                          style: theme.textTheme.headlineSmall,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Current Version: v$appVersion',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: ListView(
+                        controller: scrollController,
                         children: [
-                          Text("What's New", style: theme.textTheme.headlineSmall),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.of(context).pop(),
+                          Text(
+                            changelogData,
+                            style: theme.textTheme.bodyMedium,
                           ),
                         ],
                       ),
-                      Text('Current Version: v$appVersion', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary)),
-                      const SizedBox(height: 16),
-                      Expanded(
-                        child: ListView(
-                          controller: scrollController,
-                          children: [
-                            Text(changelogData, style: theme.textTheme.bodyMedium),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            },
-          );
-        },
-      );
-    } catch (e) {
-      if (context.mounted) {
-        PremiumSnackbar.showError(context, 'Failed to load changelog.');
-      }
+              ),
+            );
+          },
+        );
+      },
+    );
+  } catch (e) {
+    if (context.mounted) {
+      PremiumSnackbar.showError(context, 'Failed to load changelog.');
     }
   }
+}
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -90,7 +101,9 @@ class SettingsScreen extends ConsumerWidget {
     final offlineMode = ref.watch(offlineModeProvider);
     final precisionScanWindow = ref.watch(precisionScanWindowEnabledProvider);
     final tapToScan = ref.watch(tapToScanEnabledProvider);
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull),
+    );
     final isAppAdmin = currentUser?.role == UserRole.appAdmin;
 
     return PageScaffold(
@@ -136,9 +149,11 @@ class SettingsScreen extends ConsumerWidget {
                         ? Icons.cloud_done_outlined
                         : Icons.science_outlined,
                   ),
-                  title: Text(useSupabase
-                      ? l10n.t('settingsSupabaseConnected')
-                      : l10n.t('demoMode')),
+                  title: Text(
+                    useSupabase
+                        ? l10n.t('settingsSupabaseConnected')
+                        : l10n.t('demoMode'),
+                  ),
                   subtitle: Text(
                     useSupabase
                         ? l10n.t('settingsSupabaseHint')
@@ -157,18 +172,19 @@ class SettingsScreen extends ConsumerWidget {
               shape: isMobile
                   ? RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
-                      side: BorderSide(
-                        color: theme.colorScheme.outlineVariant,
-                      ),
+                      side: BorderSide(color: theme.colorScheme.outlineVariant),
                     )
                   : null,
               child: SwitchListTile(
                 secondary: const Icon(Icons.sync_disabled_outlined),
-                title:
-                    Text(AppLocalizations.of(context).t('settingsOfflineMode')),
-                subtitle: Text(offlineMode
-                    ? AppLocalizations.of(context).t('settingsOfflineQueue')
-                    : AppLocalizations.of(context).t('settingsOfflineSend')),
+                title: Text(
+                  AppLocalizations.of(context).t('settingsOfflineMode'),
+                ),
+                subtitle: Text(
+                  offlineMode
+                      ? AppLocalizations.of(context).t('settingsOfflineQueue')
+                      : AppLocalizations.of(context).t('settingsOfflineSend'),
+                ),
                 value: offlineMode,
                 onChanged: (value) {
                   ref.read(offlineModeProvider.notifier).state = value;
@@ -181,16 +197,19 @@ class SettingsScreen extends ConsumerWidget {
               shape: isMobile
                   ? RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
-                      side: BorderSide(
-                        color: theme.colorScheme.outlineVariant,
-                      ),
+                      side: BorderSide(color: theme.colorScheme.outlineVariant),
                     )
                   : null,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 16,
+                      bottom: 8,
+                    ),
                     child: Text(
                       l10n.t('settingsScannerHeader'),
                       style: theme.textTheme.titleSmall?.copyWith(
@@ -205,7 +224,9 @@ class SettingsScreen extends ConsumerWidget {
                     subtitle: Text(l10n.t('settingsPrecisionScanSubtitle')),
                     value: precisionScanWindow,
                     onChanged: (value) {
-                      ref.read(precisionScanWindowEnabledProvider.notifier).state = value;
+                      ref
+                          .read(precisionScanWindowEnabledProvider.notifier)
+                          .state = value;
                     },
                   ),
                   const Divider(height: 1),
@@ -279,9 +300,9 @@ class SettingsScreen extends ConsumerWidget {
                                     : () => _clearQueue(context, ref),
                                 icon: const Icon(Icons.delete_sweep_outlined),
                                 label: Text(
-                                  AppLocalizations.of(context).t(
-                                    'settingsBtnClear',
-                                  ),
+                                  AppLocalizations.of(
+                                    context,
+                                  ).t('settingsBtnClear'),
                                 ),
                               ),
                               FilledButton.icon(
@@ -290,9 +311,9 @@ class SettingsScreen extends ConsumerWidget {
                                     : () => _syncQueue(context, ref),
                                 icon: const Icon(Icons.sync_outlined),
                                 label: Text(
-                                  AppLocalizations.of(context).t(
-                                    'settingsBtnSyncNow',
-                                  ),
+                                  AppLocalizations.of(
+                                    context,
+                                  ).t('settingsBtnSyncNow'),
                                 ),
                               ),
                             ],
@@ -321,19 +342,19 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 12),
                       if (actions.isEmpty)
-                        Text(AppLocalizations.of(context)
-                            .t('settingsNoPendingActions'))
+                        Text(
+                          AppLocalizations.of(
+                            context,
+                          ).t('settingsNoPendingActions'),
+                        )
                       else
                         Column(
                           children: [
                             for (final action in actions)
                               _OfflineActionTile(
                                 action: action,
-                                onEdit: () => _resolveAction(
-                                  context,
-                                  ref,
-                                  action,
-                                ),
+                                onEdit: () =>
+                                    _resolveAction(context, ref, action),
                                 onRetry: () =>
                                     _retryAction(context, ref, action.id),
                                 onRemove: () =>
@@ -369,10 +390,10 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final String message;
     if (summary.hasFailures) {
-      message = l10n.tParams(
-        'settingsSyncedWithFailures',
-        {'synced': '${summary.synced}', 'failed': '${summary.failed}'},
-      );
+      message = l10n.tParams('settingsSyncedWithFailures', {
+        'synced': '${summary.synced}',
+        'failed': '${summary.failed}',
+      });
     } else {
       message = l10n.tParams(
         summary.synced == 1
@@ -381,9 +402,9 @@ class SettingsScreen extends ConsumerWidget {
         {'synced': '${summary.synced}'},
       );
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _retryAction(
@@ -408,9 +429,11 @@ class SettingsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(didSync
-            ? AppLocalizations.of(context).t('settingsActionSynced')
-            : AppLocalizations.of(context).t('settingsActionNeedsReview')),
+        content: Text(
+          didSync
+              ? AppLocalizations.of(context).t('settingsActionSynced')
+              : AppLocalizations.of(context).t('settingsActionNeedsReview'),
+        ),
       ),
     );
   }
@@ -439,8 +462,8 @@ class SettingsScreen extends ConsumerWidget {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content:
-              Text(AppLocalizations.of(context).t('settingsActionUpdated'))),
+        content: Text(AppLocalizations.of(context).t('settingsActionUpdated')),
+      ),
     );
   }
 
@@ -454,8 +477,8 @@ class SettingsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content:
-              Text(AppLocalizations.of(context).t('settingsActionRemoved'))),
+        content: Text(AppLocalizations.of(context).t('settingsActionRemoved')),
+      ),
     );
   }
 
@@ -465,8 +488,8 @@ class SettingsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content:
-              Text(AppLocalizations.of(context).t('settingsQueueCleared'))),
+        content: Text(AppLocalizations.of(context).t('settingsQueueCleared')),
+      ),
     );
   }
 }
@@ -547,7 +570,9 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final biometricAccount = ref.watch(biometricAccountProvider);
-    final currentEmail = ref.watch(currentUserProvider.select((s) => s.valueOrNull?.email));
+    final currentEmail = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull?.email),
+    );
     final enabled = isBiometricEnabledForEmail(biometricAccount, currentEmail);
     final available = _available ?? false;
 
@@ -595,9 +620,11 @@ class _SettingsMobileStatus extends StatelessWidget {
           useSupabase ? Icons.cloud_done_outlined : Icons.science_outlined,
           color: colorScheme.primary,
         ),
-        title: Text(useSupabase
-            ? l10n.t('settingsSupabaseConnected')
-            : l10n.t('demoMode')),
+        title: Text(
+          useSupabase
+              ? l10n.t('settingsSupabaseConnected')
+              : l10n.t('demoMode'),
+        ),
         subtitle: Text(
           useSupabase
               ? l10n.t('settingsSupabaseHint')
@@ -628,15 +655,13 @@ class _OfflineActionTile extends StatelessWidget {
     final summary = [
       _payloadSummary(action.payload),
       if (action.attemptCount > 0)
-        l10n.tParams(
-          'settingsActionListAttempts',
-          {'count': '${action.attemptCount}'},
-        ),
+        l10n.tParams('settingsActionListAttempts', {
+          'count': '${action.attemptCount}',
+        }),
       if (hasError)
-        l10n.tParams(
-          'settingsActionListError',
-          {'message': '${action.lastError}'},
-        ),
+        l10n.tParams('settingsActionListError', {
+          'message': '${action.lastError}',
+        }),
     ].join('\n');
 
     return ListTile(
@@ -676,9 +701,8 @@ class _OfflineActionTile extends StatelessWidget {
   }
 
   String _payloadSummary(Map<String, dynamic> payload) {
-    final entries = payload.entries.take(3).map(
-          (entry) => '${entry.key}: ${entry.value}',
-        );
+    final entries =
+        payload.entries.take(3).map((entry) => '${entry.key}: ${entry.value}');
     return entries.join(', ');
   }
 }
@@ -688,7 +712,9 @@ class _DemoUserSwitcher extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull),
+    );
     final isMobile = MediaQuery.sizeOf(context).width < 720;
 
     return AsyncValueView(
@@ -718,9 +744,10 @@ class _DemoUserSwitcher extends ConsumerWidget {
                 initialValue: currentUser?.id,
                 isExpanded: true,
                 decoration: InputDecoration(
-                  labelText:
-                      AppLocalizations.of(context).t('settingsTestAccessAs'),
-                  prefixIcon: Icon(Icons.manage_accounts_outlined),
+                  labelText: AppLocalizations.of(
+                    context,
+                  ).t('settingsTestAccessAs'),
+                  prefixIcon: const Icon(Icons.manage_accounts_outlined),
                 ),
                 items: [
                   for (final user in users)
@@ -744,7 +771,7 @@ class _DemoUserSwitcher extends ConsumerWidget {
                   _refreshAppData(ref);
                   if (!context.mounted) return;
                   PremiumSnackbar.showSuccess(
-                    context, 
+                    context,
                     AppLocalizations.of(context).t('settingsDemoUserChanged'),
                   );
                 },
@@ -812,8 +839,9 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 children: [
                   Chip(
                     label: Text(
-                      AppLocalizations.of(context)
-                          .syncActionTypeLabel(widget.action.type),
+                      AppLocalizations.of(
+                        context,
+                      ).syncActionTypeLabel(widget.action.type),
                     ),
                   ),
                   Chip(
@@ -827,13 +855,13 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                   if (widget.action.lastAttemptAt != null)
                     Chip(
                       label: Text(
-                        AppLocalizations.of(context).tParams(
-                          'settingsActionLastTried',
-                          {
-                            'datetime':
-                                _formatDateTime(widget.action.lastAttemptAt!)
-                          },
-                        ),
+                        AppLocalizations.of(
+                          context,
+                        ).tParams('settingsActionLastTried', {
+                          'datetime': _formatDateTime(
+                            widget.action.lastAttemptAt!,
+                          ),
+                        }),
                       ),
                     ),
                 ],
@@ -842,9 +870,7 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 const SizedBox(height: 14),
                 Text(
                   widget.action.lastError!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ],
               const SizedBox(height: 16),
@@ -853,8 +879,9 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
                 minLines: 8,
                 maxLines: 14,
                 decoration: InputDecoration(
-                  labelText:
-                      AppLocalizations.of(context).t('settingsPayloadJson'),
+                  labelText: AppLocalizations.of(
+                    context,
+                  ).t('settingsPayloadJson'),
                   alignLabelWithHint: true,
                   errorText: _error,
                 ),
@@ -887,10 +914,7 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
     final payload = _parsePayload();
     if (payload == null) return;
     Navigator.of(context).pop(
-      _ResolvedOfflinePayload(
-        payload: payload,
-        retryAfterSave: retryAfterSave,
-      ),
+      _ResolvedOfflinePayload(payload: payload, retryAfterSave: retryAfterSave),
     );
   }
 
@@ -898,8 +922,11 @@ class _OfflineConflictDialogState extends State<_OfflineConflictDialog> {
     try {
       final decoded = jsonDecode(_payloadController.text);
       if (decoded is! Map) {
-        setState(() => _error =
-            AppLocalizations.of(context).t('settingsPayloadInvalidJson'));
+        setState(
+          () => _error = AppLocalizations.of(
+            context,
+          ).t('settingsPayloadInvalidJson'),
+        );
         return null;
       }
       setState(() => _error = null);

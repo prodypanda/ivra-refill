@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- chore: performed comprehensive code quality and static analysis sweep, enforcing stricter lint rules and migrating to centralized AppLogger.
+
 - Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and

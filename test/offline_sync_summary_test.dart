@@ -27,12 +27,15 @@ void main() {
       expect(summary.hasFailures, isFalse);
     });
 
-    test('hasFailures returns true when failed is greater than 0 and synced is 0', () {
-      const summary = OfflineSyncSummary(synced: 0, failed: 2);
+    test(
+      'hasFailures returns true when failed is greater than 0 and synced is 0',
+      () {
+        const summary = OfflineSyncSummary(synced: 0, failed: 2);
 
-      expect(summary.synced, 0);
-      expect(summary.failed, 2);
-      expect(summary.hasFailures, isTrue);
-    });
+        expect(summary.synced, 0);
+        expect(summary.failed, 2);
+        expect(summary.hasFailures, isTrue);
+      },
+    );
   });
 }

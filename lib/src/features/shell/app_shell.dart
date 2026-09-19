@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../domain/app_enums.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../../version.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/version.dart';
 
-import '../alerts/alerts_screen.dart';
-import '../approvals/approvals_screen.dart';
-import '../audit/audit_logs_screen.dart';
-import '../dashboard/dashboard_screen.dart';
-import '../hotels/hotels_screen.dart';
-import '../inventory/inventory_screen.dart';
-import '../inventory/femme_de_chambre_screen.dart';
-import '../products/products_screen.dart';
-import '../reports/reports_screen.dart';
-import '../rooms/rooms_screen.dart';
-import '../settings/settings_screen.dart';
-import '../shared/offline_banner.dart';
-import '../shared/web_download_banner.dart';
-import '../team/team_screen.dart';
-import '../notifications/send_notification_screen.dart';
-import '../../services/notification_service.dart';
-import '../authorizations/authorizations_screen.dart';
+import 'package:ivra_refill/src/features/alerts/alerts_screen.dart';
+import 'package:ivra_refill/src/features/approvals/approvals_screen.dart';
+import 'package:ivra_refill/src/features/audit/audit_logs_screen.dart';
+import 'package:ivra_refill/src/features/dashboard/dashboard_screen.dart';
+import 'package:ivra_refill/src/features/hotels/hotels_screen.dart';
+import 'package:ivra_refill/src/features/inventory/inventory_screen.dart';
+import 'package:ivra_refill/src/features/inventory/femme_de_chambre_screen.dart';
+import 'package:ivra_refill/src/features/products/products_screen.dart';
+import 'package:ivra_refill/src/features/reports/reports_screen.dart';
+import 'package:ivra_refill/src/features/rooms/rooms_screen.dart';
+import 'package:ivra_refill/src/features/settings/settings_screen.dart';
+import 'package:ivra_refill/src/features/shared/offline_banner.dart';
+import 'package:ivra_refill/src/features/shared/web_download_banner.dart';
+import 'package:ivra_refill/src/features/team/team_screen.dart';
+import 'package:ivra_refill/src/features/notifications/send_notification_screen.dart';
+import 'package:ivra_refill/src/services/notification_service.dart';
+import 'package:ivra_refill/src/features/authorizations/authorizations_screen.dart';
 
 class AppShell extends ConsumerStatefulWidget {
   const AppShell({required this.child, super.key});
@@ -47,9 +47,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   Widget build(BuildContext context) {
     final navItems = _navItems(context, ref);
     final location = GoRouterState.of(context).uri.toString();
-    final selectedIndex = navItems.indexWhere(
-      (item) => location == item.route,
-    );
+    final selectedIndex = navItems.indexWhere((item) => location == item.route);
 
     // Global warm gradient for the Solar Infusion design system
     final isLight = Theme.of(context).brightness == Brightness.light;
@@ -133,7 +131,9 @@ class _AppShellState extends ConsumerState<AppShell> {
 
   List<_NavItem> _navItems(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final userProfile = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final userProfile = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull),
+    );
     final items = [
       _NavItem(
         l10n.t('dashboard'),
@@ -160,8 +160,12 @@ class _AppShellState extends ConsumerState<AppShell> {
         permission: 'view_inventory',
       ),
       _NavItem(
-        userProfile?.role == UserRole.housekeeper ? l10n.t('myBasket') : l10n.t('housekeepersTitle'),
-        userProfile?.role == UserRole.housekeeper ? Icons.shopping_basket_outlined : Icons.people_outline,
+        userProfile?.role == UserRole.housekeeper
+            ? l10n.t('myBasket')
+            : l10n.t('housekeepersTitle'),
+        userProfile?.role == UserRole.housekeeper
+            ? Icons.shopping_basket_outlined
+            : Icons.people_outline,
         FemmeDeChambreScreen.route,
         permission: 'view_inventory',
       ),
@@ -333,7 +337,11 @@ class _MobileShell extends ConsumerWidget {
     );
   }
 
-  void _showMoreDestinations(BuildContext context, WidgetRef ref, List<_NavItem> moreItems) {
+  void _showMoreDestinations(
+    BuildContext context,
+    WidgetRef ref,
+    List<_NavItem> moreItems,
+  ) {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -433,10 +441,9 @@ class _ImpersonationBanner extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  l10n.tParams(
-                    'impersonationBanner',
-                    {'name': impersonated.fullName},
-                  ),
+                  l10n.tParams('impersonationBanner', {
+                    'name': impersonated.fullName,
+                  }),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onTertiaryContainer,
                     fontWeight: FontWeight.w600,
@@ -468,27 +475,21 @@ class _DrawerFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'v$appVersion',
-            style: const TextStyle(
-              fontSize: 10,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 10, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
-          const Text(
+          SizedBox(height: 4),
+          Text(
             'iVRA Refill, by Pulire Tunisia',
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 10, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],

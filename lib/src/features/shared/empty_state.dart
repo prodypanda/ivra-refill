@@ -84,11 +84,7 @@ class _EmptyStateState extends State<EmptyState>
                         color: primary.withValues(alpha: 0.08),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
-                        widget.icon,
-                        size: 56,
-                        color: primary,
-                      ),
+                      child: Icon(widget.icon, size: 56, color: primary),
                     ),
                   ),
                   const SizedBox(height: 28),
@@ -105,8 +101,9 @@ class _EmptyStateState extends State<EmptyState>
                   Text(
                     widget.message,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant
-                          .withValues(alpha: 0.75),
+                      color: theme.colorScheme.onSurfaceVariant.withValues(
+                        alpha: 0.75,
+                      ),
                       height: 1.5,
                     ),
                     textAlign: TextAlign.center,
@@ -120,7 +117,9 @@ class _EmptyStateState extends State<EmptyState>
                       label: Text(widget.actionLabel!),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 16),
+                          horizontal: 32,
+                          vertical: 16,
+                        ),
                         textStyle: const TextStyle(
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,

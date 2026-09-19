@@ -23,7 +23,9 @@ void main() {
       'authValidationPasswordsDoNotMatch',
     );
     expect(
-        AuthValidation.matchingPasswords('strongpass', 'strongpass'), isNull);
+      AuthValidation.matchingPasswords('strongpass', 'strongpass'),
+      isNull,
+    );
   });
 
   test('password reset redirect uses web path routes', () {
@@ -46,8 +48,9 @@ void main() {
   });
 
   test('Supabase role checks are null safe for inactive accounts', () {
-    final sql =
-        File('supabase/migrations/0001_initial_schema.sql').readAsStringSync();
+    final sql = File(
+      'supabase/migrations/0001_initial_schema.sql',
+    ).readAsStringSync();
 
     expect(sql, isNot(contains("current_user_role() <> 'app_admin'")));
     expect(sql, isNot(contains('current_user_role() not in')));
@@ -57,8 +60,9 @@ void main() {
     expect(sql, isNot(contains('inventory_events_insert_hotel')));
     expect(sql, isNot(contains('approvals_update_ivra')));
 
-    final rlsVerification =
-        File('supabase/rls_verification.sql').readAsStringSync();
+    final rlsVerification = File(
+      'supabase/rls_verification.sql',
+    ).readAsStringSync();
     expect(rlsVerification, contains('public.submit_change_request'));
     expect(
       rlsVerification,
@@ -81,8 +85,9 @@ void main() {
       expect(script, contains('-RequireSupabase'));
     }
 
-    final debugScript =
-        File('scripts/build_android_debug.ps1').readAsStringSync();
+    final debugScript = File(
+      'scripts/build_android_debug.ps1',
+    ).readAsStringSync();
     expect(debugScript, isNot(contains('-RequireSupabase')));
   });
 
@@ -129,8 +134,9 @@ void main() {
   test('client request ids make retryable mutations idempotent', () async {
     final repository = MockIvraRepository();
     final before = (await repository.roomProducts()).first;
-    final stockBefore = (await repository.inventory())
-        .firstWhere((item) => item.product.id == before.product.id);
+    final stockBefore = (await repository.inventory()).firstWhere(
+      (item) => item.product.id == before.product.id,
+    );
     final approvalCount = (await repository.approvalRequests()).length;
 
     await repository.recordRefill(
@@ -173,8 +179,9 @@ void main() {
       newData: {'room_number': '999'},
       clientRequestId: 'retry-approval-1',
     );
-    final refillEvent = (await repository.recentRefillEvents())
-        .firstWhere((event) => event.type == RefillEventType.refill);
+    final refillEvent = (await repository.recentRefillEvents()).firstWhere(
+      (event) => event.type == RefillEventType.refill,
+    );
     await repository.requestCorrection(
       refillEventId: refillEvent.id,
       reason: 'Retry-safe correction',
@@ -186,17 +193,21 @@ void main() {
       clientRequestId: 'retry-correction-1',
     );
 
-    final after = (await repository.roomProducts())
-        .firstWhere((item) => item.id == before.id);
-    final stockAfter = (await repository.inventory())
-        .firstWhere((item) => item.product.id == before.product.id);
+    final after = (await repository.roomProducts()).firstWhere(
+      (item) => item.id == before.id,
+    );
+    final stockAfter = (await repository.inventory()).firstWhere(
+      (item) => item.product.id == before.product.id,
+    );
     final events = await repository.recentRefillEvents();
     final approvals = await repository.approvalRequests();
 
     expect(after.refillCount, before.refillCount + 1);
     expect(stockAfter.fullBottles, stockBefore.fullBottles - 1);
-    expect(events.where((event) => event.type == RefillEventType.refill),
-        hasLength(1));
+    expect(
+      events.where((event) => event.type == RefillEventType.refill),
+      hasLength(1),
+    );
     expect(approvals.length, approvalCount + 2);
   });
 
@@ -227,10 +238,12 @@ void main() {
       clientRequestId: 'retry-undo-1',
     );
 
-    final after = (await repository.roomProducts())
-        .firstWhere((item) => item.id == before.id);
-    final undoEvents = (await repository.recentRefillEvents())
-        .where((item) => item.type == RefillEventType.undo);
+    final after = (await repository.roomProducts()).firstWhere(
+      (item) => item.id == before.id,
+    );
+    final undoEvents = (await repository.recentRefillEvents()).where(
+      (item) => item.type == RefillEventType.undo,
+    );
 
     expect(after.refillCount, before.refillCount);
     expect(undoEvents, hasLength(1));
@@ -239,18 +252,21 @@ void main() {
   test('replaceBottle resets lifecycle and updates stock', () async {
     final repository = MockIvraRepository();
     final before = (await repository.roomProducts()).first;
-    final stockBefore = (await repository.inventory())
-        .firstWhere((item) => item.product.id == before.product.id);
+    final stockBefore = (await repository.inventory()).firstWhere(
+      (item) => item.product.id == before.product.id,
+    );
 
     await repository.replaceBottle(
       roomProductId: before.id,
       notes: 'Bottle reached replacement limit',
     );
 
-    final after = (await repository.roomProducts())
-        .firstWhere((item) => item.id == before.id);
-    final stockAfter = (await repository.inventory())
-        .firstWhere((item) => item.product.id == before.product.id);
+    final after = (await repository.roomProducts()).firstWhere(
+      (item) => item.id == before.id,
+    );
+    final stockAfter = (await repository.inventory()).firstWhere(
+      (item) => item.product.id == before.product.id,
+    );
     final event = (await repository.recentRefillEvents()).first;
 
     expect(after.refillCount, 0);
@@ -315,10 +331,7 @@ void main() {
         'room_number': roomProduct.roomNumber,
         'floor_number': roomProduct.floorNumber,
       },
-      newData: {
-        'room_number': '301',
-        'floor_number': 3,
-      },
+      newData: {'room_number': '301', 'floor_number': 3},
     );
 
     final request = (await repository.approvalRequests()).first;
@@ -352,8 +365,9 @@ void main() {
     final hotelRequest = (await repository.approvalRequests()).first;
     await repository.approveRequest(approvalRequestId: hotelRequest.id);
 
-    final updatedHotel =
-        (await repository.hotels()).firstWhere((item) => item.id == hotel.id);
+    final updatedHotel = (await repository.hotels()).firstWhere(
+      (item) => item.id == hotel.id,
+    );
     expect(updatedHotel.name, 'Updated Seaside Hotel');
     expect(updatedHotel.legalName, 'Updated Seaside Hotel Ltd');
     expect(updatedHotel.address, '99 Updated Street');
@@ -367,17 +381,15 @@ void main() {
         'room_number': roomProduct.roomNumber,
         'floor_number': roomProduct.floorNumber,
       },
-      newData: {
-        'room_number': '777',
-        'floor_number': 7,
-      },
+      newData: {'room_number': '777', 'floor_number': 7},
     );
 
     final roomRequest = (await repository.approvalRequests()).first;
     await repository.approveRequest(approvalRequestId: roomRequest.id);
 
-    final updatedRoomProduct = (await repository.roomProducts())
-        .firstWhere((item) => item.id == roomProduct.id);
+    final updatedRoomProduct = (await repository.roomProducts()).firstWhere(
+      (item) => item.id == roomProduct.id,
+    );
     expect(updatedRoomProduct.roomNumber, '777');
     expect(updatedRoomProduct.floorNumber, 7);
   });
@@ -438,10 +450,7 @@ void main() {
     );
 
     final approvals = await repository.approvalRequests();
-    expect(
-      approvals.first.title,
-      contains('Correction request'),
-    );
+    expect(approvals.first.title, contains('Correction request'));
   });
 
   test('invite team member creates pending invitation', () async {
@@ -460,41 +469,42 @@ void main() {
     expect(after.first.email, 'new.staff@seaside.example');
   });
 
-  test('team invitations can be resent, cancelled, and members deactivated',
-      () async {
-    final repository = MockIvraRepository();
-    final invitation = (await repository.teamInvitations()).first;
-    final member = (await repository.teamMembers())
-        .firstWhere((profile) => profile.id == 'hotel-staff-seaside');
+  test(
+    'team invitations can be resent, cancelled, and members deactivated',
+    () async {
+      final repository = MockIvraRepository();
+      final invitation = (await repository.teamInvitations()).first;
+      final member = (await repository.teamMembers()).firstWhere(
+        (profile) => profile.id == 'hotel-staff-seaside',
+      );
 
-    await repository.resendTeamInvitation(invitationId: invitation.id);
-    final resent = (await repository.teamInvitations())
-        .firstWhere((item) => item.id == invitation.id);
-    expect(resent.createdAt.isAfter(invitation.createdAt), true);
+      await repository.resendTeamInvitation(invitationId: invitation.id);
+      final resent = (await repository.teamInvitations()).firstWhere(
+        (item) => item.id == invitation.id,
+      );
+      expect(resent.createdAt.isAfter(invitation.createdAt), true);
 
-    await repository.cancelTeamInvitation(invitationId: invitation.id);
-    expect(
-      (await repository.teamInvitations())
-          .where((item) => item.id == invitation.id),
-      isEmpty,
-    );
+      await repository.cancelTeamInvitation(invitationId: invitation.id);
+      expect(
+        (await repository.teamInvitations()).where(
+          (item) => item.id == invitation.id,
+        ),
+        isEmpty,
+      );
 
-    await repository.setTeamMemberActive(
-      userId: member.id,
-      isActive: false,
-    );
-    final inactive = (await repository.teamMembers())
-        .firstWhere((profile) => profile.id == member.id);
-    expect(inactive.isActive, false);
+      await repository.setTeamMemberActive(userId: member.id, isActive: false);
+      final inactive = (await repository.teamMembers()).firstWhere(
+        (profile) => profile.id == member.id,
+      );
+      expect(inactive.isActive, false);
 
-    await repository.setTeamMemberActive(
-      userId: member.id,
-      isActive: true,
-    );
-    final active = (await repository.teamMembers())
-        .firstWhere((profile) => profile.id == member.id);
-    expect(active.isActive, true);
-  });
+      await repository.setTeamMemberActive(userId: member.id, isActive: true);
+      final active = (await repository.teamMembers()).firstWhere(
+        (profile) => profile.id == member.id,
+      );
+      expect(active.isActive, true);
+    },
+  );
 
   test('team invitation can be loaded and accepted by token', () async {
     final repository = MockIvraRepository();
@@ -517,8 +527,9 @@ void main() {
 
     expect(await repository.invitationByToken(token: token), isNull);
     expect(
-      (await repository.teamMembers())
-          .any((member) => member.email == invitation.email),
+      (await repository.teamMembers()).any(
+        (member) => member.email == invitation.email,
+      ),
       true,
     );
   });
@@ -564,50 +575,54 @@ void main() {
     expect(updated.maxRefillCount, 9);
   });
 
-  test('direct replacement product can be created and updated with custom maxBottleAgeDays', () async {
-    final repository = MockIvraRepository();
-    final before = await repository.products();
+  test(
+    'direct replacement product can be created and updated with custom maxBottleAgeDays',
+    () async {
+      final repository = MockIvraRepository();
+      final before = await repository.products();
 
-    await repository.createProduct(
-      sku: 'IVR-REP-1L',
-      nameEn: 'Direct Replace Wash',
-      nameFr: 'Savon direct',
-      nameAr: 'منتج استبدال مباشر',
-      bottleVolumeMl: 1000,
-      bidonVolumeMl: 0,
-      maxRefillCount: 0,
-      maxBottleAgeDays: 120,
-      lowBottleThreshold: 5,
-      lowBidonThreshold: 0,
-      refillType: RefillType.directReplacement,
-    );
+      await repository.createProduct(
+        sku: 'IVR-REP-1L',
+        nameEn: 'Direct Replace Wash',
+        nameFr: 'Savon direct',
+        nameAr: 'منتج استبدال مباشر',
+        bottleVolumeMl: 1000,
+        bidonVolumeMl: 0,
+        maxRefillCount: 0,
+        maxBottleAgeDays: 120,
+        lowBottleThreshold: 5,
+        lowBidonThreshold: 0,
+        refillType: RefillType.directReplacement,
+      );
 
-    final created = (await repository.products()).last;
-    expect((await repository.products()).length, before.length + 1);
-    expect(created.refillType, RefillType.directReplacement);
-    expect(created.maxBottleAgeDays, 120);
+      final created = (await repository.products()).last;
+      expect((await repository.products()).length, before.length + 1);
+      expect(created.refillType, RefillType.directReplacement);
+      expect(created.maxBottleAgeDays, 120);
 
-    await repository.updateProduct(
-      productId: created.id,
-      sku: created.sku,
-      nameEn: 'Updated Direct Replace Wash',
-      nameFr: created.nameFr,
-      nameAr: created.nameAr,
-      bottleVolumeMl: 1000,
-      bidonVolumeMl: 0,
-      maxRefillCount: 0,
-      maxBottleAgeDays: 90,
-      lowBottleThreshold: 5,
-      lowBidonThreshold: 0,
-      refillType: RefillType.directReplacement,
-    );
+      await repository.updateProduct(
+        productId: created.id,
+        sku: created.sku,
+        nameEn: 'Updated Direct Replace Wash',
+        nameFr: created.nameFr,
+        nameAr: created.nameAr,
+        bottleVolumeMl: 1000,
+        bidonVolumeMl: 0,
+        maxRefillCount: 0,
+        maxBottleAgeDays: 90,
+        lowBottleThreshold: 5,
+        lowBidonThreshold: 0,
+        refillType: RefillType.directReplacement,
+      );
 
-    final updated = (await repository.products()).last;
-    expect(updated.nameEn, 'Updated Direct Replace Wash');
-    expect(updated.maxBottleAgeDays, 90);
-  });
+      final updated = (await repository.products()).last;
+      expect(updated.nameEn, 'Updated Direct Replace Wash');
+      expect(updated.maxBottleAgeDays, 90);
+    },
+  );
 
-  test('direct replacement products do not generate refill limit alerts', () async {
+  test('direct replacement products do not generate refill limit alerts',
+      () async {
     final repository = MockIvraRepository();
 
     // 1. Create a direct replacement product
@@ -632,7 +647,7 @@ void main() {
     final rooms = await repository.rooms();
     final firstRoom = rooms.first;
     final hotelId = firstRoom.hotelId;
-    
+
     // Now template/place rooms (with autoAdjustInventory: true to initialize inventory item)
     await repository.createRoomsFromTemplate(
       hotelId: hotelId,
@@ -666,11 +681,16 @@ void main() {
 
     // 5. Verify no alerts of type refillLimit are generated for this hotel/product
     final alertsAfter = await repository.alerts(hotelId: hotelId);
-    final refillLimitAlerts = alertsAfter.where((a) => !a.isResolved && a.type == AlertType.refillLimit && a.productId == repProduct.id).toList();
+    final refillLimitAlerts = alertsAfter
+        .where(
+          (a) =>
+              !a.isResolved &&
+              a.type == AlertType.refillLimit &&
+              a.productId == repProduct.id,
+        )
+        .toList();
     expect(refillLimitAlerts.isEmpty, true);
   });
-
-
 
   test('offline queue syncs refill actions', () async {
     SharedPreferences.setMockInitialValues({});
@@ -706,8 +726,9 @@ void main() {
 
     expect(await service.syncPending(repository), 1);
 
-    final after = (await repository.roomProducts())
-        .firstWhere((item) => item.id == before.id);
+    final after = (await repository.roomProducts()).firstWhere(
+      (item) => item.id == before.id,
+    );
     final event = (await repository.recentRefillEvents()).first;
 
     expect(await service.pendingActions(), isEmpty);
@@ -733,10 +754,7 @@ void main() {
           'room_number': roomProduct.roomNumber,
           'floor_number': roomProduct.floorNumber,
         },
-        'newData': {
-          'room_number': '990',
-          'floor_number': 9,
-        },
+        'newData': {'room_number': '990', 'floor_number': 9},
       },
     );
 
@@ -767,8 +785,9 @@ void main() {
 
     final summary = await service.syncPendingDetailed(repository);
     final pending = await service.pendingActions();
-    final after = (await repository.roomProducts())
-        .firstWhere((item) => item.id == roomProduct.id);
+    final after = (await repository.roomProducts()).firstWhere(
+      (item) => item.id == roomProduct.id,
+    );
 
     expect(summary.synced, 1);
     expect(summary.failed, 1);
@@ -797,17 +816,18 @@ void main() {
     final failed = (await service.pendingActions()).single;
     expect(failed.lastError, isNotNull);
 
-    await service.updatePayload(
-      failed.id,
-      {'roomProductId': roomProduct.id, 'notes': 'Resolved conflict'},
-    );
+    await service.updatePayload(failed.id, {
+      'roomProductId': roomProduct.id,
+      'notes': 'Resolved conflict',
+    });
     final resolved = (await service.pendingActions()).single;
     expect(resolved.lastError, isNull);
     expect(resolved.payload['roomProductId'], roomProduct.id);
 
     expect(await service.syncPending(repository), 1);
-    final after = (await repository.roomProducts())
-        .firstWhere((item) => item.id == roomProduct.id);
+    final after = (await repository.roomProducts()).firstWhere(
+      (item) => item.id == roomProduct.id,
+    );
 
     expect(await service.pendingActions(), isEmpty);
     expect(after.refillCount, before + 1);
@@ -816,10 +836,12 @@ void main() {
   test('smart alerts refresh without duplicates and can be resolved', () async {
     final repository = MockIvraRepository();
 
-    final created =
-        await repository.refreshSmartAlerts(hotelId: 'hotel-seaside');
-    final duplicateCreated =
-        await repository.refreshSmartAlerts(hotelId: 'hotel-seaside');
+    final created = await repository.refreshSmartAlerts(
+      hotelId: 'hotel-seaside',
+    );
+    final duplicateCreated = await repository.refreshSmartAlerts(
+      hotelId: 'hotel-seaside',
+    );
     final alerts = await repository.alerts(hotelId: 'hotel-seaside');
     final openAlert = alerts.firstWhere((alert) => !alert.isResolved);
 
@@ -829,7 +851,9 @@ void main() {
 
     await repository.resolveAlert(alertId: openAlert.id);
 
-    final resolved = (await repository.alerts(hotelId: 'hotel-seaside'))
+    final resolved = (await repository.alerts(
+      hotelId: 'hotel-seaside',
+    ))
         .firstWhere((alert) => alert.id == openAlert.id);
     expect(resolved.isResolved, true);
   });
@@ -842,18 +866,21 @@ void main() {
     await repository.recordRefill(roomProductId: roomProduct.id);
     await repository.refreshSmartAlerts(hotelId: 'hotel-seaside');
 
-    final refillCsv =
-        service.refillHistoryCsv(await repository.recentRefillEvents());
-    final orderCsv =
-        service.suggestedOrdersCsv(await repository.suggestedOrders());
+    final refillCsv = service.refillHistoryCsv(
+      await repository.recentRefillEvents(),
+    );
+    final orderCsv = service.suggestedOrdersCsv(
+      await repository.suggestedOrders(),
+    );
     final inventoryCsv = service.inventoryCsv(await repository.inventory());
     final alertCsv = service.alertsCsv(await repository.alerts());
     final refillPdf = await service.refillHistoryPdf(
       await repository.recentRefillEvents(),
       languageCode: 'fr',
     );
-    final orderPdf =
-        await service.suggestedOrdersPdf(await repository.suggestedOrders());
+    final orderPdf = await service.suggestedOrdersPdf(
+      await repository.suggestedOrders(),
+    );
     final frenchOrderPdf = await service.suggestedOrdersPdf(
       await repository.suggestedOrders(),
       languageCode: 'fr',
@@ -884,70 +911,102 @@ void main() {
     expect(alertsPdf.length, greaterThan(100));
   });
 
-  test('percentage-based refill and undo restore volumes on MockIvraRepository', () async {
-    final repository = MockIvraRepository();
-    
-    // Find the in-memory inventory for shampoo
-    final initialInvList = await repository.inventory(hotelId: 'hotel-seaside');
-    final beforeShampoo = initialInvList.firstWhere((item) => item.product.id == 'prod-shampoo');
-    
-    // Check initial values
-    expect(beforeShampoo.openBidonVolumeLeftMl, 2500.0);
-    expect(beforeShampoo.fullBidons, 3);
-    expect(beforeShampoo.openBidons, 1);
-    expect(beforeShampoo.emptyBidons, 5);
+  test(
+    'percentage-based refill and undo restore volumes on MockIvraRepository',
+    () async {
+      final repository = MockIvraRepository();
 
-    // Record a 50% refill
-    // rp-101-shampoo is 'prod-shampoo' (bottle volume 1000ml)
-    // 50% refill = 500ml added, which should deduct 500ml from the open bidon (leaving 2000.0ml left)
-    await repository.recordRefill(
-      roomProductId: 'rp-101-shampoo',
-      notes: '[Refill: 50%]',
-    );
+      // Find the in-memory inventory for shampoo
+      final initialInvList = await repository.inventory(
+        hotelId: 'hotel-seaside',
+      );
+      final beforeShampoo = initialInvList.firstWhere(
+        (item) => item.product.id == 'prod-shampoo',
+      );
 
-    final afterRefill1 = (await repository.inventory(hotelId: 'hotel-seaside'))
-        .firstWhere((item) => item.product.id == 'prod-shampoo');
-    expect(afterRefill1.openBidonVolumeLeftMl, 2000.0);
-    expect(afterRefill1.fullBidons, 3);
-    expect(afterRefill1.openBidons, 1);
-    expect(afterRefill1.emptyBidons, 5);
+      // Check initial values
+      expect(beforeShampoo.openBidonVolumeLeftMl, 2500.0);
+      expect(beforeShampoo.fullBidons, 3);
+      expect(beforeShampoo.openBidons, 1);
+      expect(beforeShampoo.emptyBidons, 5);
 
-    // Record three 100% refills to trigger bidon replacement
-    await repository.recordRefill(roomProductId: 'rp-101-shampoo', notes: '[Refill: 100%]'); // leaves 1000ml
-    await repository.recordRefill(roomProductId: 'rp-101-shampoo', notes: '[Refill: 100%]'); // leaves 0ml, triggers new bidon, starts at 5000ml
-    await repository.recordRefill(roomProductId: 'rp-101-shampoo', notes: '[Refill: 100%]'); // leaves 4000ml
+      // Record a 50% refill
+      // rp-101-shampoo is 'prod-shampoo' (bottle volume 1000ml)
+      // 50% refill = 500ml added, which should deduct 500ml from the open bidon (leaving 2000.0ml left)
+      await repository.recordRefill(
+        roomProductId: 'rp-101-shampoo',
+        notes: '[Refill: 50%]',
+      );
 
-    final afterRefill2 = (await repository.inventory(hotelId: 'hotel-seaside'))
-        .firstWhere((item) => item.product.id == 'prod-shampoo');
-    expect(afterRefill2.openBidonVolumeLeftMl, 4000.0);
-    expect(afterRefill2.fullBidons, 2);
-    expect(afterRefill2.openBidons, 1);
-    expect(afterRefill2.emptyBidons, 6);
+      final afterRefill1 = (await repository.inventory(
+        hotelId: 'hotel-seaside',
+      ))
+          .firstWhere((item) => item.product.id == 'prod-shampoo');
+      expect(afterRefill1.openBidonVolumeLeftMl, 2000.0);
+      expect(afterRefill1.fullBidons, 3);
+      expect(afterRefill1.openBidons, 1);
+      expect(afterRefill1.emptyBidons, 5);
 
-    // Undo the last refill
-    final recentEvents = await repository.recentRefillEvents();
-    final lastRefillEvent = recentEvents.firstWhere((event) => event.roomProductId == 'rp-101-shampoo' && event.type == RefillEventType.refill);
-    
-    await repository.undoRefill(refillEventId: lastRefillEvent.id);
+      // Record three 100% refills to trigger bidon replacement
+      await repository.recordRefill(
+        roomProductId: 'rp-101-shampoo',
+        notes: '[Refill: 100%]',
+      ); // leaves 1000ml
+      await repository.recordRefill(
+        roomProductId: 'rp-101-shampoo',
+        notes: '[Refill: 100%]',
+      ); // leaves 0ml, triggers new bidon, starts at 5000ml
+      await repository.recordRefill(
+        roomProductId: 'rp-101-shampoo',
+        notes: '[Refill: 100%]',
+      ); // leaves 4000ml
 
-    final afterUndo = (await repository.inventory(hotelId: 'hotel-seaside'))
-        .firstWhere((item) => item.product.id == 'prod-shampoo');
-    expect(afterUndo.openBidonVolumeLeftMl, 5000.0);
-    expect(afterUndo.fullBidons, 2);
-    expect(afterUndo.openBidons, 1);
-    expect(afterUndo.emptyBidons, 6);
+      final afterRefill2 = (await repository.inventory(
+        hotelId: 'hotel-seaside',
+      ))
+          .firstWhere((item) => item.product.id == 'prod-shampoo');
+      expect(afterRefill2.openBidonVolumeLeftMl, 4000.0);
+      expect(afterRefill2.fullBidons, 2);
+      expect(afterRefill2.openBidons, 1);
+      expect(afterRefill2.emptyBidons, 6);
 
-    // Undo the refill before that (which caused a new bidon to open)
-    final updatedEvents = await repository.recentRefillEvents();
-    final prevRefillEvent = updatedEvents.firstWhere((event) => event.roomProductId == 'rp-101-shampoo' && event.type == RefillEventType.refill);
+      // Undo the last refill
+      final recentEvents = await repository.recentRefillEvents();
+      final lastRefillEvent = recentEvents.firstWhere(
+        (event) =>
+            event.roomProductId == 'rp-101-shampoo' &&
+            event.type == RefillEventType.refill,
+      );
 
-    await repository.undoRefill(refillEventId: prevRefillEvent.id);
+      await repository.undoRefill(refillEventId: lastRefillEvent.id);
 
-    final afterBoundaryUndo = (await repository.inventory(hotelId: 'hotel-seaside'))
-        .firstWhere((item) => item.product.id == 'prod-shampoo');
-    expect(afterBoundaryUndo.openBidonVolumeLeftMl, 1000.0);
-    expect(afterBoundaryUndo.fullBidons, 3);
-    expect(afterBoundaryUndo.openBidons, 1);
-    expect(afterBoundaryUndo.emptyBidons, 5);
-  });
+      final afterUndo = (await repository.inventory(
+        hotelId: 'hotel-seaside',
+      ))
+          .firstWhere((item) => item.product.id == 'prod-shampoo');
+      expect(afterUndo.openBidonVolumeLeftMl, 5000.0);
+      expect(afterUndo.fullBidons, 2);
+      expect(afterUndo.openBidons, 1);
+      expect(afterUndo.emptyBidons, 6);
+
+      // Undo the refill before that (which caused a new bidon to open)
+      final updatedEvents = await repository.recentRefillEvents();
+      final prevRefillEvent = updatedEvents.firstWhere(
+        (event) =>
+            event.roomProductId == 'rp-101-shampoo' &&
+            event.type == RefillEventType.refill,
+      );
+
+      await repository.undoRefill(refillEventId: prevRefillEvent.id);
+
+      final afterBoundaryUndo = (await repository.inventory(
+        hotelId: 'hotel-seaside',
+      ))
+          .firstWhere((item) => item.product.id == 'prod-shampoo');
+      expect(afterBoundaryUndo.openBidonVolumeLeftMl, 1000.0);
+      expect(afterBoundaryUndo.fullBidons, 3);
+      expect(afterBoundaryUndo.openBidons, 1);
+      expect(afterBoundaryUndo.emptyBidons, 5);
+    },
+  );
 }

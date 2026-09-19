@@ -39,9 +39,9 @@ class GlassCard extends StatelessWidget {
     final finalShadows = boxShadow ??
         [
           BoxShadow(
-            color: const Color(0xFF92400E).withValues(
-              alpha: isMobile ? 0.12 : 0.08,
-            ),
+            color: const Color(
+              0xFF92400E,
+            ).withValues(alpha: isMobile ? 0.12 : 0.08),
             blurRadius: isMobile ? 20.0 : 12.0,
             offset: Offset(0, isMobile ? 10 : 4),
           ),
@@ -62,10 +62,7 @@ class GlassCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: finalColor,
               borderRadius: BorderRadius.circular(borderRadius),
-              border: Border.all(
-                color: finalBorderColor,
-                width: borderWidth,
-              ),
+              border: Border.all(color: finalBorderColor, width: borderWidth),
             ),
             child: child,
           ),

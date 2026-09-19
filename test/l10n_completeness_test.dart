@@ -16,9 +16,7 @@ void main() {
   Set<String> nonMetadataKeys(String fileName) {
     final raw = File('$l10nDir/$fileName').readAsStringSync();
     final map = jsonDecode(raw) as Map<String, dynamic>;
-    return map.keys
-        .where((key) => !key.startsWith('@'))
-        .toSet();
+    return map.keys.where((key) => !key.startsWith('@')).toSet();
   }
 
   test('translation ARB files are a superset of the English source keys', () {

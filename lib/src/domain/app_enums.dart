@@ -1,3 +1,6 @@
+/// A enum representing UserRole.
+///
+/// Provides data structure and operations for UserRole.
 enum UserRole {
   appAdmin('app_admin'),
   appManager('app_manager'),
@@ -40,6 +43,9 @@ enum ApprovalStatus {
   final String value;
 }
 
+/// A enum representing BottleStatus.
+///
+/// Provides data structure and operations for BottleStatus.
 enum BottleStatus {
   active('active'),
   needsRefill('needs_refill'),
@@ -62,6 +68,9 @@ enum BottleStatus {
   }
 }
 
+/// A enum representing RefillEventType.
+///
+/// Provides data structure and operations for RefillEventType.
 enum RefillEventType {
   refill('refill'),
   undo('undo'),
@@ -74,6 +83,9 @@ enum RefillEventType {
   final String value;
 }
 
+/// A enum representing AlertType.
+///
+/// Provides data structure and operations for AlertType.
 enum AlertType {
   lowBidonStock('low_bidon_stock'),
   lowBottleStock('low_bottle_stock'),
@@ -87,6 +99,9 @@ enum AlertType {
   final String value;
 }
 
+/// A enum representing SyncActionType.
+///
+/// Provides data structure and operations for SyncActionType.
 enum SyncActionType {
   refill('refill'),
   undoRefill('undo_refill'),
@@ -99,6 +114,9 @@ enum SyncActionType {
   final String value;
 }
 
+/// A enum representing TunisianState.
+///
+/// Provides data structure and operations for TunisianState.
 enum TunisianState {
   tunis('Tunis'),
   ariana('Ariana'),
@@ -137,6 +155,9 @@ enum TunisianState {
   }
 }
 
+/// A enum representing BottleType.
+///
+/// Provides data structure and operations for BottleType.
 enum BottleType {
   withPump('with_pump'),
   withoutPump('without_pump');
@@ -152,6 +173,9 @@ enum BottleType {
   }
 }
 
+/// A enum representing RefillType.
+///
+/// Provides data structure and operations for RefillType.
 enum RefillType {
   refillable('refillable'),
   directReplacement('direct_replacement');
@@ -166,4 +190,3 @@ enum RefillType {
     );
   }
 }
-

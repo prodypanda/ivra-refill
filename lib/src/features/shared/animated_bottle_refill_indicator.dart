@@ -45,8 +45,7 @@ class AnimatedBottleRefillIndicator extends StatefulWidget {
 }
 
 class _AnimatedBottleRefillIndicatorState
-    extends State<AnimatedBottleRefillIndicator>
-    with TickerProviderStateMixin {
+    extends State<AnimatedBottleRefillIndicator> with TickerProviderStateMixin {
   late final AnimationController _waveController;
   late final AnimationController _oldLiquidController;
   late final AnimationController _newLiquidController;
@@ -78,13 +77,13 @@ class _AnimatedBottleRefillIndicatorState
     if (widget.isInteracting) {
       _newLiquidAnimation = const AlwaysStoppedAnimation<double>(0.0);
     } else {
-      _newLiquidAnimation = Tween<double>(
-        begin: 0.0,
-        end: widget.refillPercentage,
-      ).animate(CurvedAnimation(
-        parent: _newLiquidController,
-        curve: Curves.easeOutCubic,
-      ));
+      _newLiquidAnimation =
+          Tween<double>(begin: 0.0, end: widget.refillPercentage).animate(
+        CurvedAnimation(
+          parent: _newLiquidController,
+          curve: Curves.easeOutCubic,
+        ),
+      );
       if (widget.refillPercentage > 0.0) {
         _newLiquidController.forward(from: 0.0);
       }
@@ -103,10 +102,12 @@ class _AnimatedBottleRefillIndicatorState
       _oldLiquidAnimation = Tween<double>(
         begin: _oldLiquidAnimation.value,
         end: targetOld,
-      ).animate(CurvedAnimation(
-        parent: _oldLiquidController,
-        curve: Curves.easeOutCubic,
-      ));
+      ).animate(
+        CurvedAnimation(
+          parent: _oldLiquidController,
+          curve: Curves.easeOutCubic,
+        ),
+      );
       _oldLiquidController.forward(from: 0.0);
     }
 
@@ -119,13 +120,13 @@ class _AnimatedBottleRefillIndicatorState
         _newLiquidAnimation = const AlwaysStoppedAnimation<double>(0.0);
       } else {
         // On release, animate new liquid up from 0.0
-        _newLiquidAnimation = Tween<double>(
-          begin: 0.0,
-          end: widget.refillPercentage,
-        ).animate(CurvedAnimation(
-          parent: _newLiquidController,
-          curve: Curves.easeOutCubic,
-        ));
+        _newLiquidAnimation =
+            Tween<double>(begin: 0.0, end: widget.refillPercentage).animate(
+          CurvedAnimation(
+            parent: _newLiquidController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
         _newLiquidController.forward(from: 0.0);
       }
     } else if (!widget.isInteracting &&
@@ -135,10 +136,12 @@ class _AnimatedBottleRefillIndicatorState
       _newLiquidAnimation = Tween<double>(
         begin: _newLiquidAnimation.value,
         end: widget.refillPercentage,
-      ).animate(CurvedAnimation(
-        parent: _newLiquidController,
-        curve: Curves.easeOutCubic,
-      ));
+      ).animate(
+        CurvedAnimation(
+          parent: _newLiquidController,
+          curve: Curves.easeOutCubic,
+        ),
+      );
       _newLiquidController.forward(from: 0.0);
     }
   }
@@ -162,7 +165,11 @@ class _AnimatedBottleRefillIndicatorState
         (isDark ? Colors.cyanAccent.shade400 : Colors.teal.shade400);
 
     return AnimatedBuilder(
-      animation: Listenable.merge([_waveController, _oldLiquidController, _newLiquidController]),
+      animation: Listenable.merge([
+        _waveController,
+        _oldLiquidController,
+        _newLiquidController,
+      ]),
       builder: (context, child) {
         return CustomPaint(
           size: Size(widget.width, widget.height),
@@ -176,8 +183,8 @@ class _AnimatedBottleRefillIndicatorState
             baseColor: finalBaseColor,
             accentColor: finalAccentColor,
             isDark: isDark,
-            existingLabel: widget.existingLabel ?? "Existing",
-            toAddLabel: widget.toAddLabel ?? "To Add",
+            existingLabel: widget.existingLabel ?? 'Existing',
+            toAddLabel: widget.toAddLabel ?? 'To Add',
           ),
         );
       },
@@ -215,7 +222,8 @@ class _BottlePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Coordinate dimensions based on canvas size
-    final xLeft = size.width * 0.22; // Nudge in slightly to leave room for left scale ruler
+    final xLeft = size.width *
+        0.22; // Nudge in slightly to leave room for left scale ruler
     final xRight = size.width * 0.88;
     final yBottom = size.height * 0.94;
     final yTop = size.height * 0.08; // Shifted mouth up to minimize padding
@@ -227,7 +235,9 @@ class _BottlePainter extends CustomPainter {
 
     // 1. Draw a soft, premium drop shadow beneath the bottle base
     final shadowPaint = Paint()
-      ..color = isDark ? Colors.black.withOpacity(0.4) : Colors.black.withOpacity(0.12)
+      ..color = isDark
+          ? Colors.black.withValues(alpha: 0.4)
+          : Colors.black.withValues(alpha: 0.12)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8.0);
     canvas.drawOval(
       Rect.fromLTRB(xLeft - 6, yBottom - 4, xRight + 6, yBottom + 8),
@@ -239,7 +249,12 @@ class _BottlePainter extends CustomPainter {
     bottlePath.moveTo(xLeft + cornerRadius, yBottom);
     bottlePath.lineTo(xRight - cornerRadius, yBottom);
     // Draw convex (outward rounded) bottom right corner with quadraticBezierTo
-    bottlePath.quadraticBezierTo(xRight, yBottom, xRight, yBottom - cornerRadius);
+    bottlePath.quadraticBezierTo(
+      xRight,
+      yBottom,
+      xRight,
+      yBottom - cornerRadius,
+    );
     bottlePath.lineTo(xRight, yShoulder);
     bottlePath.quadraticBezierTo(xRight, yNeckBase, xNeckRight, yNeckBase);
     bottlePath.lineTo(xNeckRight, yTop);
@@ -257,8 +272,8 @@ class _BottlePainter extends CustomPainter {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: isDark
-            ? [Colors.white.withOpacity(0.08), Colors.white.withOpacity(0.02)]
-            : [Colors.black.withOpacity(0.04), Colors.black.withOpacity(0.01)],
+            ? [Colors.white.withValues(alpha: 0.08), Colors.white.withValues(alpha: 0.02)]
+            : [Colors.black.withValues(alpha: 0.04), Colors.black.withValues(alpha: 0.01)],
       ).createShader(Rect.fromLTRB(xLeft, yTop, xRight, yBottom))
       ..style = PaintingStyle.fill;
     canvas.drawPath(bottlePath, glassBgPaint);
@@ -267,16 +282,17 @@ class _BottlePainter extends CustomPainter {
     canvas.save();
     canvas.clipPath(bottlePath);
 
-    final yMaxLiquid = size.height * 0.20; // Match shoulder adjustments to maximize liquid height
+    final yMaxLiquid = size.height *
+        0.20; // Match shoulder adjustments to maximize liquid height
     final yMinLiquid = size.height * 0.92;
     final liquidSpan = yMinLiquid - yMaxLiquid;
 
     // Liquid physical ratios:
-    final double r_old = oldLiquidPercentage;
-    final double r_new = newLiquidPercentage;
+    final double rOld = oldLiquidPercentage;
+    final double rNew = newLiquidPercentage;
 
-    final double ySplit = yMinLiquid - r_old * liquidSpan;
-    final double yNewSurface = yMinLiquid - (r_old + r_new) * liquidSpan;
+    final double ySplit = yMinLiquid - rOld * liquidSpan;
+    final double yNewSurface = yMinLiquid - (rOld + rNew) * liquidSpan;
 
     // Center coordinates for falling stream calculations
     final double xCenter = (xNeckLeft + xNeckRight) / 2.0;
@@ -284,7 +300,9 @@ class _BottlePainter extends CustomPainter {
     // Calculate dynamic stream opacity for water pouring effect
     double streamOpacity = 0.0;
     if (!isInteracting && targetRefillPercentage > 0.001) {
-      final double progress = targetRefillPercentage > 0.001 ? (r_new / targetRefillPercentage) : 0.0;
+      final double progress = targetRefillPercentage > 0.001
+          ? (rNew / targetRefillPercentage)
+          : 0.0;
       if (progress > 0.0 && progress < 1.0) {
         if (progress < 0.15) {
           streamOpacity = progress / 0.15;
@@ -299,7 +317,7 @@ class _BottlePainter extends CustomPainter {
     // Calculate dynamic wave dampening factor
     double waveFactor = 0.0;
     if (!isInteracting && targetRefillPercentage > 0.001) {
-      final double progress = (r_new / targetRefillPercentage).clamp(0.0, 1.0);
+      final double progress = (rNew / targetRefillPercentage).clamp(0.0, 1.0);
       waveFactor = math.pow(1.0 - progress, 1.2).toDouble();
       if (progress >= 0.98) {
         waveFactor = 0.0;
@@ -307,7 +325,7 @@ class _BottlePainter extends CustomPainter {
     }
 
     // A. Draw newly added liquid (accentColor) at the top
-    if (r_new > 0.001) {
+    if (rNew > 0.001) {
       final addedWavePath = Path();
       final waveAmplitude = 4.5 * waveFactor;
       const waveFrequency = 0.055;
@@ -316,10 +334,14 @@ class _BottlePainter extends CustomPainter {
       for (double x = xLeft - 10; x <= xRight + 10; x += 2.0) {
         // Physical Splash Ripple Perturbation: decays exponentially from the stream impact point
         final double centerDist = (x - xCenter).abs();
-        final double ripplePerturbation = math.sin((centerDist * 0.15) - (waveValue * 8 * math.pi)) * 
-            6.0 * streamOpacity * math.exp(-centerDist * 0.04);
+        final double ripplePerturbation =
+            math.sin((centerDist * 0.15) - (waveValue * 8 * math.pi)) *
+                6.0 *
+                streamOpacity *
+                math.exp(-centerDist * 0.04);
 
-        final y = yNewSurface + ripplePerturbation +
+        final y = yNewSurface +
+            ripplePerturbation +
             waveAmplitude *
                 math.sin((x * waveFrequency) + (waveValue * 2 * math.pi));
         addedWavePath.lineTo(x, y);
@@ -333,10 +355,7 @@ class _BottlePainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            accentColor.withOpacity(0.85),
-            accentColor,
-          ],
+          colors: [accentColor.withValues(alpha: 0.85), accentColor],
         ).createShader(Rect.fromLTRB(xLeft, yNewSurface, xRight, yMinLiquid));
       canvas.drawPath(addedWavePath, paintAdded);
 
@@ -344,10 +363,14 @@ class _BottlePainter extends CustomPainter {
       final addedSurfaceWave = Path();
       for (double x = xLeft; x <= xRight; x += 2.0) {
         final double centerDist = (x - xCenter).abs();
-        final double ripplePerturbation = math.sin((centerDist * 0.15) - (waveValue * 8 * math.pi)) * 
-            6.0 * streamOpacity * math.exp(-centerDist * 0.04);
+        final double ripplePerturbation =
+            math.sin((centerDist * 0.15) - (waveValue * 8 * math.pi)) *
+                6.0 *
+                streamOpacity *
+                math.exp(-centerDist * 0.04);
 
-        final y = yNewSurface + ripplePerturbation +
+        final y = yNewSurface +
+            ripplePerturbation +
             waveAmplitude *
                 math.sin((x * waveFrequency) + (waveValue * 2 * math.pi));
         if (x == xLeft) {
@@ -357,14 +380,14 @@ class _BottlePainter extends CustomPainter {
         }
       }
       final surfaceCapPaint = Paint()
-        ..color = Colors.white.withOpacity(0.55)
+        ..color = Colors.white.withValues(alpha: 0.55)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.8;
       canvas.drawPath(addedSurfaceWave, surfaceCapPaint);
     }
 
     // B. Draw pre-existing liquid (baseColor) on top to overlay beautifully
-    if (r_old > 0.001) {
+    if (rOld > 0.001) {
       final existingWavePath = Path();
       final waveAmplitude = 3.5 * waveFactor;
       const waveFrequency = 0.045;
@@ -385,10 +408,7 @@ class _BottlePainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            baseColor.withOpacity(0.9),
-            baseColor,
-          ],
+          colors: [baseColor.withValues(alpha: 0.9), baseColor],
         ).createShader(Rect.fromLTRB(xLeft, ySplit, xRight, yMinLiquid));
       canvas.drawPath(existingWavePath, paintExisting);
 
@@ -405,7 +425,7 @@ class _BottlePainter extends CustomPainter {
         }
       }
       final existingCapPaint = Paint()
-        ..color = Colors.white.withOpacity(0.4)
+        ..color = Colors.white.withValues(alpha: 0.4)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.2;
       canvas.drawPath(existingSurfaceWave, existingCapPaint);
@@ -422,7 +442,8 @@ class _BottlePainter extends CustomPainter {
         final double tY = (y - yTop) / (yNewSurface - yTop);
         final double widthFactor = 1.0 - (0.35 * tY); // Taper down to 65% width
         final double currentWidth = streamWidth * widthFactor;
-        final double sway = math.sin((y * 0.1) - (waveValue * 4 * math.pi)) * 1.5;
+        final double sway =
+            math.sin((y * 0.1) - (waveValue * 4 * math.pi)) * 1.5;
         streamPath.lineTo(xCenter - currentWidth / 2 + sway, y);
       }
       streamPath.lineTo(xCenter + (streamWidth * 0.65) / 2, yNewSurface);
@@ -430,7 +451,8 @@ class _BottlePainter extends CustomPainter {
         final double tY = (y - yTop) / (yNewSurface - yTop);
         final double widthFactor = 1.0 - (0.35 * tY);
         final double currentWidth = streamWidth * widthFactor;
-        final double sway = math.sin((y * 0.1) - (waveValue * 4 * math.pi)) * 1.5;
+        final double sway =
+            math.sin((y * 0.1) - (waveValue * 4 * math.pi)) * 1.5;
         streamPath.lineTo(xCenter + currentWidth / 2 + sway, y);
       }
       streamPath.close();
@@ -440,21 +462,28 @@ class _BottlePainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            accentColor.withOpacity(0.95 * streamOpacity),
-            accentColor.withOpacity(0.75 * streamOpacity),
+            accentColor.withValues(alpha: 0.95 * streamOpacity),
+            accentColor.withValues(alpha: 0.75 * streamOpacity),
           ],
-        ).createShader(Rect.fromLTRB(xCenter - streamWidth, yTop, xCenter + streamWidth, yNewSurface))
+        ).createShader(
+          Rect.fromLTRB(
+            xCenter - streamWidth,
+            yTop,
+            xCenter + streamWidth,
+            yNewSurface,
+          ),
+        )
         ..style = PaintingStyle.fill;
 
       canvas.drawPath(streamPath, streamPaint);
 
       // Shimmer threads inside stream for glittering wet flowing texture
       final shimmerPaint1 = Paint()
-        ..color = Colors.white.withOpacity(0.55 * streamOpacity)
+        ..color = Colors.white.withValues(alpha: 0.55 * streamOpacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5;
       final shimmerPaint2 = Paint()
-        ..color = Colors.white.withOpacity(0.3 * streamOpacity)
+        ..color = Colors.white.withValues(alpha: 0.3 * streamOpacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 0.9;
 
@@ -462,7 +491,8 @@ class _BottlePainter extends CustomPainter {
       final shimmerPath2 = Path();
 
       for (double y = yTop; y <= yNewSurface; y += 4.0) {
-        final double sway = math.sin((y * 0.1) - (waveValue * 4 * math.pi)) * 1.5;
+        final double sway =
+            math.sin((y * 0.1) - (waveValue * 4 * math.pi)) * 1.5;
         if (y == yTop) {
           shimmerPath1.moveTo(xCenter + sway - 1.2, y);
           shimmerPath2.moveTo(xCenter + sway + 1.2, y);
@@ -477,23 +507,34 @@ class _BottlePainter extends CustomPainter {
       // D. Gravity-based Spray Splash Particles at the landing point
       if (streamOpacity > 0.05) {
         final splashPaint = Paint()
-          ..color = accentColor.withOpacity(0.65 * streamOpacity)
+          ..color = accentColor.withValues(alpha: 0.65 * streamOpacity)
           ..style = PaintingStyle.fill;
 
         for (int i = 0; i < 6; i++) {
           // Dynamic loop for particles: spreads outward, sprays upwards/outwards, pulls down by gravity
           final double t = (waveValue * 1.8 + i / 6.0) % 1.0;
-          final double angle = -math.pi / 2.0 + (i - 2.5) * (math.pi / 8.0); // spray fan
+          final double angle =
+              -math.pi / 2.0 + (i - 2.5) * (math.pi / 8.0); // spray fan
           final double speed = 25.0 + 15.0 * math.sin(i * 324.5);
           final double distance = t * speed;
 
           final double splashX = xCenter + math.cos(angle) * distance;
           // y-position includes velocity + acceleration due to gravity (0.5 * g * t^2)
-          final double splashY = yNewSurface + math.sin(angle) * distance + (0.5 * 9.8 * t * t * 30.0);
-          final double splashRadius = (1.8 + 1.2 * math.sin(i * 123.4)) * (1.0 - t);
+          final double splashY = yNewSurface +
+              math.sin(angle) * distance +
+              (0.5 * 9.8 * t * t * 30.0);
+          final double splashRadius =
+              (1.8 + 1.2 * math.sin(i * 123.4)) * (1.0 - t);
 
-          if (splashRadius > 0.1 && splashX >= xLeft && splashX <= xRight && splashY >= yNewSurface) {
-            canvas.drawCircle(Offset(splashX, splashY), splashRadius, splashPaint);
+          if (splashRadius > 0.1 &&
+              splashX >= xLeft &&
+              splashX <= xRight &&
+              splashY >= yNewSurface) {
+            canvas.drawCircle(
+              Offset(splashX, splashY),
+              splashRadius,
+              splashPaint,
+            );
           }
         }
       }
@@ -501,10 +542,10 @@ class _BottlePainter extends CustomPainter {
 
     // E. Draw Rising & Swaying Micro-Bubbles inside liquid columns
     final bubblePaint = Paint()
-      ..color = Colors.white.withOpacity(0.25)
+      ..color = Colors.white.withValues(alpha: 0.25)
       ..style = PaintingStyle.fill;
     final bubbleStrokePaint = Paint()
-      ..color = Colors.white.withOpacity(0.45)
+      ..color = Colors.white.withValues(alpha: 0.45)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8;
 
@@ -548,14 +589,14 @@ class _BottlePainter extends CustomPainter {
           TextSpan(
             text: '$label\n',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.85),
+              color: Colors.white.withValues(alpha: 0.85),
               fontSize: 9.0,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.3,
               height: 1.25,
               shadows: [
                 Shadow(
-                  color: Colors.black.withOpacity(0.4),
+                  color: Colors.black.withValues(alpha: 0.4),
                   blurRadius: 3,
                   offset: const Offset(0, 1),
                 ),
@@ -571,7 +612,7 @@ class _BottlePainter extends CustomPainter {
               height: 1.25,
               shadows: [
                 Shadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   blurRadius: 4,
                   offset: const Offset(0, 1.5),
                 ),
@@ -587,7 +628,10 @@ class _BottlePainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
 
-      textPainter.paint(canvas, Offset(x - textPainter.width / 2, y - textPainter.height / 2));
+      textPainter.paint(
+        canvas,
+        Offset(x - textPainter.width / 2, y - textPainter.height / 2),
+      );
     }
 
     // Upper region (To Add, accentColor)
@@ -597,17 +641,17 @@ class _BottlePainter extends CustomPainter {
         xCenter,
         yNewSurface + upperHeight / 2.0,
         toAddLabel,
-        "+${formatVolume(r_new * bottleVolumeMl)}",
+        '+${formatVolume(rNew * bottleVolumeMl)}',
       );
     } else if (upperHeight >= 14.0) {
       final textSpan = TextSpan(
-        text: "$toAddLabel: +${formatVolume(r_new * bottleVolumeMl)}",
+        text: '$toAddLabel: +${formatVolume(rNew * bottleVolumeMl)}',
         style: TextStyle(
           color: Colors.white,
           fontSize: 8.5,
           fontWeight: FontWeight.bold,
           shadows: [
-            Shadow(color: Colors.black.withOpacity(0.5), blurRadius: 2),
+            Shadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 2),
           ],
         ),
       );
@@ -618,7 +662,10 @@ class _BottlePainter extends CustomPainter {
       )..layout();
       textPainter.paint(
         canvas,
-        Offset(xCenter - textPainter.width / 2, yNewSurface + upperHeight / 2.0 - textPainter.height / 2),
+        Offset(
+          xCenter - textPainter.width / 2,
+          yNewSurface + upperHeight / 2.0 - textPainter.height / 2,
+        ),
       );
     }
 
@@ -629,17 +676,17 @@ class _BottlePainter extends CustomPainter {
         xCenter,
         ySplit + lowerHeight / 2.0,
         existingLabel,
-        formatVolume(r_old * bottleVolumeMl),
+        formatVolume(rOld * bottleVolumeMl),
       );
     } else if (lowerHeight >= 14.0) {
       final textSpan = TextSpan(
-        text: "$existingLabel: ${formatVolume(r_old * bottleVolumeMl)}",
+        text: '$existingLabel: ${formatVolume(rOld * bottleVolumeMl)}',
         style: TextStyle(
           color: Colors.white,
           fontSize: 8.5,
           fontWeight: FontWeight.bold,
           shadows: [
-            Shadow(color: Colors.black.withOpacity(0.5), blurRadius: 2),
+            Shadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 2),
           ],
         ),
       );
@@ -650,7 +697,10 @@ class _BottlePainter extends CustomPainter {
       )..layout();
       textPainter.paint(
         canvas,
-        Offset(xCenter - textPainter.width / 2, ySplit + lowerHeight / 2.0 - textPainter.height / 2),
+        Offset(
+          xCenter - textPainter.width / 2,
+          ySplit + lowerHeight / 2.0 - textPainter.height / 2,
+        ),
       );
     }
 
@@ -662,32 +712,34 @@ class _BottlePainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          Colors.white.withOpacity(0.40),
-          Colors.white.withOpacity(0.04),
+          Colors.white.withValues(alpha: 0.40),
+          Colors.white.withValues(alpha: 0.04),
         ],
       ).createShader(Rect.fromLTRB(xLeft + 5, yShoulder, xLeft + 11, yBottom))
       ..style = PaintingStyle.fill;
 
     final glossyPath = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-        Rect.fromLTRB(xLeft + 4, yShoulder + 12, xLeft + 9, yBottom - 16),
-        const Radius.circular(3),
-      ));
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTRB(xLeft + 4, yShoulder + 12, xLeft + 9, yBottom - 16),
+          const Radius.circular(3),
+        ),
+      );
     canvas.drawPath(glossyPath, glossyPaint);
 
     // 4. Draw outer glass container stroke with inner refraction double rim
     final strokePaint = Paint()
       ..color = isDark
-          ? Colors.white.withOpacity(0.24)
-          : Colors.black.withOpacity(0.12)
+          ? Colors.white.withValues(alpha: 0.24)
+          : Colors.black.withValues(alpha: 0.12)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.2;
     canvas.drawPath(bottlePath, strokePaint);
 
     final innerGlassPaint = Paint()
       ..color = isDark
-          ? Colors.white.withOpacity(0.12)
-          : Colors.black.withOpacity(0.06)
+          ? Colors.white.withValues(alpha: 0.12)
+          : Colors.black.withValues(alpha: 0.06)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
     canvas.drawPath(bottlePath, innerGlassPaint);
@@ -707,15 +759,17 @@ class _BottlePainter extends CustomPainter {
 
     final capStroke = Paint()
       ..color = isDark
-          ? Colors.white.withOpacity(0.25)
-          : Colors.black.withOpacity(0.12)
+          ? Colors.white.withValues(alpha: 0.25)
+          : Colors.black.withValues(alpha: 0.12)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
     canvas.drawPath(capPath, capStroke);
 
     // 5. Draw Left-side Graduated Ruler Scale and tick marks
     final scalePaint = Paint()
-      ..color = isDark ? Colors.white.withOpacity(0.35) : Colors.black.withOpacity(0.25)
+      ..color = isDark
+          ? Colors.white.withValues(alpha: 0.35)
+          : Colors.black.withValues(alpha: 0.25)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -740,7 +794,9 @@ class _BottlePainter extends CustomPainter {
             style: TextStyle(
               fontSize: 8.5,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white.withOpacity(0.55) : Colors.black.withOpacity(0.45),
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.55)
+                  : Colors.black.withValues(alpha: 0.45),
             ),
           ),
           textDirection: TextDirection.ltr,
@@ -748,7 +804,10 @@ class _BottlePainter extends CustomPainter {
 
         textPainter.paint(
           canvas,
-          Offset(xLeft - tickLength - 4 - textPainter.width, yLevel - textPainter.height / 2),
+          Offset(
+            xLeft - tickLength - 4 - textPainter.width,
+            yLevel - textPainter.height / 2,
+          ),
         );
       }
     }

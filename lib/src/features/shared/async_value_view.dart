@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../l10n/app_localizations.dart';
-import 'premium_loading.dart';
-import '../../utils/app_logger.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/features/shared/premium_loading.dart';
+import 'package:ivra_refill/src/utils/app_logger.dart';
 
 class AsyncValueView<T> extends StatelessWidget {
   const AsyncValueView({
@@ -31,22 +31,19 @@ class AsyncValueView<T> extends StatelessWidget {
             ),
           ),
       error: (error, stackTrace) {
-        AppLogger.error(error,
-            stackTrace: stackTrace, context: 'AsyncValueView Error');
-        return _AsyncErrorState(
-          message: error.toString(),
-          onRetry: onRetry,
+        AppLogger.error(
+          error,
+          stackTrace: stackTrace,
+          context: 'AsyncValueView Error',
         );
+        return _AsyncErrorState(message: error.toString(), onRetry: onRetry);
       },
     );
   }
 }
 
 class _AsyncErrorState extends StatelessWidget {
-  const _AsyncErrorState({
-    required this.message,
-    this.onRetry,
-  });
+  const _AsyncErrorState({required this.message, this.onRetry});
 
   final String message;
   final VoidCallback? onRetry;

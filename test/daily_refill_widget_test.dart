@@ -8,9 +8,7 @@ void main() {
   group('dailyRefillProgressProvider Tests', () {
     test('returns null if hotelId is not selected', () {
       final container = ProviderContainer(
-        overrides: [
-          selectedHotelIdProvider.overrideWith((ref) => null),
-        ],
+        overrides: [selectedHotelIdProvider.overrideWith((ref) => null)],
       );
       addTearDown(container.dispose);
 
@@ -121,7 +119,9 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           selectedHotelIdProvider.overrideWith((ref) => hotelId),
-          roomProductsProvider.overrideWith((ref) => [rp101, rp102, rp103, rp201]),
+          roomProductsProvider.overrideWith(
+            (ref) => [rp101, rp102, rp103, rp201],
+          ),
           refillEventsProvider.overrideWith((ref) => [ev1, ev2]),
         ],
       );

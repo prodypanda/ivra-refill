@@ -5,9 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import '../domain/models.dart';
-import '../l10n/app_localizations.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
 
+/// A class representing QrCodeLabelData.
+///
+/// Provides data structure and operations for QrCodeLabelData.
 class QrCodeLabelData {
   const QrCodeLabelData({
     required this.hotelName,
@@ -26,6 +28,9 @@ class QrCodeLabelData {
   final String url;
 }
 
+/// A class representing QrCodePdfService.
+///
+/// Provides data structure and operations for QrCodePdfService.
 class QrCodePdfService {
   Future<_PdfFonts>? _pdfFonts;
 
@@ -36,10 +41,7 @@ class QrCodePdfService {
   Future<_PdfFonts> _loadPdfFontsFromAssets() async {
     final regular = await rootBundle.load('assets/fonts/DejaVuSans.ttf');
     final bold = await rootBundle.load('assets/fonts/DejaVuSans-Bold.ttf');
-    return _PdfFonts(
-      regular: pw.Font.ttf(regular),
-      bold: pw.Font.ttf(bold),
-    );
+    return _PdfFonts(regular: pw.Font.ttf(regular), bold: pw.Font.ttf(bold));
   }
 
   /// Generates a print-ready PDF containing the grid of QR code labels.
@@ -52,9 +54,10 @@ class QrCodePdfService {
     final pdf = pw.Document();
 
     final l10n = AppLocalizations(Locale(languageCode));
-    final scanInstructions = l10n.t('qrLabelScanInstructions') ?? 'Scan with IVRA app to refill or replace';
-    final floorLabel = l10n.t('qrFloorRoom') != null ? '' : 'Floor'; // helper if custom text needed
-    final roomLabel = l10n.t('qrFloorRoom') != null ? '' : 'Room';
+    final scanInstructions = l10n.t('qrLabelScanInstructions') ??
+        'Scan with IVRA app to refill or replace';
+    final floorLabel = ''; // helper if custom text needed
+    final roomLabel = '';
 
     // Chunk labels into pages (12 labels per page max)
     final chunkedLabels = <List<QrCodeLabelData>>[];
@@ -62,7 +65,8 @@ class QrCodePdfService {
       chunkedLabels.add(labels.sublist(i, min(i + 12, labels.length)));
     }
 
-    final textDirection = languageCode == 'ar' ? pw.TextDirection.rtl : pw.TextDirection.ltr;
+    final textDirection =
+        languageCode == 'ar' ? pw.TextDirection.rtl : pw.TextDirection.ltr;
 
     for (final pageLabels in chunkedLabels) {
       pdf.addPage(
@@ -70,10 +74,7 @@ class QrCodePdfService {
           pageFormat: PdfPageFormat.a4,
           margin: const pw.EdgeInsets.all(20),
           textDirection: textDirection,
-          theme: pw.ThemeData.withFont(
-            base: fonts.regular,
-            bold: fonts.bold,
-          ),
+          theme: pw.ThemeData.withFont(base: fonts.regular, bold: fonts.bold),
           build: (context) {
             // Build a 3x4 grid for A4 paper
             final rows = <pw.Widget>[];
@@ -93,7 +94,9 @@ class QrCodePdfService {
                             color: PdfColors.grey400,
                             width: 1,
                           ),
-                          borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                          borderRadius: const pw.BorderRadius.all(
+                            pw.Radius.circular(8),
+                          ),
                         ),
                         height: 172,
                         child: pw.Column(
@@ -115,7 +118,10 @@ class QrCodePdfService {
                             pw.SizedBox(height: 2),
                             // Room/Floor details
                             pw.Text(
-                              l10n.tParams('qrFloorRoom', {'floor': label.floor, 'room': label.room}) ??
+                              l10n.tParams('qrFloorRoom', {
+                                    'floor': label.floor,
+                                    'room': label.room,
+                                  }) ??
                                   '$floorLabel ${label.floor} \u2022 $roomLabel ${label.room}',
                               style: pw.TextStyle(
                                 fontSize: 9,
@@ -224,11 +230,11 @@ class QrCodePdfService {
   }
 }
 
+/// A class representing _PdfFonts.
+///
+/// Provides data structure and operations for _PdfFonts.
 class _PdfFonts {
-  const _PdfFonts({
-    required this.regular,
-    required this.bold,
-  });
+  const _PdfFonts({required this.regular, required this.bold});
 
   final pw.Font regular;
   final pw.Font bold;

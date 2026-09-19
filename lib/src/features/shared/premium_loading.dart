@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../l10n/app_localizations.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
 
 /// A premium, fully-animated loading widget with the Ivra brand identity.
 ///
@@ -306,10 +306,12 @@ class _GradientProgressPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     canvas.save();
-    canvas.clipRRect(RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      const Radius.circular(2),
-    ));
+    canvas.clipRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        const Radius.circular(2),
+      ),
+    );
     canvas.drawRect(rect, paint);
     canvas.restore();
   }
@@ -422,8 +424,9 @@ class _SplashLoadingCard extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color:
-            theme.colorScheme.surface.withValues(alpha: isLight ? 0.78 : 0.9),
+        color: theme.colorScheme.surface.withValues(
+          alpha: isLight ? 0.78 : 0.9,
+        ),
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
           color: theme.colorScheme.outlineVariant.withValues(alpha: 0.35),

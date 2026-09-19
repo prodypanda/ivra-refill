@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../shared/async_value_view.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/premium_confirm_dialog.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/premium_confirm_dialog.dart';
 
 class AuditLogsScreen extends ConsumerStatefulWidget {
   const AuditLogsScreen({super.key});
@@ -28,9 +28,15 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
     final lower = action.toLowerCase();
     if (lower.contains('login')) return Icons.login_rounded;
     if (lower.contains('logout')) return Icons.logout_rounded;
-    if (lower.contains('create') || lower.contains('add')) return Icons.add_circle_outline_rounded;
-    if (lower.contains('update') || lower.contains('edit')) return Icons.edit_note_rounded;
-    if (lower.contains('delete') || lower.contains('clear')) return Icons.delete_outline_rounded;
+    if (lower.contains('create') || lower.contains('add')) {
+      return Icons.add_circle_outline_rounded;
+    }
+    if (lower.contains('update') || lower.contains('edit')) {
+      return Icons.edit_note_rounded;
+    }
+    if (lower.contains('delete') || lower.contains('clear')) {
+      return Icons.delete_outline_rounded;
+    }
     if (lower.contains('sync')) return Icons.sync_rounded;
     if (lower.contains('approve')) return Icons.assignment_turned_in_rounded;
     if (lower.contains('reject')) return Icons.assignment_late_rounded;
@@ -40,10 +46,24 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
   Color _getActionColor(BuildContext context, String action) {
     final lower = action.toLowerCase();
     final colorScheme = Theme.of(context).colorScheme;
-    if (lower.contains('delete') || lower.contains('clear') || lower.contains('reject')) return colorScheme.error;
-    if (lower.contains('create') || lower.contains('add') || lower.contains('approve')) return Colors.green.shade700;
-    if (lower.contains('update') || lower.contains('edit')) return colorScheme.primary;
-    if (lower.contains('login') || lower.contains('logout') || lower.contains('sync')) return colorScheme.secondary;
+    if (lower.contains('delete') ||
+        lower.contains('clear') ||
+        lower.contains('reject')) {
+      return colorScheme.error;
+    }
+    if (lower.contains('create') ||
+        lower.contains('add') ||
+        lower.contains('approve')) {
+      return Colors.green.shade700;
+    }
+    if (lower.contains('update') || lower.contains('edit')) {
+      return colorScheme.primary;
+    }
+    if (lower.contains('login') ||
+        lower.contains('logout') ||
+        lower.contains('sync')) {
+      return colorScheme.secondary;
+    }
     return colorScheme.outline;
   }
 
@@ -94,20 +114,33 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
         value: auditLogsAsync,
         builder: (logs) {
           final teamMembers = teamMembersAsync.valueOrNull ?? [];
-          final uniqueActions = logs.map((l) => l.action).toSet().toList()..sort();
-          
-          var filteredLogs = _selectedActionFilter == null 
+          final uniqueActions = logs.map((l) => l.action).toSet().toList()
+            ..sort();
+
+          var filteredLogs = _selectedActionFilter == null
               ? logs.toList()
               : logs.where((l) => l.action == _selectedActionFilter).toList();
-              
+
           filteredLogs.sort((a, b) {
             final asc = _sortAscending ? 1 : -1;
             switch (_sortColumnIndex) {
               case 0:
                 return a.createdAt.compareTo(b.createdAt) * asc;
               case 1:
-                final userA = a.userId != null ? teamMembers.where((m) => m.id == a.userId).firstOrNull?.email ?? a.userId! : 'System';
-                final userB = b.userId != null ? teamMembers.where((m) => m.id == b.userId).firstOrNull?.email ?? b.userId! : 'System';
+                final userA = a.userId != null
+                    ? teamMembers
+                            .where((m) => m.id == a.userId)
+                            .firstOrNull
+                            ?.email ??
+                        a.userId!
+                    : 'System';
+                final userB = b.userId != null
+                    ? teamMembers
+                            .where((m) => m.id == b.userId)
+                            .firstOrNull
+                            ?.email ??
+                        b.userId!
+                    : 'System';
                 return userA.compareTo(userB) * asc;
               case 2:
                 return a.action.compareTo(b.action) * asc;
@@ -121,7 +154,7 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
           });
 
           final isWide = MediaQuery.sizeOf(context).width >= 720;
-          
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -133,24 +166,35 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
                     runSpacing: 8,
                     children: [
                       FilterChip(
-                        label: Text(l10n.t('auditFilterAllActions') ?? 'All Actions'),
+                        label: Text(
+                          l10n.t('auditFilterAllActions') ?? 'All Actions',
+                        ),
                         selected: _selectedActionFilter == null,
-                        onSelected: (_) => setState(() => _selectedActionFilter = null),
+                        onSelected: (_) =>
+                            setState(() => _selectedActionFilter = null),
                       ),
-                      ...uniqueActions.map((action) => FilterChip(
-                        label: Text(action),
-                        selected: _selectedActionFilter == action,
-                        onSelected: (selected) {
-                          setState(() => _selectedActionFilter = selected ? action : null);
-                        },
-                      )),
+                      ...uniqueActions.map(
+                        (action) => FilterChip(
+                          label: Text(action),
+                          selected: _selectedActionFilter == action,
+                          onSelected: (selected) {
+                            setState(
+                              () => _selectedActionFilter =
+                                  selected ? action : null,
+                            );
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),
               if (isWide)
                 Container(
                   constraints: BoxConstraints(
-                    maxHeight: (MediaQuery.sizeOf(context).height - 260).clamp(300, 1000),
+                    maxHeight: (MediaQuery.sizeOf(context).height - 260).clamp(
+                      300,
+                      1000,
+                    ),
                   ),
                   child: Card(
                     margin: EdgeInsets.zero,
@@ -171,19 +215,40 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
                               sortColumnIndex: _sortColumnIndex,
                               sortAscending: _sortAscending,
                               columns: [
-                                DataColumn(label: Text(l10n.t('auditTimestamp')), onSort: _onSort),
-                                DataColumn(label: Text(l10n.t('auditUser')), onSort: _onSort),
-                                DataColumn(label: Text(l10n.t('auditAction')), onSort: _onSort),
-                                DataColumn(label: Text(l10n.t('auditIpAddress')), onSort: _onSort),
-                                DataColumn(label: Text(l10n.t('auditDevice')), onSort: _onSort),
+                                DataColumn(
+                                  label: Text(l10n.t('auditTimestamp')),
+                                  onSort: _onSort,
+                                ),
+                                DataColumn(
+                                  label: Text(l10n.t('auditUser')),
+                                  onSort: _onSort,
+                                ),
+                                DataColumn(
+                                  label: Text(l10n.t('auditAction')),
+                                  onSort: _onSort,
+                                ),
+                                DataColumn(
+                                  label: Text(l10n.t('auditIpAddress')),
+                                  onSort: _onSort,
+                                ),
+                                DataColumn(
+                                  label: Text(l10n.t('auditDevice')),
+                                  onSort: _onSort,
+                                ),
                               ],
                               rows: filteredLogs.map((log) {
-                                final user = log.userId != null 
-                                    ? teamMembers.where((m) => m.id == log.userId).firstOrNull 
+                                final user = log.userId != null
+                                    ? teamMembers
+                                        .where((m) => m.id == log.userId)
+                                        .firstOrNull
                                     : null;
-                                final userDisplay = user != null ? user.email : (log.userId ?? 'System');
-                                
-                                final date = DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createdAt);
+                                final userDisplay = user != null
+                                    ? user.email
+                                    : (log.userId ?? 'System');
+
+                                final date = DateFormat(
+                                  'yyyy-MM-dd HH:mm:ss',
+                                ).format(log.createdAt);
 
                                 return DataRow(
                                   cells: [
@@ -191,14 +256,30 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
                                     DataCell(Text(userDisplay)),
                                     DataCell(
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Text(log.action, style: const TextStyle(fontWeight: FontWeight.w600)),
-                                          if (log.details != null && log.details!.isNotEmpty)
+                                          Text(
+                                            log.action,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          if (log.details != null &&
+                                              log.details!.isNotEmpty)
                                             Text(
-                                              log.details!.entries.map((e) => '${e.key}: ${e.value}').join(', '),
-                                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                              log.details!.entries
+                                                  .map(
+                                                    (e) =>
+                                                        '${e.key}: ${e.value}',
+                                                  )
+                                                  .join(', '),
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey,
+                                              ),
                                             ),
                                         ],
                                       ),
@@ -230,11 +311,16 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
                   )
                 else
                   ...filteredLogs.map((log) {
-                    final user = log.userId != null 
-                        ? teamMembers.where((m) => m.id == log.userId).firstOrNull 
+                    final user = log.userId != null
+                        ? teamMembers
+                            .where((m) => m.id == log.userId)
+                            .firstOrNull
                         : null;
-                    final userDisplay = user != null ? user.email : (log.userId ?? 'System');
-                    final date = DateFormat('yyyy-MM-dd HH:mm:ss').format(log.createdAt);
+                    final userDisplay =
+                        user != null ? user.email : (log.userId ?? 'System');
+                    final date = DateFormat(
+                      'yyyy-MM-dd HH:mm:ss',
+                    ).format(log.createdAt);
 
                     return _AuditLogMobileCard(
                       date: date,
@@ -280,18 +366,13 @@ class _AuditLogMobileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       clipBehavior: Clip.antiAlias,
       child: Container(
         decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(
-              color: color,
-              width: 4,
-            ),
-          ),
+          border: Border(left: BorderSide(color: color, width: 4)),
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -314,7 +395,11 @@ class _AuditLogMobileCard extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(Icons.person_outline, size: 14, color: theme.colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.person_outline,
+                  size: 14,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
@@ -329,7 +414,11 @@ class _AuditLogMobileCard extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.access_time, size: 14, color: theme.colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.access_time,
+                  size: 14,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   date,
@@ -345,7 +434,9 @@ class _AuditLogMobileCard extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.3,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -359,7 +450,9 @@ class _AuditLogMobileCard extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: '${e.key}: ',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             TextSpan(text: '${e.value}'),
                           ],
@@ -376,11 +469,17 @@ class _AuditLogMobileCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.language, size: 13, color: theme.colorScheme.outline),
+                    Icon(
+                      Icons.language,
+                      size: 13,
+                      color: theme.colorScheme.outline,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       ipAddress,
-                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.outline,
+                      ),
                     ),
                   ],
                 ),
@@ -390,7 +489,11 @@ class _AuditLogMobileCard extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 1.0),
-                      child: Icon(Icons.devices, size: 13, color: theme.colorScheme.outline),
+                      child: Icon(
+                        Icons.devices,
+                        size: 13,
+                        color: theme.colorScheme.outline,
+                      ),
                     ),
                     const SizedBox(width: 6),
                     Expanded(

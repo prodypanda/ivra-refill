@@ -71,11 +71,10 @@ ThemeData buildIvraTheme(Brightness brightness) {
     // Soft Chips
     chipTheme: ChipThemeData(
       backgroundColor: colorScheme.surfaceContainerHighest,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      side: BorderSide(
+        color: colorScheme.outlineVariant.withValues(alpha: 0.3),
       ),
-      side:
-          BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       labelStyle: TextStyle(
         fontWeight: FontWeight.w600,
@@ -91,9 +90,7 @@ ThemeData buildIvraTheme(Brightness brightness) {
         fontWeight: FontWeight.bold,
         color: colorScheme.onSurface,
       ),
-      dataTextStyle: TextStyle(
-        color: colorScheme.onSurface,
-      ),
+      dataTextStyle: TextStyle(color: colorScheme.onSurface),
     ),
     // Transparent scaffold to allow global gradient background to show through
     scaffoldBackgroundColor: Colors.transparent,
@@ -105,8 +102,9 @@ ThemeData buildIvraTheme(Brightness brightness) {
       color: isLight
           ? Colors.white.withValues(alpha: 0.7)
           : colorScheme.surface.withValues(alpha: 0.8),
-      shadowColor: const Color(0xFF92400E)
-          .withValues(alpha: 0.08), // Amber tinted shadow
+      shadowColor: const Color(
+        0xFF92400E,
+      ).withValues(alpha: 0.08), // Amber tinted shadow
       margin: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -122,23 +120,27 @@ ThemeData buildIvraTheme(Brightness brightness) {
           : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
       floatingLabelStyle: TextStyle(color: colorScheme.primary),
-      hintStyle:
-          TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
+      hintStyle: TextStyle(
+        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+      ),
       border: OutlineInputBorder(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
-        borderSide:
-            BorderSide(color: colorScheme.outline.withValues(alpha: 0.3)),
+        borderSide: BorderSide(
+          color: colorScheme.outline.withValues(alpha: 0.3),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
         borderSide: BorderSide(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+          color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+        ),
       ),
       focusedBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(16)),
         borderSide: BorderSide(
-            color: Color(0xFFF59E0B),
-            width: 2.0), // Stitch Golden Orange focus outline!
+          color: Color(0xFFF59E0B),
+          width: 2.0,
+        ), // Stitch Golden Orange focus outline!
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     ),
@@ -150,8 +152,9 @@ ThemeData buildIvraTheme(Brightness brightness) {
         foregroundColor: Colors.white, // White text
         shape: const StadiumBorder(),
         elevation: 2,
-        shadowColor: const Color(0xFFF59E0B)
-            .withValues(alpha: 0.4), // Golden Orange glow shadow!
+        shadowColor: const Color(
+          0xFFF59E0B,
+        ).withValues(alpha: 0.4), // Golden Orange glow shadow!
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
         textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
       ),
@@ -161,7 +164,9 @@ ThemeData buildIvraTheme(Brightness brightness) {
         shape: const StadiumBorder(),
         foregroundColor: const Color(0xFF855300), // Brownish-orange primary
         side: const BorderSide(
-            color: Color(0xFFF59E0B), width: 1.5), // Golden Orange border
+          color: Color(0xFFF59E0B),
+          width: 1.5,
+        ), // Golden Orange border
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
         textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
       ),
@@ -216,9 +221,7 @@ ThemeData buildIvraTheme(Brightness brightness) {
 
     // Dialogs with fluid rounded corners
     dialogTheme: DialogThemeData(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       backgroundColor: isLight ? const Color(0xFFFFF8F5) : null,
     ),
   );

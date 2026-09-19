@@ -1,3 +1,6 @@
+/// A class representing ExportFileResult.
+///
+/// Provides data structure and operations for ExportFileResult.
 class ExportFileResult {
   const ExportFileResult({
     required this.fileName,
