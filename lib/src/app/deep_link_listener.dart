@@ -4,7 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../routing/app_router.dart';
+import 'package:ivra_refill/src/routing/app_router.dart';
 
 /// Bridges `ivra://app/...` deep links into go_router after the app is
 /// already running.
@@ -58,8 +58,10 @@ class _DeepLinkListenerState extends ConsumerState<DeepLinkListener> {
     // a flicker. The hot-state case still works because the stream will
     // continue emitting subsequent intents.
     final currentUri = router.routeInformationProvider.value.uri;
-    final current =
-        _toRouterLocation(currentUri.path, currentUri.queryParameters);
+    final current = _toRouterLocation(
+      currentUri.path,
+      currentUri.queryParameters,
+    );
     if (current == target) return;
 
     router.go(target);
@@ -71,8 +73,10 @@ class _DeepLinkListenerState extends ConsumerState<DeepLinkListener> {
   ) {
     final normalisedPath = path.isEmpty ? '/' : path;
     if (queryParameters.isEmpty) return normalisedPath;
-    return Uri(path: normalisedPath, queryParameters: queryParameters)
-        .toString();
+    return Uri(
+      path: normalisedPath,
+      queryParameters: queryParameters,
+    ).toString();
   }
 
   @override

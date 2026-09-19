@@ -56,14 +56,14 @@ class CardShimmer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
+              const Row(
                 children: [
-                  const ShimmerLoading(width: 48, height: 48, borderRadius: 24),
-                  const SizedBox(width: 16),
+                  ShimmerLoading(width: 48, height: 48, borderRadius: 24),
+                  SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         ShimmerLoading(width: 120, height: 16),
                         SizedBox(height: 8),
                         ShimmerLoading(width: 80, height: 14),
@@ -94,19 +94,19 @@ class MetricCardShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return const Card(
       elevation: 0,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Row(
           children: [
-            const ShimmerLoading(width: 56, height: 56, borderRadius: 28),
-            const SizedBox(width: 20),
+            ShimmerLoading(width: 56, height: 56, borderRadius: 28),
+            SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   ShimmerLoading(width: 60, height: 28, borderRadius: 6),
                   SizedBox(height: 8),
                   ShimmerLoading(width: 100, height: 14, borderRadius: 4),

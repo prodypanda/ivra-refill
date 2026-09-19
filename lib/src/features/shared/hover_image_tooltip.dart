@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'product_image.dart';
+import 'package:ivra_refill/src/features/shared/product_image.dart';
 
 class HoverImageTooltip extends StatelessWidget {
   const HoverImageTooltip({
@@ -30,7 +30,7 @@ class HoverImageTooltip extends StatelessWidget {
             color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 15,
             spreadRadius: 5,
-          )
+          ),
         ],
       ),
       padding: EdgeInsets.zero,

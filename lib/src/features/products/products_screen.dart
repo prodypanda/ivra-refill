@@ -2,21 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-import '../../ui/ivra_icons.dart';
+import 'package:ivra_refill/src/ui/ivra_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../domain/app_enums.dart';
-import '../../domain/models.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../shared/async_value_view.dart';
-import '../shared/empty_state.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/product_image.dart';
-import '../shared/premium_snackbar.dart';
-import '../shared/premium_confirm_dialog.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/empty_state.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/product_image.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/features/shared/premium_confirm_dialog.dart';
 
 class ProductsScreen extends ConsumerWidget {
   const ProductsScreen({super.key});
@@ -170,15 +170,17 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.shadow
-                    .withValues(alpha: _isHovered ? 0.15 : 0.05),
+                color: theme.colorScheme.shadow.withValues(
+                  alpha: _isHovered ? 0.15 : 0.05,
+                ),
                 blurRadius: _isHovered ? 24 : 12,
                 offset: const Offset(0, 8),
               ),
             ],
             border: Border.all(
-              color: theme.colorScheme.primary
-                  .withValues(alpha: _isHovered ? 0.4 : 0.15),
+              color: theme.colorScheme.primary.withValues(
+                alpha: _isHovered ? 0.4 : 0.15,
+              ),
               width: 1.5,
             ),
           ),
@@ -226,7 +228,9 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                           // SKU Badge
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.black.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(12),
@@ -248,7 +252,9 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                           // Bottle Type Badge
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.primaryContainer,
                               borderRadius: BorderRadius.circular(12),
@@ -257,7 +263,8 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                  widget.product.bottleType == BottleType.withPump
+                                  widget.product.bottleType ==
+                                          BottleType.withPump
                                       ? IvraIcons.fullBottleWithPump
                                       : IvraIcons.fullBottleWithoutPump,
                                   size: 14,
@@ -265,9 +272,12 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  widget.product.bottleType == BottleType.withPump
+                                  widget.product.bottleType ==
+                                          BottleType.withPump
                                       ? l10n.t('productsLabelBottleWithPump')
-                                      : l10n.t('productsLabelBottleWithoutPump'),
+                                      : l10n.t(
+                                          'productsLabelBottleWithoutPump',
+                                        ),
                                   style: TextStyle(
                                     color: theme.colorScheme.onPrimaryContainer,
                                     fontSize: 10,
@@ -280,7 +290,9 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                           // Refillable Badge
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: widget.product.isRefillable
                                   ? theme.colorScheme.secondaryContainer
@@ -336,23 +348,27 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _RuleRow(
-                        IvraIcons.bottleVolume,
-                        l10n.t('productsLabelBottleVolume'),
-                        '${widget.product.bottleVolumeMl} ml'),
+                      IvraIcons.bottleVolume,
+                      l10n.t('productsLabelBottleVolume'),
+                      '${widget.product.bottleVolumeMl} ml',
+                    ),
                     if (widget.product.isRefillable) ...[
                       _RuleRow(
-                          IvraIcons.refillBottleVolume,
-                          l10n.t('productsLabelBidonVolume'),
-                          '${widget.product.bidonVolumeMl} ml'),
+                        IvraIcons.refillBottleVolume,
+                        l10n.t('productsLabelBidonVolume'),
+                        '${widget.product.bidonVolumeMl} ml',
+                      ),
                       _RuleRow(
-                          Icons.loop_outlined,
-                          l10n.t('productsLabelMaxRefill'),
-                          '${widget.product.maxRefillCount} ${l10n.t('refills')}'),
+                        Icons.loop_outlined,
+                        l10n.t('productsLabelMaxRefill'),
+                        '${widget.product.maxRefillCount} ${l10n.t('refills')}',
+                      ),
                     ],
                     _RuleRow(
-                        Icons.calendar_today_outlined,
-                        l10n.t('productsLabelMaxAge'),
-                        '${widget.product.maxBottleAgeDays} ${l10n.t('days')}'),
+                      Icons.calendar_today_outlined,
+                      l10n.t('productsLabelMaxAge'),
+                      '${widget.product.maxBottleAgeDays} ${l10n.t('days')}',
+                    ),
                     _RuleRow(
                       Icons.warning_amber_outlined,
                       l10n.t('productsLabelLowStock'),
@@ -381,8 +397,9 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                             icon: const Icon(Icons.edit_outlined, size: 18),
                             label: Text(
                               l10n.t('productsBtnEdit'),
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             onPressed: () => showModalBottomSheet<void>(
                               context: context,
@@ -401,8 +418,10 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                           const SizedBox(width: 8),
                           IconButton(
                             tooltip: l10n.t('delete'),
-                            icon: Icon(Icons.delete_outline,
-                                color: theme.colorScheme.error),
+                            icon: Icon(
+                              Icons.delete_outline,
+                              color: theme.colorScheme.error,
+                            ),
                             onPressed: () => _confirmDelete(context, ref),
                           ),
                         ],
@@ -425,8 +444,9 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
     final confirmed = await PremiumConfirmDialog.show(
       context,
       title: l10n.t('delete'),
-      message:
-          l10n.tParams('confirmDeleteProduct', {'productName': productName}),
+      message: l10n.tParams('confirmDeleteProduct', {
+        'productName': productName,
+      }),
     );
 
     if (confirmed && context.mounted) {
@@ -463,21 +483,21 @@ class _RuleRow extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 2),
-            child: Icon(icon,
-                size: 20,
-                color: Theme.of(context)
-                    .colorScheme
-                    .primary
-                    .withValues(alpha: 0.8)),
+            child: Icon(
+              icon,
+              size: 20,
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.8),
+            ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               label,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Colors.grey.shade600),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
             ),
           ),
           const SizedBox(width: 8),
@@ -486,10 +506,9 @@ class _RuleRow extends StatelessWidget {
               alignment: AlignmentDirectional.centerEnd,
               child: Text(
                 value,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
                 textAlign: TextAlign.end,
               ),
             ),
@@ -628,8 +647,9 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
       if (mounted) {
         PremiumSnackbar.show(
           context,
-          l10n.tParams('productsImageTooLarge',
-              {'max': '${_maxImageBytes ~/ (1024 * 1024)}'}),
+          l10n.tParams('productsImageTooLarge', {
+            'max': '${_maxImageBytes ~/ (1024 * 1024)}',
+          }),
           icon: Icons.error_outline,
           isError: true,
         );
@@ -720,9 +740,9 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
               _isEditing
                   ? l10n.t('productsBtnEdit')
                   : l10n.t('productsBtnCreate'),
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Flexible(
@@ -733,7 +753,9 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _RequiredTextField(
-                          controller: _sku, label: l10n.t('productsLabelSku')),
+                        controller: _sku,
+                        label: l10n.t('productsLabelSku'),
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -778,8 +800,10 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                             child: Text(
                               _hasImage
                                   ? (_selectedImage != null
-                                      ? l10n.tParams('productsImageSelected',
-                                          {'name': _selectedImage!.name})
+                                      ? l10n.tParams(
+                                          'productsImageSelected',
+                                          {'name': _selectedImage!.name},
+                                        )
                                       : l10n.t('productsImageSet'))
                                   : l10n.t('productsImageNone'),
                               style: Theme.of(context)
@@ -788,9 +812,9 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                                   ?.copyWith(
                                     color: _hasImage
                                         ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant,
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                   ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -800,8 +824,10 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                           if (_hasImage)
                             IconButton(
                               tooltip: l10n.t('productsImageRemove'),
-                              icon: Icon(Icons.close,
-                                  color: Theme.of(context).colorScheme.error),
+                              icon: Icon(
+                                Icons.close,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
                               onPressed: _isSaving ? null : _clearImage,
                             ),
                           OutlinedButton.icon(
@@ -823,9 +849,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 8),
                                 SizedBox(
@@ -834,13 +858,17 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                                     segments: [
                                       ButtonSegment<BottleType>(
                                         value: BottleType.withPump,
-                                        label: Text(l10n
-                                            .t('productsLabelBottleWithPump')),
+                                        label: Text(
+                                          l10n.t('productsLabelBottleWithPump'),
+                                        ),
                                       ),
                                       ButtonSegment<BottleType>(
                                         value: BottleType.withoutPump,
-                                        label: Text(l10n.t(
-                                            'productsLabelBottleWithoutPump')),
+                                        label: Text(
+                                          l10n.t(
+                                            'productsLabelBottleWithoutPump',
+                                          ),
+                                        ),
                                       ),
                                     ],
                                     selected: {_selectedBottleType},
@@ -869,9 +897,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 8),
                                 SizedBox(
@@ -881,12 +907,16 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                                       ButtonSegment<RefillType>(
                                         value: RefillType.refillable,
                                         label: Text(
-                                            l10n.t('productsLabelRefillable')),
+                                          l10n.t('productsLabelRefillable'),
+                                        ),
                                       ),
                                       ButtonSegment<RefillType>(
                                         value: RefillType.directReplacement,
-                                        label: Text(l10n.t(
-                                            'productsLabelDirectReplacement')),
+                                        label: Text(
+                                          l10n.t(
+                                            'productsLabelDirectReplacement',
+                                          ),
+                                        ),
                                       ),
                                     ],
                                     selected: {_selectedRefillType},
@@ -955,9 +985,11 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
                 FilledButton.icon(
                   onPressed: _isSaving ? null : _save,
                   icon: Icon(
-                      _isEditing ? Icons.save_outlined : Icons.add_outlined),
+                    _isEditing ? Icons.save_outlined : Icons.add_outlined,
+                  ),
                   label: Text(
-                      _isEditing ? l10n.t('btnSave') : l10n.t('btnCreate')),
+                    _isEditing ? l10n.t('btnSave') : l10n.t('btnCreate'),
+                  ),
                 ),
               ],
             ),
@@ -994,8 +1026,11 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
           try {
             await Supabase.instance.client.storage
                 .from('products')
-                .uploadBinary(fileName, bytes,
-                    fileOptions: const FileOptions(upsert: true));
+                .uploadBinary(
+                  fileName,
+                  bytes,
+                  fileOptions: const FileOptions(upsert: true),
+                );
             // Only build a public URL once the upload actually succeeded.
             finalImageUrl = Supabase.instance.client.storage
                 .from('products')
@@ -1095,10 +1130,7 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
 }
 
 class _RequiredTextField extends StatelessWidget {
-  const _RequiredTextField({
-    required this.controller,
-    required this.label,
-  });
+  const _RequiredTextField({required this.controller, required this.label});
 
   final TextEditingController controller;
   final String label;
@@ -1120,10 +1152,7 @@ class _RequiredTextField extends StatelessWidget {
 }
 
 class _PositiveIntField extends StatelessWidget {
-  const _PositiveIntField({
-    required this.controller,
-    required this.label,
-  });
+  const _PositiveIntField({required this.controller, required this.label});
 
   final TextEditingController controller;
   final String label;

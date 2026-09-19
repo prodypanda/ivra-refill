@@ -18,7 +18,9 @@ void main() {
   SharedPreferences.setMockInitialValues({'express_qr_enabled': true});
 
   group('QR Code Scanning Tests', () {
-    testWidgets('Clicking room QR button and scanning room code filters list', (tester) async {
+    testWidgets('Clicking room QR button and scanning room code filters list', (
+      tester,
+    ) async {
       await _pumpIvraApp(
         tester,
         size: const Size(1280, 900),
@@ -55,7 +57,7 @@ void main() {
       );
       expect(room205Chip, findsOneWidget);
       await tester.tap(room205Chip, warnIfMissed: false);
-      
+
       // Since tapping pops the dialog, the infinite animation is removed from the tree.
       // Now we can safely call pumpAndSettle.
       await tester.pumpAndSettle();
@@ -66,196 +68,227 @@ void main() {
       expect(find.text('Room 101'), findsNothing);
     });
 
-    testWidgets('Clicking card-level QR button and scanning product SKU shows choice dialog', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        size: const Size(1280, 900),
-        currentUser: _userForRole(UserRole.hotelManager),
-      );
+    testWidgets(
+      'Clicking card-level QR button and scanning product SKU shows choice dialog',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          size: const Size(1280, 900),
+          currentUser: _userForRole(UserRole.hotelManager),
+        );
 
-      // Navigate to Rooms Screen
-      final context = tester.element(find.text('Dashboard').first);
-      GoRouter.of(context).go(RoomsScreen.route);
-      await tester.pumpAndSettle();
+        // Navigate to Rooms Screen
+        final context = tester.element(find.text('Dashboard').first);
+        GoRouter.of(context).go(RoomsScreen.route);
+        await tester.pumpAndSettle();
 
-      // Switch to detailed view
-      await tester.tap(find.text('Detailed View'));
-      await tester.pumpAndSettle();
+        // Switch to detailed view
+        await tester.tap(find.text('Detailed View'));
+        await tester.pumpAndSettle();
 
-      // Expand all floors
-      await tester.tap(find.text('Expand all'));
-      await tester.pumpAndSettle();
+        // Expand all floors
+        await tester.tap(find.text('Expand all'));
+        await tester.pumpAndSettle();
 
-      // Find the card-level QR scan button (tooltip 'Scan QR Code')
-      // The first two 'Scan QR Code' tooltips are for room and product search fields.
-      // Subsequent ones are room cards. Let's tap the third one (index 2).
-      final scanButtons = find.byTooltip('Scan QR Code');
-      expect(scanButtons, findsAtLeastNWidgets(3));
-      
-      // Tap card scan button (index 2)
-      await tester.tap(scanButtons.at(2));
-      for (int i = 0; i < 10; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
+        // Find the card-level QR scan button (tooltip 'Scan QR Code')
+        // The first two 'Scan QR Code' tooltips are for room and product search fields.
+        // Subsequent ones are room cards. Let's tap the third one (index 2).
+        final scanButtons = find.byTooltip('Scan QR Code');
+        expect(scanButtons, findsAtLeastNWidgets(3));
 
-      // Dialog should be open
-      expect(find.byType(PremiumQrScannerDialog), findsOneWidget);
+        // Tap card scan button (index 2)
+        await tester.tap(scanButtons.at(2));
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
 
-      // Find the product SKU chip. In the dialog, the chip label is "PRODUCT:IVR-SHA-1L"
-      final productChip = find.text('PRODUCT:IVR-SHA-1L');
-      expect(productChip, findsOneWidget);
-      await tester.tap(productChip, warnIfMissed: false);
-      
-      // Dialog pops, so safe to pumpAndSettle
-      await tester.pumpAndSettle();
+        // Dialog should be open
+        expect(find.byType(PremiumQrScannerDialog), findsOneWidget);
 
-      // Viewfinder dialog should close, and action selection prompt should show up
-      expect(find.byType(PremiumQrScannerDialog), findsNothing);
-      expect(find.text('Select Action'), findsOneWidget);
-      expect(find.text('Refill Bottle'), findsOneWidget);
-      expect(find.text('Replace Bottle'), findsOneWidget);
+        // Find the product SKU chip. In the dialog, the chip label is "PRODUCT:IVR-SHA-1L"
+        final productChip = find.text('PRODUCT:IVR-SHA-1L');
+        expect(productChip, findsOneWidget);
+        await tester.tap(productChip, warnIfMissed: false);
 
-      // Dismiss dialog
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
-    });
+        // Dialog pops, so safe to pumpAndSettle
+        await tester.pumpAndSettle();
 
-    testWidgets('Clicking inventory QR button and scanning product SKU shows adjust stock dialog', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        size: const Size(1280, 900),
-        currentUser: _userForRole(UserRole.hotelManager),
-      );
+        // Viewfinder dialog should close, and action selection prompt should show up
+        expect(find.byType(PremiumQrScannerDialog), findsNothing);
+        expect(find.text('Select Action'), findsOneWidget);
+        expect(find.text('Refill Bottle'), findsOneWidget);
+        expect(find.text('Replace Bottle'), findsOneWidget);
 
-      // Navigate to Inventory Screen
-      final context = tester.element(find.text('Dashboard').first);
-      GoRouter.of(context).go(InventoryScreen.route);
-      await tester.pumpAndSettle();
+        // Dismiss dialog
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
+      },
+    );
 
-      // Find QR scan button next to inventory search bar
-      final inventoryScanButton = find.byTooltip('Scan QR Code').first;
-      expect(inventoryScanButton, findsOneWidget);
+    testWidgets(
+      'Clicking inventory QR button and scanning product SKU shows adjust stock dialog',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          size: const Size(1280, 900),
+          currentUser: _userForRole(UserRole.hotelManager),
+        );
 
-      // Tap inventory QR scan button
-      await tester.tap(inventoryScanButton);
-      for (int i = 0; i < 10; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
+        // Navigate to Inventory Screen
+        final context = tester.element(find.text('Dashboard').first);
+        GoRouter.of(context).go(InventoryScreen.route);
+        await tester.pumpAndSettle();
 
-      // Viewfinder dialog should be open
-      expect(find.byType(PremiumQrScannerDialog), findsOneWidget);
+        // Find QR scan button next to inventory search bar
+        final inventoryScanButton = find.byTooltip('Scan QR Code').first;
+        expect(inventoryScanButton, findsOneWidget);
 
-      // Find the product SKU chip. In the dialog, the chip label is "PRODUCT:IVR-SHA-1L"
-      final productChip = find.text('PRODUCT:IVR-SHA-1L');
-      expect(productChip, findsOneWidget);
-      await tester.tap(productChip, warnIfMissed: false);
-      
-      // Dialog pops, safe to pumpAndSettle
-      await tester.pumpAndSettle();
+        // Tap inventory QR scan button
+        await tester.tap(inventoryScanButton);
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
 
-      // Viewfinder dialog should close, and stock adjustment dialog should display
-      expect(find.byType(PremiumQrScannerDialog), findsNothing);
-      expect(find.text('Adjust stock'), findsNWidgets(2));
+        // Viewfinder dialog should be open
+        expect(find.byType(PremiumQrScannerDialog), findsOneWidget);
 
-      // Dismiss dialog
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
-    });
+        // Find the product SKU chip. In the dialog, the chip label is "PRODUCT:IVR-SHA-1L"
+        final productChip = find.text('PRODUCT:IVR-SHA-1L');
+        expect(productChip, findsOneWidget);
+        await tester.tap(productChip, warnIfMissed: false);
 
-    testWidgets('Navigating to /rooms?scan=true auto-starts the QR scanner dialog and clears the URL param on dismiss', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        size: const Size(1280, 900),
-        currentUser: _userForRole(UserRole.hotelManager),
-      );
+        // Dialog pops, safe to pumpAndSettle
+        await tester.pumpAndSettle();
 
-      // Navigate directly with deep link query parameter
-      final context = tester.element(find.text('Dashboard').first);
-      GoRouter.of(context).go('/rooms?scan=true');
-      await tester.pump(); // Start navigation/build
-      
-      // Let the page load, run postFrameCallbacks, and show dialog
-      for (int i = 0; i < 15; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
+        // Viewfinder dialog should close, and stock adjustment dialog should display
+        expect(find.byType(PremiumQrScannerDialog), findsNothing);
+        expect(find.text('Adjust stock'), findsNWidgets(2));
 
-      // Scanner dialog should be automatically open
-      expect(find.byType(PremiumQrScannerDialog), findsOneWidget);
+        // Dismiss dialog
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
+      },
+    );
 
-      // Find room 205 demo chip and tap it
-      final room205Chip = find.descendant(
-        of: find.byType(PremiumQrScannerDialog),
-        matching: find.text('205'),
-      );
-      expect(room205Chip, findsOneWidget);
-      await tester.tap(room205Chip, warnIfMissed: false);
+    testWidgets(
+      'Navigating to /rooms?scan=true auto-starts the QR scanner dialog and clears the URL param on dismiss',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          size: const Size(1280, 900),
+          currentUser: _userForRole(UserRole.hotelManager),
+        );
 
-      // Pump to settle transitions and verify URL clean up
-      await tester.pumpAndSettle();
+        // Navigate directly with deep link query parameter
+        final context = tester.element(find.text('Dashboard').first);
+        GoRouter.of(context).go('/rooms?scan=true');
+        await tester.pump(); // Start navigation/build
 
-      // Scanner should be closed
-      expect(find.byType(PremiumQrScannerDialog), findsNothing);
+        // Let the page load, run postFrameCallbacks, and show dialog
+        for (int i = 0; i < 15; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
 
-      // Switch to detailed view
-      await tester.tap(find.text('Detailed View'));
-      await tester.pumpAndSettle();
+        // Scanner dialog should be automatically open
+        expect(find.byType(PremiumQrScannerDialog), findsOneWidget);
 
-      // Results should be filtered to Room 205
-      expect(find.text('Room 205'), findsOneWidget);
+        // Find room 205 demo chip and tap it
+        final room205Chip = find.descendant(
+          of: find.byType(PremiumQrScannerDialog),
+          matching: find.text('205'),
+        );
+        expect(room205Chip, findsOneWidget);
+        await tester.tap(room205Chip, warnIfMissed: false);
 
-      // The router URL should be cleaned up to "/rooms" without query parameter
-      final roomsContext = tester.element(find.byType(RoomsScreen));
-      final currentUri = GoRouter.of(roomsContext).routeInformationProvider.value.uri;
-      expect(currentUri.queryParameters['scan'], isNull);
-    });
-    testWidgets('Staff cannot see QR button and is redirected from /qr when Express QR is disabled', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        size: const Size(1280, 900),
-        currentUser: _userForRole(UserRole.hotelStaff),
-      );
+        // Pump to settle transitions and verify URL clean up
+        await tester.pumpAndSettle();
 
-      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
-      final repo = container.read(repositoryProvider) as MockIvraRepository;
-      await repo.updateHotelExpressQrEnabled(hotelId: 'hotel-seaside', enabled: false);
-      container.invalidate(hotelsProvider);
-      await tester.pumpAndSettle();
+        // Scanner should be closed
+        expect(find.byType(PremiumQrScannerDialog), findsNothing);
 
-      // Verify that the QR button is NOT displayed
-      expect(find.byIcon(Icons.qr_code_scanner_rounded), findsNothing);
+        // Switch to detailed view
+        await tester.tap(find.text('Detailed View'));
+        await tester.pumpAndSettle();
 
-      // Verify that navigating to /qr redirects back to /rooms
-      container.read(routerProvider).go('/qr');
-      await tester.pumpAndSettle();
+        // Results should be filtered to Room 205
+        expect(find.text('Room 205'), findsOneWidget);
 
-      final roomsContext = tester.element(find.byType(RoomsScreen));
-      final currentUri = GoRouter.of(roomsContext).routeInformationProvider.value.uri;
-      expect(currentUri.path, '/rooms');
-    });
-    testWidgets('Housekeeper cannot see QR button and is redirected from /qr when Express QR is disabled', (tester) async {
-      await _pumpIvraApp(
-        tester,
-        size: const Size(1280, 900),
-        currentUser: _userForRole(UserRole.housekeeper),
-      );
+        // The router URL should be cleaned up to "/rooms" without query parameter
+        final roomsContext = tester.element(find.byType(RoomsScreen));
+        final currentUri = GoRouter.of(
+          roomsContext,
+        ).routeInformationProvider.value.uri;
+        expect(currentUri.queryParameters['scan'], isNull);
+      },
+    );
+    testWidgets(
+      'Staff cannot see QR button and is redirected from /qr when Express QR is disabled',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          size: const Size(1280, 900),
+          currentUser: _userForRole(UserRole.hotelStaff),
+        );
 
-      final container = ProviderScope.containerOf(tester.element(find.byType(IvraApp)));
-      final repo = container.read(repositoryProvider) as MockIvraRepository;
-      await repo.updateHotelExpressQrEnabled(hotelId: 'hotel-seaside', enabled: false);
-      container.invalidate(hotelsProvider);
-      await tester.pumpAndSettle();
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(IvraApp)),
+        );
+        final repo = container.read(repositoryProvider) as MockIvraRepository;
+        await repo.updateHotelExpressQrEnabled(
+          hotelId: 'hotel-seaside',
+          enabled: false,
+        );
+        container.invalidate(hotelsProvider);
+        await tester.pumpAndSettle();
 
-      // Verify that the QR button is NOT displayed
-      expect(find.byIcon(Icons.qr_code_scanner_rounded), findsNothing);
+        // Verify that the QR button is NOT displayed
+        expect(find.byIcon(Icons.qr_code_scanner_rounded), findsNothing);
 
-      // Verify that navigating to /qr redirects back to /rooms
-      container.read(routerProvider).go('/qr');
-      await tester.pumpAndSettle();
+        // Verify that navigating to /qr redirects back to /rooms
+        container.read(routerProvider).go('/qr');
+        await tester.pumpAndSettle();
 
-      final roomsContext = tester.element(find.byType(RoomsScreen));
-      final currentUri = GoRouter.of(roomsContext).routeInformationProvider.value.uri;
-      expect(currentUri.path, '/rooms');
-    });
+        final roomsContext = tester.element(find.byType(RoomsScreen));
+        final currentUri = GoRouter.of(
+          roomsContext,
+        ).routeInformationProvider.value.uri;
+        expect(currentUri.path, '/rooms');
+      },
+    );
+    testWidgets(
+      'Housekeeper cannot see QR button and is redirected from /qr when Express QR is disabled',
+      (tester) async {
+        await _pumpIvraApp(
+          tester,
+          size: const Size(1280, 900),
+          currentUser: _userForRole(UserRole.housekeeper),
+        );
+
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(IvraApp)),
+        );
+        final repo = container.read(repositoryProvider) as MockIvraRepository;
+        await repo.updateHotelExpressQrEnabled(
+          hotelId: 'hotel-seaside',
+          enabled: false,
+        );
+        container.invalidate(hotelsProvider);
+        await tester.pumpAndSettle();
+
+        // Verify that the QR button is NOT displayed
+        expect(find.byIcon(Icons.qr_code_scanner_rounded), findsNothing);
+
+        // Verify that navigating to /qr redirects back to /rooms
+        container.read(routerProvider).go('/qr');
+        await tester.pumpAndSettle();
+
+        final roomsContext = tester.element(find.byType(RoomsScreen));
+        final currentUri = GoRouter.of(
+          roomsContext,
+        ).routeInformationProvider.value.uri;
+        expect(currentUri.path, '/rooms');
+      },
+    );
   });
 }
 

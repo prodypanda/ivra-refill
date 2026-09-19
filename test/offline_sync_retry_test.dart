@@ -46,11 +46,15 @@ void main() {
 
   group('NetworkErrorClassifier', () {
     test('transient errors are retriable, not permanent', () {
-      expect(NetworkErrorClassifier.isRetriable(const SocketException('x')),
-          isTrue);
+      expect(
+        NetworkErrorClassifier.isRetriable(const SocketException('x')),
+        isTrue,
+      );
       expect(NetworkErrorClassifier.isRetriable(TimeoutException('x')), isTrue);
-      expect(NetworkErrorClassifier.isRetriable(const HttpException('x')),
-          isTrue);
+      expect(
+        NetworkErrorClassifier.isRetriable(const HttpException('x')),
+        isTrue,
+      );
       expect(
         NetworkErrorClassifier.isRetriable(
           const PostgrestException(message: 'jwt expired', code: 'PGRST301'),
@@ -63,11 +67,15 @@ void main() {
         ),
         isTrue,
       );
-      expect(NetworkErrorClassifier.isRetriable(const AuthException('expired')),
-          isTrue);
+      expect(
+        NetworkErrorClassifier.isRetriable(const AuthException('expired')),
+        isTrue,
+      );
 
-      expect(NetworkErrorClassifier.isPermanent(const SocketException('x')),
-          isFalse);
+      expect(
+        NetworkErrorClassifier.isPermanent(const SocketException('x')),
+        isFalse,
+      );
     });
 
     test('server validation / 4xx errors are permanent', () {
@@ -81,20 +89,22 @@ void main() {
   });
 
   group('OfflineSyncService retry / dead-letter / backoff', () {
-    test('transient failure keeps the action retriable (not dead-letter)',
-        () async {
-      SharedPreferences.setMockInitialValues({});
-      final service = OfflineSyncService();
-      final repo = _ThrowingRepository(const SocketException('offline'));
+    test(
+      'transient failure keeps the action retriable (not dead-letter)',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final service = OfflineSyncService();
+        final repo = _ThrowingRepository(const SocketException('offline'));
 
-      await _enqueueRefill(service);
-      final synced = await service.syncPending(repo);
+        await _enqueueRefill(service);
+        final synced = await service.syncPending(repo);
 
-      expect(synced, 0);
-      final action = (await service.pendingActions()).single;
-      expect(action.attemptCount, 1);
-      expect(action.isDeadLetter, isFalse);
-    });
+        expect(synced, 0);
+        final action = (await service.pendingActions()).single;
+        expect(action.attemptCount, 1);
+        expect(action.isDeadLetter, isFalse);
+      },
+    );
 
     test('permanent failure goes straight to dead-letter', () async {
       SharedPreferences.setMockInitialValues({});
@@ -151,20 +161,22 @@ void main() {
       expect((await service.pendingActions()).single.id, queued.id);
     });
 
-    test('automatic sync skips actions still in their backoff window',
-        () async {
-      SharedPreferences.setMockInitialValues({});
-      final service = OfflineSyncService();
-      final repo = _ThrowingRepository(const SocketException('offline'));
+    test(
+      'automatic sync skips actions still in their backoff window',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final service = OfflineSyncService();
+        final repo = _ThrowingRepository(const SocketException('offline'));
 
-      await _enqueueRefill(service);
-      await service.syncPending(repo); // attempt 1, just failed transiently
-      expect(repo.recordRefillCalls, 1);
+        await _enqueueRefill(service);
+        await service.syncPending(repo); // attempt 1, just failed transiently
+        expect(repo.recordRefillCalls, 1);
 
-      // Immediately running again should skip it (within backoff window).
-      await service.syncPending(repo);
-      expect(repo.recordRefillCalls, 1);
-    });
+        // Immediately running again should skip it (within backoff window).
+        await service.syncPending(repo);
+        expect(repo.recordRefillCalls, 1);
+      },
+    );
 
     test('manual retry bypasses backoff window', () async {
       SharedPreferences.setMockInitialValues({});
@@ -180,45 +192,49 @@ void main() {
       expect(repo.recordRefillCalls, 2);
     });
 
-    test('manual retry resets a dead-lettered action and can succeed',
-        () async {
-      SharedPreferences.setMockInitialValues({});
-      final service = OfflineSyncService();
-      final repo = _ThrowingRepository(
-        const PostgrestException(message: 'invalid', code: '23514'),
-      );
+    test(
+      'manual retry resets a dead-lettered action and can succeed',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final service = OfflineSyncService();
+        final repo = _ThrowingRepository(
+          const PostgrestException(message: 'invalid', code: '23514'),
+        );
 
-      final queued = await _enqueueRefill(service);
-      await service.syncPending(repo);
-      expect((await service.pendingActions()).single.isDeadLetter, isTrue);
+        final queued = await _enqueueRefill(service);
+        await service.syncPending(repo);
+        expect((await service.pendingActions()).single.isDeadLetter, isTrue);
 
-      // The error is resolved server-side; manual retry resets and succeeds.
-      repo.error = null;
-      final didSync = await service.retryDeadLetterAction(repo, queued.id);
+        // The error is resolved server-side; manual retry resets and succeeds.
+        repo.error = null;
+        final didSync = await service.retryDeadLetterAction(repo, queued.id);
 
-      expect(didSync, isTrue);
-      expect(await service.pendingActions(), isEmpty);
-    });
+        expect(didSync, isTrue);
+        expect(await service.pendingActions(), isEmpty);
+      },
+    );
 
-    test('manual retry of a dead-letter that still fails resets then re-fails',
-        () async {
-      SharedPreferences.setMockInitialValues({});
-      final service = OfflineSyncService();
-      final repo = _ThrowingRepository(const SocketException('offline'));
+    test(
+      'manual retry of a dead-letter that still fails resets then re-fails',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final service = OfflineSyncService();
+        final repo = _ThrowingRepository(const SocketException('offline'));
 
-      // Force into dead-letter via repeated manual attempts.
-      final queued = await _enqueueRefill(service);
-      for (var i = 0; i < OfflineAction.maxAttempts; i++) {
-        await service.syncAction(repo, queued.id, manual: true);
-      }
-      expect((await service.pendingActions()).single.isDeadLetter, isTrue);
+        // Force into dead-letter via repeated manual attempts.
+        final queued = await _enqueueRefill(service);
+        for (var i = 0; i < OfflineAction.maxAttempts; i++) {
+          await service.syncAction(repo, queued.id, manual: true);
+        }
+        expect((await service.pendingActions()).single.isDeadLetter, isTrue);
 
-      // Manual retry resets attemptCount to 0, then fails again transiently.
-      await service.retryDeadLetterAction(repo, queued.id);
-      final action = (await service.pendingActions()).single;
-      expect(action.attemptCount, 1);
-      expect(action.isDeadLetter, isFalse);
-    });
+        // Manual retry resets attemptCount to 0, then fails again transiently.
+        await service.retryDeadLetterAction(repo, queued.id);
+        final action = (await service.pendingActions()).single;
+        expect(action.attemptCount, 1);
+        expect(action.isDeadLetter, isFalse);
+      },
+    );
   });
 
   group('OfflineAction backoff math', () {

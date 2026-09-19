@@ -10,17 +10,20 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 
-import '../app/ivra_app.dart';
-import '../state/app_state.dart';
-import '../l10n/app_localizations.dart';
-import '../utils/app_logger.dart';
+import 'package:ivra_refill/src/app/ivra_app.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/utils/app_logger.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   // Handle background tap
-  AppLogger.debug('notificationTapBackground: ${notificationResponse.actionId}');
+  AppLogger.debug(
+    'notificationTapBackground: ${notificationResponse.actionId}',
+  );
 }
 
 /// The alert/hotel identifiers extracted from a notification payload.
@@ -48,8 +51,9 @@ NotificationPayloadIds parseNotificationPayloadIds(String? payloadStr) {
 
     if (payload['data'] != null) {
       try {
-        final nestedData =
-            payload['data'] is String ? jsonDecode(payload['data']) : payload['data'];
+        final nestedData = payload['data'] is String
+            ? jsonDecode(payload['data'])
+            : payload['data'];
         if (nestedData is Map) {
           alertId ??= nestedData['alertId']?.toString();
           hotelId ??= nestedData['hotelId']?.toString();
@@ -84,11 +88,7 @@ enum NotificationActionKind {
 /// A pure description of what a notification action should do, free of any
 /// Supabase/Riverpod/UI dependencies so it can be unit-tested directly.
 class NotificationActionDecision {
-  const NotificationActionDecision(
-    this.kind, {
-    this.toastKey,
-    this.navigation,
-  });
+  const NotificationActionDecision(this.kind, {this.toastKey, this.navigation});
 
   final NotificationActionKind kind;
   final String? toastKey;
@@ -177,6 +177,9 @@ class _PendingToast {
   final bool isError;
 }
 
+/// A class representing NotificationService.
+///
+/// Provides data structure and operations for NotificationService.
 class NotificationService {
   NotificationService(this._supabase, this._ref);
 
@@ -286,12 +289,13 @@ class NotificationService {
       requestSoundPermission: false,
     );
 
-    const InitializationSettings initializationSettings = InitializationSettings(
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
       macOS: initializationSettingsDarwin,
     );
-    
+
     await flutterLocalNotificationsPlugin.initialize(
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
@@ -310,18 +314,19 @@ class NotificationService {
         importance: Importance.max,
         playSound: true,
       );
-      
-      final androidPlugin = flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-          
+
+      final androidPlugin =
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
       await androidPlugin?.createNotificationChannel(channel);
       await androidPlugin?.requestNotificationsPermission();
     }
 
     // Request local-notification permission on iOS/macOS explicitly.
     if (!kIsWeb && Platform.isIOS) {
-      final iosPlugin = flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
+      final iosPlugin =
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>();
       await iosPlugin?.requestPermissions(
         alert: true,
@@ -329,8 +334,8 @@ class NotificationService {
         sound: true,
       );
     } else if (!kIsWeb && Platform.isMacOS) {
-      final macPlugin = flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
+      final macPlugin =
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>();
       await macPlugin?.requestPermissions(
         alert: true,
@@ -343,10 +348,10 @@ class NotificationService {
       // FCM has no native implementation on desktop (Windows/Linux); skip it
       // there. iOS, macOS, Android, and web are all supported.
       if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
-         AppLogger.debug('FCM not supported on this desktop platform natively.');
-         return;
+        AppLogger.debug('FCM not supported on this desktop platform natively.');
+        return;
       }
-      
+
       _fcm = FirebaseMessaging.instance;
 
       // On Apple platforms an APNS token must be available before an FCM token
@@ -354,7 +359,7 @@ class NotificationService {
       if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
         await _fcm!.getAPNSToken();
       }
-      
+
       final settings = await _fcm!.requestPermission(
         alert: true,
         badge: true,
@@ -368,7 +373,9 @@ class NotificationService {
         await _registerToken();
         _fcm!.onTokenRefresh.listen((_) => _registerToken());
       } else {
-        AppLogger.debug('User declined or has not accepted notification permission');
+        AppLogger.debug(
+          'User declined or has not accepted notification permission',
+        );
       }
 
       // Handle foreground messages
@@ -378,12 +385,17 @@ class NotificationService {
         NotificationService.showLocalNotification(message);
       });
     } catch (e, st) {
-      AppLogger.error(e, stackTrace: st, context: 'NotificationService.initialize FCM init failure');
+      AppLogger.error(
+        e,
+        stackTrace: st,
+        context: 'NotificationService.initialize FCM init failure',
+      );
     }
 
     // Check if app was launched from a notification
     try {
-      final launchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+      final launchDetails = await flutterLocalNotificationsPlugin
+          .getNotificationAppLaunchDetails();
       if (launchDetails != null && launchDetails.didNotificationLaunchApp) {
         final response = launchDetails.notificationResponse;
         if (response != null) {
@@ -391,7 +403,11 @@ class NotificationService {
         }
       }
     } catch (e, st) {
-      AppLogger.error(e, stackTrace: st, context: 'NotificationService launch-details');
+      AppLogger.error(
+        e,
+        stackTrace: st,
+        context: 'NotificationService launch-details',
+      );
     }
 
     _drainPending();
@@ -406,7 +422,9 @@ class NotificationService {
       String? hotelId = payload['hotelId']?.toString();
       if (payload['data'] != null) {
         try {
-          final nestedData = payload['data'] is String ? jsonDecode(payload['data']) : payload['data'];
+          final nestedData = payload['data'] is String
+              ? jsonDecode(payload['data'])
+              : payload['data'];
           if (nestedData is Map) {
             alertId ??= nestedData['alertId']?.toString();
             hotelId ??= nestedData['hotelId']?.toString();
@@ -435,7 +453,8 @@ class NotificationService {
       if (actionId == 'resolve') {
         if (alertId != null && alertId.isNotEmpty) {
           _runAlertMutation(
-            action: _ref.read(repositoryProvider).resolveAlert(alertId: alertId),
+            action:
+                _ref.read(repositoryProvider).resolveAlert(alertId: alertId),
             successKey: 'alertResolvedToast',
             failureKey: 'alertResolveFailedToast',
           );
@@ -461,7 +480,11 @@ class NotificationService {
         _queueNavigation(targetPage.toString());
       }
     } catch (e, st) {
-      AppLogger.error(e, stackTrace: st, context: 'NotificationService handle action');
+      AppLogger.error(
+        e,
+        stackTrace: st,
+        context: 'NotificationService handle action',
+      );
     }
   }
 
@@ -478,7 +501,11 @@ class NotificationService {
       _ref.invalidate(alertsProvider);
       _queueToast(successKey, isError: false);
     }).catchError((Object e, StackTrace st) {
-      AppLogger.error(e, stackTrace: st, context: 'NotificationService alert mutation');
+      AppLogger.error(
+        e,
+        stackTrace: st,
+        context: 'NotificationService alert mutation',
+      );
       _queueToast(failureKey, isError: true);
     });
   }
@@ -498,31 +525,39 @@ class NotificationService {
         AppLocalizations.tStatic('notificationDefaultTitle');
     final body = data['body'] ?? message.notification?.body ?? '';
     final actionButtonsStr = data['actionButtons'];
-    
+
     List<AndroidNotificationAction> actions = [];
     if (actionButtonsStr != null && actionButtonsStr.isNotEmpty) {
       try {
         final List<dynamic> btns = jsonDecode(actionButtonsStr);
         for (var btn in btns) {
           if (btn is Map) {
-            actions.add(AndroidNotificationAction(
-              btn['id'].toString(),
-              btn['title'].toString(),
-              showsUserInterface: true,
-            ));
+            actions.add(
+              AndroidNotificationAction(
+                btn['id'].toString(),
+                btn['title'].toString(),
+                showsUserInterface: true,
+              ),
+            );
           } else {
-            actions.add(AndroidNotificationAction(
-              btn.toString(),
-              btn.toString(),
-              showsUserInterface: true,
-            ));
+            actions.add(
+              AndroidNotificationAction(
+                btn.toString(),
+                btn.toString(),
+                showsUserInterface: true,
+              ),
+            );
           }
         }
       } catch (e, st) {
-        AppLogger.error(e, stackTrace: st, context: 'NotificationService parse actionButtons');
+        AppLogger.error(
+          e,
+          stackTrace: st,
+          context: 'NotificationService parse actionButtons',
+        );
       }
     }
-    
+
     final payload = jsonEncode(data);
 
     final androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -549,7 +584,7 @@ class NotificationService {
       iOS: darwinPlatformChannelSpecifics,
       macOS: darwinPlatformChannelSpecifics,
     );
-    
+
     await flutterLocalNotificationsPlugin.show(
       id: message.messageId?.hashCode ?? 0,
       title: title,
@@ -580,13 +615,17 @@ class NotificationService {
         AppLogger.debug('SupabaseClient is null, skipping token registration.');
         return;
       }
-      await _supabase.rpc('register_fcm_token', params: {
-        'p_token': token,
-        'p_device_type': deviceType,
-      });
+      await _supabase.rpc(
+        'register_fcm_token',
+        params: {'p_token': token, 'p_device_type': deviceType},
+      );
       AppLogger.debug('FCM Token registered successfully.');
     } catch (e, st) {
-      AppLogger.error(e, stackTrace: st, context: 'NotificationService register-token');
+      AppLogger.error(
+        e,
+        stackTrace: st,
+        context: 'NotificationService register-token',
+      );
     }
   }
 }

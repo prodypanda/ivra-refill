@@ -57,8 +57,9 @@ void main() {
       expect(find.text('Tableau de bord'), findsWidgets);
     });
 
-    testWidgets('shows retryable error state when data loading fails',
-        (tester) async {
+    testWidgets('shows retryable error state when data loading fails', (
+      tester,
+    ) async {
       await _pumpIvraApp(
         tester,
         size: const Size(1280, 900),
@@ -116,8 +117,9 @@ void main() {
       expect(find.text('Password'), findsWidgets);
     });
 
-    testWidgets('Arabic mobile login keeps RTL localized layout',
-        (tester) async {
+    testWidgets('Arabic mobile login keeps RTL localized layout', (
+      tester,
+    ) async {
       final router = GoRouter(
         initialLocation: LoginScreen.route,
         routes: [
@@ -207,8 +209,9 @@ void main() {
     testWidgets('navigates to alerts and shows alert cards', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(AlertsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(AlertsScreen.route);
       await tester.pumpAndSettle();
 
       // Demo data has 2 alerts
@@ -219,8 +222,9 @@ void main() {
     testWidgets('shows refresh smart alerts button', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(AlertsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(AlertsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.byTooltip('Refresh smart alerts'), findsOneWidget);
@@ -229,8 +233,9 @@ void main() {
     testWidgets('shows resolve button for open alerts', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(AlertsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(AlertsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Resolve'), findsWidgets);
@@ -239,8 +244,9 @@ void main() {
     testWidgets('alert severity and type chips are displayed', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(AlertsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(AlertsScreen.route);
       await tester.pumpAndSettle();
 
       // Demo data has severity 2 and 3 alerts
@@ -257,8 +263,9 @@ void main() {
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(InventoryScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(InventoryScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Store Stock'), findsWidgets);
@@ -274,24 +281,27 @@ void main() {
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(InventoryScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(InventoryScreen.route);
       await tester.pumpAndSettle();
 
       // Shampoo has 9 bottles, threshold 12 → low stock
       expect(find.text('Low stock'), findsWidgets);
     });
 
-    testWidgets('mobile inventory uses stock cards instead of data table',
-        (tester) async {
+    testWidgets('mobile inventory uses stock cards instead of data table', (
+      tester,
+    ) async {
       await _pumpIvraApp(
         tester,
         size: const Size(390, 844),
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(InventoryScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(InventoryScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.byType(DataTable), findsNothing);
@@ -306,8 +316,9 @@ void main() {
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(InventoryScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(InventoryScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.byTooltip('Adjust stock'), findsWidgets);
@@ -320,8 +331,9 @@ void main() {
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(InventoryScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(InventoryScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Suggested orders'), findsWidgets);
@@ -329,16 +341,18 @@ void main() {
   });
 
   group('RoomsScreen', () {
-    testWidgets('mobile rooms show summary and rounded room cards',
-        (tester) async {
+    testWidgets('mobile rooms show summary and rounded room cards', (
+      tester,
+    ) async {
       await _pumpIvraApp(
         tester,
         size: const Size(390, 844),
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(RoomsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(RoomsScreen.route);
       await tester.pumpAndSettle();
 
       // Switch to detailed view and expand floors
@@ -353,8 +367,9 @@ void main() {
       expect(find.textContaining('Room '), findsWidgets);
     });
 
-    testWidgets('Arabic mobile rooms keep RTL localized layout',
-        (tester) async {
+    testWidgets('Arabic mobile rooms keep RTL localized layout', (
+      tester,
+    ) async {
       await _pumpIvraApp(
         tester,
         size: const Size(390, 844),
@@ -362,8 +377,9 @@ void main() {
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('لوحة القيادة').first))
-          .go(RoomsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('لوحة القيادة').first),
+      ).go(RoomsScreen.route);
       await tester.pumpAndSettle();
 
       // Switch to detailed view and expand floors
@@ -380,16 +396,16 @@ void main() {
       expect(find.textContaining('غرفة '), findsWidgets);
     });
 
-    testWidgets('housekeeper can add and remove room products',
-        (tester) async {
+    testWidgets('housekeeper can add and remove room products', (tester) async {
       await _pumpIvraApp(
         tester,
         size: const Size(1280, 900),
         currentUser: _userForRole(UserRole.housekeeper),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(RoomsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(RoomsScreen.route);
       await tester.pumpAndSettle();
 
       // Switch to detailed view and expand floors
@@ -453,10 +469,12 @@ void main() {
 
       // Now remove the product using the trash icon
       // Find the delete button next to the "Shower Gel" product
-      final showerGelRow = find.ancestor(
-        of: find.text('Shower Gel').first,
-        matching: find.byType(Row),
-      ).first;
+      final showerGelRow = find
+          .ancestor(
+            of: find.text('Shower Gel').first,
+            matching: find.byType(Row),
+          )
+          .first;
       final deleteBtn = find.descendant(
         of: showerGelRow,
         matching: find.byIcon(Icons.delete_outline),
@@ -481,267 +499,289 @@ void main() {
       expect(find.text('Product removed'), findsOneWidget);
     });
 
-    testWidgets('housekeeper refill succeeds immediately when housekeeper has stock', (tester) async {
-      final repo = _CustomStockMockRepository(
-        mockAllocations: [
-          HousekeeperAllocation(
-            id: 'alloc-1',
-            housekeeperId: 'user-housekeeper',
-            hotelId: 'hotel-seaside',
-            product: const Product(
-              id: 'prod-shower-gel',
-              sku: 'IVR-GEL-1L',
-              nameEn: 'Shower Gel',
-              nameFr: 'Gel douche',
-              nameAr: 'جل الاستحمام',
-              nameIt: 'Bagnoschiuma',
-              maxRefillCount: 10,
-              maxBottleAgeDays: 240,
-              lowBottleThreshold: 12,
-              lowBidonThreshold: 4,
+    testWidgets(
+      'housekeeper refill succeeds immediately when housekeeper has stock',
+      (tester) async {
+        final repo = _CustomStockMockRepository(
+          mockAllocations: [
+            const HousekeeperAllocation(
+              id: 'alloc-1',
+              housekeeperId: 'user-housekeeper',
+              hotelId: 'hotel-seaside',
+              product: Product(
+                id: 'prod-shower-gel',
+                sku: 'IVR-GEL-1L',
+                nameEn: 'Shower Gel',
+                nameFr: 'Gel douche',
+                nameAr: 'جل الاستحمام',
+                nameIt: 'Bagnoschiuma',
+                maxRefillCount: 10,
+                maxBottleAgeDays: 240,
+                lowBottleThreshold: 12,
+                lowBidonThreshold: 4,
+              ),
+              fullBottles: 0,
+              emptyBottles: 0,
+              fullBidons: 1, // Has stock
+              openBidons: 0,
+              emptyBidons: 0,
+              openBidonVolumeLeftMl: 0.0,
             ),
-            fullBottles: 0,
-            emptyBottles: 0,
-            fullBidons: 1, // Has stock
-            openBidons: 0,
-            emptyBidons: 0,
-            openBidonVolumeLeftMl: 0.0,
+          ],
+          mockInventory: [],
+        );
+
+        await _pumpIvraApp(
+          tester,
+          size: const Size(1280, 900),
+          currentUser: _userForRole(UserRole.housekeeper),
+          repository: repo,
+        );
+
+        GoRouter.of(
+          tester.element(find.text('Dashboard').first),
+        ).go(RoomsScreen.route);
+        await tester.pumpAndSettle();
+
+        // Switch to detailed view and expand floors
+        await tester.tap(find.text('Detailed View'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Expand all'));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('Shower Gel').first);
+        await tester.pumpAndSettle();
+
+        final showerGelRow = find.ancestor(
+          of: find.text('Shower Gel').first,
+          matching: find.byWidgetPredicate(
+            (widget) => widget.runtimeType.toString() == '_RoomCardProductRow',
           ),
-        ],
-        mockInventory: [],
-      );
+        );
+        expect(showerGelRow, findsOneWidget);
+        final refillBtn = find.descendant(
+          of: showerGelRow,
+          matching: find.text('Refill bottle'),
+        );
+        expect(refillBtn, findsOneWidget);
+        await tester.tap(refillBtn);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
-      await _pumpIvraApp(
-        tester,
-        size: const Size(1280, 900),
-        currentUser: _userForRole(UserRole.housekeeper),
-        repository: repo,
-      );
+        // RefillPercentageDialog should appear. Tap "Confirm"
+        final confirmBtn = find.descendant(
+          of: find.byType(RefillPercentageDialog),
+          matching: find.byType(FilledButton),
+        );
+        expect(confirmBtn, findsOneWidget);
+        await tester.tap(confirmBtn);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(RoomsScreen.route);
-      await tester.pumpAndSettle();
+        // Expect immediate success snackbar without showing transfer dialog
+        expect(find.textContaining('Refill recorded'), findsOneWidget);
+      },
+    );
 
-      // Switch to detailed view and expand floors
-      await tester.tap(find.text('Detailed View'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Expand all'));
-      await tester.pumpAndSettle();
-
-      await tester.ensureVisible(find.text('Shower Gel').first);
-      await tester.pumpAndSettle();
-
-      final showerGelRow = find.ancestor(
-        of: find.text('Shower Gel').first,
-        matching: find.byWidgetPredicate((widget) => widget.runtimeType.toString() == '_RoomCardProductRow'),
-      );
-      expect(showerGelRow, findsOneWidget);
-      final refillBtn = find.descendant(
-        of: showerGelRow,
-        matching: find.text('Refill bottle'),
-      );
-      expect(refillBtn, findsOneWidget);
-      await tester.tap(refillBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      // RefillPercentageDialog should appear. Tap "Confirm"
-      final confirmBtn = find.descendant(
-        of: find.byType(RefillPercentageDialog),
-        matching: find.byType(FilledButton),
-      );
-      expect(confirmBtn, findsOneWidget);
-      await tester.tap(confirmBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      // Expect immediate success snackbar without showing transfer dialog
-      expect(find.textContaining('Refill recorded'), findsOneWidget);
-    });
-
-    testWidgets('housekeeper refill prompts for checkout when housekeeper is empty but hotel has central stock', (tester) async {
-      final repo = _CustomStockMockRepository(
-        mockAllocations: [], // empty housekeeper stock
-        mockInventory: [
-          InventoryItem(
-            id: 'inv-gel',
-            hotelId: 'hotel-seaside',
-            product: const Product(
-              id: 'prod-shower-gel',
-              sku: 'IVR-GEL-1L',
-              nameEn: 'Shower Gel',
-              nameFr: 'Gel douche',
-              nameAr: 'جل الاستحمام',
-              nameIt: 'Bagnoschiuma',
-              maxRefillCount: 10,
-              maxBottleAgeDays: 240,
-              lowBottleThreshold: 12,
-              lowBidonThreshold: 4,
+    testWidgets(
+      'housekeeper refill prompts for checkout when housekeeper is empty but hotel has central stock',
+      (tester) async {
+        final repo = _CustomStockMockRepository(
+          mockAllocations: [], // empty housekeeper stock
+          mockInventory: [
+            const InventoryItem(
+              id: 'inv-gel',
+              hotelId: 'hotel-seaside',
+              product: Product(
+                id: 'prod-shower-gel',
+                sku: 'IVR-GEL-1L',
+                nameEn: 'Shower Gel',
+                nameFr: 'Gel douche',
+                nameAr: 'جل الاستحمام',
+                nameIt: 'Bagnoschiuma',
+                maxRefillCount: 10,
+                maxBottleAgeDays: 240,
+                lowBottleThreshold: 12,
+                lowBidonThreshold: 4,
+              ),
+              fullBottles: 0,
+              emptyBottles: 0,
+              fullBidons: 5, // Hotel has 5 bidons
+              openBidons: 0,
+              emptyBidons: 0,
             ),
-            fullBottles: 0,
-            emptyBottles: 0,
-            fullBidons: 5, // Hotel has 5 bidons
-            openBidons: 0,
-            emptyBidons: 0,
+          ],
+        );
+
+        await _pumpIvraApp(
+          tester,
+          size: const Size(1280, 900),
+          currentUser: _userForRole(UserRole.housekeeper),
+          repository: repo,
+        );
+
+        GoRouter.of(
+          tester.element(find.text('Dashboard').first),
+        ).go(RoomsScreen.route);
+        await tester.pumpAndSettle();
+
+        // Switch to detailed view and expand floors
+        await tester.tap(find.text('Detailed View'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Expand all'));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('Shower Gel').first);
+        await tester.pumpAndSettle();
+
+        final showerGelRow = find.ancestor(
+          of: find.text('Shower Gel').first,
+          matching: find.byWidgetPredicate(
+            (widget) => widget.runtimeType.toString() == '_RoomCardProductRow',
           ),
-        ],
-      );
+        );
+        expect(showerGelRow, findsOneWidget);
+        final refillBtn = find.descendant(
+          of: showerGelRow,
+          matching: find.text('Refill bottle'),
+        );
+        expect(refillBtn, findsOneWidget);
+        await tester.tap(refillBtn);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
-      await _pumpIvraApp(
-        tester,
-        size: const Size(1280, 900),
-        currentUser: _userForRole(UserRole.housekeeper),
-        repository: repo,
-      );
+        // Confirm RefillPercentageDialog
+        final confirmBtn = find.descendant(
+          of: find.byType(RefillPercentageDialog),
+          matching: find.byType(FilledButton),
+        );
+        await tester.tap(confirmBtn);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(RoomsScreen.route);
-      await tester.pumpAndSettle();
+        // Expect a stock warning/transfer prompt dialog to appear
+        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(find.textContaining('requires 1 full bidon'), findsOneWidget);
 
-      // Switch to detailed view and expand floors
-      await tester.tap(find.text('Detailed View'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Expand all'));
-      await tester.pumpAndSettle();
+        // Tap the confirm checkout button (which is FilledButton inside the AlertDialog)
+        final confirmCheckoutBtn = find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.byType(FilledButton),
+        );
+        await tester.tap(confirmCheckoutBtn);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
-      await tester.ensureVisible(find.text('Shower Gel').first);
-      await tester.pumpAndSettle();
+        // Now the refill should be recorded
+        expect(find.textContaining('Refill recorded'), findsOneWidget);
+      },
+    );
 
-      final showerGelRow = find.ancestor(
-        of: find.text('Shower Gel').first,
-        matching: find.byWidgetPredicate((widget) => widget.runtimeType.toString() == '_RoomCardProductRow'),
-      );
-      expect(showerGelRow, findsOneWidget);
-      final refillBtn = find.descendant(
-        of: showerGelRow,
-        matching: find.text('Refill bottle'),
-      );
-      expect(refillBtn, findsOneWidget);
-      await tester.tap(refillBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      // Confirm RefillPercentageDialog
-      final confirmBtn = find.descendant(
-        of: find.byType(RefillPercentageDialog),
-        matching: find.byType(FilledButton),
-      );
-      await tester.tap(confirmBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      // Expect a stock warning/transfer prompt dialog to appear
-      expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.textContaining('requires 1 full bidon'), findsOneWidget);
-
-      // Tap the confirm checkout button (which is FilledButton inside the AlertDialog)
-      final confirmCheckoutBtn = find.descendant(
-        of: find.byType(AlertDialog),
-        matching: find.byType(FilledButton),
-      );
-      await tester.tap(confirmCheckoutBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      // Now the refill should be recorded
-      expect(find.textContaining('Refill recorded'), findsOneWidget);
-    });
-
-    testWidgets('housekeeper refill aborts with warning when neither has stock', (tester) async {
-      final repo = _CustomStockMockRepository(
-        mockAllocations: [],
-        mockInventory: [
-          InventoryItem(
-            id: 'inv-gel',
-            hotelId: 'hotel-seaside',
-            product: const Product(
-              id: 'prod-shower-gel',
-              sku: 'IVR-GEL-1L',
-              nameEn: 'Shower Gel',
-              nameFr: 'Gel douche',
-              nameAr: 'جل الاستحمام',
-              nameIt: 'Bagnoschiuma',
-              maxRefillCount: 10,
-              maxBottleAgeDays: 240,
-              lowBottleThreshold: 12,
-              lowBidonThreshold: 4,
+    testWidgets(
+      'housekeeper refill aborts with warning when neither has stock',
+      (tester) async {
+        final repo = _CustomStockMockRepository(
+          mockAllocations: [],
+          mockInventory: [
+            const InventoryItem(
+              id: 'inv-gel',
+              hotelId: 'hotel-seaside',
+              product: Product(
+                id: 'prod-shower-gel',
+                sku: 'IVR-GEL-1L',
+                nameEn: 'Shower Gel',
+                nameFr: 'Gel douche',
+                nameAr: 'جل الاستحمام',
+                nameIt: 'Bagnoschiuma',
+                maxRefillCount: 10,
+                maxBottleAgeDays: 240,
+                lowBottleThreshold: 12,
+                lowBidonThreshold: 4,
+              ),
+              fullBottles: 0,
+              emptyBottles: 0,
+              fullBidons: 0, // No hotel stock
+              openBidons: 0,
+              emptyBidons: 0,
             ),
-            fullBottles: 0,
-            emptyBottles: 0,
-            fullBidons: 0, // No hotel stock
-            openBidons: 0,
-            emptyBidons: 0,
+          ],
+        );
+
+        await _pumpIvraApp(
+          tester,
+          size: const Size(1280, 900),
+          currentUser: _userForRole(UserRole.housekeeper),
+          repository: repo,
+        );
+
+        GoRouter.of(
+          tester.element(find.text('Dashboard').first),
+        ).go(RoomsScreen.route);
+        await tester.pumpAndSettle();
+
+        // Switch to detailed view and expand floors
+        await tester.tap(find.text('Detailed View'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Expand all'));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('Shower Gel').first);
+        await tester.pumpAndSettle();
+
+        final showerGelRow = find.ancestor(
+          of: find.text('Shower Gel').first,
+          matching: find.byWidgetPredicate(
+            (widget) => widget.runtimeType.toString() == '_RoomCardProductRow',
           ),
-        ],
-      );
+        );
+        expect(showerGelRow, findsOneWidget);
+        final refillBtn = find.descendant(
+          of: showerGelRow,
+          matching: find.text('Refill bottle'),
+        );
+        expect(refillBtn, findsOneWidget);
+        await tester.tap(refillBtn);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
-      await _pumpIvraApp(
-        tester,
-        size: const Size(1280, 900),
-        currentUser: _userForRole(UserRole.housekeeper),
-        repository: repo,
-      );
+        // Confirm RefillPercentageDialog
+        final confirmBtn = find.descendant(
+          of: find.byType(RefillPercentageDialog),
+          matching: find.byType(FilledButton),
+        );
+        await tester.tap(confirmBtn);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(RoomsScreen.route);
-      await tester.pumpAndSettle();
+        // Expect a warning dialog instructing to contact the hotel manager
+        expect(find.byType(AlertDialog), findsOneWidget);
+        expect(
+          find.textContaining('Please inform the hotel manager'),
+          findsOneWidget,
+        );
 
-      // Switch to detailed view and expand floors
-      await tester.tap(find.text('Detailed View'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Expand all'));
-      await tester.pumpAndSettle();
+        // Tap the close/dismiss button on the alert dialog
+        final dismissBtn = find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.byType(FilledButton),
+        );
+        await tester.tap(dismissBtn);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
 
-      await tester.ensureVisible(find.text('Shower Gel').first);
-      await tester.pumpAndSettle();
-
-      final showerGelRow = find.ancestor(
-        of: find.text('Shower Gel').first,
-        matching: find.byWidgetPredicate((widget) => widget.runtimeType.toString() == '_RoomCardProductRow'),
-      );
-      expect(showerGelRow, findsOneWidget);
-      final refillBtn = find.descendant(
-        of: showerGelRow,
-        matching: find.text('Refill bottle'),
-      );
-      expect(refillBtn, findsOneWidget);
-      await tester.tap(refillBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      // Confirm RefillPercentageDialog
-      final confirmBtn = find.descendant(
-        of: find.byType(RefillPercentageDialog),
-        matching: find.byType(FilledButton),
-      );
-      await tester.tap(confirmBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      // Expect a warning dialog instructing to contact the hotel manager
-      expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.textContaining('Please inform the hotel manager'), findsOneWidget);
-
-      // Tap the close/dismiss button on the alert dialog
-      final dismissBtn = find.descendant(
-        of: find.byType(AlertDialog),
-        matching: find.byType(FilledButton),
-      );
-      await tester.tap(dismissBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      // No success message should appear
-      expect(find.textContaining('Refill recorded'), findsNothing);
-    });
+        // No success message should appear
+        expect(find.textContaining('Refill recorded'), findsNothing);
+      },
+    );
   });
 
   group('ReportsScreen', () {
     testWidgets('shows all four report cards', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(ReportsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(ReportsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Refill history'), findsWidgets);
@@ -753,8 +793,9 @@ void main() {
     testWidgets('shows CSV and PDF download buttons', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(ReportsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(ReportsScreen.route);
       await tester.pumpAndSettle();
 
       // 4 report cards × 2 buttons each = 8 buttons
@@ -769,8 +810,9 @@ void main() {
         locale: const Locale('fr'),
       );
 
-      GoRouter.of(tester.element(find.text('Tableau de bord').first))
-          .go(ReportsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Tableau de bord').first),
+      ).go(ReportsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Historique de recharge'), findsWidgets);
@@ -787,8 +829,9 @@ void main() {
         locale: const Locale('ar'),
       );
 
-      GoRouter.of(tester.element(find.text('لوحة القيادة').first))
-          .go(ReportsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('لوحة القيادة').first),
+      ).go(ReportsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('سجل التعبئة'), findsWidgets);
@@ -805,8 +848,9 @@ void main() {
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(ReportsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(ReportsScreen.route);
       await tester.pumpAndSettle();
 
       // Should redirect to dashboard
@@ -819,8 +863,9 @@ void main() {
     testWidgets('mobile settings shows compact status card', (tester) async {
       await _pumpIvraApp(tester, size: const Size(390, 844));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(SettingsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(SettingsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Settings'), findsWidgets);
@@ -829,21 +874,25 @@ void main() {
       expect(find.text('Language'), findsOneWidget);
     });
 
-    testWidgets('Arabic mobile settings keep RTL localized layout',
-        (tester) async {
+    testWidgets('Arabic mobile settings keep RTL localized layout', (
+      tester,
+    ) async {
       await _pumpIvraApp(
         tester,
         size: const Size(390, 844),
         locale: const Locale('ar'),
       );
 
-      GoRouter.of(tester.element(find.text('لوحة القيادة').first))
-          .go(SettingsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('لوحة القيادة').first),
+      ).go(SettingsScreen.route);
       await tester.pumpAndSettle();
 
       final settingsFinder = find.text('الإعدادات').first;
       expect(
-          Directionality.of(tester.element(settingsFinder)), TextDirection.rtl);
+        Directionality.of(tester.element(settingsFinder)),
+        TextDirection.rtl,
+      );
       expect(find.text('وضع العرض'), findsWidgets);
       expect(find.text('وضع عدم الاتصال'), findsWidgets);
       expect(find.text('اللغة'), findsOneWidget);
@@ -852,20 +901,23 @@ void main() {
     testWidgets('shows language selector', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(SettingsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(SettingsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Settings'), findsWidgets);
       expect(find.text('English'), findsWidgets);
     });
 
-    testWidgets('shows demo mode indicator when not using Supabase',
-        (tester) async {
+    testWidgets('shows demo mode indicator when not using Supabase', (
+      tester,
+    ) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(SettingsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(SettingsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Demo mode'), findsWidgets);
@@ -874,8 +926,9 @@ void main() {
     testWidgets('shows demo user switcher in demo mode', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(SettingsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(SettingsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Demo user'), findsWidgets);
@@ -884,8 +937,9 @@ void main() {
     testWidgets('shows offline mode switch', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(SettingsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(SettingsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Offline mode'), findsWidgets);
@@ -901,8 +955,9 @@ void main() {
     testWidgets('shows pending sync section', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(SettingsScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(SettingsScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Pending sync'), findsWidgets);
@@ -913,8 +968,9 @@ void main() {
     testWidgets('shows profile form with current user data', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(AccountScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(AccountScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Account'), findsWidgets);
@@ -926,8 +982,9 @@ void main() {
     testWidgets('shows password change section', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(AccountScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(AccountScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Password'), findsWidgets);
@@ -936,8 +993,9 @@ void main() {
     testWidgets('does not show sign-out in demo mode', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(AccountScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(AccountScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Sign out'), findsNothing);
@@ -950,8 +1008,9 @@ void main() {
         currentUser: _userForRole(UserRole.hotelStaff),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(AccountScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(AccountScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Hotel staff'), findsWidgets);
@@ -961,8 +1020,9 @@ void main() {
     testWidgets('save button exists on profile card', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(AccountScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(AccountScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Save'), findsWidgets);
@@ -970,12 +1030,14 @@ void main() {
   });
 
   group('TeamScreen', () {
-    testWidgets('shows team accounts and pending invitations tables',
-        (tester) async {
+    testWidgets('shows team accounts and pending invitations tables', (
+      tester,
+    ) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(TeamScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(TeamScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.text('Team'), findsWidgets);
@@ -986,8 +1048,9 @@ void main() {
     testWidgets('admin can see invite button', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(TeamScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(TeamScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.byTooltip('Invite team member'), findsOneWidget);
@@ -1001,8 +1064,9 @@ void main() {
       );
 
       // hotel_staff doesn't have Team in allowed routes
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(TeamScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(TeamScreen.route);
       await tester.pumpAndSettle();
 
       // Should redirect to dashboard (hotelStaff can't access Team)
@@ -1016,8 +1080,9 @@ void main() {
         currentUser: _userForRole(UserRole.hotelManager),
       );
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(TeamScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(TeamScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.byTooltip('Invite team member'), findsOneWidget);
@@ -1026,8 +1091,9 @@ void main() {
     testWidgets('shows team member data in table', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(TeamScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(TeamScreen.route);
       await tester.pumpAndSettle();
 
       // Demo data team members
@@ -1038,8 +1104,9 @@ void main() {
     testWidgets('shows pending invitation details', (tester) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(TeamScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(TeamScreen.route);
       await tester.pumpAndSettle();
 
       // Demo data has one pending invitation
@@ -1047,12 +1114,14 @@ void main() {
       expect(find.text('opslead@palms.example'), findsWidgets);
     });
 
-    testWidgets('invitation management actions visible for admin',
-        (tester) async {
+    testWidgets('invitation management actions visible for admin', (
+      tester,
+    ) async {
       await _pumpIvraApp(tester, size: const Size(1280, 900));
 
-      GoRouter.of(tester.element(find.text('Dashboard').first))
-          .go(TeamScreen.route);
+      GoRouter.of(
+        tester.element(find.text('Dashboard').first),
+      ).go(TeamScreen.route);
       await tester.pumpAndSettle();
 
       expect(find.byTooltip('Copy invitation link'), findsWidgets);
@@ -1172,8 +1241,9 @@ void main() {
       expect(find.text('More'), findsOneWidget);
     });
 
-    testWidgets('mobile more menu opens secondary destinations',
-        (tester) async {
+    testWidgets('mobile more menu opens secondary destinations', (
+      tester,
+    ) async {
       await _pumpIvraApp(tester, size: const Size(375, 812));
 
       await tester.tap(find.text('More'));
@@ -1344,7 +1414,9 @@ UserProfile _userForRole(UserRole role) {
     email: '${role.value}@ivra.test',
     role: role,
     roleString: role.value,
-    hotelId: role == UserRole.hotelManager || role == UserRole.hotelStaff || role == UserRole.housekeeper
+    hotelId: role == UserRole.hotelManager ||
+            role == UserRole.hotelStaff ||
+            role == UserRole.housekeeper
         ? 'hotel-seaside'
         : null,
   );
@@ -1369,7 +1441,10 @@ class _CustomStockMockRepository extends MockIvraRepository {
   final List<InventoryItem> mockInventory;
 
   @override
-  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({String? housekeeperId, String? hotelId}) async {
+  Future<List<HousekeeperAllocation>> fetchHousekeeperAllocations({
+    String? housekeeperId,
+    String? hotelId,
+  }) async {
     return mockAllocations;
   }
 
@@ -1385,7 +1460,9 @@ class _CustomStockMockRepository extends MockIvraRepository {
     required int fullBottles,
     required int fullBidons,
   }) async {
-    final invIndex = mockInventory.indexWhere((item) => item.product.id == productId);
+    final invIndex = mockInventory.indexWhere(
+      (item) => item.product.id == productId,
+    );
     if (invIndex != -1) {
       final central = mockInventory[invIndex];
       mockInventory[invIndex] = central.copyWith(
@@ -1393,7 +1470,9 @@ class _CustomStockMockRepository extends MockIvraRepository {
         fullBidons: central.fullBidons - fullBidons,
       );
     }
-    final allocIndex = mockAllocations.indexWhere((a) => a.product.id == productId);
+    final allocIndex = mockAllocations.indexWhere(
+      (a) => a.product.id == productId,
+    );
     if (allocIndex != -1) {
       final alloc = mockAllocations[allocIndex];
       mockAllocations[allocIndex] = alloc.copyWith(
@@ -1401,19 +1480,23 @@ class _CustomStockMockRepository extends MockIvraRepository {
         fullBidons: alloc.fullBidons + fullBidons,
       );
     } else {
-      final product = mockInventory.firstWhere((item) => item.product.id == productId).product;
-      mockAllocations.add(HousekeeperAllocation(
-        id: 'new-alloc',
-        housekeeperId: housekeeperId,
-        hotelId: 'hotel-seaside',
-        product: product,
-        fullBottles: fullBottles,
-        emptyBottles: 0,
-        fullBidons: fullBidons,
-        openBidons: 0,
-        emptyBidons: 0,
-        openBidonVolumeLeftMl: 0.0,
-      ));
+      final product = mockInventory
+          .firstWhere((item) => item.product.id == productId)
+          .product;
+      mockAllocations.add(
+        HousekeeperAllocation(
+          id: 'new-alloc',
+          housekeeperId: housekeeperId,
+          hotelId: 'hotel-seaside',
+          product: product,
+          fullBottles: fullBottles,
+          emptyBottles: 0,
+          fullBidons: fullBidons,
+          openBidons: 0,
+          emptyBidons: 0,
+          openBidonVolumeLeftMl: 0.0,
+        ),
+      );
     }
   }
 }

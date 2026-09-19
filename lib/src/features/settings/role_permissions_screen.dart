@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../../data/ivra_repository.dart';
-import '../../domain/app_enums.dart';
-import '../../data/ivra_repository.dart';
-import '../shared/async_value_view.dart';
-import '../shared/page_scaffold.dart';
-import '../../state/app_state.dart';
-import '../../data/ivra_repository.dart';
-import '../../domain/app_enums.dart';
-import '../../data/ivra_repository.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
 
 // Create dedicated providers
 final rolesProvider = FutureProvider<List<String>>((ref) async {
@@ -19,12 +12,15 @@ final rolesProvider = FutureProvider<List<String>>((ref) async {
   return repo.fetchRoles();
 });
 
-final rolePermissionsProvider = FutureProvider<Map<String, Set<String>>>((ref) async {
+final rolePermissionsProvider = FutureProvider<Map<String, Set<String>>>((
+  ref,
+) async {
   final repo = ref.read(repositoryProvider);
   return repo.fetchRolePermissions();
 });
 
-final rolePermissionsCombinedProvider = FutureProvider<({List<String> roles, Map<String, Set<String>> permissions})>((ref) async {
+final rolePermissionsCombinedProvider = FutureProvider<
+    ({List<String> roles, Map<String, Set<String>> permissions})>((ref) async {
   final roles = await ref.watch(rolesProvider.future);
   final permissions = await ref.watch(rolePermissionsProvider.future);
   return (roles: roles, permissions: permissions);
@@ -49,13 +45,17 @@ class RolePermissionsScreen extends ConsumerWidget {
         builder: (data) {
           final roles = data.roles;
           final permissions = data.permissions;
-          
+
           if (roles.isEmpty || permissions.isEmpty) {
-             return const Center(child: Text("No permissions found."));
+            return const Center(child: Text('No permissions found.'));
           }
 
           // Convert sets to a distinct list of all possible permissions
-          final allPermissions = permissions.values.expand((element) => element).toSet().toList()..sort();
+          final allPermissions = permissions.values
+              .expand((element) => element)
+              .toSet()
+              .toList()
+            ..sort();
 
           return Card(
             elevation: 0,
@@ -67,28 +67,46 @@ class RolePermissionsScreen extends ConsumerWidget {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
-                headingRowColor: WidgetStateProperty.resolveWith((states) => theme.colorScheme.surfaceContainerHighest),
+                headingRowColor: WidgetStateProperty.resolveWith(
+                  (states) => theme.colorScheme.surfaceContainerHighest,
+                ),
                 columnSpacing: 24,
                 columns: [
-                  DataColumn(label: Text('Feature', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                    label: Text(
+                      'Feature',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   for (final role in roles)
                     DataColumn(
                       label: Text(
                         role.replaceAll('_', ' ').toUpperCase(),
-                        style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                      )
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                 ],
                 rows: [
                   for (final permission in allPermissions)
                     DataRow(
                       cells: [
-                        DataCell(Text(permission.replaceAll('_', ' ').toUpperCase())),
+                        DataCell(
+                          Text(permission.replaceAll('_', ' ').toUpperCase()),
+                        ),
                         for (final role in roles)
                           DataCell(
                             Icon(
-                              permissions[role]?.contains(permission) == true ? Icons.check_circle : Icons.cancel,
-                              color: permissions[role]?.contains(permission) == true ? Colors.green : Colors.grey,
+                              permissions[role]?.contains(permission) == true
+                                  ? Icons.check_circle
+                                  : Icons.cancel,
+                              color: permissions[role]?.contains(permission) ==
+                                      true
+                                  ? Colors.green
+                                  : Colors.grey,
                               size: 20,
                             ),
                           ),

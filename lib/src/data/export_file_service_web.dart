@@ -3,7 +3,7 @@
 import 'dart:html' as html;
 import 'dart:typed_data';
 
-import 'export_file_result.dart';
+import 'package:ivra_refill/src/data/export_file_result.dart';
 
 Future<ExportFileResult> saveBytes({
   required String fileName,

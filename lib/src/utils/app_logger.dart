@@ -26,11 +26,8 @@ class AppLogger {
   /// Optional external sink. When set, every [error] is forwarded here so a
   /// real crash-reporting backend can be plugged in without touching call
   /// sites.
-  static void Function(
-    Object error, {
-    StackTrace? stackTrace,
-    String? context,
-  })? onError;
+  static void Function(Object error, {StackTrace? stackTrace, String? context})?
+      onError;
 
   static void debug(String msg) {
     if (kReleaseMode) return;
@@ -45,11 +42,7 @@ class AppLogger {
   /// Records an [error] (with optional [stackTrace] and human [context]).
   ///
   /// This never throws — logging must not take down the caller.
-  static void error(
-    Object error, {
-    StackTrace? stackTrace,
-    String? context,
-  }) {
+  static void error(Object error, {StackTrace? stackTrace, String? context}) {
     final label = context == null || context.isEmpty ? 'error' : context;
     try {
       developer.log(
@@ -88,10 +81,6 @@ class AppLogger {
     // Preserve Flutter's default presentation (console dump in debug, etc.).
     FlutterError.presentError(details);
     final context = details.context?.toString() ?? details.library;
-    error(
-      details.exception,
-      stackTrace: details.stack,
-      context: context,
-    );
+    error(details.exception, stackTrace: details.stack, context: context);
   }
 }

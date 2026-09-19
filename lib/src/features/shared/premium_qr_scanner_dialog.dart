@@ -4,13 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../../l10n/app_localizations.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
 
 class PremiumQrScannerDialog extends StatefulWidget {
-  const PremiumQrScannerDialog({
-    super.key,
-    required this.demoCodes,
-  });
+  const PremiumQrScannerDialog({super.key, required this.demoCodes});
 
   final List<String> demoCodes;
 
@@ -48,7 +45,8 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
   }
 
   void _initCamera() {
-    final bool isTestEnv = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+    final bool isTestEnv =
+        !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
     if (isTestEnv) {
       return;
     }
@@ -152,7 +150,10 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(22),
                                 child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                  filter: ImageFilter.blur(
+                                    sigmaX: 4,
+                                    sigmaY: 4,
+                                  ),
                                   child: Container(color: Colors.transparent),
                                 ),
                               )
@@ -162,7 +163,8 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
                                 child: MobileScanner(
                                   controller: _cameraController,
                                   onDetect: (capture) {
-                                    final List<Barcode> barcodes = capture.barcodes;
+                                    final List<Barcode> barcodes =
+                                        capture.barcodes;
                                     for (final barcode in barcodes) {
                                       if (barcode.rawValue != null) {
                                         _onCodeScanned(barcode.rawValue!);
@@ -181,7 +183,8 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
                                           children: [
                                             Icon(
                                               isPermission
-                                                  ? Icons.no_photography_outlined
+                                                  ? Icons
+                                                      .no_photography_outlined
                                                   : Icons.error_outline_rounded,
                                               color: Colors.redAccent,
                                               size: 36,
@@ -236,9 +239,13 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
                                       ],
                                       gradient: LinearGradient(
                                         colors: [
-                                          colorScheme.primary.withValues(alpha: 0.1),
+                                          colorScheme.primary.withValues(
+                                            alpha: 0.1,
+                                          ),
                                           colorScheme.primary,
-                                          colorScheme.primary.withValues(alpha: 0.1),
+                                          colorScheme.primary.withValues(
+                                            alpha: 0.1,
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -257,15 +264,24 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
                       controller: _inputController,
                       decoration: InputDecoration(
                         hintText: l10n.t('qrScanPlaceholder'),
-                        prefixIcon: const Icon(Icons.keyboard_outlined, size: 20),
+                        prefixIcon: const Icon(
+                          Icons.keyboard_outlined,
+                          size: 20,
+                        ),
                         suffixIcon: IconButton(
-                          icon: const Icon(Icons.arrow_forward_rounded, size: 20),
-                          onPressed: () => _onCodeScanned(_inputController.text),
+                          icon: const Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 20,
+                          ),
+                          onPressed: () =>
+                              _onCodeScanned(_inputController.text),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
                       ),
                       onSubmitted: _onCodeScanned,
                     ),
@@ -306,7 +322,10 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 2,
+                                  ),
                                 ),
                             ],
                           ),

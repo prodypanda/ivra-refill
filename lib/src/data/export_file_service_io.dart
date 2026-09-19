@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'export_file_result.dart';
+import 'package:ivra_refill/src/data/export_file_result.dart';
 
 /// Hands the exported bytes off to the OS share sheet on mobile/desktop.
 ///

@@ -8,10 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:workmanager/workmanager.dart';
 
-import 'src/app/ivra_app.dart';
-import 'src/state/app_state.dart';
-import 'src/services/notification_service.dart';
-import 'src/utils/app_logger.dart';
+import 'package:ivra_refill/src/app/ivra_app.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/services/notification_service.dart';
+import 'package:ivra_refill/src/utils/app_logger.dart';
 
 const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
 const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
@@ -63,7 +63,9 @@ Future<void> main() async {
   try {
     await Firebase.initializeApp();
     if (!kIsWeb) {
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      FirebaseMessaging.onBackgroundMessage(
+        _firebaseMessagingBackgroundHandler,
+      );
     }
   } catch (e, stack) {
     // Firebase is optional: the app must still start when no Firebase config
@@ -106,18 +108,14 @@ Future<void> main() async {
   // crashed startup and left the web build stuck on the loading screen. Skip
   // it on web, where background sync isn't supported anyway.
   if (!kIsWeb) {
-    Workmanager().initialize(
-      callbackDispatcher,
-    );
+    Workmanager().initialize(callbackDispatcher);
 
     // Register a periodic task for background sync
     Workmanager().registerPeriodicTask(
       '1',
       'backgroundSync',
       frequency: const Duration(minutes: 15),
-      constraints: Constraints(
-        networkType: NetworkType.connected,
-      ),
+      constraints: Constraints(networkType: NetworkType.connected),
     );
   }
 

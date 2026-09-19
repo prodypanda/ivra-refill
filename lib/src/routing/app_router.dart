@@ -1,36 +1,35 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../features/account/account_screen.dart';
-import '../features/products/public_product_screen.dart';
-import '../features/rooms/qr_action_screen.dart';
-import '../features/auth/accept_invitation_screen.dart';
-import '../features/auth/login_screen.dart';
-import '../features/auth/reset_password_screen.dart';
-import '../features/auth/set_password_screen.dart';
-import '../features/alerts/alerts_screen.dart';
-import '../features/approvals/approvals_screen.dart';
-import '../features/dashboard/dashboard_screen.dart';
-import '../features/hotels/hotels_screen.dart';
-import '../features/inventory/inventory_screen.dart';
-import '../features/inventory/femme_de_chambre_screen.dart';
-import '../features/products/products_screen.dart';
-import '../features/reports/reports_screen.dart';
-import '../features/rooms/rooms_screen.dart';
-import '../features/settings/app_settings_screen.dart';
-import '../features/settings/settings_screen.dart';
-import '../features/settings/role_permissions_screen.dart';
-import '../features/shared/not_found_screen.dart';
-import '../features/shell/app_shell.dart';
-import '../features/team/team_screen.dart';
-import '../features/notifications/send_notification_screen.dart';
-import '../features/audit/audit_logs_screen.dart';
-import '../features/authorizations/authorizations_screen.dart';
-import '../domain/app_enums.dart';
-import '../state/app_state.dart';
+import 'package:ivra_refill/src/features/account/account_screen.dart';
+import 'package:ivra_refill/src/features/products/public_product_screen.dart';
+import 'package:ivra_refill/src/features/rooms/qr_action_screen.dart';
+import 'package:ivra_refill/src/features/auth/accept_invitation_screen.dart';
+import 'package:ivra_refill/src/features/auth/login_screen.dart';
+import 'package:ivra_refill/src/features/auth/reset_password_screen.dart';
+import 'package:ivra_refill/src/features/auth/set_password_screen.dart';
+import 'package:ivra_refill/src/features/alerts/alerts_screen.dart';
+import 'package:ivra_refill/src/features/approvals/approvals_screen.dart';
+import 'package:ivra_refill/src/features/dashboard/dashboard_screen.dart';
+import 'package:ivra_refill/src/features/hotels/hotels_screen.dart';
+import 'package:ivra_refill/src/features/inventory/inventory_screen.dart';
+import 'package:ivra_refill/src/features/inventory/femme_de_chambre_screen.dart';
+import 'package:ivra_refill/src/features/products/products_screen.dart';
+import 'package:ivra_refill/src/features/reports/reports_screen.dart';
+import 'package:ivra_refill/src/features/rooms/rooms_screen.dart';
+import 'package:ivra_refill/src/features/settings/app_settings_screen.dart';
+import 'package:ivra_refill/src/features/settings/settings_screen.dart';
+import 'package:ivra_refill/src/features/settings/role_permissions_screen.dart';
+import 'package:ivra_refill/src/features/shared/not_found_screen.dart';
+import 'package:ivra_refill/src/features/shell/app_shell.dart';
+import 'package:ivra_refill/src/features/team/team_screen.dart';
+import 'package:ivra_refill/src/features/notifications/send_notification_screen.dart';
+import 'package:ivra_refill/src/features/audit/audit_logs_screen.dart';
+import 'package:ivra_refill/src/features/authorizations/authorizations_screen.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
 
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this._ref) {
@@ -58,7 +57,8 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final useSupabase = ref.read(useSupabaseProvider);
       final isLoggedIn = ref.read(isLoggedInProvider);
-      final currentUserValue = isLoggedIn ? ref.read(currentUserProvider) : null;
+      final currentUserValue =
+          isLoggedIn ? ref.read(currentUserProvider) : null;
       final currentUser = currentUserValue?.valueOrNull;
 
       final profileErrorObj = currentUserValue?.error;
@@ -78,7 +78,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isSetPassword = path == SetPasswordScreen.route;
       final isAuthCallback = path == '/auth/callback';
 
-      final isQrLink = path.startsWith('/app/qr') || path.startsWith('/qr') || path.startsWith('/q/');
+      final isQrLink = path.startsWith('/app/qr') ||
+          path.startsWith('/qr') ||
+          path.startsWith('/q/');
       final isPublicProduct = path.startsWith('/public/product/');
       final isPublicAuthRoute = isLogin ||
           isResetPassword ||
@@ -132,9 +134,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         final hotels = ref.read(hotelsProvider).valueOrNull ?? [];
         final currentHotelId = hotelId ?? ref.read(selectedHotelIdProvider);
         final matchedHotels = hotels.where((h) => h.id == currentHotelId);
-        final expressQrEnabled = matchedHotels.isNotEmpty ? matchedHotels.first.expressQrEnabled : false;
-        
-        final isStaffOrHousekeeper = currentUser?.role == UserRole.hotelStaff ||
+        final expressQrEnabled = matchedHotels.isNotEmpty
+            ? matchedHotels.first.expressQrEnabled
+            : false;
+
             currentUser?.role == UserRole.housekeeper;
 
         if (!expressQrEnabled) {
@@ -156,15 +159,20 @@ final routerProvider = Provider<GoRouter>((ref) {
         final isOnboarded = userMetadata['onboarded'] == true;
         final passwordAlreadySet = ref.read(passwordSetProvider);
         final isPasswordRecovery = ref.read(isPasswordRecoveryProvider);
-        final needsPassword =
-            (isLoggedIn && isInvitedUser && !isOnboarded && !passwordAlreadySet) ||
-                isPasswordRecovery;
+        final needsPassword = (isLoggedIn &&
+                isInvitedUser &&
+                !isOnboarded &&
+                !passwordAlreadySet) ||
+            isPasswordRecovery;
 
         if (needsPassword && !isSetPassword) {
           return SetPasswordScreen.route;
         }
 
-        if (isLoggedIn && hasProfileError && !isPublicAuthRoute && !needsPassword) {
+        if (isLoggedIn &&
+            hasProfileError &&
+            !isPublicAuthRoute &&
+            !needsPassword) {
           return LoginScreen.route;
         }
         if (isLoggedIn && isLogin && !hasProfileError && !needsPassword) {
@@ -224,9 +232,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/auth/callback',
-        builder: (context, state) => const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
+        builder: (context, state) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
       GoRoute(
         path: '/public/product/:sku',
@@ -251,7 +258,8 @@ final routerProvider = Provider<GoRouter>((ref) {
               sku: sku,
             ),
             opaque: false,
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
           );
@@ -273,7 +281,8 @@ final routerProvider = Provider<GoRouter>((ref) {
               sku: sku,
             ),
             opaque: false,
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
           );
@@ -295,7 +304,8 @@ final routerProvider = Provider<GoRouter>((ref) {
               sku: sku,
             ),
             opaque: false,
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
           );
@@ -367,9 +377,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: SendNotificationScreen.route,
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: SendNotificationScreen(),
-            ),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: SendNotificationScreen()),
           ),
           GoRoute(
             path: SettingsScreen.route,

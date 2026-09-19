@@ -88,15 +88,18 @@ void main() {
       expect(d.toastKey, 'notificationAcknowledgedToast');
     });
 
-    test('more_info navigates to hotel-scoped inventory when hotelId is set', () {
-      final d = resolveNotificationAction(
-        actionId: 'more_info',
-        alertId: null,
-        hotelId: 'h9',
-      );
-      expect(d.kind, NotificationActionKind.navigate);
-      expect(d.navigation, '/inventory?hotelId=h9');
-    });
+    test(
+      'more_info navigates to hotel-scoped inventory when hotelId is set',
+      () {
+        final d = resolveNotificationAction(
+          actionId: 'more_info',
+          alertId: null,
+          hotelId: 'h9',
+        );
+        expect(d.kind, NotificationActionKind.navigate);
+        expect(d.navigation, '/inventory?hotelId=h9');
+      },
+    );
 
     test('more_info navigates to plain inventory when hotelId is missing', () {
       final d = resolveNotificationAction(
@@ -128,16 +131,19 @@ void main() {
       expect(d.navigation, '/alerts');
     });
 
-    test('default tap navigates to an explicit targetPage from the payload', () {
-      final d = resolveNotificationAction(
-        actionId: null,
-        alertId: null,
-        hotelId: null,
-        payload: {'targetPage': '/dashboard'},
-      );
-      expect(d.kind, NotificationActionKind.navigate);
-      expect(d.navigation, '/dashboard');
-    });
+    test(
+      'default tap navigates to an explicit targetPage from the payload',
+      () {
+        final d = resolveNotificationAction(
+          actionId: null,
+          alertId: null,
+          hotelId: null,
+          payload: {'targetPage': '/dashboard'},
+        );
+        expect(d.kind, NotificationActionKind.navigate);
+        expect(d.navigation, '/dashboard');
+      },
+    );
 
     test('default tap with no targetPage does nothing', () {
       final d = resolveNotificationAction(

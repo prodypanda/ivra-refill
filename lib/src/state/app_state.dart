@@ -1,17 +1,16 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../data/export_file_service.dart';
-import '../data/ivra_repository.dart';
-import '../data/mock_ivra_repository.dart';
-import '../data/offline/offline_sync_service.dart';
-import '../data/report_export_service.dart';
-import '../data/supabase_ivra_repository.dart';
-import '../domain/app_enums.dart';
-import '../domain/models.dart';
+import 'package:ivra_refill/src/data/export_file_service.dart';
+import 'package:ivra_refill/src/data/ivra_repository.dart';
+import 'package:ivra_refill/src/data/mock_ivra_repository.dart';
+import 'package:ivra_refill/src/data/offline/offline_sync_service.dart';
+import 'package:ivra_refill/src/data/report_export_service.dart';
+import 'package:ivra_refill/src/data/supabase_ivra_repository.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
 
 final useSupabaseProvider = Provider<bool>((ref) => false);
 
@@ -24,7 +23,8 @@ final supabaseAuthStateProvider = StreamProvider<AuthState?>((ref) {
 final sharedPreferencesProvider = Provider<SharedPreferences?>((ref) => null);
 
 final localeProvider = StateProvider<Locale>((ref) {
-  ref.listenSelf((previous, next) async {
+  // ignore: deprecated_member_use
+    ref.listenSelf((previous, next) async {
     if (previous != null && previous != next) {
       try {
         final prefs = await SharedPreferences.getInstance();
@@ -55,7 +55,8 @@ Locale resolveInitialLocale() {
 final offlineModeProvider = StateProvider<bool>((ref) => false);
 
 final precisionScanWindowEnabledProvider = StateProvider<bool>((ref) {
-  ref.listenSelf((previous, next) async {
+  // ignore: deprecated_member_use
+    ref.listenSelf((previous, next) async {
     if (previous != null && previous != next) {
       try {
         final prefs = await SharedPreferences.getInstance();
@@ -74,7 +75,8 @@ final precisionScanWindowEnabledProvider = StateProvider<bool>((ref) {
 });
 
 final tapToScanEnabledProvider = StateProvider<bool>((ref) {
-  ref.listenSelf((previous, next) async {
+  // ignore: deprecated_member_use
+    ref.listenSelf((previous, next) async {
     if (previous != null && previous != next) {
       try {
         final prefs = await SharedPreferences.getInstance();
@@ -93,7 +95,8 @@ final tapToScanEnabledProvider = StateProvider<bool>((ref) {
 });
 
 final percentageRefillEnabledProvider = StateProvider<bool>((ref) {
-  ref.listenSelf((previous, next) async {
+  // ignore: deprecated_member_use
+    ref.listenSelf((previous, next) async {
     if (previous != null && previous != next) {
       try {
         final prefs = await SharedPreferences.getInstance();
@@ -111,7 +114,9 @@ final percentageRefillEnabledProvider = StateProvider<bool>((ref) {
   return true;
 });
 
-final expressQrEnabledOverrideProvider = StateProvider<Map<String, bool>>((ref) => {});
+final expressQrEnabledOverrideProvider = StateProvider<Map<String, bool>>(
+  (ref) => {},
+);
 
 final expressQrEnabledProvider = Provider<bool>((ref) {
   final selectedHotelId = ref.watch(selectedHotelIdProvider);
@@ -128,7 +133,6 @@ final expressQrEnabledProvider = Provider<bool>((ref) {
   if (matches.isEmpty) return false;
   return matches.first.expressQrEnabled;
 });
-
 
 /// Set to true after the invited user successfully sets their password.
 /// This prevents the router from redirecting back to SetPasswordScreen
@@ -260,14 +264,20 @@ final auditLogsProvider = FutureProvider.autoDispose<List<AuditLog>>((ref) {
   return ref.watch(repositoryProvider).fetchAuditLogs();
 });
 
-final teamMembersProvider = FutureProvider.autoDispose<List<UserProfile>>((ref) async {
+final teamMembersProvider = FutureProvider.autoDispose<List<UserProfile>>((
+  ref,
+) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
-  final members = await ref.watch(repositoryProvider).teamMembers(hotelId: hotelId);
-  final invitations = await ref.watch(repositoryProvider).teamInvitations(hotelId: hotelId);
-  
+  final members =
+      await ref.watch(repositoryProvider).teamMembers(hotelId: hotelId);
+  final invitations =
+      await ref.watch(repositoryProvider).teamInvitations(hotelId: hotelId);
+
   // Filter out members who are still in the "Pending Invitations" list
   return members.where((m) {
-    return !invitations.any((i) => i.email.toLowerCase() == m.email.toLowerCase());
+    return !invitations.any(
+      (i) => i.email.toLowerCase() == m.email.toLowerCase(),
+    );
   }).toList();
 });
 
@@ -275,7 +285,8 @@ final demoUsersProvider = FutureProvider<List<UserProfile>>((ref) {
   return ref.watch(repositoryProvider).teamMembers();
 });
 
-final teamInvitationsProvider = FutureProvider.autoDispose<List<TeamInvitation>>((ref) {
+final teamInvitationsProvider =
+    FutureProvider.autoDispose<List<TeamInvitation>>((ref) {
   final hotelId = ref.watch(selectedHotelIdProvider);
   return ref.watch(repositoryProvider).teamInvitations(hotelId: hotelId);
 });
@@ -329,8 +340,11 @@ final roomProductsProvider = FutureProvider<List<RoomProduct>>((ref) async {
   if (pendingActions.isEmpty) return items;
 
   final appliedIds = await repository.appliedClientRequestIds(hotelId: hotelId);
-  pendingActions =
-      await _reconcilePendingActions(ref, pendingActions, appliedIds);
+  pendingActions = await _reconcilePendingActions(
+    ref,
+    pendingActions,
+    appliedIds,
+  );
 
   if (pendingActions.isEmpty) return items;
 
@@ -377,15 +391,18 @@ final inventoryProvider = FutureProvider<List<InventoryItem>>((ref) async {
   if (pendingActions.isEmpty) return items;
 
   final appliedIds = await repository.appliedClientRequestIds(hotelId: hotelId);
-  pendingActions =
-      await _reconcilePendingActions(ref, pendingActions, appliedIds);
+  pendingActions = await _reconcilePendingActions(
+    ref,
+    pendingActions,
+    appliedIds,
+  );
 
   if (pendingActions.isEmpty) return items;
 
   // Fetch room products to map roomProductId to product/productId
   final roomProducts = await repository.roomProducts(hotelId: hotelId);
   final Map<String, Product> roomProductMap = {
-    for (final rp in roomProducts) rp.id: rp.product
+    for (final rp in roomProducts) rp.id: rp.product,
   };
 
   // Local tracker for active volume left of the open bidon per product
@@ -414,23 +431,32 @@ final inventoryProvider = FutureProvider<List<InventoryItem>>((ref) async {
       } else if (action.type == SyncActionType.refill) {
         final roomProductId = action.payload['roomProductId'] as String?;
         final product = roomProductMap[roomProductId];
-        if (product != null && product.id == updated.product.id && product.isRefillable) {
+        if (product != null &&
+            product.id == updated.product.id &&
+            product.isRefillable) {
           final notes = action.payload['notes'] as String?;
           int percentageVal = 100;
           if (notes != null) {
-            final percentageMatch = RegExp(r'\[Refill:\s*(\d+)%\]').firstMatch(notes);
+            final percentageMatch = RegExp(
+              r'\[Refill:\s*(\d+)%\]',
+            ).firstMatch(notes);
             if (percentageMatch != null) {
               percentageVal = int.parse(percentageMatch.group(1)!);
             }
           }
-          final double bottleVol = product.bottleVolumeMl > 0 ? product.bottleVolumeMl.toDouble() : 1000.0;
-          final double bidonVolume = product.bidonVolumeMl > 0 ? product.bidonVolumeMl.toDouble() : 5000.0;
+          final double bottleVol = product.bottleVolumeMl > 0
+              ? product.bottleVolumeMl.toDouble()
+              : 1000.0;
+          final double bidonVolume = product.bidonVolumeMl > 0
+              ? product.bidonVolumeMl.toDouble()
+              : 5000.0;
           final double volumeAdded = (percentageVal / 100.0) * bottleVol;
 
           int fullBidons = updated.fullBidons;
           int openBidons = updated.openBidons;
           int emptyBidons = updated.emptyBidons;
-          double currentVolumeLeft = localVolumeLeft[updated.product.id] ?? updated.openBidonVolumeLeftMl;
+          double currentVolumeLeft = localVolumeLeft[updated.product.id] ??
+              updated.openBidonVolumeLeftMl;
 
           if (openBidons > 0 && currentVolumeLeft == 0.0) {
             currentVolumeLeft = bidonVolume;
@@ -523,7 +549,6 @@ final inventoryEventsProvider = FutureProvider<List<InventoryEvent>>((ref) {
   return ref.watch(repositoryProvider).recentInventoryEvents(hotelId: hotelId);
 });
 
-
 class DownloadBannerNotifier extends StateNotifier<bool> {
   DownloadBannerNotifier() : super(false) {
     _load();
@@ -549,7 +574,8 @@ class DownloadBannerNotifier extends StateNotifier<bool> {
   }
 }
 
-final downloadBannerCollapsedProvider = StateNotifierProvider<DownloadBannerNotifier, bool>((ref) {
+final downloadBannerCollapsedProvider =
+    StateNotifierProvider<DownloadBannerNotifier, bool>((ref) {
   return DownloadBannerNotifier();
 });
 
@@ -598,13 +624,15 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
         occurredLocal.day == now.day;
   }).toList();
 
-  final refilledProductIds = todayRefillEvents.map((e) => e.roomProductId).toSet();
+  final refilledProductIds =
+      todayRefillEvents.map((e) => e.roomProductId).toSet();
 
   for (final entry in roomMap.entries) {
     final roomNumber = entry.key;
     final roomProducts = entry.value;
-    final anyProductRefilledToday =
-        roomProducts.any((p) => refilledProductIds.contains(p.id));
+    final anyProductRefilledToday = roomProducts.any(
+      (p) => refilledProductIds.contains(p.id),
+    );
     if (anyProductRefilledToday) {
       refilledRoomNumbers.add(roomNumber);
     }
@@ -623,15 +651,18 @@ final dailyRefillProgressProvider = Provider<DailyRefillProgress?>((ref) {
 
     for (final entry in remainingRooms) {
       final roomProducts = entry.value;
-      final hasCritical = roomProducts.any((item) =>
-          item.status == BottleStatus.refillLimitReached ||
-          item.status == BottleStatus.tooOld ||
-          item.status == BottleStatus.needsReplacement ||
-          item.status == BottleStatus.damaged ||
-          item.status == BottleStatus.lost);
+      final hasCritical = roomProducts.any(
+        (item) =>
+            item.status == BottleStatus.refillLimitReached ||
+            item.status == BottleStatus.tooOld ||
+            item.status == BottleStatus.needsReplacement ||
+            item.status == BottleStatus.damaged ||
+            item.status == BottleStatus.lost,
+      );
 
-      final hasWarning =
-          roomProducts.any((item) => item.status == BottleStatus.needsRefill);
+      final hasWarning = roomProducts.any(
+        (item) => item.status == BottleStatus.needsRefill,
+      );
 
       if (hasCritical) {
         criticalRooms.add(entry);
@@ -686,7 +717,9 @@ final rolesProvider = FutureProvider<List<String>>((ref) async {
   return ref.watch(repositoryProvider).fetchRoles();
 });
 
-final rolePermissionsProvider = FutureProvider<Map<String, Set<String>>>((ref) async {
+final rolePermissionsProvider = FutureProvider<Map<String, Set<String>>>((
+  ref,
+) async {
   return ref.watch(repositoryProvider).fetchRolePermissions();
 });
 
@@ -725,7 +758,8 @@ final hasPermissionProvider = Provider.family<bool, String>((ref, permission) {
   return rolePermissions?.contains(permission) ?? false;
 });
 
-final housekeeperAllocationsProvider = FutureProvider<List<HousekeeperAllocation>>((ref) async {
+final housekeeperAllocationsProvider =
+    FutureProvider<List<HousekeeperAllocation>>((ref) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
   final repository = ref.watch(repositoryProvider);
   final currentUser = ref.watch(currentUserProvider).valueOrNull;
@@ -740,8 +774,8 @@ final housekeeperAllocationsProvider = FutureProvider<List<HousekeeperAllocation
 /// (checkouts, returns, room placements, refill/replace usages).
 typedef HousekeeperProductParams = ({String housekeeperId, String productId});
 
-final housekeeperStockEventsProvider =
-    FutureProvider.family<List<HousekeeperStockEvent>, HousekeeperProductParams>((ref, params) async {
+final housekeeperStockEventsProvider = FutureProvider.family<
+    List<HousekeeperStockEvent>, HousekeeperProductParams>((ref, params) async {
   final repository = ref.watch(repositoryProvider);
   return repository.fetchHousekeeperStockEvents(
     housekeeperId: params.housekeeperId,
@@ -752,7 +786,10 @@ final housekeeperStockEventsProvider =
 /// Full movement history of the current housekeeper's cart across ALL
 /// products (used by the "All history" button on the My Basket page).
 final housekeeperAllStockEventsProvider =
-    FutureProvider.family<List<HousekeeperStockEvent>, String>((ref, housekeeperId) async {
+    FutureProvider.family<List<HousekeeperStockEvent>, String>((
+  ref,
+  housekeeperId,
+) async {
   final repository = ref.watch(repositoryProvider);
   return repository.fetchHousekeeperStockEvents(
     housekeeperId: housekeeperId,
@@ -760,18 +797,21 @@ final housekeeperAllStockEventsProvider =
   );
 });
 
-final hotelHousekeepersProvider = FutureProvider<List<UserProfile>>((ref) async {
+final hotelHousekeepersProvider = FutureProvider<List<UserProfile>>((
+  ref,
+) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
   final repository = ref.watch(repositoryProvider);
   final members = await repository.teamMembers(hotelId: hotelId);
-  return members
-      .where((m) => m.role == UserRole.housekeeper)
-      .toList();
+  return members.where((m) => m.role == UserRole.housekeeper).toList();
 });
 
 /// Basket (allocations) of a specific housekeeper, viewed by managers.
-final housekeeperBasketProvider = FutureProvider.family<List<HousekeeperAllocation>, String>(
-    (ref, housekeeperId) async {
+final housekeeperBasketProvider =
+    FutureProvider.family<List<HousekeeperAllocation>, String>((
+  ref,
+  housekeeperId,
+) async {
   final hotelId = ref.watch(selectedHotelIdProvider);
   final repository = ref.watch(repositoryProvider);
   return repository.fetchHousekeeperAllocations(
@@ -781,12 +821,14 @@ final housekeeperBasketProvider = FutureProvider.family<List<HousekeeperAllocati
 });
 
 /// Full stock movement history of a specific housekeeper, viewed by managers.
-final housekeeperHistoryProvider = FutureProvider.family<List<HousekeeperStockEvent>, String>(
-    (ref, housekeeperId) async {
+final housekeeperHistoryProvider =
+    FutureProvider.family<List<HousekeeperStockEvent>, String>((
+  ref,
+  housekeeperId,
+) async {
   final repository = ref.watch(repositoryProvider);
   return repository.fetchHousekeeperStockEvents(
     housekeeperId: housekeeperId,
     limit: 200,
   );
 });
-

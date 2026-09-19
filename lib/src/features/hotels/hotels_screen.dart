@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/app_enums.dart';
-import '../../domain/models.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../auth/auth_validation.dart';
-import '../shared/async_value_view.dart';
-import '../shared/glass_card.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/premium_snackbar.dart';
-import '../shared/premium_confirm_dialog.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/auth/auth_validation.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/glass_card.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/features/shared/premium_confirm_dialog.dart';
 
 class HotelsScreen extends ConsumerWidget {
   const HotelsScreen({super.key});
@@ -20,7 +20,9 @@ class HotelsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull),
+    );
     final canCreateHotel = currentUser?.isIvraUser ?? false;
     return PageScaffold(
       title: l10n.t('hotels'),
@@ -53,7 +55,9 @@ class HotelsScreen extends ConsumerWidget {
               _PremiumHotelCard(
                 hotel: hotel,
                 onEdit: () => _showHotelEditRequestDialog(context, ref, hotel),
-                onDelete: canCreateHotel ? () => _confirmDeleteHotel(context, ref, hotel) : null,
+                onDelete: canCreateHotel
+                    ? () => _confirmDeleteHotel(context, ref, hotel)
+                    : null,
               ),
           ],
         ),
@@ -161,7 +165,11 @@ class _Line extends StatelessWidget {
 }
 
 class _PremiumHotelCard extends StatefulWidget {
-  const _PremiumHotelCard({required this.hotel, required this.onEdit, this.onDelete});
+  const _PremiumHotelCard({
+    required this.hotel,
+    required this.onEdit,
+    this.onDelete,
+  });
 
   final Hotel hotel;
   final VoidCallback onEdit;
@@ -194,8 +202,9 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary
-                      .withValues(alpha: _isHovered ? 0.15 : 0.0),
+                  color: theme.colorScheme.primary.withValues(
+                    alpha: _isHovered ? 0.15 : 0.0,
+                  ),
                   blurRadius: _isHovered ? 20 : 0,
                   spreadRadius: _isHovered ? 2 : 0,
                 ),
@@ -204,8 +213,9 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
             child: GlassCard(
               padding: EdgeInsets.zero,
               borderRadius: 20,
-              borderColor: theme.colorScheme.outline
-                  .withValues(alpha: _isHovered ? 0.3 : 0.1),
+              borderColor: theme.colorScheme.outline.withValues(
+                alpha: _isHovered ? 0.3 : 0.1,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -214,10 +224,12 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          theme.colorScheme.primaryContainer
-                              .withValues(alpha: 0.6),
-                          theme.colorScheme.primaryContainer
-                              .withValues(alpha: 0.2),
+                          theme.colorScheme.primaryContainer.withValues(
+                            alpha: 0.6,
+                          ),
+                          theme.colorScheme.primaryContainer.withValues(
+                            alpha: 0.2,
+                          ),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -246,7 +258,9 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
                             if (hotel.pendingEdits > 0)
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: theme.colorScheme.errorContainer,
                                   borderRadius: BorderRadius.circular(6),
@@ -295,8 +309,11 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.location_city_outlined,
-                                size: 16, color: theme.colorScheme.primary),
+                            Icon(
+                              Icons.location_city_outlined,
+                              size: 16,
+                              color: theme.colorScheme.primary,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               '${hotel.city}, ${hotel.country}',
@@ -325,10 +342,11 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
                                     .withValues(alpha: 0.5),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Icon(Icons.room_service_outlined,
-                                  size: 16,
-                                  color:
-                                      theme.colorScheme.onSecondaryContainer),
+                              child: Icon(
+                                Icons.room_service_outlined,
+                                size: 16,
+                                color: theme.colorScheme.onSecondaryContainer,
+                              ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -412,10 +430,12 @@ class _HotelOnboardingWizard extends ConsumerStatefulWidget {
   const _HotelOnboardingWizard();
 
   @override
-  ConsumerState<_HotelOnboardingWizard> createState() => _HotelOnboardingWizardState();
+  ConsumerState<_HotelOnboardingWizard> createState() =>
+      _HotelOnboardingWizardState();
 }
 
-class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> {
+class _HotelOnboardingWizardState
+    extends ConsumerState<_HotelOnboardingWizard> {
   int _step = 0;
   final _hotelKey = GlobalKey<FormState>();
   final _roomsKey = GlobalKey<FormState>();
@@ -454,7 +474,9 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final products = ref.watch(productsProvider.select((s) => s.valueOrNull ?? const <Product>[]));
+    final products = ref.watch(
+      productsProvider.select((s) => s.valueOrNull ?? const <Product>[]),
+    );
     if (!_didInitializeProducts && products.isNotEmpty) {
       _selectedProductIds.addAll(products.take(3).map((p) => p.id));
       _didInitializeProducts = true;
@@ -462,7 +484,12 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(maxHeight: 760),
-      padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + MediaQuery.viewInsetsOf(context).bottom),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        24 + MediaQuery.viewInsetsOf(context).bottom,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
@@ -471,7 +498,12 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(l10n.t('hotelOnboardingWizard'), style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              l10n.t('hotelOnboardingWizard'),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             Stepper(
               currentStep: _step,
@@ -485,25 +517,84 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
                     key: _hotelKey,
                     child: Column(
                       children: [
-                        _RequiredTextField(controller: _name, label: l10n.t('hotelLabelName')),
+                        _RequiredTextField(
+                          controller: _name,
+                          label: l10n.t('hotelLabelName'),
+                        ),
                         const SizedBox(height: 12),
-                        TextFormField(controller: _legalName, decoration: InputDecoration(labelText: l10n.t('hotelLabelLegalName'))),
+                        TextFormField(
+                          controller: _legalName,
+                          decoration: InputDecoration(
+                            labelText: l10n.t('hotelLabelLegalName'),
+                          ),
+                        ),
                         const SizedBox(height: 12),
-                        Row(children: [
-                          Expanded(child: DropdownButtonFormField<TunisianState>(value: _selectedState, isExpanded: true, decoration: InputDecoration(labelText: l10n.t('hotelLabelState')), items: [for (final state in TunisianState.values) DropdownMenuItem(value: state, child: Text(state.displayName, overflow: TextOverflow.ellipsis))], onChanged: (value) { if (value != null) setState(() => _selectedState = value); })),
-                          const SizedBox(width: 12),
-                          Expanded(child: _RequiredTextField(controller: _country, label: l10n.t('hotelLabelCountry'))),
-                        ]),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<TunisianState>(
+                                initialValue: _selectedState,
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  labelText: l10n.t('hotelLabelState'),
+                                ),
+                                items: [
+                                  for (final state in TunisianState.values)
+                                    DropdownMenuItem(
+                                      value: state,
+                                      child: Text(
+                                        state.displayName,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                ],
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    setState(() => _selectedState = value);
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _RequiredTextField(
+                                controller: _country,
+                                label: l10n.t('hotelLabelCountry'),
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 12),
-                        _RequiredTextField(controller: _contactName, label: l10n.t('hotelLabelContactName')),
+                        _RequiredTextField(
+                          controller: _contactName,
+                          label: l10n.t('hotelLabelContactName'),
+                        ),
                         const SizedBox(height: 12),
-                        _RequiredTextField(controller: _email, label: l10n.t('hotelLabelEmail')),
+                        _RequiredTextField(
+                          controller: _email,
+                          label: l10n.t('hotelLabelEmail'),
+                        ),
                         const SizedBox(height: 12),
-                        _RequiredTextField(controller: _phone, label: l10n.t('hotelLabelPhone')),
+                        _RequiredTextField(
+                          controller: _phone,
+                          label: l10n.t('hotelLabelPhone'),
+                        ),
                         const SizedBox(height: 12),
-                        TextFormField(controller: _address, decoration: InputDecoration(labelText: l10n.t('hotelLabelAddress'))),
+                        TextFormField(
+                          controller: _address,
+                          decoration: InputDecoration(
+                            labelText: l10n.t('hotelLabelAddress'),
+                          ),
+                        ),
                         const SizedBox(height: 12),
-                        TextFormField(controller: _notes, minLines: 2, maxLines: 3, decoration: InputDecoration(labelText: l10n.t('hotelLabelNotes'))),
+                        TextFormField(
+                          controller: _notes,
+                          minLines: 2,
+                          maxLines: 3,
+                          decoration: InputDecoration(
+                            labelText: l10n.t('hotelLabelNotes'),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -515,27 +606,50 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
                     key: _roomsKey,
                     child: Column(
                       children: [
-                        _NumberField(controller: _floorNumber, label: l10n.t('roomsLabelFloorNumber')),
+                        _NumberField(
+                          controller: _floorNumber,
+                          label: l10n.t('roomsLabelFloorNumber'),
+                        ),
                         const SizedBox(height: 12),
-                        _NumberField(controller: _firstRoomNumber, label: l10n.t('hotelOnboardingFirstRoom')),
+                        _NumberField(
+                          controller: _firstRoomNumber,
+                          label: l10n.t('hotelOnboardingFirstRoom'),
+                        ),
                         const SizedBox(height: 12),
-                        _NumberField(controller: _roomCount, label: l10n.t('hotelOnboardingRoomCount')),
+                        _NumberField(
+                          controller: _roomCount,
+                          label: l10n.t('hotelOnboardingRoomCount'),
+                        ),
                         const SizedBox(height: 12),
-                        Align(alignment: Alignment.centerLeft, child: Text(l10n.t('hotelOnboardingProducts'))),
-                        Wrap(spacing: 8, children: [
-                          for (final product in products)
-                            FilterChip(
-                              label: Text(product.label(Localizations.localeOf(context).languageCode)),
-                              selected: _selectedProductIds.contains(product.id),
-                              onSelected: (selected) => setState(() {
-                                if (selected) {
-                                  _selectedProductIds.add(product.id);
-                                } else {
-                                  _selectedProductIds.remove(product.id);
-                                }
-                              }),
-                            ),
-                        ]),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(l10n.t('hotelOnboardingProducts')),
+                        ),
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            for (final product in products)
+                              FilterChip(
+                                label: Text(
+                                  product.label(
+                                    Localizations.localeOf(
+                                      context,
+                                    ).languageCode,
+                                  ),
+                                ),
+                                selected: _selectedProductIds.contains(
+                                  product.id,
+                                ),
+                                onSelected: (selected) => setState(() {
+                                  if (selected) {
+                                    _selectedProductIds.add(product.id);
+                                  } else {
+                                    _selectedProductIds.remove(product.id);
+                                  }
+                                }),
+                              ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -551,17 +665,36 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
               ],
             ),
             const Spacer(),
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              TextButton(onPressed: _isSaving ? null : () => Navigator.of(context).pop(), child: Text(l10n.t('btnCancel'))),
-              const SizedBox(width: 8),
-              if (_step > 0) TextButton(onPressed: _isSaving ? null : () => setState(() => _step--), child: Text(l10n.t('back'))),
-              const SizedBox(width: 8),
-              FilledButton.icon(
-                onPressed: _isSaving ? null : (_step < 2 ? _next : _finish),
-                icon: Icon(_step < 2 ? Icons.arrow_forward_outlined : Icons.check_circle_outline),
-                label: Text(_step < 2 ? l10n.t('next') : l10n.t('hotelOnboardingFinish')),
-              ),
-            ]),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed:
+                      _isSaving ? null : () => Navigator.of(context).pop(),
+                  child: Text(l10n.t('btnCancel')),
+                ),
+                const SizedBox(width: 8),
+                if (_step > 0)
+                  TextButton(
+                    onPressed: _isSaving ? null : () => setState(() => _step--),
+                    child: Text(l10n.t('back')),
+                  ),
+                const SizedBox(width: 8),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : (_step < 2 ? _next : _finish),
+                  icon: Icon(
+                    _step < 2
+                        ? Icons.arrow_forward_outlined
+                        : Icons.check_circle_outline,
+                  ),
+                  label: Text(
+                    _step < 2
+                        ? l10n.t('next')
+                        : l10n.t('hotelOnboardingFinish'),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -574,21 +707,29 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
     setState(() => _step++);
   }
 
-  Future<bool?> _showOnboardingInventoryDialog(BuildContext context, int total) {
+  Future<bool?> _showOnboardingInventoryDialog(
+    BuildContext context,
+    int total,
+  ) {
     final l10n = AppLocalizations.of(context);
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.info_outline, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.info_outline,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(width: 8),
             Text(l10n.t('inventoryEnforceOnboardingTitle')),
           ],
         ),
-        content: Text(l10n.tParams('inventoryEnforceOnboardingContent', {
-          'total': total.toString(),
-        })),
+        content: Text(
+          l10n.tParams('inventoryEnforceOnboardingContent', {
+            'total': total.toString(),
+          }),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -628,7 +769,8 @@ class _HotelOnboardingWizardState extends ConsumerState<_HotelOnboardingWizard> 
           );
       ref.invalidate(hotelsProvider);
       final hotels = await ref.read(hotelsProvider.future);
-      final created = hotels.where((hotel) => hotel.name == _name.text.trim()).lastOrNull;
+      final created =
+          hotels.where((hotel) => hotel.name == _name.text.trim()).lastOrNull;
       if (created != null) {
         await ref.read(repositoryProvider).createRoomsFromTemplate(
               hotelId: created.id,
@@ -703,9 +845,9 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
           children: [
             Text(
               l10n.t('createHotel'),
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Flexible(
@@ -716,12 +858,15 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _RequiredTextField(
-                          controller: _name, label: l10n.t('hotelLabelName')),
+                        controller: _name,
+                        label: l10n.t('hotelLabelName'),
+                      ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _legalName,
                         decoration: InputDecoration(
-                            labelText: l10n.t('hotelLabelLegalName')),
+                          labelText: l10n.t('hotelLabelLegalName'),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -731,13 +876,16 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
                               isExpanded: true,
                               initialValue: _selectedState,
                               decoration: InputDecoration(
-                                  labelText: l10n.t('hotelLabelState')),
+                                labelText: l10n.t('hotelLabelState'),
+                              ),
                               items: [
                                 for (final state in TunisianState.values)
                                   DropdownMenuItem(
                                     value: state,
-                                    child: Text(state.displayName,
-                                        overflow: TextOverflow.ellipsis),
+                                    child: Text(
+                                      state.displayName,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                               ],
                               onChanged: (value) {
@@ -763,15 +911,20 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
                       ),
                       const SizedBox(height: 12),
                       _RequiredTextField(
-                          controller: _email, label: l10n.t('hotelLabelEmail')),
+                        controller: _email,
+                        label: l10n.t('hotelLabelEmail'),
+                      ),
                       const SizedBox(height: 12),
                       _RequiredTextField(
-                          controller: _phone, label: l10n.t('hotelLabelPhone')),
+                        controller: _phone,
+                        label: l10n.t('hotelLabelPhone'),
+                      ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _address,
                         decoration: InputDecoration(
-                            labelText: l10n.t('hotelLabelAddress')),
+                          labelText: l10n.t('hotelLabelAddress'),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -828,15 +981,21 @@ class _CreateHotelDialogState extends ConsumerState<_CreateHotelDialog> {
           );
       if (mounted) {
         Navigator.of(context).pop();
-        PremiumSnackbar.showSuccess(context, AppLocalizations.of(context).t('hotelCreatedSuccessfully'),);
+        PremiumSnackbar.showSuccess(
+          context,
+          AppLocalizations.of(context).t('hotelCreatedSuccessfully'),
+        );
       }
     } catch (error) {
       if (!mounted) return;
-      PremiumSnackbar.showError(context, localizeAuthError(
-            AppLocalizations.of(context),
-            error,
-            fallbackKey: 'hotelCreateFailed',
-          ));
+      PremiumSnackbar.showError(
+        context,
+        localizeAuthError(
+          AppLocalizations.of(context),
+          error,
+          fallbackKey: 'hotelCreateFailed',
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -879,7 +1038,8 @@ class _HotelEditRequestDialogState
     _selectedState =
         TunisianState.fromString(widget.hotel.city) ?? TunisianState.tunis;
     _country = TextEditingController(
-        text: widget.hotel.country.isEmpty ? 'Tunisia' : widget.hotel.country);
+      text: widget.hotel.country.isEmpty ? 'Tunisia' : widget.hotel.country,
+    );
     _contactName = TextEditingController(text: widget.hotel.contactName);
     _email = TextEditingController(text: widget.hotel.email);
     _phone = TextEditingController(text: widget.hotel.phone);
@@ -919,9 +1079,9 @@ class _HotelEditRequestDialogState
           children: [
             Text(
               '${l10n.t('requestHotelEdit')} - ${widget.hotel.name}',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Flexible(
@@ -932,12 +1092,15 @@ class _HotelEditRequestDialogState
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _RequiredTextField(
-                          controller: _name, label: l10n.t('hotelLabelName')),
+                        controller: _name,
+                        label: l10n.t('hotelLabelName'),
+                      ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _legalName,
                         decoration: InputDecoration(
-                            labelText: l10n.t('hotelLabelLegalName')),
+                          labelText: l10n.t('hotelLabelLegalName'),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -947,13 +1110,16 @@ class _HotelEditRequestDialogState
                               isExpanded: true,
                               initialValue: _selectedState,
                               decoration: InputDecoration(
-                                  labelText: l10n.t('hotelLabelState')),
+                                labelText: l10n.t('hotelLabelState'),
+                              ),
                               items: [
                                 for (final state in TunisianState.values)
                                   DropdownMenuItem(
                                     value: state,
-                                    child: Text(state.displayName,
-                                        overflow: TextOverflow.ellipsis),
+                                    child: Text(
+                                      state.displayName,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                               ],
                               onChanged: (value) {
@@ -979,15 +1145,20 @@ class _HotelEditRequestDialogState
                       ),
                       const SizedBox(height: 12),
                       _RequiredTextField(
-                          controller: _email, label: l10n.t('hotelLabelEmail')),
+                        controller: _email,
+                        label: l10n.t('hotelLabelEmail'),
+                      ),
                       const SizedBox(height: 12),
                       _RequiredTextField(
-                          controller: _phone, label: l10n.t('hotelLabelPhone')),
+                        controller: _phone,
+                        label: l10n.t('hotelLabelPhone'),
+                      ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _address,
                         decoration: InputDecoration(
-                            labelText: l10n.t('hotelLabelAddress')),
+                          labelText: l10n.t('hotelLabelAddress'),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -1021,9 +1192,11 @@ class _HotelEditRequestDialogState
                         ? Icons.save_outlined
                         : Icons.pending_actions_outlined,
                   ),
-                  label: Text(widget.applyImmediately
-                      ? l10n.t('btnSave')
-                      : l10n.t('btnSubmitRequest')),
+                  label: Text(
+                    widget.applyImmediately
+                        ? l10n.t('btnSave')
+                        : l10n.t('btnSubmitRequest'),
+                  ),
                 ),
               ],
             ),
@@ -1086,26 +1259,28 @@ class _HotelEditRequestDialogState
                   newData: newData,
                 );
         if (widget.applyImmediately && requestId != null) {
-          await ref.read(repositoryProvider).approveRequest(
-                approvalRequestId: requestId,
-              );
+          await ref
+              .read(repositoryProvider)
+              .approveRequest(approvalRequestId: requestId);
         }
       }
       if (mounted) {
         Navigator.of(context).pop();
-        PremiumSnackbar.showSuccess(context, offline
-                  ? l10n.t('editRequestQueued')
-                  : widget.applyImmediately
-                      ? l10n.t('hotelUpdated')
-                      : l10n.t('editRequestSubmitted'),);
+        PremiumSnackbar.showSuccess(
+          context,
+          offline
+              ? l10n.t('editRequestQueued')
+              : widget.applyImmediately
+                  ? l10n.t('hotelUpdated')
+                  : l10n.t('editRequestSubmitted'),
+        );
       }
     } catch (error) {
       if (!mounted) return;
-      PremiumSnackbar.showError(context, localizeAuthError(
-            l10n,
-            error,
-            fallbackKey: 'hotelUpdateFailed',
-          ));
+      PremiumSnackbar.showError(
+        context,
+        localizeAuthError(l10n, error, fallbackKey: 'hotelUpdateFailed'),
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -1113,10 +1288,7 @@ class _HotelEditRequestDialogState
 }
 
 class _RequiredTextField extends StatelessWidget {
-  const _RequiredTextField({
-    required this.controller,
-    required this.label,
-  });
+  const _RequiredTextField({required this.controller, required this.label});
 
   final TextEditingController controller;
   final String label;
@@ -1138,10 +1310,7 @@ class _RequiredTextField extends StatelessWidget {
 }
 
 class _NumberField extends StatelessWidget {
-  const _NumberField({
-    required this.controller,
-    required this.label,
-  });
+  const _NumberField({required this.controller, required this.label});
 
   final TextEditingController controller;
   final String label;

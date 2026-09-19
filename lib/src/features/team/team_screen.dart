@@ -3,18 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../domain/app_enums.dart';
-import '../../domain/models.dart';
-import '../../state/app_state.dart';
-import '../../l10n/app_localizations.dart';
-import '../dashboard/dashboard_screen.dart';
-import '../auth/accept_invitation_screen.dart';
-import '../auth/auth_validation.dart';
-import '../shared/async_value_view.dart';
-import '../shared/premium_snackbar.dart';
-import '../shared/premium_confirm_dialog.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/glass_card.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/features/dashboard/dashboard_screen.dart';
+import 'package:ivra_refill/src/features/auth/accept_invitation_screen.dart';
+import 'package:ivra_refill/src/features/auth/auth_validation.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/features/shared/premium_confirm_dialog.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/glass_card.dart';
 
 class TeamScreen extends ConsumerWidget {
   const TeamScreen({super.key});
@@ -23,7 +23,9 @@ class TeamScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull),
+    );
     final canInvite =
         currentUser != null && currentUser.role != UserRole.hotelStaff;
 
@@ -48,8 +50,10 @@ class TeamScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context).t('teamAccounts'),
-              style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            AppLocalizations.of(context).t('teamAccounts'),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           const SizedBox(height: 12),
           AsyncValueView(
             value: ref.watch(teamMembersProvider),
@@ -101,11 +105,7 @@ class TeamScreen extends ConsumerWidget {
   /// navigates to the dashboard so the admin immediately sees the app scoped to
   /// the impersonated user. The persistent banner in the app shell offers the
   /// exit back to the admin's own view.
-  void _viewAsMember(
-    BuildContext context,
-    WidgetRef ref,
-    UserProfile member,
-  ) {
+  void _viewAsMember(BuildContext context, WidgetRef ref, UserProfile member) {
     startImpersonation(ref, member);
     context.go(DashboardScreen.route);
   }
@@ -142,10 +142,8 @@ class TeamScreen extends ConsumerWidget {
 
     await showDialog<void>(
       context: context,
-      builder: (context) => _InviteTeamMemberDialog(
-        currentUser: currentUser,
-        hotels: hotels,
-      ),
+      builder: (context) =>
+          _InviteTeamMemberDialog(currentUser: currentUser, hotels: hotels),
     );
 
     ref.invalidate(teamInvitationsProvider);
@@ -160,13 +158,15 @@ class TeamScreen extends ConsumerWidget {
         .read(repositoryProvider)
         .fetchHousekeeperAllocations(housekeeperId: housekeeperId);
     return allocations
-        .where((a) =>
-            a.fullBottles > 0 ||
-            a.emptyBottles > 0 ||
-            a.fullBidons > 0 ||
-            a.openBidons > 0 ||
-            a.emptyBidons > 0 ||
-            a.openBidonVolumeLeftMl > 0)
+        .where(
+          (a) =>
+              a.fullBottles > 0 ||
+              a.emptyBottles > 0 ||
+              a.fullBidons > 0 ||
+              a.openBidons > 0 ||
+              a.emptyBidons > 0 ||
+              a.openBidonVolumeLeftMl > 0,
+        )
         .toList();
   }
 
@@ -235,10 +235,9 @@ class TeamScreen extends ConsumerWidget {
       }
     }
 
-    await ref.read(repositoryProvider).setTeamMemberActive(
-          userId: member.id,
-          isActive: isActive,
-        );
+    await ref
+        .read(repositoryProvider)
+        .setTeamMemberActive(userId: member.id, isActive: isActive);
     ref.invalidate(teamMembersProvider);
     if (!context.mounted) return;
     PremiumSnackbar.showSuccess(
@@ -293,17 +292,16 @@ class TeamScreen extends ConsumerWidget {
     WidgetRef ref,
     TeamInvitation invitation,
   ) async {
-    await ref.read(repositoryProvider).cancelTeamInvitation(
-          invitationId: invitation.id,
-        );
+    await ref
+        .read(repositoryProvider)
+        .cancelTeamInvitation(invitationId: invitation.id);
     ref.invalidate(teamInvitationsProvider);
     if (!context.mounted) return;
     PremiumSnackbar.showSuccess(
       context,
-      AppLocalizations.of(context).tParams(
-        'teamInvitationCancelled',
-        {'email': invitation.email},
-      ),
+      AppLocalizations.of(
+        context,
+      ).tParams('teamInvitationCancelled', {'email': invitation.email}),
     );
   }
 
@@ -312,17 +310,16 @@ class TeamScreen extends ConsumerWidget {
     WidgetRef ref,
     TeamInvitation invitation,
   ) async {
-    await ref.read(repositoryProvider).resendTeamInvitation(
-          invitationId: invitation.id,
-        );
+    await ref
+        .read(repositoryProvider)
+        .resendTeamInvitation(invitationId: invitation.id);
     ref.invalidate(teamInvitationsProvider);
     if (!context.mounted) return;
     PremiumSnackbar.showSuccess(
       context,
-      AppLocalizations.of(context).tParams(
-        'teamInvitationResent',
-        {'email': invitation.email},
-      ),
+      AppLocalizations.of(
+        context,
+      ).tParams('teamInvitationResent', {'email': invitation.email}),
     );
   }
 
@@ -349,10 +346,9 @@ class TeamScreen extends ConsumerWidget {
     if (!context.mounted) return;
     PremiumSnackbar.showSuccess(
       context,
-      AppLocalizations.of(context).tParams(
-        'teamInvitationCopied',
-        {'email': invitation.email},
-      ),
+      AppLocalizations.of(
+        context,
+      ).tParams('teamInvitationCopied', {'email': invitation.email}),
     );
   }
 }
@@ -393,8 +389,9 @@ class _MembersTable extends ConsumerWidget {
             currentUser!.role == UserRole.appManager);
 
     final hotelsById = <String, String>{
-      for (final hotel
-          in ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const <Hotel>[])))
+      for (final hotel in ref.watch(
+        hotelsProvider.select((s) => s.valueOrNull ?? const <Hotel>[]),
+      ))
         hotel.id: hotel.name,
     };
 
@@ -505,8 +502,9 @@ class _InviteTeamMemberDialogState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final availableRoles = _invitableRoles(widget.currentUser.role);
-    final needsHotel =
-        _role == UserRole.hotelManager || _role == UserRole.hotelStaff || _role == UserRole.housekeeper;
+    final needsHotel = _role == UserRole.hotelManager ||
+        _role == UserRole.hotelStaff ||
+        _role == UserRole.housekeeper;
 
     return AlertDialog(
       title: Text(l10n.t('teamInviteTitle')),
@@ -521,8 +519,9 @@ class _InviteTeamMemberDialogState
               children: [
                 TextFormField(
                   controller: _fullName,
-                  decoration:
-                      InputDecoration(labelText: l10n.t('teamLabelFullName')),
+                  decoration: InputDecoration(
+                    labelText: l10n.t('teamLabelFullName'),
+                  ),
                   validator: _required,
                 ),
                 const SizedBox(height: 12),
@@ -530,7 +529,8 @@ class _InviteTeamMemberDialogState
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                      labelText: l10n.t('teamTableColumnEmail')),
+                    labelText: l10n.t('teamTableColumnEmail'),
+                  ),
                   validator: (value) {
                     final errorKey = AuthValidation.email(value ?? '');
                     if (errorKey != null) return l10n.t(errorKey);
@@ -544,9 +544,10 @@ class _InviteTeamMemberDialogState
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<UserRole>(
-                  value: _role,
-                  decoration:
-                      InputDecoration(labelText: l10n.t('teamTableColumnRole')),
+                  initialValue: _role,
+                  decoration: InputDecoration(
+                    labelText: l10n.t('teamTableColumnRole'),
+                  ),
                   items: [
                     for (final role in availableRoles)
                       DropdownMenuItem(
@@ -580,7 +581,8 @@ class _InviteTeamMemberDialogState
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                          color: Theme.of(context).colorScheme.outlineVariant),
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     constraints: const BoxConstraints(maxHeight: 200),
@@ -645,8 +647,9 @@ class _InviteTeamMemberDialogState
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    final needsHotel =
-        _role == UserRole.hotelManager || _role == UserRole.hotelStaff || _role == UserRole.housekeeper;
+    final needsHotel = _role == UserRole.hotelManager ||
+        _role == UserRole.hotelStaff ||
+        _role == UserRole.housekeeper;
     if (needsHotel && _selectedHotelIds.isEmpty) return;
 
     setState(() => _isSaving = true);
@@ -666,11 +669,14 @@ class _InviteTeamMemberDialogState
       if (mounted) Navigator.of(context).pop();
     } catch (error) {
       if (!mounted) return;
-      PremiumSnackbar.showError(context, localizeAuthError(
-            AppLocalizations.of(context),
-            error,
-            fallbackKey: 'teamInviteFailed',
-          ));
+      PremiumSnackbar.showError(
+        context,
+        localizeAuthError(
+          AppLocalizations.of(context),
+          error,
+          fallbackKey: 'teamInviteFailed',
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -736,7 +742,10 @@ class _MemberActions extends StatelessWidget {
         ),
         IconButton(
           tooltip: l10n.t('delete'),
-          icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+          icon: Icon(
+            Icons.delete_outline,
+            color: Theme.of(context).colorScheme.error,
+          ),
           onPressed: canManage ? () => onDelete(member) : null,
         ),
       ],
@@ -780,7 +789,8 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
 
     return AlertDialog(
       title: Text(
-          '${l10n.t('teamAssignHotelsTitle')} — ${widget.member.fullName}'),
+        '${l10n.t('teamAssignHotelsTitle')} — ${widget.member.fullName}',
+      ),
       content: SizedBox(
         width: 520,
         child: Column(
@@ -807,7 +817,12 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
                   for (final hotel in widget.allHotels)
                     CheckboxListTile(
                       title: Text(hotel.name),
-                      subtitle: Text(l10n.tParams('teamHotelSubtitle', {'city': hotel.city, 'country': hotel.country})),
+                      subtitle: Text(
+                        l10n.tParams('teamHotelSubtitle', {
+                          'city': hotel.city,
+                          'country': hotel.country,
+                        }),
+                      ),
                       secondary: Icon(
                         Icons.hotel_outlined,
                         color: _selectedIds.contains(hotel.id)
@@ -842,7 +857,9 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
               ? const SizedBox.square(
                   dimension: 18,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : const Icon(Icons.check),
           label: Text(l10n.t('btnSave')),
@@ -860,20 +877,14 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
       // Assign newly selected hotels
       for (final id in _selectedIds) {
         if (!oldIds.contains(id)) {
-          await repo.assignUserHotel(
-            userId: widget.member.id,
-            hotelId: id,
-          );
+          await repo.assignUserHotel(userId: widget.member.id, hotelId: id);
         }
       }
 
       // Unassign removed hotels
       for (final id in oldIds) {
         if (!_selectedIds.contains(id)) {
-          await repo.unassignUserHotel(
-            userId: widget.member.id,
-            hotelId: id,
-          );
+          await repo.unassignUserHotel(userId: widget.member.id, hotelId: id);
         }
       }
 
@@ -881,19 +892,21 @@ class _ManageHotelsDialogState extends ConsumerState<_ManageHotelsDialog> {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(AppLocalizations.of(context).t('teamHotelsUpdated'))),
+            content: Text(AppLocalizations.of(context).t('teamHotelsUpdated')),
+          ),
         );
       }
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(localizeAuthError(
-            AppLocalizations.of(context),
-            error,
-            fallbackKey: 'teamHotelsUpdateFailed',
-          )),
+          content: Text(
+            localizeAuthError(
+              AppLocalizations.of(context),
+              error,
+              fallbackKey: 'teamHotelsUpdateFailed',
+            ),
+          ),
         ),
       );
     } finally {
@@ -990,8 +1003,9 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
           child: GlassCard(
             padding: const EdgeInsets.all(20),
             borderColor: member.isActive
-                ? theme.colorScheme.primary
-                    .withValues(alpha: _isHovered ? 0.5 : 0.2)
+                ? theme.colorScheme.primary.withValues(
+                    alpha: _isHovered ? 0.5 : 0.2,
+                  )
                 : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1052,7 +1066,9 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(6),
@@ -1067,7 +1083,9 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: member.isActive
                             ? Colors.green.withValues(alpha: 0.2)
@@ -1091,8 +1109,11 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Icon(Icons.business_outlined,
-                        size: 16, color: theme.colorScheme.primary),
+                    Icon(
+                      Icons.business_outlined,
+                      size: 16,
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -1172,8 +1193,9 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
           width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 320.0),
           child: GlassCard(
             padding: const EdgeInsets.all(20),
-            borderColor: theme.colorScheme.tertiary
-                .withValues(alpha: _isHovered ? 0.5 : 0.2),
+            borderColor: theme.colorScheme.tertiary.withValues(
+              alpha: _isHovered ? 0.5 : 0.2,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1187,8 +1209,9 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                         color: theme.colorScheme.surfaceContainerHighest,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color:
-                              theme.colorScheme.tertiary.withValues(alpha: 0.3),
+                          color: theme.colorScheme.tertiary.withValues(
+                            alpha: 0.3,
+                          ),
                           width: 2,
                         ),
                       ),
@@ -1228,7 +1251,9 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.tertiaryContainer,
                         borderRadius: BorderRadius.circular(6),
@@ -1243,7 +1268,9 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.orange.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(6),
@@ -1261,8 +1288,11 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Icon(Icons.business_outlined,
-                        size: 16, color: theme.colorScheme.primary),
+                    Icon(
+                      Icons.business_outlined,
+                      size: 16,
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -1278,8 +1308,10 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: _InvitationActions(
-                    canManage:
-                        _canManageInvitation(widget.currentUser, invitation),
+                    canManage: _canManageInvitation(
+                      widget.currentUser,
+                      invitation,
+                    ),
                     invitation: invitation,
                     onCancel: widget.onCancel,
                     onCopyLink: widget.onCopyLink,
@@ -1303,10 +1335,7 @@ List<UserRole> _invitableRoles(UserRole role) {
         UserRole.hotelStaff,
         UserRole.housekeeper,
       ],
-    UserRole.hotelManager => const [
-        UserRole.hotelStaff,
-        UserRole.housekeeper,
-      ],
+    UserRole.hotelManager => const [UserRole.hotelStaff, UserRole.housekeeper],
     UserRole.hotelStaff => const [],
     UserRole.housekeeper => const [],
   };
@@ -1360,19 +1389,27 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
             children: [
               TextFormField(
                 controller: _fullName,
-                decoration: InputDecoration(labelText: l10n.t('teamLabelFullName')),
-                validator: (val) => val == null || val.trim().isEmpty ? l10n.t('requiredField') : null,
+                decoration: InputDecoration(
+                  labelText: l10n.t('teamLabelFullName'),
+                ),
+                validator: (val) => val == null || val.trim().isEmpty
+                    ? l10n.t('requiredField')
+                    : null,
               ),
               if (canEditRole) ...[
                 const SizedBox(height: 16),
                 DropdownButtonFormField<UserRole>(
-                  value: _role,
-                  decoration: InputDecoration(labelText: l10n.t('teamTableColumnRole')),
+                  initialValue: _role,
+                  decoration: InputDecoration(
+                    labelText: l10n.t('teamTableColumnRole'),
+                  ),
                   items: [
                     for (final role in UserRole.values)
                       DropdownMenuItem(
                         value: role,
-                        child: Text(AppLocalizations.of(context).userRoleLabel(role)),
+                        child: Text(
+                          AppLocalizations.of(context).userRoleLabel(role),
+                        ),
                       ),
                   ],
                   onChanged: (value) {
@@ -1394,7 +1431,13 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
         FilledButton.icon(
           onPressed: _isSaving ? null : _save,
           icon: _isSaving
-              ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              ? const SizedBox.square(
+                  dimension: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
               : const Icon(Icons.check),
           label: Text(l10n.t('btnSave')),
         ),
@@ -1415,22 +1458,28 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
       // Invalidate providers so UI updates
       ref.invalidate(teamMembersProvider);
       ref.invalidate(currentUserProvider);
-      
+
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).t('teamEditProfileSuccess'))),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).t('teamEditProfileSuccess'),
+            ),
+          ),
         );
       }
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(localizeAuthError(
-            AppLocalizations.of(context),
-            error,
-            fallbackKey: 'errorGeneric',
-          )),
+          content: Text(
+            localizeAuthError(
+              AppLocalizations.of(context),
+              error,
+              fallbackKey: 'errorGeneric',
+            ),
+          ),
         ),
       );
     } finally {
@@ -1439,13 +1488,13 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
   }
 }
 
-
 bool _canManageMember(UserProfile? currentUser, UserProfile member) {
   if (currentUser == null || currentUser.id == member.id) return false;
   return switch (currentUser.role) {
     UserRole.appAdmin => true,
     UserRole.appManager => member.role != UserRole.appAdmin,
-    UserRole.hotelManager => (member.role == UserRole.hotelStaff || member.role == UserRole.housekeeper) &&
+    UserRole.hotelManager => (member.role == UserRole.hotelStaff ||
+            member.role == UserRole.housekeeper) &&
         member.hotelId != null &&
         member.hotelId == currentUser.hotelId,
     UserRole.hotelStaff => false,
@@ -1459,17 +1508,15 @@ bool _canViewAsMember(UserProfile? currentUser, UserProfile member) {
   return currentUser.role == UserRole.appAdmin;
 }
 
-bool _canManageInvitation(
-  UserProfile? currentUser,
-  TeamInvitation invitation,
-) {
+bool _canManageInvitation(UserProfile? currentUser, TeamInvitation invitation) {
   if (currentUser == null) return false;
   return switch (currentUser.role) {
     UserRole.appAdmin => true,
     UserRole.appManager => invitation.role == UserRole.hotelManager ||
         invitation.role == UserRole.hotelStaff ||
         invitation.role == UserRole.housekeeper,
-    UserRole.hotelManager => (invitation.role == UserRole.hotelStaff || invitation.role == UserRole.housekeeper) &&
+    UserRole.hotelManager => (invitation.role == UserRole.hotelStaff ||
+            invitation.role == UserRole.housekeeper) &&
         invitation.hotelId != null &&
         invitation.hotelId == currentUser.hotelId,
     UserRole.hotelStaff => false,

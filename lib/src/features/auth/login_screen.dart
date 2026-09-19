@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../dashboard/dashboard_screen.dart';
-import '../shared/glass_card.dart';
-import '../shared/offline_banner.dart';
-import 'auth_validation.dart';
-import 'biometric_auth.dart';
-import 'reset_password_screen.dart';
-import '../../services/audit_service.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/glass_card.dart';
+import 'package:ivra_refill/src/features/shared/offline_banner.dart';
+import 'package:ivra_refill/src/features/auth/auth_validation.dart';
+import 'package:ivra_refill/src/features/auth/biometric_auth.dart';
+import 'package:ivra_refill/src/features/auth/reset_password_screen.dart';
+import 'package:ivra_refill/src/services/audit_service.dart';
 
 String buildPasswordResetRedirectUrl(Uri base) {
   if (base.hasScheme && (base.scheme == 'http' || base.scheme == 'https')) {
@@ -33,7 +31,10 @@ String _currentWebAppBasePath(String path) {
       : path;
 
   if (normalized.endsWith(LoginScreen.route)) {
-    return normalized.substring(0, normalized.length - LoginScreen.route.length);
+    return normalized.substring(
+      0,
+      normalized.length - LoginScreen.route.length,
+    );
   }
   if (normalized.endsWith(ResetPasswordScreen.route)) {
     return normalized.substring(
@@ -99,9 +100,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final hasSession =
         useSupabase && Supabase.instance.client.auth.currentSession != null;
     final profileErrorObj = hasSession
-        ? ref.watch(currentUserProvider).whenOrNull(
-              error: (error, stackTrace) => error,
-            )
+        ? ref
+            .watch(currentUserProvider)
+            .whenOrNull(error: (error, stackTrace) => error)
         : null;
     final isTransientProfile =
         profileErrorObj != null && isTransientProfileError(profileErrorObj);
@@ -165,9 +166,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   maxWidth: isMobile ? double.infinity : 420,
                 ),
                 child: GlassCard(
-                  padding: EdgeInsets.all(
-                    isMobile ? 20 : 32,
-                  ),
+                  padding: EdgeInsets.all(isMobile ? 20 : 32),
                   borderRadius: isMobile ? 30 : 16,
                   color: isMobile
                       ? colorScheme.surface.withValues(alpha: 0.88)
@@ -216,13 +215,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                l10n.t(isTransientProfile
-                                    ? 'authProfileLoadErrorTitle'
-                                    : 'authTitleCannotAccess'),
+                                l10n.t(
+                                  isTransientProfile
+                                      ? 'authProfileLoadErrorTitle'
+                                      : 'authTitleCannotAccess',
+                                ),
                                 style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onErrorContainer,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onErrorContainer,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -232,9 +233,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     ? l10n.t('authProfileLoadErrorBody')
                                     : localizeAuthError(l10n, profileErrorObj),
                                 style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onErrorContainer,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onErrorContainer,
                                   fontSize: 13,
                                 ),
                               ),
@@ -273,8 +274,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: l10n.t('authLabelEmail'),
                           labelStyle: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
                           ),
                           prefixIcon: Icon(
@@ -294,8 +296,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: l10n.t('authLabelPassword'),
                           labelStyle: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
                           ),
                           prefixIcon: Icon(
@@ -327,10 +330,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .errorContainer
-                                .withValues(alpha: 0.5),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.errorContainer.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -495,8 +497,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      
-      ref.read(auditServiceProvider).logAction('User logged in', details: {'method': 'password', 'email': _emailController.text.trim()});
+
+      ref.read(auditServiceProvider).logAction(
+        'User logged in',
+        details: {
+          'method': 'password',
+          'email': _emailController.text.trim(),
+        },
+      );
 
       await saveLoginCredentials(
         _emailController.text.trim(),
@@ -606,11 +614,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ref.invalidate(dashboardProvider);
     } catch (error) {
       if (mounted) {
-        setState(() => _error = localizeAuthError(
-              l10n,
-              error,
-              fallbackKey: 'accountSignOutFailed',
-            ));
+        setState(
+          () => _error = localizeAuthError(
+            l10n,
+            error,
+            fallbackKey: 'accountSignOutFailed',
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -694,7 +704,9 @@ class _ForgotPasswordDialogState extends State<_ForgotPasswordDialog> {
               ? const SizedBox.square(
                   dimension: 18,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : const Icon(Icons.mark_email_read_outlined),
           label: Text(l10n.t('authBtnSendResetLink')),

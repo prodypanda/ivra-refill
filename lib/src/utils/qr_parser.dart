@@ -19,7 +19,10 @@ class QrParser {
     }
 
     // Check for web URL format containing /QR/<sku>
-    final urlMatch = RegExp(r'/QR/([^/?]+)', caseSensitive: false).firstMatch(trimmed);
+    final urlMatch = RegExp(
+      r'/QR/([^/?]+)',
+      caseSensitive: false,
+    ).firstMatch(trimmed);
     if (urlMatch != null) {
       return urlMatch.group(1)!;
     }

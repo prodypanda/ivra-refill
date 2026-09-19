@@ -4,10 +4,13 @@ import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../domain/app_enums.dart';
-import '../ivra_repository.dart';
-import 'network_error_classifier.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/data/ivra_repository.dart';
+import 'package:ivra_refill/src/data/offline/network_error_classifier.dart';
 
+/// A class representing OfflineAction.
+///
+/// Provides data structure and operations for OfflineAction.
 class OfflineAction {
   const OfflineAction({
     required this.id,
@@ -165,11 +168,11 @@ class OfflineAction {
   }
 }
 
+/// A class representing OfflineSyncSummary.
+///
+/// Provides data structure and operations for OfflineSyncSummary.
 class OfflineSyncSummary {
-  const OfflineSyncSummary({
-    required this.synced,
-    required this.failed,
-  });
+  const OfflineSyncSummary({required this.synced, required this.failed});
 
   final int synced;
   final int failed;
@@ -177,6 +180,9 @@ class OfflineSyncSummary {
   bool get hasFailures => failed > 0;
 }
 
+/// A class representing OfflineSyncService.
+///
+/// Provides data structure and operations for OfflineSyncService.
 class OfflineSyncService {
   static const _storageKey = 'ivra_offline_actions';
   final _uuid = const Uuid();
@@ -256,7 +262,9 @@ class OfflineSyncService {
   /// review (retry/remove) from the Settings screen.
   Future<List<OfflineAction>> deadLetterActions() async {
     final actions = await pendingActions();
-    return actions.where((action) => action.isDeadLetter).toList(growable: false);
+    return actions
+        .where((action) => action.isDeadLetter)
+        .toList(growable: false);
   }
 
   Future<int> syncPending(IvraRepository repository) async {
@@ -340,10 +348,7 @@ class OfflineSyncService {
     }
   }
 
-  Future<void> _perform(
-    IvraRepository repository,
-    OfflineAction action,
-  ) async {
+  Future<void> _perform(IvraRepository repository, OfflineAction action) async {
     final payload = action.payload;
     switch (action.type) {
       case SyncActionType.refill:
@@ -403,14 +408,11 @@ class OfflineSyncService {
     final raw = prefs.getStringList(_storageKey) ?? const [];
     final actions =
         raw.map((item) => OfflineAction.fromJson(jsonDecode(item))).toList();
-    await prefs.setStringList(
-      _storageKey,
-      [
-        for (final action in actions)
-          jsonEncode(
-            (action.id == updatedAction.id ? updatedAction : action).toJson(),
-          ),
-      ],
-    );
+    await prefs.setStringList(_storageKey, [
+      for (final action in actions)
+        jsonEncode(
+          (action.id == updatedAction.id ? updatedAction : action).toJson(),
+        ),
+    ]);
   }
 }

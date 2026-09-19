@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../l10n/app_localizations.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
 
 class AuthValidation {
   const AuthValidation._();
@@ -52,9 +52,11 @@ String localizeAuthError(
       return l10n.t('errorForeignKeyViolation') ?? 'Related record not found.';
     }
     if (error.code == '42501') {
-      return l10n.t('errorPermissionDenied') ?? 'You do not have permission to perform this action.';
+      return l10n.t('errorPermissionDenied') ??
+          'You do not have permission to perform this action.';
     }
-    return l10n.t('errorGeneric') ?? 'An unexpected database error occurred. Please try again.';
+    return l10n.t('errorGeneric') ??
+        'An unexpected database error occurred. Please try again.';
   }
   final raw = error.toString();
   if (raw.contains('This account has been deactivated')) {

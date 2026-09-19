@@ -35,7 +35,7 @@ void main() {
     status: BottleStatus.needsRefill,
   );
 
-  Future<void> _pumpDialog(WidgetTester tester, Widget child) async {
+  Future<void> pumpDialog(WidgetTester tester, Widget child) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(1280, 900);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -52,26 +52,29 @@ void main() {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           locale: const Locale('en'),
-          home: Scaffold(
-            body: child,
-          ),
+          home: Scaffold(body: child),
         ),
       ),
     );
   }
 
-  testWidgets('RefillPercentageDialog basic rendering and cancellation', (tester) async {
+  testWidgets('RefillPercentageDialog basic rendering and cancellation', (
+    tester,
+  ) async {
     RefillResult? returnedResult;
     bool dialogOpened = false;
 
-    await _pumpDialog(
+    await pumpDialog(
       tester,
       Builder(
         builder: (context) {
           return ElevatedButton(
             onPressed: () async {
               dialogOpened = true;
-              returnedResult = await RefillPercentageDialog.show(context, testProduct);
+              returnedResult = await RefillPercentageDialog.show(
+                context,
+                testProduct,
+              );
             },
             child: const Text('Open Dialog'),
           );
@@ -99,7 +102,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
 
     // Find cancel button and tap it
-    final l10n = AppLocalizations(const Locale('en'));
+    final l10n = const AppLocalizations(Locale('en'));
     final cancelText = l10n.t('btnCancel') ?? 'Cancel';
     expect(find.text(cancelText), findsOneWidget);
 
@@ -113,49 +116,55 @@ void main() {
     expect(returnedResult, isNull);
   });
 
-  testWidgets('RefillPercentageDialog confirmation with custom percentage and notes', (tester) async {
-    RefillResult? returnedResult;
+  testWidgets(
+    'RefillPercentageDialog confirmation with custom percentage and notes',
+    (tester) async {
+      RefillResult? returnedResult;
 
-    await _pumpDialog(
-      tester,
-      Builder(
-        builder: (context) {
-          return ElevatedButton(
-            onPressed: () async {
-              returnedResult = await RefillPercentageDialog.show(context, testProduct);
-            },
-            child: const Text('Open Dialog'),
-          );
-        },
-      ),
-    );
+      await pumpDialog(
+        tester,
+        Builder(
+          builder: (context) {
+            return ElevatedButton(
+              onPressed: () async {
+                returnedResult = await RefillPercentageDialog.show(
+                  context,
+                  testProduct,
+                );
+              },
+              child: const Text('Open Dialog'),
+            );
+          },
+        ),
+      );
 
-    // Open dialog
-    await tester.tap(find.text('Open Dialog'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+      // Open dialog
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
-    // Enter notes text
-    final notesField = find.byType(TextField);
-    expect(notesField, findsOneWidget);
-    await tester.enterText(notesField, 'Refilled under supervision');
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+      // Enter notes text
+      final notesField = find.byType(TextField);
+      expect(notesField, findsOneWidget);
+      await tester.enterText(notesField, 'Refilled under supervision');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
-    // Confirm refill
-    final l10n = AppLocalizations(const Locale('en'));
-    final confirmText = l10n.t('dialogRefillConfirm') ?? 'Confirm Refill';
-    expect(find.text(confirmText), findsOneWidget);
+      // Confirm refill
+      final l10n = const AppLocalizations(Locale('en'));
+      final confirmText = l10n.t('dialogRefillConfirm') ?? 'Confirm Refill';
+      expect(find.text(confirmText), findsOneWidget);
 
-    await tester.tap(find.text(confirmText));
-    await tester.pump();
-    // Allow pop animation to complete fully (500ms)
-    await tester.pump(const Duration(milliseconds: 500));
+      await tester.tap(find.text(confirmText));
+      await tester.pump();
+      // Allow pop animation to complete fully (500ms)
+      await tester.pump(const Duration(milliseconds: 500));
 
-    // Dialog should be closed
-    expect(find.byType(RefillPercentageDialog), findsNothing);
-    expect(returnedResult, isNotNull);
-    expect(returnedResult!.refillPercentage, equals(10));
-    expect(returnedResult!.notes, equals('Refilled under supervision'));
-  });
+      // Dialog should be closed
+      expect(find.byType(RefillPercentageDialog), findsNothing);
+      expect(returnedResult, isNotNull);
+      expect(returnedResult!.refillPercentage, equals(10));
+      expect(returnedResult!.notes, equals('Refilled under supervision'));
+    },
+  );
 }

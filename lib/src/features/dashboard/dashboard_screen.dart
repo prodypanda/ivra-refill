@@ -6,15 +6,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../ui/ivra_icons.dart';
-import '../../domain/models.dart';
-import '../../domain/app_enums.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../shared/async_value_view.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/shimmer_loading.dart';
-import '../shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/ui/ivra_icons.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/shimmer_loading.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
 
 class _AnalyticsData {
   _AnalyticsData({
@@ -38,12 +38,21 @@ class _AnalyticsData {
 
 final _analyticsDataProvider = Provider.autoDispose.family<_AnalyticsData,
     ({bool isStaff, String? currentUserId, String languageCode})>((ref, arg) {
-  final refillEvents = ref.watch(refillEventsProvider
-      .select((state) => state.valueOrNull ?? const <RefillEvent>[]));
-  final roomProducts = ref.watch(roomProductsProvider
-      .select((state) => state.valueOrNull ?? const <RoomProduct>[]));
-  final inventory = ref.watch(inventoryProvider
-      .select((state) => state.valueOrNull ?? const <InventoryItem>[]));
+  final refillEvents = ref.watch(
+    refillEventsProvider.select(
+      (state) => state.valueOrNull ?? const <RefillEvent>[],
+    ),
+  );
+  final roomProducts = ref.watch(
+    roomProductsProvider.select(
+      (state) => state.valueOrNull ?? const <RoomProduct>[],
+    ),
+  );
+  final inventory = ref.watch(
+    inventoryProvider.select(
+      (state) => state.valueOrNull ?? const <InventoryItem>[],
+    ),
+  );
 
   final now = DateTime.now();
   final visibleEvents = arg.isStaff && arg.currentUserId != null
@@ -233,8 +242,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           builder: (context, constraints) {
             final isMobile = MediaQuery.sizeOf(context).width < 720;
 
-            final currentUser =
-                ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+            final currentUser = ref.watch(
+              currentUserProvider.select((s) => s.valueOrNull),
+            );
             final isStaff = currentUser?.role == UserRole.hotelStaff;
             final isManager = currentUser?.role == UserRole.hotelManager ||
                 currentUser?.role == UserRole.appManager;
@@ -244,60 +254,72 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             final List<Widget> visibleCards = [];
 
             if (isAdmin || (isManager && data.hotelCount > 1)) {
-              visibleCards.add(_MetricCard(
-                label: l10n.t('metricHotels'),
-                value: data.hotelCount,
-                icon: Icons.apartment_outlined,
-                iconColor: theme.colorScheme.primary,
-                onTap: () => context.go('/hotels'),
-              ));
+              visibleCards.add(
+                _MetricCard(
+                  label: l10n.t('metricHotels'),
+                  value: data.hotelCount,
+                  icon: Icons.apartment_outlined,
+                  iconColor: theme.colorScheme.primary,
+                  onTap: () => context.go('/hotels'),
+                ),
+              );
             }
 
             // Everyone sees rooms
-            visibleCards.add(_MetricCard(
-              label: l10n.t('metricRooms'),
-              value: data.roomCount,
-              icon: Icons.meeting_room_outlined,
-              iconColor: Colors.orange,
-              onTap: () => context.go('/rooms'),
-            ));
+            visibleCards.add(
+              _MetricCard(
+                label: l10n.t('metricRooms'),
+                value: data.roomCount,
+                icon: Icons.meeting_room_outlined,
+                iconColor: Colors.orange,
+                onTap: () => context.go('/rooms'),
+              ),
+            );
 
             if (!isStaff) {
-              visibleCards.add(_MetricCard(
-                label: l10n.t('metricPendingApprovals'),
-                value: data.pendingApprovals,
-                icon: Icons.fact_check_outlined,
-                iconColor: Colors.amber.shade800,
-                onTap: () => context.go('/approvals'),
-              ));
+              visibleCards.add(
+                _MetricCard(
+                  label: l10n.t('metricPendingApprovals'),
+                  value: data.pendingApprovals,
+                  icon: Icons.fact_check_outlined,
+                  iconColor: Colors.amber.shade800,
+                  onTap: () => context.go('/approvals'),
+                ),
+              );
             }
 
             // Everyone sees alerts
-            visibleCards.add(_MetricCard(
-              label: l10n.t('metricOpenAlerts'),
-              value: data.openAlerts,
-              icon: Icons.notifications_active_outlined,
-              iconColor: theme.colorScheme.error,
-              onTap: () => context.go('/alerts'),
-            ));
+            visibleCards.add(
+              _MetricCard(
+                label: l10n.t('metricOpenAlerts'),
+                value: data.openAlerts,
+                icon: Icons.notifications_active_outlined,
+                iconColor: theme.colorScheme.error,
+                onTap: () => context.go('/alerts'),
+              ),
+            );
 
             // Everyone sees bottles to replace
-            visibleCards.add(_MetricCard(
-              label: l10n.t('metricBottlesToReplace'),
-              value: data.bottlesToReplace,
-              icon: IvraIcons.replaceAction,
-              iconColor: Colors.orange.shade700,
-              onTap: () => context.go('/rooms'),
-            ));
+            visibleCards.add(
+              _MetricCard(
+                label: l10n.t('metricBottlesToReplace'),
+                value: data.bottlesToReplace,
+                icon: IvraIcons.replaceAction,
+                iconColor: Colors.orange.shade700,
+                onTap: () => context.go('/rooms'),
+              ),
+            );
 
             if (!isStaff) {
-              visibleCards.add(_MetricCard(
-                label: l10n.t('metricLowStockProducts'),
-                value: data.lowStockProducts,
-                icon: Icons.inventory_2_outlined,
-                iconColor: Colors.indigo.shade600,
-                onTap: () => context.go('/inventory'),
-              ));
+              visibleCards.add(
+                _MetricCard(
+                  label: l10n.t('metricLowStockProducts'),
+                  value: data.lowStockProducts,
+                  icon: Icons.inventory_2_outlined,
+                  iconColor: Colors.indigo.shade600,
+                  onTap: () => context.go('/inventory'),
+                ),
+              );
             }
 
             // Adjust grid columns based on number of cards and screen width
@@ -363,24 +385,28 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final languageCode = Localizations.localeOf(context).languageCode;
 
-    final analyticsData = ref.watch(_analyticsDataProvider((
-      isStaff: isStaff,
-      currentUserId: currentUserId,
-      languageCode: languageCode,
-    )));
+    final analyticsData = ref.watch(
+      _analyticsDataProvider((
+        isStaff: isStaff,
+        currentUserId: currentUserId,
+        languageCode: languageCode,
+      )),
+    );
 
     final floorUsage = {
       for (final entry in analyticsData.floorUsageData.entries)
-        '${l10n.t('roomsLabelFloor')} ${entry.key}': entry.value
+        '${l10n.t('roomsLabelFloor')} ${entry.key}': entry.value,
     };
 
     final forecasts = analyticsData.forecastsData
-        .map((f) => MapEntry(
-              f.productName,
-              f.days == null
-                  ? l10n.t('dashboardStable')
-                  : '${f.days}${l10n.t('roomsLabelDaysUnit')}',
-            ))
+        .map(
+          (f) => MapEntry(
+            f.productName,
+            f.days == null
+                ? l10n.t('dashboardStable')
+                : '${f.days}${l10n.t('roomsLabelDaysUnit')}',
+          ),
+        )
         .toList();
 
     return Card(
@@ -394,18 +420,23 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
                 Icon(Icons.insights_outlined, color: theme.colorScheme.primary),
                 const SizedBox(width: 10),
                 Expanded(
-                    child: Text(l10n.t('dashboardOpsAnalytics'),
-                        style: theme.textTheme.titleLarge
-                            ?.copyWith(fontWeight: FontWeight.w800))),
+                  child: Text(
+                    l10n.t('dashboardOpsAnalytics'),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
                 OutlinedButton.icon(
                   onPressed: () => _exportSummary(
-                      context,
-                      ref,
-                      analyticsData.daily,
-                      analyticsData.weekly,
-                      analyticsData.monthly,
-                      analyticsData.attentionRoomsCount,
-                      forecasts),
+                    context,
+                    ref,
+                    analyticsData.daily,
+                    analyticsData.weekly,
+                    analyticsData.monthly,
+                    analyticsData.attentionRoomsCount,
+                    forecasts,
+                  ),
                   icon: const Icon(Icons.download_outlined),
                   label: Text(l10n.t('dashboardExport')),
                 ),
@@ -417,17 +448,20 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
               runSpacing: 12,
               children: [
                 _AnalyticsChip(
-                    label: l10n.t('dashboardDaily'),
-                    value: analyticsData.daily.toString(),
-                    icon: Icons.today_outlined),
+                  label: l10n.t('dashboardDaily'),
+                  value: analyticsData.daily.toString(),
+                  icon: Icons.today_outlined,
+                ),
                 _AnalyticsChip(
-                    label: l10n.t('dashboardWeekly'),
-                    value: analyticsData.weekly.toString(),
-                    icon: Icons.date_range_outlined),
+                  label: l10n.t('dashboardWeekly'),
+                  value: analyticsData.weekly.toString(),
+                  icon: Icons.date_range_outlined,
+                ),
                 _AnalyticsChip(
-                    label: l10n.t('dashboardMonthly'),
-                    value: analyticsData.monthly.toString(),
-                    icon: Icons.calendar_month_outlined),
+                  label: l10n.t('dashboardMonthly'),
+                  value: analyticsData.monthly.toString(),
+                  icon: Icons.calendar_month_outlined,
+                ),
                 _AnalyticsChip(
                   label: l10n.t('dashboardRoomsAttention'),
                   value: analyticsData.attentionRoomsCount.toString(),
@@ -437,52 +471,68 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 16),
-            LayoutBuilder(builder: (context, constraints) {
-              final wide = constraints.maxWidth >= 860;
-              final cards = [
-                _AnalyticsListCard(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= 860;
+                final cards = [
+                  _AnalyticsListCard(
                     title: l10n.t('dashboardProductUsage'),
                     icon: Icons.spa_outlined,
-                    rows: _topRows(analyticsData.productUsage)),
-                _AnalyticsListCard(
+                    rows: _topRows(analyticsData.productUsage),
+                  ),
+                  _AnalyticsListCard(
                     title: l10n.t('dashboardUsageByFloor'),
                     icon: Icons.layers_outlined,
-                    rows: _topRows(floorUsage)),
-                _AnalyticsListCard(
+                    rows: _topRows(floorUsage),
+                  ),
+                  _AnalyticsListCard(
                     title: l10n.t('dashboardStockForecast'),
                     icon: Icons.trending_down_outlined,
                     rows: forecasts.isEmpty
                         ? [MapEntry(l10n.t('dashboardNoStockData'), '')]
-                        : forecasts.take(5).toList()),
-                _AnalyticsListCard(
+                        : forecasts.take(5).toList(),
+                  ),
+                  _AnalyticsListCard(
                     title: l10n.t('dashboardUnusualPatterns'),
                     icon: Icons.warning_amber_outlined,
                     rows: analyticsData.attentionRoomsCount > 8
                         ? [
                             MapEntry(
-                                l10n.tParams('dashboardRoomsRequireReview', {
-                                  'count':
-                                      '${analyticsData.attentionRoomsCount}'
-                                }),
-                                l10n.t('dashboardHighPriority'))
+                              l10n.tParams('dashboardRoomsRequireReview', {
+                                'count': '${analyticsData.attentionRoomsCount}',
+                              }),
+                              l10n.t('dashboardHighPriority'),
+                            ),
                           ]
-                        : [MapEntry(l10n.t('dashboardNoUnusualPatterns'), '')]),
-              ];
-              if (!wide)
-                return Column(
+                        : [MapEntry(l10n.t('dashboardNoUnusualPatterns'), '')],
+                  ),
+                ];
+                if (!wide) {
+                  return Column(
                     children: cards
-                        .map((c) => Padding(
+                        .map(
+                          (c) => Padding(
                             padding: const EdgeInsets.only(bottom: 12),
-                            child: c))
-                        .toList());
-              return Wrap(
+                            child: c,
+                          ),
+                        )
+                        .toList(),
+                  );
+                }
+                return Wrap(
                   spacing: 12,
                   runSpacing: 12,
                   children: cards
-                      .map((c) => SizedBox(
-                          width: (constraints.maxWidth - 12) / 2, child: c))
-                      .toList());
-            }),
+                      .map(
+                        (c) => SizedBox(
+                          width: (constraints.maxWidth - 12) / 2,
+                          child: c,
+                        ),
+                      )
+                      .toList(),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -500,13 +550,14 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
   }
 
   Future<void> _exportSummary(
-      BuildContext context,
-      WidgetRef ref,
-      int daily,
-      int weekly,
-      int monthly,
-      int attentionCount,
-      List<MapEntry<String, String>> forecasts) async {
+    BuildContext context,
+    WidgetRef ref,
+    int daily,
+    int weekly,
+    int monthly,
+    int attentionCount,
+    List<MapEntry<String, String>> forecasts,
+  ) async {
     final buffer = StringBuffer()
       ..writeln('metric,value')
       ..writeln('daily_refills,$daily')
@@ -524,8 +575,11 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
           mimeType: 'text/csv',
         );
     if (!context.mounted) return;
-    PremiumSnackbar.show(context, result.message,
-        icon: Icons.download_done_outlined);
+    PremiumSnackbar.show(
+      context,
+      result.message,
+      icon: Icons.download_done_outlined,
+    );
   }
 }
 
@@ -551,22 +605,31 @@ class _AnalyticsChip extends StatelessWidget {
         color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(children: [
-        Icon(icon, color: theme.colorScheme.primary),
-        const SizedBox(width: 10),
-        Expanded(
-            child: Text(label, maxLines: 2, overflow: TextOverflow.ellipsis)),
-        Text(value,
-            style: theme.textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.w900))
-      ]),
+      child: Row(
+        children: [
+          Icon(icon, color: theme.colorScheme.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(label, maxLines: 2, overflow: TextOverflow.ellipsis),
+          ),
+          Text(
+            value,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class _AnalyticsListCard extends StatelessWidget {
-  const _AnalyticsListCard(
-      {required this.title, required this.icon, required this.rows});
+  const _AnalyticsListCard({
+    required this.title,
+    required this.icon,
+    required this.rows,
+  });
   final String title;
   final IconData icon;
   final List<MapEntry<String, String>> rows;
@@ -577,31 +640,49 @@ class _AnalyticsListCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          border: Border.all(color: theme.colorScheme.outlineVariant),
-          borderRadius: BorderRadius.circular(18)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Row(children: [
-          Icon(icon, size: 18),
-          const SizedBox(width: 8),
-          Expanded(
-              child: Text(title,
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w800)))
-        ]),
-        const SizedBox(height: 10),
-        for (final row in rows)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(children: [
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18),
+              const SizedBox(width: 8),
               Expanded(
-                  child: Text(row.key,
-                      maxLines: 1, overflow: TextOverflow.ellipsis)),
-              if (row.value.isNotEmpty)
-                Text(row.value,
-                    style: const TextStyle(fontWeight: FontWeight.w700))
-            ]),
+                child: Text(
+                  title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
           ),
-      ]),
+          const SizedBox(height: 10),
+          for (final row in rows)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      row.key,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (row.value.isNotEmpty)
+                    Text(
+                      row.value,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -632,107 +713,109 @@ class _MetricCardState extends State<_MetricCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.0, end: 1.0),
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeOutCubic,
-        builder: (context, value, child) {
-          return Transform.translate(
-            offset: Offset(0, 20 * (1 - value)),
-            child: Opacity(
-              opacity: value,
-              child: child,
-            ),
-          );
-        },
-        child: MouseRegion(
-            onEnter: (_) => setState(() => _isHovered = true),
-            onExit: (_) => setState(() => _isHovered = false),
-            cursor: SystemMouseCursors.click,
-            child: AnimatedScale(
-              scale: _isHovered ? 1.02 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOutBack,
-              child: GestureDetector(
-                onTap: widget.onTap,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        theme.colorScheme.surface.withValues(alpha: 0.9),
-                        theme.colorScheme.surface.withValues(alpha: 0.7),
-                      ],
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
+        );
+      },
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        cursor: SystemMouseCursors.click,
+        child: AnimatedScale(
+          scale: _isHovered ? 1.02 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutBack,
+          child: GestureDetector(
+            onTap: widget.onTap,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    theme.colorScheme.surface.withValues(alpha: 0.9),
+                    theme.colorScheme.surface.withValues(alpha: 0.7),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.iconColor.withValues(
+                      alpha: _isHovered ? 0.15 : 0.05,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: widget.iconColor
-                            .withValues(alpha: _isHovered ? 0.15 : 0.05),
-                        blurRadius: _isHovered ? 24 : 12,
-                        offset: const Offset(0, 8),
-                      ),
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.03),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                    border: Border.all(
-                      color: widget.iconColor
-                          .withValues(alpha: _isHovered ? 0.3 : 0.1),
-                      width: 1.5,
-                    ),
+                    blurRadius: _isHovered ? 24 : 12,
+                    offset: const Offset(0, 8),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+                border: Border.all(
+                  color: widget.iconColor.withValues(
+                    alpha: _isHovered ? 0.3 : 0.1,
+                  ),
+                  width: 1.5,
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.label,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant
-                                    .withValues(
-                                  alpha: 0.9,
-                                ),
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.2,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                      Expanded(
+                        child: Text(
+                          widget.label,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant
+                                .withValues(alpha: 0.9),
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.2,
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: widget.iconColor.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(widget.icon,
-                                size: 24, color: widget.iconColor),
-                          ),
-                        ],
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      Text(
-                        widget.value.toString(),
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          color: theme.colorScheme.onSurface,
-                          letterSpacing: -1.0,
-                          height: 1.1,
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: widget.iconColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          widget.icon,
+                          size: 24,
+                          color: widget.iconColor,
                         ),
                       ),
                     ],
                   ),
-                ),
+                  Text(
+                    widget.value.toString(),
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: theme.colorScheme.onSurface,
+                      letterSpacing: -1.0,
+                      height: 1.1,
+                    ),
+                  ),
+                ],
               ),
-            )));
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -754,145 +837,150 @@ class _MobileHeroState extends State<_MobileHero> {
     final l10n = AppLocalizations.of(context);
 
     return TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.0, end: 1.0),
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOutCubic,
-        builder: (context, value, child) {
-          return Transform.scale(
-            scale: 0.95 + (0.05 * value),
-            child: Opacity(
-              opacity: value,
-              child: child,
-            ),
-          );
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                theme.colorScheme.primary,
-                theme.colorScheme.primary.withRed(220).withGreen(120),
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.95 + (0.05 * value),
+          child: Opacity(opacity: value, child: child),
+        );
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.colorScheme.primary,
+              theme.colorScheme.primary.withRed(220).withGreen(120),
             ],
           ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: -20,
-                top: -20,
-                child: Icon(
-                  Icons.spa,
-                  size: 140,
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.primary.withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              right: -20,
+              top: -20,
+              child: Icon(
+                Icons.spa,
+                size: 140,
+                color: Colors.white.withValues(alpha: 0.1),
               ),
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () => setState(() => _isExpanded = !_isExpanded),
-                      behavior: HitTestBehavior.opaque,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.insights,
-                                    color: Colors.white, size: 16),
-                                const SizedBox(width: 6),
-                                Text(
-                                  l10n.t('dashboardHeroTitle'),
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ],
-                            ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () => setState(() => _isExpanded = !_isExpanded),
+                    behavior: HitTestBehavior.opaque,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
                           ),
-                          Icon(
-                            _isExpanded ? Icons.expand_less : Icons.expand_more,
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ],
-                      ),
-                    ),
-                    AnimatedCrossFade(
-                      firstChild:
-                          const SizedBox(height: 0, width: double.infinity),
-                      secondChild: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 24),
-                          Text(
-                            widget.data.bottlesToReplace.toString(),
-                            style: theme.textTheme.displayMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                              height: 1.1,
-                            ),
-                          ),
-                          Text(
-                            l10n.t('metricBottlesToReplace'),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          Row(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              _HeroPill(
-                                label: l10n.t('metricOpenAlerts'),
-                                value: widget.data.openAlerts,
-                                icon: Icons.notifications_active,
+                              const Icon(
+                                Icons.insights,
                                 color: Colors.white,
+                                size: 16,
                               ),
-                              const SizedBox(width: 12),
-                              _HeroPill(
-                                label: l10n.t('metricPendingApprovals'),
-                                value: widget.data.pendingApprovals,
-                                icon: Icons.fact_check,
-                                color: Colors.white,
+                              const SizedBox(width: 6),
+                              Text(
+                                l10n.t('dashboardHeroTitle'),
+                                style: theme.textTheme.labelMedium?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      crossFadeState: _isExpanded
-                          ? CrossFadeState.showSecond
-                          : CrossFadeState.showFirst,
-                      duration: const Duration(milliseconds: 300),
+                        ),
+                        Icon(
+                          _isExpanded ? Icons.expand_less : Icons.expand_more,
+                          color: Colors.white,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  AnimatedCrossFade(
+                    firstChild: const SizedBox(
+                      height: 0,
+                      width: double.infinity,
+                    ),
+                    secondChild: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 24),
+                        Text(
+                          widget.data.bottlesToReplace.toString(),
+                          style: theme.textTheme.displayMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            height: 1.1,
+                          ),
+                        ),
+                        Text(
+                          l10n.t('metricBottlesToReplace'),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            _HeroPill(
+                              label: l10n.t('metricOpenAlerts'),
+                              value: widget.data.openAlerts,
+                              icon: Icons.notifications_active,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 12),
+                            _HeroPill(
+                              label: l10n.t('metricPendingApprovals'),
+                              value: widget.data.pendingApprovals,
+                              icon: Icons.fact_check,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    crossFadeState: _isExpanded
+                        ? CrossFadeState.showSecond
+                        : CrossFadeState.showFirst,
+                    duration: const Duration(milliseconds: 300),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -948,10 +1036,7 @@ class _HeroPill extends StatelessWidget {
 enum ChartDateRange { last7Days, lastMonth, lastYear }
 
 class _ActivityChart extends ConsumerStatefulWidget {
-  const _ActivityChart({
-    this.isStaff = false,
-    this.currentUserId,
-  });
+  const _ActivityChart({this.isStaff = false, this.currentUserId});
 
   final bool isStaff;
   final String? currentUserId;
@@ -973,390 +1058,408 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
     final refillEventsAsync = ref.watch(refillEventsProvider);
 
     return TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.0, end: 1.0),
-        duration: const Duration(milliseconds: 800),
-        curve: Curves.easeOutCubic,
-        builder: (context, value, child) {
-          return Transform.translate(
-            offset: Offset(0, 30 * (1 - value)),
-            child: Opacity(
-              opacity: value,
-              child: child,
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 800),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          color: theme.colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
-          );
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            color: theme.colorScheme.surface,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header layout with selectors
-              LayoutBuilder(
-                builder: (context, headerConstraints) {
-                  final isWide = headerConstraints.maxWidth > 600;
-                  final titleText = Text(
-                    widget.isStaff
-                        ? l10n.t('myCompletedTasksThisWeek')
-                        : l10n.t('refillActivity'),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
-                    ),
-                  );
+          ],
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header layout with selectors
+            LayoutBuilder(
+              builder: (context, headerConstraints) {
+                final isWide = headerConstraints.maxWidth > 600;
+                final titleText = Text(
+                  widget.isStaff
+                      ? l10n.t('myCompletedTasksThisWeek')
+                      : l10n.t('refillActivity'),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                  ),
+                );
 
-                  final headerControls =
-                      _buildSelectors(context, hotels, selectedHotelId);
+                final headerControls = _buildSelectors(
+                  context,
+                  hotels,
+                  selectedHotelId,
+                );
 
-                  if (isWide) {
-                    return Row(
-                      children: [
-                        Expanded(child: titleText),
-                        const SizedBox(width: 16),
-                        headerControls,
-                      ],
-                    );
-                  }
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                if (isWide) {
+                  return Row(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(child: titleText),
-                          Icon(Icons.timeline,
-                              color: theme.colorScheme.primary),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
+                      Expanded(child: titleText),
+                      const SizedBox(width: 16),
                       headerControls,
                     ],
                   );
-                },
-              ),
-              const SizedBox(height: 32),
-              // Chart Body
-              refillEventsAsync.when(
-                loading: () => const SizedBox(
-                  height: 220,
-                  child: CardShimmer(),
-                ),
-                error: (err, stack) => SizedBox(
-                  height: 220,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.error_outline,
-                            color: theme.colorScheme.error, size: 48),
-                        const SizedBox(height: 16),
-                        Text(
-                          l10n.t('genericError'),
-                          style: TextStyle(color: theme.colorScheme.error),
+                        Expanded(child: titleText),
+                        Icon(Icons.timeline, color: theme.colorScheme.primary),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    headerControls,
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 32),
+            // Chart Body
+            refillEventsAsync.when(
+              loading: () => const SizedBox(height: 220, child: CardShimmer()),
+              error: (err, stack) => SizedBox(
+                height: 220,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        color: theme.colorScheme.error,
+                        size: 48,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.t('genericError'),
+                        style: TextStyle(color: theme.colorScheme.error),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              data: (refillEvents) {
+                // Aggregate refill events, filtering by user if staff
+                final refills = refillEvents.where((e) {
+                  if (e.type != RefillEventType.refill) return false;
+                  if (widget.isStaff && widget.currentUserId != null) {
+                    return e.performedBy == widget.currentUserId;
+                  }
+                  return true;
+                }).toList();
+
+                final now = DateTime.now();
+                final today = DateTime(now.year, now.month, now.day);
+
+                List<FlSpot> spots = [];
+                List<String> xLabels = [];
+                double maxX = 6.0;
+                double maxY = 10.0;
+
+                switch (_dateRange) {
+                  case ChartDateRange.last7Days:
+                    maxX = 6.0;
+                    final List<int> dailyCounts = List.filled(7, 0);
+                    final List<DateTime> dates = List.generate(
+                      7,
+                      (i) => today.subtract(Duration(days: 6 - i)),
+                    );
+
+                    for (final event in refills) {
+                      final eventDate = DateTime(
+                        event.occurredAt.year,
+                        event.occurredAt.month,
+                        event.occurredAt.day,
+                      );
+                      for (int i = 0; i < 7; i++) {
+                        if (eventDate.isAtSameMomentAs(dates[i])) {
+                          dailyCounts[i]++;
+                        }
+                      }
+                    }
+
+                    spots = List.generate(
+                      7,
+                      (i) => FlSpot(i.toDouble(), dailyCounts[i].toDouble()),
+                    );
+
+                    final days = [
+                      l10n.t('dayMon'),
+                      l10n.t('dayTue'),
+                      l10n.t('dayWed'),
+                      l10n.t('dayThu'),
+                      l10n.t('dayFri'),
+                      l10n.t('daySat'),
+                      l10n.t('daySun'),
+                    ];
+                    xLabels = dates.map((d) => days[d.weekday - 1]).toList();
+                    break;
+
+                  case ChartDateRange.lastMonth:
+                    maxX = 29.0;
+                    final List<int> dailyCounts = List.filled(30, 0);
+                    final List<DateTime> dates = List.generate(
+                      30,
+                      (i) => today.subtract(Duration(days: 29 - i)),
+                    );
+
+                    for (final event in refills) {
+                      final eventDate = DateTime(
+                        event.occurredAt.year,
+                        event.occurredAt.month,
+                        event.occurredAt.day,
+                      );
+                      for (int i = 0; i < 30; i++) {
+                        if (eventDate.isAtSameMomentAs(dates[i])) {
+                          dailyCounts[i]++;
+                        }
+                      }
+                    }
+
+                    spots = List.generate(
+                      30,
+                      (i) => FlSpot(i.toDouble(), dailyCounts[i].toDouble()),
+                    );
+                    xLabels = dates.map((d) => '${d.day}/${d.month}').toList();
+                    break;
+
+                  case ChartDateRange.lastYear:
+                    maxX = 11.0;
+                    final List<int> monthlyCounts = List.filled(12, 0);
+                    final List<DateTime> months = List.generate(
+                      12,
+                      (i) => DateTime(today.year, today.month - (11 - i), 1),
+                    );
+
+                    for (final event in refills) {
+                      final eventMonth = DateTime(
+                        event.occurredAt.year,
+                        event.occurredAt.month,
+                        1,
+                      );
+                      for (int i = 0; i < 12; i++) {
+                        if (eventMonth.isAtSameMomentAs(months[i])) {
+                          monthlyCounts[i]++;
+                        }
+                      }
+                    }
+
+                    spots = List.generate(
+                      12,
+                      (i) => FlSpot(i.toDouble(), monthlyCounts[i].toDouble()),
+                    );
+
+                    final monthKeys = [
+                      'monthJan',
+                      'monthFeb',
+                      'monthMar',
+                      'monthApr',
+                      'monthMay',
+                      'monthJun',
+                      'monthJul',
+                      'monthAug',
+                      'monthSep',
+                      'monthOct',
+                      'monthNov',
+                      'monthDec',
+                    ];
+                    xLabels = months
+                        .map((m) => l10n.t(monthKeys[m.month - 1]))
+                        .toList();
+                    break;
+                }
+
+                double highestRefillCount = 0;
+                for (final spot in spots) {
+                  if (spot.y > highestRefillCount) {
+                    highestRefillCount = spot.y;
+                  }
+                }
+
+                if (highestRefillCount < 5) {
+                  maxY = 5.0;
+                } else {
+                  maxY = (highestRefillCount * 1.25).ceilToDouble();
+                  maxY = ((maxY / 5).ceil() * 5).toDouble();
+                }
+
+                double leftInterval = 5;
+                if (maxY <= 5) {
+                  leftInterval = 1;
+                } else if (maxY <= 15) {
+                  leftInterval = 3;
+                } else if (maxY <= 30) {
+                  leftInterval = 5;
+                } else if (maxY <= 100) {
+                  leftInterval = 20;
+                } else {
+                  leftInterval = 50;
+                }
+
+                return SizedBox(
+                  height: 220,
+                  child: LineChart(
+                    LineChartData(
+                      gridData: FlGridData(
+                        show: true,
+                        drawVerticalLine: false,
+                        horizontalInterval: leftInterval,
+                        getDrawingHorizontalLine: (value) => FlLine(
+                          color: theme.dividerColor.withValues(alpha: 0.4),
+                          strokeWidth: 1,
+                          dashArray: [4, 4],
+                        ),
+                      ),
+                      titlesData: FlTitlesData(
+                        rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 30,
+                            interval: 1,
+                            getTitlesWidget: (value, meta) {
+                              final index = value.toInt();
+                              if (index >= 0 && index < xLabels.length) {
+                                final isMobile =
+                                    MediaQuery.sizeOf(context).width < 600;
+                                if (_dateRange == ChartDateRange.lastMonth) {
+                                  if (index % 5 != 0 &&
+                                      index != xLabels.length - 1) {
+                                    return const SizedBox.shrink();
+                                  }
+                                } else if (_dateRange ==
+                                    ChartDateRange.lastYear) {
+                                  if (isMobile && index % 2 != 0) {
+                                    return const SizedBox.shrink();
+                                  }
+                                }
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    xLabels[index],
+                                    style: TextStyle(
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 40,
+                            interval: leftInterval,
+                            getTitlesWidget: (value, meta) => Text(
+                              value.toInt().toString(),
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurfaceVariant,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      borderData: FlBorderData(show: false),
+                      minX: 0,
+                      maxX: maxX,
+                      minY: 0,
+                      maxY: maxY,
+                      lineTouchData: LineTouchData(
+                        touchTooltipData: LineTouchTooltipData(
+                          getTooltipItems: (touchedSpots) {
+                            return touchedSpots
+                                .map(
+                                  (spot) => LineTooltipItem(
+                                    '${spot.y.toInt()} ${l10n.t('chartRefills')}',
+                                    const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                )
+                                .toList();
+                          },
+                        ),
+                      ),
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: spots,
+                          isCurved: true,
+                          curveSmoothness: 0.35,
+                          color: theme.colorScheme.primary,
+                          barWidth: 4,
+                          isStrokeCapRound: true,
+                          dotData: FlDotData(
+                            show: true,
+                            getDotPainter: (spot, percent, barData, index) {
+                              return FlDotCirclePainter(
+                                radius: 4,
+                                color: Colors.white,
+                                strokeWidth: 3,
+                                strokeColor: theme.colorScheme.primary,
+                              );
+                            },
+                          ),
+                          belowBarData: BarAreaData(
+                            show: true,
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary.withValues(
+                                  alpha: 0.3,
+                                ),
+                                theme.colorScheme.primary.withValues(
+                                  alpha: 0.0,
+                                ),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                data: (refillEvents) {
-                  // Aggregate refill events, filtering by user if staff
-                  final refills = refillEvents.where((e) {
-                    if (e.type != RefillEventType.refill) return false;
-                    if (widget.isStaff && widget.currentUserId != null) {
-                      return e.performedBy == widget.currentUserId;
-                    }
-                    return true;
-                  }).toList();
-
-                  final now = DateTime.now();
-                  final today = DateTime(now.year, now.month, now.day);
-
-                  List<FlSpot> spots = [];
-                  List<String> xLabels = [];
-                  double maxX = 6.0;
-                  double maxY = 10.0;
-
-                  switch (_dateRange) {
-                    case ChartDateRange.last7Days:
-                      maxX = 6.0;
-                      final List<int> dailyCounts = List.filled(7, 0);
-                      final List<DateTime> dates = List.generate(
-                          7, (i) => today.subtract(Duration(days: 6 - i)));
-
-                      for (final event in refills) {
-                        final eventDate = DateTime(event.occurredAt.year,
-                            event.occurredAt.month, event.occurredAt.day);
-                        for (int i = 0; i < 7; i++) {
-                          if (eventDate.isAtSameMomentAs(dates[i])) {
-                            dailyCounts[i]++;
-                          }
-                        }
-                      }
-
-                      spots = List.generate(
-                          7,
-                          (i) =>
-                              FlSpot(i.toDouble(), dailyCounts[i].toDouble()));
-
-                      final days = [
-                        l10n.t('dayMon'),
-                        l10n.t('dayTue'),
-                        l10n.t('dayWed'),
-                        l10n.t('dayThu'),
-                        l10n.t('dayFri'),
-                        l10n.t('daySat'),
-                        l10n.t('daySun'),
-                      ];
-                      xLabels = dates.map((d) => days[d.weekday - 1]).toList();
-                      break;
-
-                    case ChartDateRange.lastMonth:
-                      maxX = 29.0;
-                      final List<int> dailyCounts = List.filled(30, 0);
-                      final List<DateTime> dates = List.generate(
-                          30, (i) => today.subtract(Duration(days: 29 - i)));
-
-                      for (final event in refills) {
-                        final eventDate = DateTime(event.occurredAt.year,
-                            event.occurredAt.month, event.occurredAt.day);
-                        for (int i = 0; i < 30; i++) {
-                          if (eventDate.isAtSameMomentAs(dates[i])) {
-                            dailyCounts[i]++;
-                          }
-                        }
-                      }
-
-                      spots = List.generate(
-                          30,
-                          (i) =>
-                              FlSpot(i.toDouble(), dailyCounts[i].toDouble()));
-                      xLabels =
-                          dates.map((d) => '${d.day}/${d.month}').toList();
-                      break;
-
-                    case ChartDateRange.lastYear:
-                      maxX = 11.0;
-                      final List<int> monthlyCounts = List.filled(12, 0);
-                      final List<DateTime> months = List.generate(
-                          12,
-                          (i) =>
-                              DateTime(today.year, today.month - (11 - i), 1));
-
-                      for (final event in refills) {
-                        final eventMonth = DateTime(
-                            event.occurredAt.year, event.occurredAt.month, 1);
-                        for (int i = 0; i < 12; i++) {
-                          if (eventMonth.isAtSameMomentAs(months[i])) {
-                            monthlyCounts[i]++;
-                          }
-                        }
-                      }
-
-                      spots = List.generate(
-                          12,
-                          (i) => FlSpot(
-                              i.toDouble(), monthlyCounts[i].toDouble()));
-
-                      final monthKeys = [
-                        'monthJan',
-                        'monthFeb',
-                        'monthMar',
-                        'monthApr',
-                        'monthMay',
-                        'monthJun',
-                        'monthJul',
-                        'monthAug',
-                        'monthSep',
-                        'monthOct',
-                        'monthNov',
-                        'monthDec'
-                      ];
-                      xLabels = months
-                          .map((m) => l10n.t(monthKeys[m.month - 1]))
-                          .toList();
-                      break;
-                  }
-
-                  double highestRefillCount = 0;
-                  for (final spot in spots) {
-                    if (spot.y > highestRefillCount) {
-                      highestRefillCount = spot.y;
-                    }
-                  }
-
-                  if (highestRefillCount < 5) {
-                    maxY = 5.0;
-                  } else {
-                    maxY = (highestRefillCount * 1.25).ceilToDouble();
-                    maxY = ((maxY / 5).ceil() * 5).toDouble();
-                  }
-
-                  double leftInterval = 5;
-                  if (maxY <= 5) {
-                    leftInterval = 1;
-                  } else if (maxY <= 15) {
-                    leftInterval = 3;
-                  } else if (maxY <= 30) {
-                    leftInterval = 5;
-                  } else if (maxY <= 100) {
-                    leftInterval = 20;
-                  } else {
-                    leftInterval = 50;
-                  }
-
-                  return SizedBox(
-                    height: 220,
-                    child: LineChart(
-                      LineChartData(
-                        gridData: FlGridData(
-                          show: true,
-                          drawVerticalLine: false,
-                          horizontalInterval: leftInterval,
-                          getDrawingHorizontalLine: (value) => FlLine(
-                            color: theme.dividerColor.withValues(alpha: 0.4),
-                            strokeWidth: 1,
-                            dashArray: [4, 4],
-                          ),
-                        ),
-                        titlesData: FlTitlesData(
-                          rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 30,
-                              interval: 1,
-                              getTitlesWidget: (value, meta) {
-                                final index = value.toInt();
-                                if (index >= 0 && index < xLabels.length) {
-                                  final isMobile =
-                                      MediaQuery.sizeOf(context).width < 600;
-                                  if (_dateRange == ChartDateRange.lastMonth) {
-                                    if (index % 5 != 0 &&
-                                        index != xLabels.length - 1) {
-                                      return const SizedBox.shrink();
-                                    }
-                                  } else if (_dateRange ==
-                                      ChartDateRange.lastYear) {
-                                    if (isMobile && index % 2 != 0) {
-                                      return const SizedBox.shrink();
-                                    }
-                                  }
-
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      xLabels[index],
-                                      style: TextStyle(
-                                        color:
-                                            theme.colorScheme.onSurfaceVariant,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
-                            ),
-                          ),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 40,
-                              interval: leftInterval,
-                              getTitlesWidget: (value, meta) => Text(
-                                value.toInt().toString(),
-                                style: TextStyle(
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        borderData: FlBorderData(show: false),
-                        minX: 0,
-                        maxX: maxX,
-                        minY: 0,
-                        maxY: maxY,
-                        lineTouchData: LineTouchData(
-                          touchTooltipData: LineTouchTooltipData(
-                            getTooltipItems: (touchedSpots) {
-                              return touchedSpots
-                                  .map((spot) => LineTooltipItem(
-                                        '${spot.y.toInt()} ${l10n.t('chartRefills')}',
-                                        const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ))
-                                  .toList();
-                            },
-                          ),
-                        ),
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: spots,
-                            isCurved: true,
-                            curveSmoothness: 0.35,
-                            color: theme.colorScheme.primary,
-                            barWidth: 4,
-                            isStrokeCapRound: true,
-                            dotData: FlDotData(
-                              show: true,
-                              getDotPainter: (spot, percent, barData, index) {
-                                return FlDotCirclePainter(
-                                  radius: 4,
-                                  color: Colors.white,
-                                  strokeWidth: 3,
-                                  strokeColor: theme.colorScheme.primary,
-                                );
-                              },
-                            ),
-                            belowBarData: BarAreaData(
-                              show: true,
-                              gradient: LinearGradient(
-                                colors: [
-                                  theme.colorScheme.primary
-                                      .withValues(alpha: 0.3),
-                                  theme.colorScheme.primary
-                                      .withValues(alpha: 0.0),
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ));
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildSelectors(
-      BuildContext context, List<Hotel> hotels, String? selectedHotelId) {
+    BuildContext context,
+    List<Hotel> hotels,
+    String? selectedHotelId,
+  ) {
     if (widget.isStaff) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
@@ -1371,15 +1474,9 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
           _buildDropdown<String?>(
             value: selectedHotelId,
             items: [
-              DropdownMenuItem(
-                value: null,
-                child: Text(l10n.t('allHotels')),
-              ),
+              DropdownMenuItem(value: null, child: Text(l10n.t('allHotels'))),
               for (final hotel in hotels)
-                DropdownMenuItem(
-                  value: hotel.id,
-                  child: Text(hotel.name),
-                ),
+                DropdownMenuItem(value: hotel.id, child: Text(hotel.name)),
             ],
             onChanged: (val) {
               ref.read(selectedHotelIdProvider.notifier).state = val;
@@ -1445,8 +1542,11 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
               value: value,
               items: items,
               onChanged: onChanged,
-              icon: Icon(Icons.arrow_drop_down,
-                  color: theme.colorScheme.primary, size: 18),
+              icon: Icon(
+                Icons.arrow_drop_down,
+                color: theme.colorScheme.primary,
+                size: 18,
+              ),
               style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 color: theme.colorScheme.onSurface,

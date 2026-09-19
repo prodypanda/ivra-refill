@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../l10n/app_localizations.dart';
-import '../../routing/app_router.dart';
-import '../dashboard/dashboard_screen.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/features/dashboard/dashboard_screen.dart';
 
 class NotFoundScreen extends StatelessWidget {
   const NotFoundScreen({super.key, this.error});
@@ -23,7 +22,7 @@ class NotFoundScreen extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [
               theme.colorScheme.surface,
-              theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             ],
           ),
         ),
@@ -37,19 +36,24 @@ class NotFoundScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                   side: BorderSide(
-                    color: theme.colorScheme.outlineVariant.withOpacity(0.3),
+                    color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
                   ),
                 ),
-                color: theme.colorScheme.surface.withOpacity(0.8),
+                color: theme.colorScheme.surface.withValues(alpha: 0.8),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 48.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32.0,
+                    vertical: 48.0,
+                  ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primaryContainer.withOpacity(0.5),
+                          color: theme.colorScheme.primaryContainer.withValues(alpha:
+                            0.5,
+                          ),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -87,7 +91,9 @@ class NotFoundScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.errorContainer.withOpacity(0.5),
+                            color: theme.colorScheme.errorContainer.withValues(alpha:
+                              0.5,
+                            ),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(

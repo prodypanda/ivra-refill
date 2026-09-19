@@ -75,24 +75,27 @@ void main() {
       currentUser: _userForRole(UserRole.hotelStaff),
     );
 
-    GoRouter.of(tester.element(find.text('Dashboard').first))
-        .go(ProductsScreen.route);
+    GoRouter.of(
+      tester.element(find.text('Dashboard').first),
+    ).go(ProductsScreen.route);
     await tester.pumpAndSettle();
 
     expect(find.text('Products'), findsNothing);
     expect(find.text('Dashboard'), findsWidgets);
   });
 
-  testWidgets('hotel staff room screen hides edit request actions',
-      (tester) async {
+  testWidgets('hotel staff room screen hides edit request actions', (
+    tester,
+  ) async {
     await _pumpIvraApp(
       tester,
       size: const Size(1280, 900),
       currentUser: _userForRole(UserRole.hotelStaff),
     );
 
-    GoRouter.of(tester.element(find.text('Dashboard').first))
-        .go(RoomsScreen.route);
+    GoRouter.of(
+      tester.element(find.text('Dashboard').first),
+    ).go(RoomsScreen.route);
     await tester.pumpAndSettle();
 
     // Switch to detailed view and expand floors
@@ -107,8 +110,9 @@ void main() {
     expect(find.text('Refill bottle'), findsWidgets);
   });
 
-  testWidgets('hotel manager cannot create hotels or approve requests',
-      (tester) async {
+  testWidgets('hotel manager cannot create hotels or approve requests', (
+    tester,
+  ) async {
     await _pumpIvraApp(
       tester,
       size: const Size(1280, 900),
@@ -122,8 +126,9 @@ void main() {
     expect(find.byTooltip('Create hotel'), findsNothing);
     expect(find.byTooltip('Request hotel edit'), findsWidgets);
 
-    GoRouter.of(tester.element(find.text('Hotels').first))
-        .go(ApprovalsScreen.route);
+    GoRouter.of(
+      tester.element(find.text('Hotels').first),
+    ).go(ApprovalsScreen.route);
     await tester.pumpAndSettle();
 
     expect(find.text('Approve'), findsNothing);
@@ -139,10 +144,7 @@ void main() {
       const AppLocalizations(Locale('fr')).t('reportOpenAlertsTitle'),
       'Alertes ouvertes',
     );
-    expect(
-      const AppLocalizations(Locale('ar')).t('downloadPdf'),
-      'تحميل PDF',
-    );
+    expect(const AppLocalizations(Locale('ar')).t('downloadPdf'), 'تحميل PDF');
   });
 }
 

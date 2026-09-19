@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../domain/app_enums.dart';
-import '../../domain/models.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../auth/login_screen.dart';
-import '../auth/auth_validation.dart';
-import '../shared/async_value_view.dart';
-import '../shared/page_scaffold.dart';
-import '../../services/audit_service.dart';
-import '../shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/auth/auth_validation.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/services/audit_service.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
 
 class AccountScreen extends ConsumerStatefulWidget {
   const AccountScreen({super.key});
@@ -49,17 +47,15 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
   Widget build(BuildContext context) {
     final isLoggedIn = ref.watch(isLoggedInProvider);
     if (!isLoggedIn) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final useSupabase = ref.watch(useSupabaseProvider);
 
     final l10n = AppLocalizations.of(context);
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull),
+    );
     final canViewTeam =
         currentUser != null && currentUser.role != UserRole.hotelStaff;
 
@@ -134,27 +130,31 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     if (!_profileFormKey.currentState!.validate()) return;
     setState(() => _isSavingProfile = true);
     try {
-      await ref.read(repositoryProvider).updateCurrentUserProfile(
-            fullName: _fullNameController.text.trim(),
-          );
+      await ref
+          .read(repositoryProvider)
+          .updateCurrentUserProfile(fullName: _fullNameController.text.trim());
       ref.invalidate(realCurrentUserProvider);
       ref.invalidate(currentUserProvider);
       ref.invalidate(teamMembersProvider);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content:
-                Text(AppLocalizations.of(context).t('accountProfileUpdated'))),
+          content: Text(
+            AppLocalizations.of(context).t('accountProfileUpdated'),
+          ),
+        ),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(localizeAuthError(
-            AppLocalizations.of(context),
-            error,
-            fallbackKey: 'accountSaveFailed',
-          )),
+          content: Text(
+            localizeAuthError(
+              AppLocalizations.of(context),
+              error,
+              fallbackKey: 'accountSaveFailed',
+            ),
+          ),
         ),
       );
     } finally {
@@ -166,26 +166,30 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     if (!_passwordFormKey.currentState!.validate()) return;
     setState(() => _isChangingPassword = true);
     try {
-      await ref.read(repositoryProvider).changeCurrentUserPassword(
-            password: _passwordController.text,
-          );
+      await ref
+          .read(repositoryProvider)
+          .changeCurrentUserPassword(password: _passwordController.text);
       _passwordController.clear();
       _confirmPasswordController.clear();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content:
-                Text(AppLocalizations.of(context).t('accountPasswordUpdated'))),
+          content: Text(
+            AppLocalizations.of(context).t('accountPasswordUpdated'),
+          ),
+        ),
       );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(localizeAuthError(
-            AppLocalizations.of(context),
-            error,
-            fallbackKey: 'accountPasswordChangeFailed',
-          )),
+          content: Text(
+            localizeAuthError(
+              AppLocalizations.of(context),
+              error,
+              fallbackKey: 'accountPasswordChangeFailed',
+            ),
+          ),
         ),
       );
     } finally {
@@ -213,11 +217,14 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       ref.invalidate(teamInvitationsProvider);
     } catch (error) {
       if (!mounted) return;
-      PremiumSnackbar.showError(context, localizeAuthError(
-            AppLocalizations.of(context),
-            error,
-            fallbackKey: 'accountSignOutFailed',
-          ));
+      PremiumSnackbar.showError(
+        context,
+        localizeAuthError(
+          AppLocalizations.of(context),
+          error,
+          fallbackKey: 'accountSignOutFailed',
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSigningOut = false);
     }
@@ -233,21 +240,21 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       } catch (_) {
         image = await picker.pickMedia();
       }
-      
+
       if (image == null) return;
-      
+
       setState(() => _isUploadingAvatar = true);
-      
+
       final bytes = await image.readAsBytes();
       final ext = image.name.split('.').last;
-      
+
       final currentUser = ref.read(currentUserProvider).valueOrNull;
       if (currentUser != null) {
         await ref.read(repositoryProvider).updateUserAvatar(
-          userId: currentUser.id,
-          imageBytes: bytes,
-          fileExtension: ext,
-        );
+              userId: currentUser.id,
+              imageBytes: bytes,
+              fileExtension: ext,
+            );
         ref.invalidate(realCurrentUserProvider);
         ref.invalidate(currentUserProvider);
         ref.invalidate(teamMembersProvider);
@@ -287,7 +294,9 @@ class _ProfileCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final hotelName = user.hotelId == null
         ? null
-        : (ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const <Hotel>[])))
+        : (ref.watch(
+            hotelsProvider.select((s) => s.valueOrNull ?? const <Hotel>[]),
+          ))
             .where((hotel) => hotel.id == user.hotelId)
             .map((hotel) => hotel.name)
             .firstOrNull;
@@ -307,10 +316,24 @@ class _ProfileCard extends ConsumerWidget {
                       children: [
                         CircleAvatar(
                           radius: 32,
-                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                          backgroundImage: (user.avatarUrl != null && user.avatarUrl!.isNotEmpty && user.avatarUrl!.startsWith('http')) ? NetworkImage(user.avatarUrl!) : null,
-                          child: (user.avatarUrl == null || user.avatarUrl!.isEmpty || !user.avatarUrl!.startsWith('http'))
-                              ? Icon(Icons.person, size: 32, color: Theme.of(context).colorScheme.onPrimaryContainer)
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer,
+                          backgroundImage: (user.avatarUrl != null &&
+                                  user.avatarUrl!.isNotEmpty &&
+                                  user.avatarUrl!.startsWith('http'))
+                              ? NetworkImage(user.avatarUrl!)
+                              : null,
+                          child: (user.avatarUrl == null ||
+                                  user.avatarUrl!.isEmpty ||
+                                  !user.avatarUrl!.startsWith('http'))
+                              ? Icon(
+                                  Icons.person,
+                                  size: 32,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer,
+                                )
                               : null,
                         ),
                         if (isUploadingAvatar)
@@ -359,12 +382,13 @@ class _ProfileCard extends ConsumerWidget {
               TextFormField(
                 controller: fullNameController,
                 decoration: InputDecoration(
-                    labelText:
-                        AppLocalizations.of(context).t('accountFullName')),
+                  labelText: AppLocalizations.of(context).t('accountFullName'),
+                ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return AppLocalizations.of(context)
-                        .t('accountFullNameRequired');
+                    return AppLocalizations.of(
+                      context,
+                    ).t('accountFullNameRequired');
                   }
                   return null;
                 },
@@ -382,8 +406,9 @@ class _ProfileCard extends ConsumerWidget {
                   _InfoChip(
                     icon: Icons.admin_panel_settings_outlined,
                     label: AppLocalizations.of(context).t('accountRole'),
-                    value:
-                        AppLocalizations.of(context).userRoleLabel(user.role),
+                    value: AppLocalizations.of(
+                      context,
+                    ).userRoleLabel(user.role),
                   ),
                   _InfoChip(
                     icon: Icons.apartment_outlined,
@@ -452,10 +477,12 @@ class _PasswordCard extends StatelessWidget {
                         ),
                         Text(
                           useSupabase
-                              ? AppLocalizations.of(context)
-                                  .t('accountPasswordHintSupabase')
-                              : AppLocalizations.of(context)
-                                  .t('accountPasswordHintDemo'),
+                              ? AppLocalizations.of(
+                                  context,
+                                ).t('accountPasswordHintSupabase')
+                              : AppLocalizations.of(
+                                  context,
+                                ).t('accountPasswordHintDemo'),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -478,8 +505,10 @@ class _PasswordCard extends StatelessWidget {
                 controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                    labelText:
-                        AppLocalizations.of(context).t('accountNewPassword')),
+                  labelText: AppLocalizations.of(
+                    context,
+                  ).t('accountNewPassword'),
+                ),
                 validator: (value) => AuthValidation.password(value ?? ''),
               ),
               const SizedBox(height: 12),
@@ -487,8 +516,10 @@ class _PasswordCard extends StatelessWidget {
                 controller: confirmPasswordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)
-                        .t('accountConfirmPassword')),
+                  labelText: AppLocalizations.of(
+                    context,
+                  ).t('accountConfirmPassword'),
+                ),
                 validator: (value) => AuthValidation.matchingPasswords(
                   passwordController.text,
                   value ?? '',
@@ -503,10 +534,7 @@ class _PasswordCard extends StatelessWidget {
 }
 
 class _SignOutCard extends StatelessWidget {
-  const _SignOutCard({
-    required this.isSigningOut,
-    required this.onSignOut,
-  });
+  const _SignOutCard({required this.isSigningOut, required this.onSignOut});
 
   final bool isSigningOut;
   final VoidCallback onSignOut;
@@ -522,21 +550,22 @@ class _SignOutCard extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Builder(
-                  builder: (context) => Text(
-                      AppLocalizations.of(context).t('accountSignOutHint'))),
+                builder: (context) =>
+                    Text(AppLocalizations.of(context).t('accountSignOutHint')),
+              ),
             ),
             Builder(
-                builder: (context) => FilledButton.icon(
-                      onPressed: isSigningOut ? null : onSignOut,
-                      icon: isSigningOut
-                          ? const SizedBox.square(
-                              dimension: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.logout_outlined),
-                      label: Text(
-                          AppLocalizations.of(context).t('accountSignOut')),
-                    )),
+              builder: (context) => FilledButton.icon(
+                onPressed: isSigningOut ? null : onSignOut,
+                icon: isSigningOut
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.logout_outlined),
+                label: Text(AppLocalizations.of(context).t('accountSignOut')),
+              ),
+            ),
           ],
         ),
       ),
@@ -559,7 +588,11 @@ class _InfoChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Chip(
       avatar: Icon(icon, size: 18),
-      label: Text(AppLocalizations.of(context).tParams('chipLabelValue', {'label': label, 'value': value})),
+      label: Text(
+        AppLocalizations.of(
+          context,
+        ).tParams('chipLabelValue', {'label': label, 'value': value}),
+      ),
     );
   }
 }
@@ -575,8 +608,9 @@ class _TeamAccountsCard extends ConsumerWidget {
     final theme = Theme.of(context);
 
     final hotelsById = <String, String>{
-      for (final hotel
-          in ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const <Hotel>[])))
+      for (final hotel in ref.watch(
+        hotelsProvider.select((s) => s.valueOrNull ?? const <Hotel>[]),
+      ))
         hotel.id: hotel.name,
     };
 

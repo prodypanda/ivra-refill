@@ -1,23 +1,24 @@
+import 'package:ivra_refill/src/utils/app_logger.dart';
 import 'package:flutter/material.dart';
 
-import '../../ui/ivra_icons.dart';
+import 'package:ivra_refill/src/ui/ivra_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../domain/app_enums.dart';
-import '../../domain/models.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../shared/async_value_view.dart';
-import '../shared/glass_card.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/empty_state.dart';
-import '../shared/premium_snackbar.dart';
-import '../shared/shimmer_loading.dart';
-import '../shared/premium_qr_scanner_dialog.dart';
-import '../shared/centered_sheet.dart';
-import '../shared/hover_image_tooltip.dart';
-import '../../utils/qr_parser.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/glass_card.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/empty_state.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/features/shared/shimmer_loading.dart';
+import 'package:ivra_refill/src/features/shared/premium_qr_scanner_dialog.dart';
+import 'package:ivra_refill/src/features/shared/centered_sheet.dart';
+import 'package:ivra_refill/src/features/shared/hover_image_tooltip.dart';
+import 'package:ivra_refill/src/utils/qr_parser.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
   final String? hotelId;
@@ -33,7 +34,7 @@ enum InventorySortOption {
   nameAsc,
   nameDesc,
   fullBottlesDesc,
-  emptyBottlesDesc
+  emptyBottlesDesc,
 }
 
 class _InventoryScreenState extends ConsumerState<InventoryScreen> {
@@ -73,8 +74,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     final theme = Theme.of(context);
     final primaryColor = const Color(0xFFF2A900); // Golden yellow/orange
 
-    final currentUser =
-        ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull),
+    );
     final canManage = currentUser?.role != UserRole.housekeeper;
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final hotelsAsync = ref.watch(hotelsProvider);
@@ -178,8 +180,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     children: List.generate(
                       3,
                       (index) => const Padding(
-                        padding:
-                            EdgeInsets.only(bottom: 12, left: 16, right: 16),
+                        padding: EdgeInsets.only(
+                          bottom: 12,
+                          left: 16,
+                          right: 16,
+                        ),
                         child: CardShimmer(isCompact: true),
                       ),
                     ),
@@ -210,8 +215,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     }).toList();
 
                     // Apply sort
-                    final languageCode =
-                        Localizations.localeOf(context).languageCode;
+                    final languageCode = Localizations.localeOf(
+                      context,
+                    ).languageCode;
                     filteredItems.sort((a, b) {
                       switch (_sortOption) {
                         case InventorySortOption.nameAsc:
@@ -247,8 +253,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     children: List.generate(
                       2,
                       (index) => const Padding(
-                        padding:
-                            EdgeInsets.only(bottom: 16, left: 16, right: 16),
+                        padding: EdgeInsets.only(
+                          bottom: 16,
+                          left: 16,
+                          right: 16,
+                        ),
                         child: CardShimmer(),
                       ),
                     ),
@@ -328,8 +337,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         child: DropdownButton<String>(
                           value: selectedHotelId,
                           hint: Text(l10n.t('roomsSelectHotelFirst')),
-                          icon:
-                              Icon(Icons.arrow_drop_down, color: primaryColor),
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                            color: primaryColor,
+                          ),
                           items: [
                             for (final hotel in hotels)
                               DropdownMenuItem(
@@ -337,7 +348,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                                 child: Text(
                                   hotel.name,
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.w600),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                           ],
@@ -362,8 +374,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   controller: _searchController,
                   decoration: InputDecoration(
                     hintText: l10n.t('roomsSearchPlaceholder'),
-                    prefixIcon:
-                        const Icon(Icons.search, size: 20, color: Colors.grey),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      size: 20,
+                      color: Colors.grey,
+                    ),
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -380,18 +395,23 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                           ),
                         IconButton(
                           tooltip: l10n.t('qrScanTitle'),
-                          icon: const Icon(Icons.qr_code_scanner_outlined,
-                              size: 20),
+                          icon: const Icon(
+                            Icons.qr_code_scanner_outlined,
+                            size: 20,
+                          ),
                           onPressed: () => _scanProductQr(context),
                         ),
                       ],
                     ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 0,
+                      horizontal: 12,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide:
-                          BorderSide(color: theme.colorScheme.outlineVariant),
+                      borderSide: BorderSide(
+                        color: theme.colorScheme.outlineVariant,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -432,12 +452,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 ),
                 const SizedBox(width: 8),
                 FilterChip(
-                  avatar: Icon(Icons.warning_amber_rounded,
-                      size: 16, color: theme.colorScheme.error),
+                  avatar: Icon(
+                    Icons.warning_amber_rounded,
+                    size: 16,
+                    color: theme.colorScheme.error,
+                  ),
                   label: Text(l10n.t('inventoryStatusLowStock')),
                   selected: _statusFilter == 'lowStock',
-                  selectedColor:
-                      theme.colorScheme.error.withValues(alpha: 0.15),
+                  selectedColor: theme.colorScheme.error.withValues(
+                    alpha: 0.15,
+                  ),
                   checkmarkColor: theme.colorScheme.error,
                   labelStyle: TextStyle(
                     color: _statusFilter == 'lowStock'
@@ -466,8 +490,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   label: Text(l10n.t('sortNameAsc') ?? 'Name (A-Z)'),
                   selected: _sortOption == InventorySortOption.nameAsc,
                   onSelected: (selected) {
-                    if (selected)
+                    if (selected) {
                       setState(() => _sortOption = InventorySortOption.nameAsc);
+                    }
                   },
                 ),
                 const SizedBox(width: 8),
@@ -475,31 +500,40 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   label: Text(l10n.t('sortNameDesc') ?? 'Name (Z-A)'),
                   selected: _sortOption == InventorySortOption.nameDesc,
                   onSelected: (selected) {
-                    if (selected)
+                    if (selected) {
                       setState(
-                          () => _sortOption = InventorySortOption.nameDesc);
+                        () => _sortOption = InventorySortOption.nameDesc,
+                      );
+                    }
                   },
                 ),
                 const SizedBox(width: 8),
                 ChoiceChip(
                   label: Text(
-                      l10n.t('sortMostFullBottles') ?? 'Most Full Bottles'),
+                    l10n.t('sortMostFullBottles') ?? 'Most Full Bottles',
+                  ),
                   selected: _sortOption == InventorySortOption.fullBottlesDesc,
                   onSelected: (selected) {
-                    if (selected)
-                      setState(() =>
-                          _sortOption = InventorySortOption.fullBottlesDesc);
+                    if (selected) {
+                      setState(
+                        () => _sortOption = InventorySortOption.fullBottlesDesc,
+                      );
+                    }
                   },
                 ),
                 const SizedBox(width: 8),
                 ChoiceChip(
                   label: Text(
-                      l10n.t('sortMostEmptyBottles') ?? 'Most Used Bottles'),
+                    l10n.t('sortMostEmptyBottles') ?? 'Most Used Bottles',
+                  ),
                   selected: _sortOption == InventorySortOption.emptyBottlesDesc,
                   onSelected: (selected) {
-                    if (selected)
-                      setState(() =>
-                          _sortOption = InventorySortOption.emptyBottlesDesc);
+                    if (selected) {
+                      setState(
+                        () =>
+                            _sortOption = InventorySortOption.emptyBottlesDesc,
+                      );
+                    }
                   },
                 ),
               ],
@@ -552,8 +586,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
 
     final productSkus = products.map((p) => 'product:${p.sku}').toList();
 
-    final code =
-        await PremiumQrScannerDialog.show(context, demoCodes: productSkus);
+    final code = await PremiumQrScannerDialog.show(
+      context,
+      demoCodes: productSkus,
+    );
     if (code == null || code.trim().isEmpty) return;
 
     final sku = QrParser.parsePayload(code);
@@ -573,12 +609,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     }
 
     if (!context.mounted) return;
-    await _showStockAdjustmentDialog(context,
-        initialProductId: matchedProduct.id);
+    await _showStockAdjustmentDialog(
+      context,
+      initialProductId: matchedProduct.id,
+    );
   }
 
-  Future<void> _showStockAdjustmentDialog(BuildContext context,
-      {String? initialProductId}) async {
+  Future<void> _showStockAdjustmentDialog(
+    BuildContext context, {
+    String? initialProductId,
+  }) async {
     final l10n = AppLocalizations.of(context);
     final selectedHotelId = ref.read(selectedHotelIdProvider);
 
@@ -702,10 +742,7 @@ class _InventoryTable extends StatelessWidget {
 }
 
 class _PremiumInventoryCard extends ConsumerStatefulWidget {
-  const _PremiumInventoryCard({
-    required this.item,
-    required this.language,
-  });
+  const _PremiumInventoryCard({required this.item, required this.language});
 
   final InventoryItem item;
   final String language;
@@ -774,10 +811,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
 
       await showCenteredFormSheet<void>(
         context: context,
-        builder: (context) => _ProductHistoryDialog(
-          item: widget.item,
-          teamMembers: teamMembers,
-        ),
+        builder: (context) =>
+            _ProductHistoryDialog(item: widget.item, teamMembers: teamMembers),
       );
     } catch (e) {
       if (context.mounted) {
@@ -790,8 +825,9 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final currentUser =
-        ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+    final currentUser = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull),
+    );
     final canManage = currentUser?.role != UserRole.housekeeper;
     final language = Localizations.localeOf(context).languageCode;
     final lowStock = widget.item.lowBottles || widget.item.lowBidons;
@@ -846,14 +882,24 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                           decoration: BoxDecoration(
                             color: statusColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(20),
-                            image: (widget.item.product.imageUrl != null && widget.item.product.imageUrl!.isNotEmpty && widget.item.product.imageUrl!.startsWith('http')) 
+                            image: (widget.item.product.imageUrl != null &&
+                                    widget.item.product.imageUrl!.isNotEmpty &&
+                                    widget.item.product.imageUrl!.startsWith(
+                                      'http',
+                                    ))
                                 ? DecorationImage(
-                                    image: NetworkImage(widget.item.product.imageUrl!),
+                                    image: NetworkImage(
+                                      widget.item.product.imageUrl!,
+                                    ),
                                     fit: BoxFit.cover,
                                   )
                                 : null,
                           ),
-                          child: (widget.item.product.imageUrl == null || widget.item.product.imageUrl!.isEmpty || !widget.item.product.imageUrl!.startsWith('http'))
+                          child: (widget.item.product.imageUrl == null ||
+                                  widget.item.product.imageUrl!.isEmpty ||
+                                  !widget.item.product.imageUrl!.startsWith(
+                                    'http',
+                                  ))
                               ? Icon(
                                   lowStock
                                       ? Icons.priority_high_rounded
@@ -874,10 +920,10 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.w900,
-                                  height: 1.1,
-                                  letterSpacing: -0.3,
-                                ),
+                                fontWeight: FontWeight.w900,
+                                height: 1.1,
+                                letterSpacing: -0.3,
+                              ),
                             ),
                             const SizedBox(height: 6),
                             Text(
@@ -899,7 +945,10 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.history_outlined, size: 20),
+                                icon: const Icon(
+                                  Icons.history_outlined,
+                                  size: 20,
+                                ),
                                 tooltip: l10n.t('productHistoryTitle'),
                                 onPressed: () => _showProductHistory(context),
                                 style: IconButton.styleFrom(
@@ -913,7 +962,10 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                               if (canManage) ...[
                                 const SizedBox(width: 8),
                                 IconButton(
-                                  icon: const Icon(Icons.edit_outlined, size: 20),
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    size: 20,
+                                  ),
                                   tooltip: l10n.t('adjustStockTitle'),
                                   onPressed: () => _adjustStock(context),
                                   style: IconButton.styleFrom(
@@ -946,14 +998,24 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                               decoration: BoxDecoration(
                                 color: statusColor.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(20),
-                                image: (widget.item.product.imageUrl != null && widget.item.product.imageUrl!.isNotEmpty && widget.item.product.imageUrl!.startsWith('http')) 
+                                image: (widget.item.product.imageUrl != null &&
+                                        widget.item.product.imageUrl!
+                                            .isNotEmpty &&
+                                        widget.item.product.imageUrl!
+                                            .startsWith('http'))
                                     ? DecorationImage(
-                                        image: NetworkImage(widget.item.product.imageUrl!),
+                                        image: NetworkImage(
+                                          widget.item.product.imageUrl!,
+                                        ),
                                         fit: BoxFit.cover,
                                       )
                                     : null,
                               ),
-                              child: (widget.item.product.imageUrl == null || widget.item.product.imageUrl!.isEmpty || !widget.item.product.imageUrl!.startsWith('http'))
+                              child: (widget.item.product.imageUrl == null ||
+                                      widget.item.product.imageUrl!.isEmpty ||
+                                      !widget.item.product.imageUrl!.startsWith(
+                                        'http',
+                                      ))
                                   ? Icon(
                                       lowStock
                                           ? Icons.priority_high_rounded
@@ -1001,7 +1063,10 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.history_outlined, size: 20),
+                                icon: const Icon(
+                                  Icons.history_outlined,
+                                  size: 20,
+                                ),
                                 tooltip: l10n.t('productHistoryTitle'),
                                 onPressed: () => _showProductHistory(context),
                                 style: IconButton.styleFrom(
@@ -1015,7 +1080,10 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                               if (canManage) ...[
                                 const SizedBox(width: 8),
                                 IconButton(
-                                  icon: const Icon(Icons.edit_outlined, size: 20),
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    size: 20,
+                                  ),
                                   tooltip: l10n.t('adjustStockTitle'),
                                   onPressed: () => _adjustStock(context),
                                   style: IconButton.styleFrom(
@@ -1041,11 +1109,15 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                 label: widget.item.product.bottleType == BottleType.withPump
                     ? l10n.tParams('inventoryTableFullBottlesWithPump', {
                         'size': _getFormattedVolume(
-                            widget.item.product.bottleVolumeMl, language)
+                          widget.item.product.bottleVolumeMl,
+                          language,
+                        ),
                       })
                     : l10n.tParams('inventoryTableFullBottlesWithoutPump', {
                         'size': _getFormattedVolume(
-                            widget.item.product.bottleVolumeMl, language)
+                          widget.item.product.bottleVolumeMl,
+                          language,
+                        ),
                       }),
                 value: widget.item.fullBottles,
                 threshold: widget.item.product.lowBottleThreshold,
@@ -1085,8 +1157,9 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                   }
 
                   return _VisualStockBar(
-                    label: l10n.tParams('inventoryTableFullBidons',
-                        {'size': _getFormattedVolume(bidonVolume, language)}),
+                    label: l10n.tParams('inventoryTableFullBidons', {
+                      'size': _getFormattedVolume(bidonVolume, language),
+                    }),
                     value: displayValue,
                     threshold: widget.item.product.lowBidonThreshold,
                     icon: IvraIcons.fullRefillBottle,
@@ -1101,8 +1174,10 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                     setState(() => _showAdvancedStats = !_showAdvancedStats),
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 6,
+                    horizontal: 8,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -1141,10 +1216,10 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                         children: [
                           Expanded(
                             child: _MiniStat(
-                              label: l10n.tParams(
-                                  'inventoryTableEmptyBottles', {
+                              label:
+                                  l10n.tParams('inventoryTableEmptyBottles', {
                                 'months':
-                                    '${(widget.item.product.maxBottleAgeDays / 30.0).round()}'
+                                    '${(widget.item.product.maxBottleAgeDays / 30.0).round()}',
                               }),
                               value: widget.item.emptyBottles,
                               icon: widget.item.product.bottleType ==
@@ -1156,9 +1231,10 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                           ),
                           if (widget.item.product.isRefillable) ...[
                             Container(
-                                width: 1,
-                                height: 24,
-                                color: theme.dividerColor),
+                              width: 1,
+                              height: 24,
+                              color: theme.dividerColor,
+                            ),
                             Expanded(
                               child: _MiniStat(
                                 label: l10n.t('inventoryTableEmptyBidons'),
@@ -1193,7 +1269,7 @@ class _VisualStockBar extends StatelessWidget {
     required this.threshold,
     required this.icon,
     required this.color,
-    this.iconSize = 31,
+    this.iconSize = 16.0,
     this.valueSuffix,
   });
 
@@ -1213,8 +1289,10 @@ class _VisualStockBar extends StatelessWidget {
 
     // Calculate an artificial percentage based on threshold (e.g. threshold * 3 is 100%)
     final maxExpected = (threshold * 3).clamp(10, 1000);
-    final percentage =
-        (value / maxExpected).clamp(0.05, 1.0); // At least 5% so it's visible
+    final percentage = (value / maxExpected).clamp(
+      0.05,
+      1.0,
+    ); // At least 5% so it's visible
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1271,10 +1349,7 @@ class _VisualStockBar extends StatelessWidget {
                 height: 8,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      displayColor.withValues(alpha: 0.7),
-                      displayColor,
-                    ],
+                    colors: [displayColor.withValues(alpha: 0.7), displayColor],
                   ),
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: [
@@ -1458,9 +1533,10 @@ class _StockAdjustmentDialogState
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<String>(
-                  value: _inventoryItemId,
+                  initialValue: _inventoryItemId,
                   decoration: InputDecoration(
-                      labelText: l10n.t('inventoryTableProduct')),
+                    labelText: l10n.t('inventoryTableProduct'),
+                  ),
                   items: [
                     for (final item in widget.items)
                       DropdownMenuItem(
@@ -1476,20 +1552,25 @@ class _StockAdjustmentDialogState
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                        color:
-                            theme.colorScheme.primary.withValues(alpha: 0.2)),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.inventory_outlined,
-                          size: 16, color: theme.colorScheme.primary),
+                      Icon(
+                        Icons.inventory_outlined,
+                        size: 16,
+                        color: theme.colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         selectedItem.product.isRefillable
@@ -1512,20 +1593,26 @@ class _StockAdjustmentDialogState
                               BottleType.withPump
                           ? l10n.tParams('inventoryTableFullBottlesWithPump', {
                               'size': _getFormattedVolume(
-                                  selectedItem.product.bottleVolumeMl, language)
+                                selectedItem.product.bottleVolumeMl,
+                                language,
+                              ),
                             })
                           : l10n.tParams(
-                              'inventoryTableFullBottlesWithoutPump', {
-                              'size': _getFormattedVolume(
-                                  selectedItem.product.bottleVolumeMl, language)
-                            }),
+                              'inventoryTableFullBottlesWithoutPump',
+                              {
+                                'size': _getFormattedVolume(
+                                  selectedItem.product.bottleVolumeMl,
+                                  language,
+                                ),
+                              },
+                            ),
                     ),
                     const SizedBox(height: 12),
                     _DeltaField(
                       controller: _emptyBottles,
                       label: l10n.tParams('inventoryTableEmptyBottles', {
                         'months':
-                            '${(selectedItem.product.maxBottleAgeDays / 30.0).round()}'
+                            '${(selectedItem.product.maxBottleAgeDays / 30.0).round()}',
                       }),
                     ),
                     if (selectedItem.product.isRefillable) ...[
@@ -1534,7 +1621,9 @@ class _StockAdjustmentDialogState
                         controller: _fullBidons,
                         label: l10n.tParams('inventoryTableFullBidons', {
                           'size': _getFormattedVolume(
-                              selectedItem.product.bidonVolumeMl, language)
+                            selectedItem.product.bidonVolumeMl,
+                            language,
+                          ),
                         }),
                       ),
                       const SizedBox(height: 8),
@@ -1544,14 +1633,18 @@ class _StockAdjustmentDialogState
                             _showAdvanced = !_showAdvanced;
                           });
                         },
-                        icon: Icon(_showAdvanced
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down),
+                        icon: Icon(
+                          _showAdvanced
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                        ),
                         label: Text(l10n.t('more')),
                         style: TextButton.styleFrom(
                           foregroundColor: theme.colorScheme.onSurfaceVariant,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                         ),
                       ),
                       if (_showAdvanced) ...[
@@ -1567,8 +1660,9 @@ class _StockAdjustmentDialogState
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _reason,
-                  decoration:
-                      InputDecoration(labelText: l10n.t('hotelLabelNotes')),
+                  decoration: InputDecoration(
+                    labelText: l10n.t('hotelLabelNotes'),
+                  ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return l10n.t('requiredField');
@@ -1633,8 +1727,9 @@ class _StockAdjustmentDialogState
           final newAlertsCount = await ref
               .read(repositoryProvider)
               .refreshSmartAlerts(hotelId: item.hotelId);
-          debugPrint(
-              '[ALERT-PUSH] refreshSmartAlerts returned $newAlertsCount new alerts');
+          AppLogger.debug(
+            '[ALERT-PUSH] refreshSmartAlerts returned $newAlertsCount new alerts',
+          );
           if (newAlertsCount > 0) {
             ref.invalidate(alertsProvider);
             try {
@@ -1645,16 +1740,18 @@ class _StockAdjustmentDialogState
                     .alerts(hotelId: item.hotelId);
                 final products = await ref.read(productsProvider.future);
 
-                debugPrint(
-                    '[ALERT-PUSH] Fetched ${latestAlerts.length} alerts, ${products.length} products');
+                AppLogger.debug(
+                  '[ALERT-PUSH] Fetched ${latestAlerts.length} alerts, ${products.length} products',
+                );
 
                 final unresolved = latestAlerts
                     .where((a) => !a.isResolved)
                     .toList()
                   ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-                debugPrint(
-                    '[ALERT-PUSH] ${unresolved.length} unresolved alerts, sending up to $newAlertsCount');
+                AppLogger.debug(
+                  '[ALERT-PUSH] ${unresolved.length} unresolved alerts, sending up to $newAlertsCount',
+                );
 
                 // Send notifications for the newest alerts (most recently created)
                 for (var i = 0;
@@ -1665,16 +1762,22 @@ class _StockAdjustmentDialogState
                       .where((p) => p.id == alert.productId)
                       .firstOrNull;
 
-                  debugPrint(
-                      '[ALERT-PUSH] Alert type=${alert.type.value}, productId=${alert.productId}, product found=${product != null}');
-                  debugPrint(
-                      '[ALERT-PUSH] Raw title="${alert.title}", Raw body="${alert.body}"');
+                  AppLogger.debug(
+                    '[ALERT-PUSH] Alert type=${alert.type.value}, productId=${alert.productId}, product found=${product != null}',
+                  );
+                  AppLogger.debug(
+                    '[ALERT-PUSH] Raw title="${alert.title}", Raw body="${alert.body}"',
+                  );
 
-                  final (pushTitle, pushBody) =
-                      alert.localizedStrings(l10n, lang, product);
+                  final (pushTitle, pushBody) = alert.localizedStrings(
+                    l10n,
+                    lang,
+                    product,
+                  );
 
-                  debugPrint(
-                      '[ALERT-PUSH] Translated title="$pushTitle", body="$pushBody"');
+                  AppLogger.debug(
+                    '[ALERT-PUSH] Translated title="$pushTitle", body="$pushBody"',
+                  );
 
                   await Supabase.instance.client.functions.invoke(
                     'send-notification',
@@ -1689,28 +1792,21 @@ class _StockAdjustmentDialogState
                           'id': 'more_info',
                           'title': l10n.t('notificationMoreInfo'),
                         },
-                        {
-                          'id': 'resolve',
-                          'title': l10n.t('alertsResolve'),
-                        },
-                        {
-                          'id': 'delete',
-                          'title': l10n.t('delete'),
-                        },
+                        {'id': 'resolve', 'title': l10n.t('alertsResolve')},
+                        {'id': 'delete', 'title': l10n.t('delete')},
                       ],
-                      'data': {
-                        'alertId': alert.id,
-                        'hotelId': item.hotelId,
-                      },
+                      'data': {'alertId': alert.id, 'hotelId': item.hotelId},
                     },
                   );
-                  debugPrint(
-                      '[ALERT-PUSH] Notification sent successfully for alert ${alert.id}');
+                  AppLogger.debug(
+                    '[ALERT-PUSH] Notification sent successfully for alert ${alert.id}',
+                  );
                 }
               }
             } catch (e) {
-              debugPrint(
-                  '[ALERT-PUSH] Failed to dispatch alert push notification: $e');
+              AppLogger.debug(
+                '[ALERT-PUSH] Failed to dispatch alert push notification: $e',
+              );
             }
           }
         } catch (e) {
@@ -1726,10 +1822,9 @@ class _StockAdjustmentDialogState
       }
 
       if (isOffline) {
-        await ref.read(offlineSyncServiceProvider).enqueue(
-              type: SyncActionType.stockAdjustment,
-              payload: payload,
-            );
+        await ref
+            .read(offlineSyncServiceProvider)
+            .enqueue(type: SyncActionType.stockAdjustment, payload: payload);
         ref.invalidate(offlineActionsProvider);
       }
 
@@ -1748,10 +1843,7 @@ class _StockAdjustmentDialogState
 }
 
 class _DeltaField extends StatefulWidget {
-  const _DeltaField({
-    required this.controller,
-    required this.label,
-  });
+  const _DeltaField({required this.controller, required this.label});
 
   final TextEditingController controller;
   final String label;
@@ -1781,7 +1873,8 @@ class _DeltaFieldState extends State<_DeltaField> {
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -1818,15 +1911,17 @@ class _DeltaFieldState extends State<_DeltaField> {
                   child: TextFormField(
                     controller: widget.controller,
                     textAlign: TextAlign.center,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(signed: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      signed: true,
+                    ),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.zero,
                       isDense: true,
                     ),
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                     validator: (value) {
                       if (int.tryParse(value ?? '') == null) {
                         return '!';
@@ -1880,8 +1975,10 @@ class _SuggestedOrders extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.shopping_cart_outlined,
-                        color: theme.colorScheme.primary),
+                    Icon(
+                      Icons.shopping_cart_outlined,
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -1899,10 +1996,9 @@ class _SuggestedOrders extends StatelessWidget {
                     order.product.bottleType == BottleType.withPump
                         ? IvraIcons.fullBottleWithPump
                         : IvraIcons.fullBottleWithoutPump,
-                    l10n.tParams(
-                      'orderNewBottlesText',
-                      {'count': '${order.bottlesToOrder}'},
-                    ),
+                    l10n.tParams('orderNewBottlesText', {
+                      'count': '${order.bottlesToOrder}',
+                    }),
                     Colors.orange,
                   ),
                   const SizedBox(height: 8),
@@ -1910,10 +2006,9 @@ class _SuggestedOrders extends StatelessWidget {
                 if (order.product.isRefillable && order.bidonsToOrder > 0) ...[
                   _SuggestedOrderRow(
                     IvraIcons.fullRefillBottle,
-                    l10n.tParams(
-                      'orderNewBidonsText',
-                      {'count': '${order.bidonsToOrder}'},
-                    ),
+                    l10n.tParams('orderNewBidonsText', {
+                      'count': '${order.bidonsToOrder}',
+                    }),
                     theme.colorScheme.primary,
                   ),
                   const SizedBox(height: 8),
@@ -1921,10 +2016,9 @@ class _SuggestedOrders extends StatelessWidget {
                 if (order.bottlesToRecycle > 0) ...[
                   _SuggestedOrderRow(
                     IvraIcons.replaceAction,
-                    l10n.tParams(
-                      'recycleBottlesText',
-                      {'count': '${order.bottlesToRecycle}'},
-                    ),
+                    l10n.tParams('recycleBottlesText', {
+                      'count': '${order.bottlesToRecycle}',
+                    }),
                     theme.colorScheme.error,
                   ),
                 ],
@@ -1939,19 +2033,12 @@ class _SuggestedOrders extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (final card in cards)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: card,
-            ),
+            Padding(padding: const EdgeInsets.only(bottom: 12), child: card),
         ],
       );
     }
 
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: cards,
-    );
+    return Wrap(spacing: 16, runSpacing: 16, children: cards);
   }
 }
 
@@ -2080,8 +2167,9 @@ class _BulkStockAdjustmentDialogState
                               widget.products.map((p) => p.id).toSet();
                         });
                       },
-                      child:
-                          Text(l10n.t('bulkAdjustSelectAll') ?? 'Select All'),
+                      child: Text(
+                        l10n.t('bulkAdjustSelectAll') ?? 'Select All',
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -2090,7 +2178,8 @@ class _BulkStockAdjustmentDialogState
                         });
                       },
                       child: Text(
-                          l10n.t('bulkAdjustDeselectAll') ?? 'Deselect All'),
+                        l10n.t('bulkAdjustDeselectAll') ?? 'Deselect All',
+                      ),
                     ),
                   ],
                 ),
@@ -2101,8 +2190,9 @@ class _BulkStockAdjustmentDialogState
                   children: widget.products.map((p) {
                     final isSelected = _selectedProductIds.contains(p.id);
                     return FilterChip(
-                      label: Text(p
-                          .label(Localizations.localeOf(context).languageCode)),
+                      label: Text(
+                        p.label(Localizations.localeOf(context).languageCode),
+                      ),
                       selected: isSelected,
                       onSelected: (selected) {
                         setState(() {
@@ -2117,72 +2207,82 @@ class _BulkStockAdjustmentDialogState
                   }).toList(),
                 ),
                 const SizedBox(height: 24),
-                Builder(builder: (context) {
-                  final selectedProducts = widget.products
-                      .where((p) => _selectedProductIds.contains(p.id));
-                  final showRefillFields = selectedProducts.isEmpty ||
-                      selectedProducts.any((p) => p.isRefillable);
-                  return Column(
-                    children: [
-                      _DeltaField(
-                        controller: _fullBottles,
-                        label: l10n.t('inventoryTableFullBottles'),
-                      ),
-                      const SizedBox(height: 12),
-                      _DeltaField(
-                        controller: _emptyBottles,
-                        label: selectedProducts.length == 1
-                            ? l10n.tParams('inventoryTableEmptyBottles', {
-                                'months':
-                                    '${(selectedProducts.first.maxBottleAgeDays / 30.0).round()}'
-                              })
-                            : l10n.t('inventoryTableEmptyBottlesGeneric'),
-                      ),
-                      if (showRefillFields) ...[
+                Builder(
+                  builder: (context) {
+                    final selectedProducts = widget.products.where(
+                      (p) => _selectedProductIds.contains(p.id),
+                    );
+                    final showRefillFields = selectedProducts.isEmpty ||
+                        selectedProducts.any((p) => p.isRefillable);
+                    return Column(
+                      children: [
+                        _DeltaField(
+                          controller: _fullBottles,
+                          label: l10n.t('inventoryTableFullBottles'),
+                        ),
                         const SizedBox(height: 12),
                         _DeltaField(
-                          controller: _fullBidons,
+                          controller: _emptyBottles,
                           label: selectedProducts.length == 1
-                              ? l10n.tParams('inventoryTableFullBidons', {
-                                  'size': _getFormattedVolume(
-                                      selectedProducts.first.bidonVolumeMl,
-                                      language)
+                              ? l10n.tParams('inventoryTableEmptyBottles', {
+                                  'months':
+                                      '${(selectedProducts.first.maxBottleAgeDays / 30.0).round()}',
                                 })
-                              : l10n.t('inventoryTableFullBidonsGeneric'),
+                              : l10n.t('inventoryTableEmptyBottlesGeneric'),
                         ),
-                        const SizedBox(height: 8),
-                        TextButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              _showAdvanced = !_showAdvanced;
-                            });
-                          },
-                          icon: Icon(_showAdvanced
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down),
-                          label: Text(l10n.t('more')),
-                          style: TextButton.styleFrom(
-                            foregroundColor: theme.colorScheme.onSurfaceVariant,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                          ),
-                        ),
-                        if (_showAdvanced) ...[
-                          const SizedBox(height: 8),
+                        if (showRefillFields) ...[
+                          const SizedBox(height: 12),
                           _DeltaField(
-                            controller: _emptyBidons,
-                            label: emptyBidonsLabel,
+                            controller: _fullBidons,
+                            label: selectedProducts.length == 1
+                                ? l10n.tParams('inventoryTableFullBidons', {
+                                    'size': _getFormattedVolume(
+                                      selectedProducts.first.bidonVolumeMl,
+                                      language,
+                                    ),
+                                  })
+                                : l10n.t('inventoryTableFullBidonsGeneric'),
                           ),
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                _showAdvanced = !_showAdvanced;
+                              });
+                            },
+                            icon: Icon(
+                              _showAdvanced
+                                  ? Icons.keyboard_arrow_up
+                                  : Icons.keyboard_arrow_down,
+                            ),
+                            label: Text(l10n.t('more')),
+                            style: TextButton.styleFrom(
+                              foregroundColor:
+                                  theme.colorScheme.onSurfaceVariant,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                            ),
+                          ),
+                          if (_showAdvanced) ...[
+                            const SizedBox(height: 8),
+                            _DeltaField(
+                              controller: _emptyBidons,
+                              label: emptyBidonsLabel,
+                            ),
+                          ],
                         ],
                       ],
-                    ],
-                  );
-                }),
+                    );
+                  },
+                ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _reason,
-                  decoration:
-                      InputDecoration(labelText: l10n.t('hotelLabelNotes')),
+                  decoration: InputDecoration(
+                    labelText: l10n.t('hotelLabelNotes'),
+                  ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return l10n.t('requiredField');
@@ -2233,8 +2333,9 @@ class _BulkStockAdjustmentDialogState
 
       var isOffline = ref.read(offlineModeProvider);
 
-      final selectedProducts =
-          widget.products.where((p) => _selectedProductIds.contains(p.id));
+      final selectedProducts = widget.products.where(
+        (p) => _selectedProductIds.contains(p.id),
+      );
 
       for (final product in selectedProducts) {
         final payload = {
@@ -2273,10 +2374,9 @@ class _BulkStockAdjustmentDialogState
         }
 
         if (isOffline) {
-          await ref.read(offlineSyncServiceProvider).enqueue(
-                type: SyncActionType.stockAdjustment,
-                payload: payload,
-              );
+          await ref
+              .read(offlineSyncServiceProvider)
+              .enqueue(type: SyncActionType.stockAdjustment, payload: payload);
         }
       }
 
@@ -2317,10 +2417,7 @@ class _BulkStockAdjustmentDialogState
 }
 
 class _ProductHistoryDialog extends ConsumerStatefulWidget {
-  const _ProductHistoryDialog({
-    required this.item,
-    required this.teamMembers,
-  });
+  const _ProductHistoryDialog({required this.item, required this.teamMembers});
 
   final InventoryItem item;
   final List<UserProfile> teamMembers;
@@ -2359,12 +2456,13 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                     productRoomProducts.map((rp) => rp.id).toSet();
 
                 final roomNumbers = {
-                  for (var rp in productRoomProducts) rp.id: rp.roomNumber
+                  for (var rp in productRoomProducts) rp.id: rp.roomNumber,
                 };
 
                 final filteredRefills = refillEvents
                     .where(
-                        (e) => productRoomProductIds.contains(e.roomProductId))
+                      (e) => productRoomProductIds.contains(e.roomProductId),
+                    )
                     .toList();
 
                 final filteredAdjustments = inventoryEvents
@@ -2388,13 +2486,16 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                       e.previousRefillCount == 0;
 
                   final title = isInitial
-                      ? l10n.tParams(
-                          'productHistoryNewBottle', {'roomNumber': roomNumber})
+                      ? l10n.tParams('productHistoryNewBottle', {
+                          'roomNumber': roomNumber,
+                        })
                       : e.type == RefillEventType.bottleReplaced
-                          ? l10n.tParams('productHistoryReplacement',
-                              {'roomNumber': roomNumber})
-                          : l10n.tParams('productHistoryRefill',
-                              {'roomNumber': roomNumber});
+                          ? l10n.tParams('productHistoryReplacement', {
+                              'roomNumber': roomNumber,
+                            })
+                          : l10n.tParams('productHistoryRefill', {
+                              'roomNumber': roomNumber,
+                            });
 
                   final subtitle =
                       '${e.previousRefillCount} -> ${e.newRefillCount}';
@@ -2416,25 +2517,25 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                           ? IvraIcons.replaceAction
                           : IvraIcons.refillAction;
 
-                  allEvents.add(_UnifiedHistoryItem(
-                    id: e.id,
-                    occurredAt: e.occurredAt,
-                    title: title,
-                    subtitle: subtitle,
-                    subtitleSpans: [
-                      TextSpan(
-                        text: subtitle,
-                        style: TextStyle(
-                          color: color,
+                  allEvents.add(
+                    _UnifiedHistoryItem(
+                      id: e.id,
+                      occurredAt: e.occurredAt,
+                      title: title,
+                      subtitle: subtitle,
+                      subtitleSpans: [
+                        TextSpan(
+                          text: subtitle,
+                          style: TextStyle(color: color),
                         ),
-                      ),
-                    ],
-                    performedBy: userName,
-                    notes: e.notes,
-                    icon: icon,
-                    color: color,
-                    isRoomEvent: true,
-                  ));
+                      ],
+                      performedBy: userName,
+                      notes: e.notes,
+                      icon: icon,
+                      color: color,
+                      isRoomEvent: true,
+                    ),
+                  );
                 }
 
                 for (final e in filteredAdjustments) {
@@ -2446,35 +2547,51 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                   void addDeltaSpan(int delta, String label) {
                     if (delta == 0) return;
                     if (spans.isNotEmpty) {
-                      spans.add(const TextSpan(
-                          text: ', ', style: TextStyle(color: Colors.grey)));
+                      spans.add(
+                        const TextSpan(
+                          text: ', ',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      );
                     }
-                    final sign = delta > 0 ? "+" : "";
-                    spans.add(TextSpan(
-                      text: '$sign$delta ',
-                      style: TextStyle(
-                        color: delta > 0 ? Colors.green : Colors.redAccent,
-                        fontWeight: FontWeight.bold,
+                    final sign = delta > 0 ? '+' : '';
+                    spans.add(
+                      TextSpan(
+                        text: '$sign$delta ',
+                        style: TextStyle(
+                          color: delta > 0 ? Colors.green : Colors.redAccent,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ));
-                    spans.add(TextSpan(
-                      text: label,
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface,
+                    );
+                    spans.add(
+                      TextSpan(
+                        text: label,
+                        style: TextStyle(color: theme.colorScheme.onSurface),
                       ),
-                    ));
+                    );
                   }
 
-                  addDeltaSpan(e.fullBottlesDelta,
-                      l10n.t('productHistoryDeltaFullBottles'));
-                  addDeltaSpan(e.emptyBottlesDelta,
-                      l10n.t('productHistoryDeltaUsedBottles'));
-                  addDeltaSpan(e.fullBidonsDelta,
-                      l10n.t('productHistoryDeltaFullBidons'));
-                  addDeltaSpan(e.openBidonsDelta,
-                      l10n.t('productHistoryDeltaOpenBidons'));
-                  addDeltaSpan(e.emptyBidonsDelta,
-                      l10n.t('productHistoryDeltaEmptyBidons'));
+                  addDeltaSpan(
+                    e.fullBottlesDelta,
+                    l10n.t('productHistoryDeltaFullBottles'),
+                  );
+                  addDeltaSpan(
+                    e.emptyBottlesDelta,
+                    l10n.t('productHistoryDeltaUsedBottles'),
+                  );
+                  addDeltaSpan(
+                    e.fullBidonsDelta,
+                    l10n.t('productHistoryDeltaFullBidons'),
+                  );
+                  addDeltaSpan(
+                    e.openBidonsDelta,
+                    l10n.t('productHistoryDeltaOpenBidons'),
+                  );
+                  addDeltaSpan(
+                    e.emptyBidonsDelta,
+                    l10n.t('productHistoryDeltaEmptyBidons'),
+                  );
 
                   final subtitle =
                       changes.isEmpty ? 'No changes' : changes.join(', ');
@@ -2486,20 +2603,22 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
 
                   final color = Colors.orangeAccent;
 
-                  allEvents.add(_UnifiedHistoryItem(
-                    id: e.id,
-                    occurredAt: e.occurredAt,
-                    title: title,
-                    subtitle: subtitle,
-                    subtitleSpans: spans.isEmpty
-                        ? [const TextSpan(text: 'No changes')]
-                        : spans,
-                    performedBy: userName,
-                    notes: e.reason,
-                    icon: Icons.inventory_2_outlined,
-                    color: color,
-                    isRoomEvent: false,
-                  ));
+                  allEvents.add(
+                    _UnifiedHistoryItem(
+                      id: e.id,
+                      occurredAt: e.occurredAt,
+                      title: title,
+                      subtitle: subtitle,
+                      subtitleSpans: spans.isEmpty
+                          ? [const TextSpan(text: 'No changes')]
+                          : spans,
+                      performedBy: userName,
+                      notes: e.reason,
+                      icon: Icons.inventory_2_outlined,
+                      color: color,
+                      isRoomEvent: false,
+                    ),
+                  );
                 }
 
                 // Filter final list
@@ -2524,22 +2643,27 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 16),
+                            horizontal: 20,
+                            vertical: 16,
+                          ),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                theme.colorScheme.secondary
-                                    .withValues(alpha: 0.15),
-                                theme.colorScheme.secondary
-                                    .withValues(alpha: 0.05),
+                                theme.colorScheme.secondary.withValues(
+                                  alpha: 0.15,
+                                ),
+                                theme.colorScheme.secondary.withValues(
+                                  alpha: 0.05,
+                                ),
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: theme.colorScheme.secondary
-                                  .withValues(alpha: 0.2),
+                              color: theme.colorScheme.secondary.withValues(
+                                alpha: 0.2,
+                              ),
                             ),
                           ),
                           child: Row(
@@ -2547,8 +2671,9 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.secondary
-                                      .withValues(alpha: 0.1),
+                                  color: theme.colorScheme.secondary.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(
@@ -2636,8 +2761,9 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label:
-                                    Text(l10n.t('productHistoryFilterManual')),
+                                label: Text(
+                                  l10n.t('productHistoryFilterManual'),
+                                ),
                                 selected: _selectedFilter == 'manual',
                                 onSelected: (val) =>
                                     setState(() => _selectedFilter = 'manual'),
@@ -2650,8 +2776,9 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                         Flexible(
                           child: displayEvents.isEmpty
                               ? Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 24),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 24,
+                                  ),
                                   child: Center(
                                     child: Text(
                                       l10n.t('productHistoryNoHistory'),
@@ -2685,20 +2812,24 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                                   width: 32,
                                                   height: 32,
                                                   decoration: BoxDecoration(
-                                                    color: event.color
-                                                        .withValues(
-                                                            alpha: 0.12),
+                                                    color:
+                                                        event.color.withValues(
+                                                      alpha: 0.12,
+                                                    ),
                                                     shape: BoxShape.circle,
                                                     border: Border.all(
                                                       color: event.color
                                                           .withValues(
-                                                              alpha: 0.3),
+                                                        alpha: 0.3,
+                                                      ),
                                                       width: 1,
                                                     ),
                                                   ),
-                                                  child: Icon(event.icon,
-                                                      size: 16,
-                                                      color: event.color),
+                                                  child: Icon(
+                                                    event.icon,
+                                                    size: 16,
+                                                    color: event.color,
+                                                  ),
                                                 ),
                                                 Expanded(
                                                   child: Container(
@@ -2708,7 +2839,8 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                                         : theme.colorScheme
                                                             .outlineVariant
                                                             .withValues(
-                                                                alpha: 0.5),
+                                                            alpha: 0.5,
+                                                          ),
                                                   ),
                                                 ),
                                               ],
@@ -2719,7 +2851,8 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                           Expanded(
                                             child: Padding(
                                               padding: const EdgeInsets.only(
-                                                  bottom: 16),
+                                                bottom: 16,
+                                              ),
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -2768,31 +2901,37 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                                       width: double.infinity,
                                                       padding:
                                                           const EdgeInsets.all(
-                                                              8),
+                                                        8,
+                                                      ),
                                                       decoration: BoxDecoration(
                                                         color: theme.colorScheme
                                                             .surfaceContainerHighest
                                                             .withValues(
-                                                                alpha: 0.4),
+                                                          alpha: 0.4,
+                                                        ),
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(8),
+                                                                .circular(
+                                                          8,
+                                                        ),
                                                         border: Border.all(
                                                           color: theme
                                                               .colorScheme
                                                               .outlineVariant
                                                               .withValues(
-                                                                  alpha: 0.2),
+                                                            alpha: 0.2,
+                                                          ),
                                                         ),
                                                       ),
                                                       child: Text(
                                                         l10n.tParams(
-                                                            'productHistoryReason',
-                                                            {
-                                                              'reason': event
-                                                                  .notes!
-                                                                  .trim()
-                                                            }),
+                                                          'productHistoryReason',
+                                                          {
+                                                            'reason': event
+                                                                .notes!
+                                                                .trim(),
+                                                          },
+                                                        ),
                                                         style: theme.textTheme
                                                             .bodyMedium
                                                             ?.copyWith(
@@ -2848,10 +2987,7 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withValues(alpha: 0.15),
-            width: 1,
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.15), width: 1),
         ),
         child: Column(
           children: [

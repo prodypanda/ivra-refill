@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../../data/ivra_repository.dart';
-import '../shared/async_value_view.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
 
 class AuthorizationsScreen extends ConsumerStatefulWidget {
   const AuthorizationsScreen({super.key});
@@ -14,10 +13,12 @@ class AuthorizationsScreen extends ConsumerStatefulWidget {
   static const route = '/authorizations';
 
   @override
-  ConsumerState<AuthorizationsScreen> createState() => _AuthorizationsScreenState();
+  ConsumerState<AuthorizationsScreen> createState() =>
+      _AuthorizationsScreenState();
 }
 
-class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> with SingleTickerProviderStateMixin {
+class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen>
+    with SingleTickerProviderStateMixin {
   bool _isSaving = false;
   TabController? _tabController;
   String _searchQuery = '';
@@ -168,15 +169,19 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
     }
   }
 
-  Future<void> _togglePermission(String role, String permission, bool isEnabled) async {
+  Future<void> _togglePermission(
+    String role,
+    String permission,
+    bool isEnabled,
+  ) async {
     setState(() => _isSaving = true);
     final l10n = AppLocalizations.of(context);
     try {
       await ref.read(repositoryProvider).updateRolePermission(
-        role: role,
-        permission: permission,
-        isEnabled: isEnabled,
-      );
+            role: role,
+            permission: permission,
+            isEnabled: isEnabled,
+          );
       ref.invalidate(rolePermissionsProvider);
       if (mounted) {
         PremiumSnackbar.showSuccess(
@@ -200,8 +205,9 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
     setState(() => _isSaving = true);
     try {
       final repository = ref.read(repositoryProvider);
-      final allPermissions = ref.read(allPermissionsProvider).valueOrNull ?? _fallbackPermissions;
-      
+      final allPermissions =
+          ref.read(allPermissionsProvider).valueOrNull ?? _fallbackPermissions;
+
       for (final permission in allPermissions) {
         await repository.updateRolePermission(
           role: role,
@@ -209,7 +215,7 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
           isEnabled: enable,
         );
       }
-      
+
       ref.invalidate(rolePermissionsProvider);
       if (mounted) {
         PremiumSnackbar.showSuccess(
@@ -281,16 +287,15 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                   final name = nameController.text.trim();
                   final desc = descController.text.trim();
                   Navigator.pop(context);
-                  
+
                   setState(() => _isSaving = true);
                   try {
-                    await ref.read(repositoryProvider).createRole(
-                      name: name,
-                      description: desc,
-                    );
+                    await ref
+                        .read(repositoryProvider)
+                        .createRole(name: name, description: desc);
                     ref.invalidate(rolesProvider);
                     ref.invalidate(rolePermissionsProvider);
-                    
+
                     if (context.mounted) {
                       PremiumSnackbar.showSuccess(
                         context,
@@ -331,8 +336,13 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
         currentCategory = cat;
         list.add(
           Container(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            color: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
             alignment: Alignment.centerLeft,
             child: Text(
               cat.toUpperCase(),
@@ -358,7 +368,7 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           subtitle: Text(_getPermissionDescription(context, permission)),
-          activeColor: const Color(0xFF267D65),
+          activeThumbColor: const Color(0xFF267D65),
           onChanged: isSystemAdmin
               ? null
               : (val) => _togglePermission(role, permission, val),
@@ -401,7 +411,8 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
         value: rolesAsync,
         onRetry: () => ref.invalidate(rolesProvider),
         builder: (roles) {
-          if (_tabController == null || _tabController!.length != roles.length) {
+          if (_tabController == null ||
+              _tabController!.length != roles.length) {
             _tabController?.dispose();
             _tabController = TabController(length: roles.length, vsync: this);
           }
@@ -415,17 +426,27 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                 onRetry: () => ref.invalidate(allPermissionsProvider),
                 builder: (allPermissions) {
                   final isWide = MediaQuery.sizeOf(context).width >= 720;
-                  final permissionsList = allPermissions.isNotEmpty ? allPermissions : _fallbackPermissions;
+                  final permissionsList = allPermissions.isNotEmpty
+                      ? allPermissions
+                      : _fallbackPermissions;
 
                   if (_selectedMobileRole == null && roles.isNotEmpty) {
                     _selectedMobileRole = roles.first;
                   }
 
-                  final filteredPermissions = permissionsList.where((permission) {
+                  final filteredPermissions = permissionsList.where((
+                    permission,
+                  ) {
                     if (_searchQuery.trim().isEmpty) return true;
                     final query = _searchQuery.toLowerCase();
-                    final title = _getPermissionTitle(context, permission).toLowerCase();
-                    final desc = _getPermissionDescription(context, permission).toLowerCase();
+                    final title = _getPermissionTitle(
+                      context,
+                      permission,
+                    ).toLowerCase();
+                    final desc = _getPermissionDescription(
+                      context,
+                      permission,
+                    ).toLowerCase();
                     return title.contains(query) || desc.contains(query);
                   }).toList();
 
@@ -441,22 +462,31 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                             children: [
                               Text(
                                 l10n.t('authorizationsHeader'),
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 l10n.t('authorizationsSubtitle'),
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                     ),
                               ),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 8.0,
+                          ),
                           child: TextField(
                             onChanged: (val) {
                               setState(() {
@@ -469,7 +499,10 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
                             ),
                           ),
                         ),
@@ -477,7 +510,9 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                         if (isWide)
                           Container(
                             constraints: BoxConstraints(
-                              maxHeight: (MediaQuery.sizeOf(context).height - 260).clamp(300, 1000),
+                              maxHeight:
+                                  (MediaQuery.sizeOf(context).height - 260)
+                                      .clamp(300, 1000),
                             ),
                             child: Scrollbar(
                               controller: _horizontalScrollController,
@@ -488,53 +523,103 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                                 child: Scrollbar(
                                   controller: _verticalScrollController,
                                   thumbVisibility: true,
-                                  notificationPredicate: (notif) => notif.depth == 0,
+                                  notificationPredicate: (notif) =>
+                                      notif.depth == 0,
                                   child: SingleChildScrollView(
                                     controller: _verticalScrollController,
                                     scrollDirection: Axis.vertical,
                                     child: DataTable(
                                       columnSpacing: 32,
                                       columns: [
-                                        DataColumn(label: Text(l10n.t('authorizationsPermission'))),
+                                        DataColumn(
+                                          label: Text(
+                                            l10n.t('authorizationsPermission'),
+                                          ),
+                                        ),
                                         ...roles.map(
                                           (role) => DataColumn(
                                             label: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   _getRoleLabel(context, role),
-                                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
                                                 if (role != 'app_admin')
                                                   Row(
-                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: [
                                                       InkWell(
-                                                        onTap: () => _bulkSetPermissions(role, true),
+                                                        onTap: () =>
+                                                            _bulkSetPermissions(
+                                                          role,
+                                                          true,
+                                                        ),
                                                         child: Padding(
-                                                          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                            horizontal: 4.0,
+                                                            vertical: 2.0,
+                                                          ),
                                                           child: Text(
-                                                            l10n.t('authBulkGrantAll'),
+                                                            l10n.t(
+                                                              'authBulkGrantAll',
+                                                            ),
                                                             style: TextStyle(
                                                               fontSize: 10,
-                                                              color: Theme.of(context).colorScheme.primary,
-                                                              fontWeight: FontWeight.bold,
+                                                              color: Theme.of(
+                                                                context,
+                                                              )
+                                                                  .colorScheme
+                                                                  .primary,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      const Text('|', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                                                      const Text(
+                                                        '|',
+                                                        style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
                                                       InkWell(
-                                                        onTap: () => _bulkSetPermissions(role, false),
+                                                        onTap: () =>
+                                                            _bulkSetPermissions(
+                                                          role,
+                                                          false,
+                                                        ),
                                                         child: Padding(
-                                                          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                            horizontal: 4.0,
+                                                            vertical: 2.0,
+                                                          ),
                                                           child: Text(
-                                                            l10n.t('authBulkRevokeAll'),
+                                                            l10n.t(
+                                                              'authBulkRevokeAll',
+                                                            ),
                                                             style: TextStyle(
                                                               fontSize: 10,
-                                                              color: Theme.of(context).colorScheme.error,
-                                                              fontWeight: FontWeight.bold,
+                                                              color: Theme.of(
+                                                                context,
+                                                              )
+                                                                  .colorScheme
+                                                                  .error,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
                                                           ),
                                                         ),
@@ -550,29 +635,43 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                                         final rowsList = <DataRow>[];
                                         String? lastCategory;
 
-                                        for (final permission in filteredPermissions) {
-                                          final cat = _getPermissionCategory(context, permission);
+                                        for (final permission
+                                            in filteredPermissions) {
+                                          final cat = _getPermissionCategory(
+                                            context,
+                                            permission,
+                                          );
                                           if (cat != lastCategory) {
                                             lastCategory = cat;
                                             rowsList.add(
                                               DataRow(
                                                 color: WidgetStateProperty.all(
-                                                  Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .surfaceContainerHighest
+                                                      .withValues(alpha: 0.15),
                                                 ),
                                                 cells: [
                                                   DataCell(
                                                     Text(
                                                       cat.toUpperCase(),
                                                       style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         fontSize: 11,
-                                                        color: Theme.of(context).colorScheme.primary,
+                                                        color: Theme.of(
+                                                          context,
+                                                        ).colorScheme.primary,
                                                         letterSpacing: 1.1,
                                                       ),
                                                     ),
                                                   ),
-                                                  for (var i = 0; i < roles.length; i++)
-                                                    const DataCell(SizedBox.shrink()),
+                                                  for (var i = 0;
+                                                      i < roles.length;
+                                                      i++)
+                                                    const DataCell(
+                                                      SizedBox.shrink(),
+                                                    ),
                                                 ],
                                               ),
                                             );
@@ -583,37 +682,78 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                                               cells: [
                                                 DataCell(
                                                   Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      vertical: 8.0,
+                                                    ),
                                                     child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
                                                       children: [
                                                         Text(
-                                                          _getPermissionTitle(context, permission),
-                                                          style: const TextStyle(fontWeight: FontWeight.w600),
+                                                          _getPermissionTitle(
+                                                            context,
+                                                            permission,
+                                                          ),
+                                                          style:
+                                                              const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
                                                         ),
-                                                        const SizedBox(height: 2),
+                                                        const SizedBox(
+                                                          height: 2,
+                                                        ),
                                                         Text(
-                                                          _getPermissionDescription(context, permission),
-                                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                                              ),
+                                                          _getPermissionDescription(
+                                                            context,
+                                                            permission,
+                                                          ),
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodySmall
+                                                                  ?.copyWith(
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .onSurfaceVariant,
+                                                                  ),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                 ),
                                                 ...roles.map((role) {
-                                                  final isEnabled = matrix[role]?.contains(permission) ?? false;
-                                                  final isSystemAdmin = role == 'app_admin';
+                                                  final isEnabled =
+                                                      matrix[role]?.contains(
+                                                            permission,
+                                                          ) ??
+                                                          false;
+                                                  final isSystemAdmin =
+                                                      role == 'app_admin';
 
                                                   return DataCell(
                                                     Switch(
-                                                      value: isSystemAdmin ? true : isEnabled,
-                                                      activeColor: const Color(0xFF267D65),
+                                                      value: isSystemAdmin
+                                                          ? true
+                                                          : isEnabled,
+                                                      activeThumbColor:
+                                                          const Color(
+                                                        0xFF267D65,
+                                                      ),
                                                       onChanged: isSystemAdmin
                                                           ? null
-                                                          : (val) => _togglePermission(role, permission, val),
+                                                          : (val) =>
+                                                              _togglePermission(
+                                                                role,
+                                                                permission,
+                                                                val,
+                                                              ),
                                                     ),
                                                   );
                                                 }),
@@ -633,9 +773,10 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                           Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: DropdownButtonFormField<String>(
-                              value: _selectedMobileRole,
+                              initialValue: _selectedMobileRole,
                               decoration: InputDecoration(
-                                labelText: l10n.t('authSelectRoleLabel') ?? 'Select Role',
+                                labelText: l10n.t('authSelectRoleLabel') ??
+                                    'Select Role',
                                 border: const OutlineInputBorder(),
                               ),
                               items: roles.map((role) {
@@ -651,29 +792,49 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                               },
                             ),
                           ),
-                          if (_selectedMobileRole != 'app_admin' && _selectedMobileRole != null)
+                          if (_selectedMobileRole != 'app_admin' &&
+                              _selectedMobileRole != null)
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 4.0,
+                              ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   OutlinedButton.icon(
-                                    onPressed: () => _bulkSetPermissions(_selectedMobileRole!, true),
-                                    icon: const Icon(Icons.check_circle_outline, size: 16),
+                                    onPressed: () => _bulkSetPermissions(
+                                      _selectedMobileRole!,
+                                      true,
+                                    ),
+                                    icon: const Icon(
+                                      Icons.check_circle_outline,
+                                      size: 16,
+                                    ),
                                     label: Text(l10n.t('authBulkGrantAll')),
                                     style: OutlinedButton.styleFrom(
                                       visualDensity: VisualDensity.compact,
-                                      foregroundColor: Theme.of(context).colorScheme.primary,
+                                      foregroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   OutlinedButton.icon(
-                                    onPressed: () => _bulkSetPermissions(_selectedMobileRole!, false),
-                                    icon: const Icon(Icons.remove_circle_outline, size: 16),
+                                    onPressed: () => _bulkSetPermissions(
+                                      _selectedMobileRole!,
+                                      false,
+                                    ),
+                                    icon: const Icon(
+                                      Icons.remove_circle_outline,
+                                      size: 16,
+                                    ),
                                     label: Text(l10n.t('authBulkRevokeAll')),
                                     style: OutlinedButton.styleFrom(
                                       visualDensity: VisualDensity.compact,
-                                      foregroundColor: Theme.of(context).colorScheme.error,
+                                      foregroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
                                     ),
                                   ),
                                 ],

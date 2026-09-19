@@ -1,24 +1,18 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../l10n/app_localizations.dart';
-import '../../domain/models.dart';
-import 'animated_bottle_refill_indicator.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/features/shared/animated_bottle_refill_indicator.dart';
 
 class RefillResult {
-  const RefillResult({
-    required this.refillPercentage,
-    required this.notes,
-  });
+  const RefillResult({required this.refillPercentage, required this.notes});
 
   final int refillPercentage;
   final String notes;
 }
 
 class RefillPercentageDialog extends StatefulWidget {
-  const RefillPercentageDialog({
-    super.key,
-    required this.item,
-  });
+  const RefillPercentageDialog({super.key, required this.item});
 
   final RoomProduct item;
 
@@ -110,7 +104,9 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        widget.item.product.label(Localizations.localeOf(context).languageCode),
+                        widget.item.product.label(
+                          Localizations.localeOf(context).languageCode,
+                        ),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w500,
@@ -128,8 +124,16 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                         accentColor: accentColor,
                         width: 140,
                         height: 200,
-                        existingLabel: l10n.t('dialogRefillPreExisting').replaceAll(':', '').replaceAll('：', '').trim(),
-                        toAddLabel: l10n.t('dialogRefillAdded').replaceAll(':', '').replaceAll('：', '').trim(),
+                        existingLabel: l10n
+                            .t('dialogRefillPreExisting')
+                            .replaceAll(':', '')
+                            .replaceAll('：', '')
+                            .trim(),
+                        toAddLabel: l10n
+                            .t('dialogRefillAdded')
+                            .replaceAll(':', '')
+                            .replaceAll('：', '')
+                            .trim(),
                       ),
                       const SizedBox(height: 24),
 
@@ -201,7 +205,8 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                       SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           activeTrackColor: accentColor,
-                          inactiveTrackColor: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                          inactiveTrackColor:
+                              colorScheme.outlineVariant.withValues(alpha: 0.5),
                           thumbColor: accentColor,
                           overlayColor: accentColor.withValues(alpha: 0.15),
                           valueIndicatorColor: accentColor,
@@ -240,7 +245,9 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                         controller: _notesController,
                         decoration: InputDecoration(
                           labelText: l10n.t('dialogRefillNotes'),
-                          labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                          labelStyle: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                           hintText: l10n.t('dialogRefillNotesHint'),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -253,10 +260,14 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: accentColor, width: 2),
+                            borderSide: BorderSide(
+                              color: accentColor,
+                              width: 2,
+                            ),
                           ),
                           filled: true,
-                          fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                          fillColor: colorScheme.surfaceContainerHighest
+                              .withValues(alpha: 0.3),
                         ),
                         maxLength: 120,
                         maxLines: 1,
@@ -269,12 +280,16 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                           Expanded(
                             child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 side: BorderSide(
-                                  color: colorScheme.outline.withValues(alpha: 0.5),
+                                  color: colorScheme.outline.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
                               ),
                               onPressed: () => Navigator.of(context).pop(),
@@ -293,7 +308,9 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                               style: FilledButton.styleFrom(
                                 backgroundColor: accentColor,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),

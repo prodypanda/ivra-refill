@@ -96,52 +96,59 @@ void main() {
       expect(await savedPasswordFor('nashab2015@gmail.com'), isNull);
     });
 
-    test('signing in as a second account does not overwrite the first',
-        () async {
-      await saveLoginCredentials('admin@ivra.com', 'adminpw');
-      await saveLoginCredentials('nashab2015@gmail.com', 'nashabpw');
-      expect(await savedPasswordFor('admin@ivra.com'), 'adminpw');
-      expect(await savedPasswordFor('nashab2015@gmail.com'), 'nashabpw');
-    });
-
-    test('hasBiometricCredentials reflects the opted-in account only',
-        () async {
-      await saveLoginCredentials('admin@ivra.com', 'adminpw');
-      // No biometric account selected yet.
-      expect(await hasBiometricCredentials(), isFalse);
-
-      await BiometricAccountNotifier().setAccount('admin@ivra.com');
-      expect(await hasBiometricCredentials(), isTrue);
-
-      // Switch the opt-in to an account without stored credentials.
-      await BiometricAccountNotifier().setAccount('nashab2015@gmail.com');
-      expect(await hasBiometricCredentials(), isFalse);
-    });
+    test(
+      'signing in as a second account does not overwrite the first',
+      () async {
+        await saveLoginCredentials('admin@ivra.com', 'adminpw');
+        await saveLoginCredentials('nashab2015@gmail.com', 'nashabpw');
+        expect(await savedPasswordFor('admin@ivra.com'), 'adminpw');
+        expect(await savedPasswordFor('nashab2015@gmail.com'), 'nashabpw');
+      },
+    );
 
     test(
-        'legacy plaintext password is migrated to secure storage and scrubbed',
-        () async {
-      // Seed a legacy plaintext password directly in SharedPreferences.
-      SharedPreferences.setMockInitialValues({
-        AuthPrefs.passwordKey('admin@ivra.com'): 'legacy_password_123',
-      });
+      'hasBiometricCredentials reflects the opted-in account only',
+      () async {
+        await saveLoginCredentials('admin@ivra.com', 'adminpw');
+        // No biometric account selected yet.
+        expect(await hasBiometricCredentials(), isFalse);
 
-      // Reading it transparently migrates via the fallback path.
-      expect(await savedPasswordFor('admin@ivra.com'), 'legacy_password_123');
+        await BiometricAccountNotifier().setAccount('admin@ivra.com');
+        expect(await hasBiometricCredentials(), isTrue);
 
-      // The plaintext copy must be gone from SharedPreferences.
-      final prefs = await SharedPreferences.getInstance();
-      expect(
-        prefs.containsKey(AuthPrefs.passwordKey('admin@ivra.com')),
-        isFalse,
-      );
+        // Switch the opt-in to an account without stored credentials.
+        await BiometricAccountNotifier().setAccount('nashab2015@gmail.com');
+        expect(await hasBiometricCredentials(), isFalse);
+      },
+    );
 
-      // The password must now live in secure storage.
-      const secureStorage = FlutterSecureStorage();
-      expect(
-        await secureStorage.read(key: AuthPrefs.passwordKey('admin@ivra.com')),
-        'legacy_password_123',
-      );
-    });
+    test(
+      'legacy plaintext password is migrated to secure storage and scrubbed',
+      () async {
+        // Seed a legacy plaintext password directly in SharedPreferences.
+        SharedPreferences.setMockInitialValues({
+          AuthPrefs.passwordKey('admin@ivra.com'): 'legacy_password_123',
+        });
+
+        // Reading it transparently migrates via the fallback path.
+        expect(await savedPasswordFor('admin@ivra.com'), 'legacy_password_123');
+
+        // The plaintext copy must be gone from SharedPreferences.
+        final prefs = await SharedPreferences.getInstance();
+        expect(
+          prefs.containsKey(AuthPrefs.passwordKey('admin@ivra.com')),
+          isFalse,
+        );
+
+        // The password must now live in secure storage.
+        const secureStorage = FlutterSecureStorage();
+        expect(
+          await secureStorage.read(
+            key: AuthPrefs.passwordKey('admin@ivra.com'),
+          ),
+          'legacy_password_123',
+        );
+      },
+    );
   });
 }

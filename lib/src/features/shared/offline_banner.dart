@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
 
 const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
 
@@ -185,10 +185,9 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
                   Text(
                     isEffectivelyOffline
                         ? l10n.t('offlineBannerTitle')
-                        : l10n.tParams(
-                            'settingsPendingSync',
-                            {'count': pendingCount.toString()},
-                          ),
+                        : l10n.tParams('settingsPendingSync', {
+                            'count': pendingCount.toString(),
+                          }),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
@@ -211,8 +210,11 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
                         borderRadius: BorderRadius.circular(12),
                         child: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Icon(Icons.sync,
-                              size: 16, color: Color(0xFF2E7D32)),
+                          child: Icon(
+                            Icons.sync,
+                            size: 16,
+                            color: Color(0xFF2E7D32),
+                          ),
                         ),
                       ),
                   ],
@@ -250,10 +252,9 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
         } else if (summary.synced > 0) {
           PremiumSnackbar.show(
             context,
-            l10n.tParams(
-              'offlineBannerAutoSynced',
-              {'count': '${summary.synced}'},
-            ),
+            l10n.tParams('offlineBannerAutoSynced', {
+              'count': '${summary.synced}',
+            }),
             icon: Icons.cloud_done_outlined,
           );
         }
@@ -288,10 +289,9 @@ class _OfflineBannerState extends ConsumerState<OfflineBanner>
         } else if (summary.synced > 0) {
           PremiumSnackbar.show(
             context,
-            l10n.tParams(
-              'offlineBannerAutoSynced',
-              {'count': '${summary.synced}'},
-            ),
+            l10n.tParams('offlineBannerAutoSynced', {
+              'count': '${summary.synced}',
+            }),
             icon: Icons.cloud_done_outlined,
           );
         }

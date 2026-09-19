@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/premium_snackbar.dart';
-
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
 
 class AppSettingsScreen extends ConsumerWidget {
   const AppSettingsScreen({super.key});
@@ -46,14 +45,17 @@ class AppSettingsScreen extends ConsumerWidget {
                       )
                     : null,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: DropdownButtonFormField<String>(
                     decoration: InputDecoration(
                       labelText: l10n.t('hotels'),
                       prefixIcon: const Icon(Icons.business_outlined),
                       border: InputBorder.none,
                     ),
-                    value: selectedHotelId,
+                    initialValue: selectedHotelId,
                     hint: Text(l10n.t('roomsSelectHotelFirst')),
                     isExpanded: true,
                     items: [
@@ -81,9 +83,7 @@ class AppSettingsScreen extends ConsumerWidget {
               shape: isMobile
                   ? RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
-                      side: BorderSide(
-                        color: theme.colorScheme.outlineVariant,
-                      ),
+                      side: BorderSide(color: theme.colorScheme.outlineVariant),
                     )
                   : null,
               child: SwitchListTile(
@@ -92,7 +92,8 @@ class AppSettingsScreen extends ConsumerWidget {
                 subtitle: Text(l10n.t('percentageRefillSubtitle')),
                 value: percentageRefillEnabled,
                 onChanged: (value) {
-                  ref.read(percentageRefillEnabledProvider.notifier).state = value;
+                  ref.read(percentageRefillEnabledProvider.notifier).state =
+                      value;
                 },
               ),
             ),
@@ -102,9 +103,7 @@ class AppSettingsScreen extends ConsumerWidget {
               shape: isMobile
                   ? RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
-                      side: BorderSide(
-                        color: theme.colorScheme.outlineVariant,
-                      ),
+                      side: BorderSide(color: theme.colorScheme.outlineVariant),
                     )
                   : null,
               child: SwitchListTile(
@@ -116,19 +115,25 @@ class AppSettingsScreen extends ConsumerWidget {
                     ? null
                     : (value) async {
                         // 1. Optimistic Update
-                        ref.read(expressQrEnabledOverrideProvider.notifier).update((state) {
+                        ref
+                            .read(expressQrEnabledOverrideProvider.notifier)
+                            .update((state) {
                           return {...state, selectedHotelId: value};
                         });
 
                         try {
-                          await ref.read(repositoryProvider).updateHotelExpressQrEnabled(
-                            hotelId: selectedHotelId,
-                            enabled: value,
-                          );
+                          await ref
+                              .read(repositoryProvider)
+                              .updateHotelExpressQrEnabled(
+                                hotelId: selectedHotelId,
+                                enabled: value,
+                              );
                           ref.invalidate(hotelsProvider);
                         } catch (e) {
                           // 2. Revert on Error
-                          ref.read(expressQrEnabledOverrideProvider.notifier).update((state) {
+                          ref
+                              .read(expressQrEnabledOverrideProvider.notifier)
+                              .update((state) {
                             final newState = Map<String, bool>.from(state);
                             newState.remove(selectedHotelId);
                             return newState;

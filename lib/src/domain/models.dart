@@ -1,6 +1,9 @@
-import 'app_enums.dart';
-import '../utils/parse_utils.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/utils/parse_utils.dart';
 
+/// A class representing UserProfile.
+///
+/// Provides data structure and operations for UserProfile.
 class UserProfile {
   const UserProfile({
     required this.id,
@@ -61,6 +64,9 @@ class UserProfile {
   }
 }
 
+/// A class representing TeamInvitation.
+///
+/// Provides data structure and operations for TeamInvitation.
 class TeamInvitation {
   const TeamInvitation({
     required this.id,
@@ -98,10 +104,7 @@ class TeamInvitation {
     );
   }
 
-  TeamInvitation copyWith({
-    String? status,
-    DateTime? createdAt,
-  }) {
+  TeamInvitation copyWith({String? status, DateTime? createdAt}) {
     return TeamInvitation(
       id: id,
       email: email,
@@ -116,6 +119,9 @@ class TeamInvitation {
   }
 }
 
+/// A class representing Hotel.
+///
+/// Provides data structure and operations for Hotel.
 class Hotel {
   const Hotel({
     required this.id,
@@ -197,6 +203,9 @@ class Hotel {
   }
 }
 
+/// A class representing FloorInfo.
+///
+/// Provides data structure and operations for FloorInfo.
 class FloorInfo {
   const FloorInfo({
     required this.id,
@@ -211,6 +220,9 @@ class FloorInfo {
   final String name;
 }
 
+/// A class representing RoomInfo.
+///
+/// Provides data structure and operations for RoomInfo.
 class RoomInfo {
   const RoomInfo({
     required this.id,
@@ -240,6 +252,9 @@ class RoomInfo {
   }
 }
 
+/// A class representing Product.
+///
+/// Provides data structure and operations for Product.
 class Product {
   const Product({
     required this.id,
@@ -310,8 +325,12 @@ class Product {
       lowBottleThreshold: asInt(map['low_bottle_threshold']),
       lowBidonThreshold: asInt(map['low_bidon_threshold']),
       imageUrl: asNullableString(map['image_url']),
-      bottleType: BottleType.fromValue(asString(map['bottle_type'], fallback: 'with_pump')),
-      refillType: RefillType.fromValue(asString(map['refill_type'], fallback: 'refillable')),
+      bottleType: BottleType.fromValue(
+        asString(map['bottle_type'], fallback: 'with_pump'),
+      ),
+      refillType: RefillType.fromValue(
+        asString(map['refill_type'], fallback: 'refillable'),
+      ),
     );
   }
 
@@ -351,6 +370,9 @@ class Product {
   }
 }
 
+/// A class representing RoomProduct.
+///
+/// Provides data structure and operations for RoomProduct.
 class RoomProduct {
   const RoomProduct({
     required this.id,
@@ -428,11 +450,14 @@ class RoomProduct {
       refillCount: refillCount ?? this.refillCount,
       lastRefillAt: lastRefillAt ?? this.lastRefillAt,
       bottleStartedAt: bottleStartedAt ?? this.bottleStartedAt,
-      status: status ?? this._status,
+      status: status ?? _status,
     );
   }
 }
 
+/// A class representing InventoryItem.
+///
+/// Provides data structure and operations for InventoryItem.
 class InventoryItem {
   const InventoryItem({
     required this.id,
@@ -457,7 +482,8 @@ class InventoryItem {
   final double openBidonVolumeLeftMl;
 
   bool get lowBottles => fullBottles <= product.lowBottleThreshold;
-  bool get lowBidons => product.isRefillable && fullBidons <= product.lowBidonThreshold;
+  bool get lowBidons =>
+      product.isRefillable && fullBidons <= product.lowBidonThreshold;
 
   InventoryItem copyWith({
     Product? product,
@@ -477,11 +503,15 @@ class InventoryItem {
       fullBidons: fullBidons ?? this.fullBidons,
       openBidons: openBidons ?? this.openBidons,
       emptyBidons: emptyBidons ?? this.emptyBidons,
-      openBidonVolumeLeftMl: openBidonVolumeLeftMl ?? this.openBidonVolumeLeftMl,
+      openBidonVolumeLeftMl:
+          openBidonVolumeLeftMl ?? this.openBidonVolumeLeftMl,
     );
   }
 }
 
+/// A class representing RefillEvent.
+///
+/// Provides data structure and operations for RefillEvent.
 class RefillEvent {
   const RefillEvent({
     required this.id,
@@ -521,6 +551,9 @@ class RefillEvent {
   }
 }
 
+/// A class representing InventoryEvent.
+///
+/// Provides data structure and operations for InventoryEvent.
 class InventoryEvent {
   const InventoryEvent({
     required this.id,
@@ -551,7 +584,9 @@ class InventoryEvent {
   final String? clientRequestId;
 }
 
-
+/// A class representing ApprovalRequest.
+///
+/// Provides data structure and operations for ApprovalRequest.
 class ApprovalRequest {
   const ApprovalRequest({
     required this.id,
@@ -582,6 +617,9 @@ class ApprovalRequest {
   final Map<String, dynamic> newData;
 }
 
+/// A class representing AlertItem.
+///
+/// Provides data structure and operations for AlertItem.
 class AlertItem {
   const AlertItem({
     required this.id,
@@ -627,7 +665,11 @@ class AlertItem {
     );
   }
 
-  (String, String) localizedStrings(dynamic l10n, String lang, Product? product) {
+  (String, String) localizedStrings(
+    dynamic l10n,
+    String lang,
+    Product? product,
+  ) {
     String translatedTitle = title;
     String translatedBody = body;
 
@@ -667,7 +709,9 @@ class AlertItem {
         }
       } else if (type == AlertType.bottleAgeLimit) {
         final titleMatch = RegExp(r'Room (\S+)').firstMatch(title);
-        final bodyMatch = RegExp(r'is (\d+) days.*?is (\d+) days').firstMatch(body);
+        final bodyMatch = RegExp(
+          r'is (\d+) days.*?is (\d+) days',
+        ).firstMatch(body);
         if (titleMatch != null && bodyMatch != null) {
           translatedTitle = l10n.tParams('alertBottleAgeLimitTitle', {
             'room': titleMatch.group(1) ?? '',
@@ -693,7 +737,9 @@ class AlertItem {
         });
       }
     } else if (type == AlertType.suspiciousActivity) {
-      final bodyMatch = RegExp(r'(.+) reported suspicious activity').firstMatch(body);
+      final bodyMatch = RegExp(
+        r'(.+) reported suspicious activity',
+      ).firstMatch(body);
       if (bodyMatch != null) {
         translatedTitle = l10n.t('alertSuspiciousActivityTitle');
         translatedBody = l10n.tParams('alertSuspiciousActivityBody', {
@@ -709,6 +755,9 @@ class AlertItem {
   }
 }
 
+/// A class representing SuggestedOrder.
+///
+/// Provides data structure and operations for SuggestedOrder.
 class SuggestedOrder {
   const SuggestedOrder({
     required this.hotelId,
@@ -725,6 +774,9 @@ class SuggestedOrder {
   final int bottlesToRecycle;
 }
 
+/// A class representing DashboardMetrics.
+///
+/// Provides data structure and operations for DashboardMetrics.
 class DashboardMetrics {
   const DashboardMetrics({
     required this.hotelCount,
@@ -743,6 +795,9 @@ class DashboardMetrics {
   final int lowStockProducts;
 }
 
+/// A class representing AuditLog.
+///
+/// Provides data structure and operations for AuditLog.
 class AuditLog {
   const AuditLog({
     required this.id,
@@ -775,6 +830,9 @@ class AuditLog {
   }
 }
 
+/// A class representing DailyRefillProgress.
+///
+/// Provides data structure and operations for DailyRefillProgress.
 class DailyRefillProgress {
   const DailyRefillProgress({
     required this.refilledRoomsCount,
@@ -823,28 +881,29 @@ class HousekeeperAllocation {
   final double openBidonVolumeLeftMl;
 
   HousekeeperAllocation copyWith({
-  Product? product,
-  int? fullBottles,
-  int? emptyBottles,
-  int? fullBidons,
-  int? openBidons,
-  int? emptyBidons,
-  double? openBidonVolumeLeftMl,
+    Product? product,
+    int? fullBottles,
+    int? emptyBottles,
+    int? fullBidons,
+    int? openBidons,
+    int? emptyBidons,
+    double? openBidonVolumeLeftMl,
   }) {
-  return HousekeeperAllocation(
-  id: id,
-  housekeeperId: housekeeperId,
-  hotelId: hotelId,
-  product: product ?? this.product,
-  fullBottles: fullBottles ?? this.fullBottles,
-  emptyBottles: emptyBottles ?? this.emptyBottles,
-  fullBidons: fullBidons ?? this.fullBidons,
-  openBidons: openBidons ?? this.openBidons,
-  emptyBidons: emptyBidons ?? this.emptyBidons,
-  openBidonVolumeLeftMl: openBidonVolumeLeftMl ?? this.openBidonVolumeLeftMl,
-  );
+    return HousekeeperAllocation(
+      id: id,
+      housekeeperId: housekeeperId,
+      hotelId: hotelId,
+      product: product ?? this.product,
+      fullBottles: fullBottles ?? this.fullBottles,
+      emptyBottles: emptyBottles ?? this.emptyBottles,
+      fullBidons: fullBidons ?? this.fullBidons,
+      openBidons: openBidons ?? this.openBidons,
+      emptyBidons: emptyBidons ?? this.emptyBidons,
+      openBidonVolumeLeftMl:
+          openBidonVolumeLeftMl ?? this.openBidonVolumeLeftMl,
+    );
   }
-  }
+}
 
 /// Type of movement in a housekeeper's personal stock (cart).
 enum HousekeeperStockEventType {
@@ -912,4 +971,3 @@ class HousekeeperStockEvent {
   final String? roomNumber;
   final String? notes;
 }
-

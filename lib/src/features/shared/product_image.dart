@@ -23,7 +23,8 @@ class ProductImage extends StatelessWidget {
         imageUrl: imagePath,
         fit: fit,
         placeholder: (context, url) => _FallbackImage(iconSize: iconSize),
-        errorWidget: (context, url, error) => _FallbackImage(iconSize: iconSize),
+        errorWidget: (context, url, error) =>
+            _FallbackImage(iconSize: iconSize),
       );
     }
 
@@ -43,7 +44,8 @@ class ProductImage extends StatelessWidget {
     return Image.asset(
       imagePath,
       fit: fit,
-      errorBuilder: (context, error, stackTrace) => _FallbackImage(iconSize: iconSize),
+      errorBuilder: (context, error, stackTrace) =>
+          _FallbackImage(iconSize: iconSize),
     );
   }
 
@@ -75,11 +77,7 @@ class _FallbackImage extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0C4A3A),
-            Color(0xFF267D65),
-            Color(0xFF3EA47E),
-          ],
+          colors: [Color(0xFF0C4A3A), Color(0xFF267D65), Color(0xFF3EA47E)],
         ),
       ),
       child: Center(

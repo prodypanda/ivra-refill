@@ -28,13 +28,17 @@ void main() {
         {'id': '1', 'name': 'A'},
         {'id': '2', 'name': 'B'},
       ];
-      final result = read(_envelope(version: version, ts: _now(), data: payload));
+      final result = read(
+        _envelope(version: version, ts: _now(), data: payload),
+      );
       expect(result, payload);
     });
 
     test('for a fresh, current-version envelope wrapping a map', () {
       final payload = {'id': '1', 'name': 'A'};
-      final result = read(_envelope(version: version, ts: _now(), data: payload));
+      final result = read(
+        _envelope(version: version, ts: _now(), data: payload),
+      );
       expect(result, payload);
     });
 
@@ -107,11 +111,13 @@ void main() {
       expect(offlineMaxAge, greaterThan(maxAge));
     });
 
-    test('an entry past the freshness window is a miss with the default maxAge',
-        () {
-      final ts = _now() - maxAge.inMilliseconds - 1000;
-      expect(read(_envelope(version: version, ts: ts, data: [1])), isNull);
-    });
+    test(
+      'an entry past the freshness window is a miss with the default maxAge',
+      () {
+        final ts = _now() - maxAge.inMilliseconds - 1000;
+        expect(read(_envelope(version: version, ts: ts, data: [1])), isNull);
+      },
+    );
 
     test('the same entry is served when reading with the offline maxAge', () {
       final ts = _now() - maxAge.inMilliseconds - 1000;
@@ -136,39 +142,51 @@ void main() {
     Object? readFor(String? cached, String key) =>
         SupabaseIvraRepository.readCacheEnvelopeForTest(
           cached,
-          expectedVersion: SupabaseIvraRepository.effectiveCacheVersionForTest(key),
+          expectedVersion: SupabaseIvraRepository.effectiveCacheVersionForTest(
+            key,
+          ),
         );
 
-    test('different resource families produce different effective versions', () {
-      final hotelsVersion =
-          SupabaseIvraRepository.effectiveCacheVersionForTest('hotels');
-      final productsVersion =
-          SupabaseIvraRepository.effectiveCacheVersionForTest('products');
-      expect(hotelsVersion, isNot(productsVersion));
-    });
+    test(
+      'different resource families produce different effective versions',
+      () {
+        final hotelsVersion =
+            SupabaseIvraRepository.effectiveCacheVersionForTest('hotels');
+        final productsVersion =
+            SupabaseIvraRepository.effectiveCacheVersionForTest('products');
+        expect(hotelsVersion, isNot(productsVersion));
+      },
+    );
 
     test('keys of the same family with different ids share a version', () {
       final a = SupabaseIvraRepository.effectiveCacheVersionForTest(
-          'current_user_aaaaaaaaaaaa');
+        'current_user_aaaaaaaaaaaa',
+      );
       final b = SupabaseIvraRepository.effectiveCacheVersionForTest(
-          'current_user_bbbbbbbbbbbb');
+        'current_user_bbbbbbbbbbbb',
+      );
       expect(a, b);
     });
 
-    test('reads an envelope written with the matching per-resource version', () {
-      final v =
-          SupabaseIvraRepository.effectiveCacheVersionForTest('hotels');
-      final payload = [
-        {'id': '1'},
-      ];
-      final result =
-          readFor(_envelope(version: v, ts: _now(), data: payload), 'hotels');
-      expect(result, payload);
-    });
+    test(
+      'reads an envelope written with the matching per-resource version',
+      () {
+        final v = SupabaseIvraRepository.effectiveCacheVersionForTest('hotels');
+        final payload = [
+          {'id': '1'},
+        ];
+        final result = readFor(
+          _envelope(version: v, ts: _now(), data: payload),
+          'hotels',
+        );
+        expect(result, payload);
+      },
+    );
 
     test('treats an envelope from another resource family as a miss', () {
-      final hotelsV =
-          SupabaseIvraRepository.effectiveCacheVersionForTest('hotels');
+      final hotelsV = SupabaseIvraRepository.effectiveCacheVersionForTest(
+        'hotels',
+      );
       // Envelope stamped for hotels, read while expecting the products family.
       final result = readFor(
         _envelope(version: hotelsV, ts: _now(), data: []),

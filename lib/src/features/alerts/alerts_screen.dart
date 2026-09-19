@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import '../../domain/app_enums.dart';
-import '../../domain/models.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../../services/notification_service.dart';
-import '../shared/async_value_view.dart';
-import '../shared/page_scaffold.dart';
-import '../shared/empty_state.dart';
-import '../shared/premium_snackbar.dart';
-import '../shared/shimmer_loading.dart';
-import '../shared/premium_confirm_dialog.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/services/notification_service.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/shared/empty_state.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/features/shared/shimmer_loading.dart';
+import 'package:ivra_refill/src/features/shared/premium_confirm_dialog.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -82,24 +82,24 @@ class AlertsScreen extends ConsumerWidget {
           padding: EdgeInsets.all(16),
           child: Column(
             children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 12),
-              child: CardShimmer(),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 12),
-              child: CardShimmer(),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 12),
-              child: CardShimmer(),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 12),
-              child: CardShimmer(),
-            ),
-          ],
-        ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: CardShimmer(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: CardShimmer(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: CardShimmer(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: CardShimmer(),
+              ),
+            ],
+          ),
         ),
         builder: (alerts) => _AlertsList(
           alerts: alerts,
@@ -115,8 +115,9 @@ class AlertsScreen extends ConsumerWidget {
 
   Future<void> _refreshAlerts(BuildContext context, WidgetRef ref) async {
     final user = await ref.read(currentUserProvider.future);
-    
-    final oldAlerts = await ref.read(repositoryProvider).alerts(hotelId: user.hotelId);
+
+    final oldAlerts =
+        await ref.read(repositoryProvider).alerts(hotelId: user.hotelId);
     final oldIds = oldAlerts.map((a) => a.id).toSet();
 
     final created = await ref
@@ -124,14 +125,16 @@ class AlertsScreen extends ConsumerWidget {
         .refreshSmartAlerts(hotelId: user.hotelId);
 
     if (created > 0) {
-      final newAlertsList = await ref.read(repositoryProvider).alerts(hotelId: user.hotelId);
-      final newAlerts = newAlertsList.where((a) => !oldIds.contains(a.id)).toList();
-      
+      final newAlertsList =
+          await ref.read(repositoryProvider).alerts(hotelId: user.hotelId);
+      final newAlerts =
+          newAlertsList.where((a) => !oldIds.contains(a.id)).toList();
+
       if (!context.mounted) return;
       final l10n = AppLocalizations.of(context);
       final langCode = Localizations.localeOf(context).languageCode;
       final products = await ref.read(productsProvider.future);
-      
+
       const androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'high_importance_channel_v2',
         'High Importance Notifications',
@@ -139,10 +142,13 @@ class AlertsScreen extends ConsumerWidget {
         priority: Priority.high,
         icon: '@mipmap/ic_launcher',
       );
-      const platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+      const platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+      );
 
       for (final alert in newAlerts) {
-        final product = products.where((p) => p.id == alert.productId).firstOrNull;
+        final product =
+            products.where((p) => p.id == alert.productId).firstOrNull;
         final (title, body) = alert.localizedStrings(l10n, langCode, product);
 
         await flutterLocalNotificationsPlugin.show(
@@ -159,8 +165,9 @@ class AlertsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     PremiumSnackbar.show(
       context,
-      AppLocalizations.of(context)
-          .tParams('alertsRefreshedToast', {'count': '$created'}),
+      AppLocalizations.of(
+        context,
+      ).tParams('alertsRefreshedToast', {'count': '$created'}),
       icon: Icons.auto_awesome,
     );
   }
@@ -218,7 +225,9 @@ class AlertsScreen extends ConsumerWidget {
     HapticFeedback.mediumImpact();
     final repository = ref.read(repositoryProvider);
     try {
-      await Future.wait(openAlerts.map((a) => repository.resolveAlert(alertId: a.id)));
+      await Future.wait(
+        openAlerts.map((a) => repository.resolveAlert(alertId: a.id)),
+      );
       ref.invalidate(alertsProvider);
       ref.invalidate(dashboardProvider);
       if (context.mounted) {
@@ -450,8 +459,11 @@ class _AlertsListState extends State<_AlertsList> {
             child: Center(
               child: Column(
                 children: [
-                  Icon(Icons.filter_alt_off_outlined,
-                      size: 40, color: theme.colorScheme.onSurfaceVariant),
+                  Icon(
+                    Icons.filter_alt_off_outlined,
+                    size: 40,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     l10n.t('alertsFilterNoMatch'),
@@ -522,8 +534,12 @@ class _AlertFilterBar extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
 
-    final hotels = ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? const []));
-    final products = ref.watch(productsProvider.select((s) => s.valueOrNull ?? const []));
+    final hotels = ref.watch(
+      hotelsProvider.select((s) => s.valueOrNull ?? const []),
+    );
+    final products = ref.watch(
+      productsProvider.select((s) => s.valueOrNull ?? const []),
+    );
 
     // Only offer filter options that actually occur in the current alert set,
     // so the dropdowns never list empty categories.
@@ -541,10 +557,8 @@ class _AlertFilterBar extends ConsumerWidget {
     final productOptions =
         products.where((p) => presentProductIds.contains(p.id)).toList();
 
-    DropdownMenuItem<T> allItem<T>(String label) => DropdownMenuItem<T>(
-          value: null,
-          child: Text(label),
-        );
+    DropdownMenuItem<T> allItem<T>(String label) =>
+        DropdownMenuItem<T>(value: null, child: Text(label));
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -560,13 +574,17 @@ class _AlertFilterBar extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.filter_alt_outlined,
-                  size: 18, color: theme.colorScheme.primary),
+              Icon(
+                Icons.filter_alt_outlined,
+                size: 18,
+                color: theme.colorScheme.primary,
+              ),
               const SizedBox(width: 8),
               Text(
                 l10n.t('alertsFilterTitle'),
-                style: theme.textTheme.titleSmall
-                    ?.copyWith(fontWeight: FontWeight.w700),
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const Spacer(),
               if (hasActiveFilter)
@@ -576,8 +594,10 @@ class _AlertFilterBar extends ConsumerWidget {
                   label: Text(l10n.t('alertsFilterClear')),
                   style: TextButton.styleFrom(
                     visualDensity: VisualDensity.compact,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 0,
+                    ),
                   ),
                 ),
             ],
@@ -597,8 +617,9 @@ class _AlertFilterBar extends ConsumerWidget {
                   for (final s in presentSeverities)
                     DropdownMenuItem<int?>(
                       value: s,
-                      child: Text(l10n.tParams(
-                          'alertsSeverityLabel', {'severity': '$s'})),
+                      child: Text(
+                        l10n.tParams('alertsSeverityLabel', {'severity': '$s'}),
+                      ),
                     ),
                 ],
               ),
@@ -676,19 +697,18 @@ class _FilterDropdown<T> extends StatelessWidget {
         decoration: InputDecoration(
           labelText: label,
           isDense: true,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
           ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<T>(
             value: value,
             isExpanded: true,
             isDense: true,
-            icon: Icon(Icons.arrow_drop_down,
-                color: theme.colorScheme.primary),
+            icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
             items: items,
             onChanged: (v) => onChanged(v as T),
           ),
@@ -765,11 +785,7 @@ class _MetricsSummary extends StatelessWidget {
           ),
         ];
 
-        return Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: cards,
-        );
+        return Wrap(spacing: 12, runSpacing: 12, children: cards);
       },
     );
   }
@@ -809,9 +825,7 @@ class _MetricCard extends StatelessWidget {
             colors: gradientColors,
           ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: iconColor.withValues(alpha: 0.12),
-          ),
+          border: Border.all(color: iconColor.withValues(alpha: 0.12)),
         ),
         child: Row(
           children: [
@@ -918,8 +932,11 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
           color: Colors.green.shade600,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.check_circle_outline,
-            color: Colors.white, size: 28),
+        child: const Icon(
+          Icons.check_circle_outline,
+          color: Colors.white,
+          size: 28,
+        ),
       ),
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 350),
@@ -939,10 +956,12 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                   end: Alignment.bottomRight,
                   colors: isResolved
                       ? [
-                          colorScheme.surfaceContainerHighest
-                              .withValues(alpha: 0.38),
-                          colorScheme.surfaceContainerHighest
-                              .withValues(alpha: 0.2),
+                          colorScheme.surfaceContainerHighest.withValues(
+                            alpha: 0.38,
+                          ),
+                          colorScheme.surfaceContainerHighest.withValues(
+                            alpha: 0.2,
+                          ),
                         ]
                       : [
                           colorScheme.surface.withValues(alpha: 0.95),
@@ -952,7 +971,8 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: severityCol.withValues(
-                      alpha: _isHovered && !isResolved ? 0.3 : 0.0),
+                    alpha: _isHovered && !isResolved ? 0.3 : 0.0,
+                  ),
                   width: 1.5,
                 ),
                 boxShadow: isResolved
@@ -960,7 +980,8 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                     : [
                         BoxShadow(
                           color: severityCol.withValues(
-                              alpha: _isHovered ? 0.15 : 0.08),
+                            alpha: _isHovered ? 0.15 : 0.08,
+                          ),
                           blurRadius: _isHovered ? 24 : 16,
                           offset: Offset(0, _isHovered ? 8 : 4),
                         ),
@@ -977,7 +998,8 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                         width: 4,
                         decoration: BoxDecoration(
                           color: severityCol.withValues(
-                              alpha: isResolved ? 0.3 : 1.0),
+                            alpha: isResolved ? 0.3 : 1.0,
+                          ),
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(16),
                             bottomLeft: Radius.circular(16),
@@ -999,29 +1021,35 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: severityCol.withValues(
-                                          alpha: isResolved ? 0.06 : 0.10),
+                                        alpha: isResolved ? 0.06 : 0.10,
+                                      ),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Icon(
                                       _alertTypeIcon(widget.alert.type),
                                       size: 20,
                                       color: severityCol.withValues(
-                                          alpha: contentOpacity),
+                                        alpha: contentOpacity,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 12),
                                   // Title
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         if (hotelName.isNotEmpty)
                                           Padding(
-                                            padding: const EdgeInsets.only(bottom: 2),
+                                            padding: const EdgeInsets.only(
+                                              bottom: 2,
+                                            ),
                                             child: Text(
                                               hotelName,
-                                              style: theme.textTheme.labelSmall?.copyWith(
+                                              style: theme.textTheme.labelSmall
+                                                  ?.copyWith(
                                                 color: colorScheme.primary,
                                                 fontWeight: FontWeight.w700,
                                                 letterSpacing: 0.2,
@@ -1032,14 +1060,18 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                           ),
                                         Text(
                                           title,
-                                          style: theme.textTheme.titleMedium?.copyWith(
+                                          style: theme.textTheme.titleMedium
+                                              ?.copyWith(
                                             fontWeight: FontWeight.w800,
                                             color: colorScheme.onSurface
-                                                .withValues(alpha: contentOpacity),
+                                                .withValues(
+                                              alpha: contentOpacity,
+                                            ),
                                             decoration: isResolved
                                                 ? TextDecoration.lineThrough
                                                 : null,
-                                            decorationColor: colorScheme.onSurface
+                                            decorationColor: colorScheme
+                                                .onSurface
                                                 .withValues(alpha: 0.35),
                                             letterSpacing: -0.2,
                                           ),
@@ -1056,7 +1088,8 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: colorScheme.onSurfaceVariant
                                           .withValues(
-                                              alpha: isResolved ? 0.35 : 0.55),
+                                        alpha: isResolved ? 0.35 : 0.55,
+                                      ),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -1070,7 +1103,8 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                   body,
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: colorScheme.onSurface.withValues(
-                                        alpha: isResolved ? 0.35 : 0.72),
+                                      alpha: isResolved ? 0.35 : 0.72,
+                                    ),
                                     height: 1.45,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -1084,23 +1118,28 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                 children: [
                                   // Type chip
                                   _PillChip(
-                                    label:
-                                        l10n.alertTypeLabel(widget.alert.type),
+                                    label: l10n.alertTypeLabel(
+                                      widget.alert.type,
+                                    ),
                                     backgroundColor: severityCol.withValues(
-                                        alpha: isResolved ? 0.05 : 0.08),
+                                      alpha: isResolved ? 0.05 : 0.08,
+                                    ),
                                     textColor: severityCol.withValues(
-                                        alpha: contentOpacity),
+                                      alpha: contentOpacity,
+                                    ),
                                   ),
                                   const SizedBox(width: 8),
                                   // Severity indicator
                                   _PillChip(
                                     label: l10n.tParams('alertsSeverityLabel', {
-                                      'severity': '${widget.alert.severity}'
+                                      'severity': '${widget.alert.severity}',
                                     }),
                                     backgroundColor: severityCol.withValues(
-                                        alpha: isResolved ? 0.05 : 0.08),
+                                      alpha: isResolved ? 0.05 : 0.08,
+                                    ),
                                     textColor: severityCol.withValues(
-                                        alpha: contentOpacity),
+                                      alpha: contentOpacity,
+                                    ),
                                   ),
                                   const Spacer(),
                                   // Status indicator or resolve button
@@ -1130,7 +1169,9 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                     FilledButton.icon(
                                       style: FilledButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 8),
+                                          horizontal: 16,
+                                          vertical: 8,
+                                        ),
                                         textStyle: const TextStyle(
                                           fontWeight: FontWeight.w700,
                                           fontSize: 12,
@@ -1139,8 +1180,10 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                         tapTargetSize:
                                             MaterialTapTargetSize.shrinkWrap,
                                       ),
-                                      icon: const Icon(Icons.check_outlined,
-                                          size: 16),
+                                      icon: const Icon(
+                                        Icons.check_outlined,
+                                        size: 16,
+                                      ),
                                       label: Text(l10n.t('alertsResolve')),
                                       onPressed: () =>
                                           widget.onResolve(widget.alert.id),
@@ -1148,8 +1191,13 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                   const SizedBox(width: 8),
                                   IconButton(
                                     tooltip: l10n.t('delete'),
-                                    icon: Icon(Icons.delete_outline, color: theme.colorScheme.error, size: 20),
-                                    onPressed: () => widget.onDelete(widget.alert.id),
+                                    icon: Icon(
+                                      Icons.delete_outline,
+                                      color: theme.colorScheme.error,
+                                      size: 20,
+                                    ),
+                                    onPressed: () =>
+                                        widget.onDelete(widget.alert.id),
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(),
                                   ),

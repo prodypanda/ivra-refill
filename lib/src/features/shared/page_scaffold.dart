@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../state/app_state.dart';
-import '../account/account_screen.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/account/account_screen.dart';
 
 class PageScaffold extends ConsumerWidget {
   const PageScaffold({
@@ -102,9 +102,6 @@ class PageScaffold extends ConsumerWidget {
       return scrollView;
     }
 
-    return RefreshIndicator.adaptive(
-      onRefresh: onRefresh!,
-      child: scrollView,
-    );
+    return RefreshIndicator.adaptive(onRefresh: onRefresh!, child: scrollView);
   }
 }

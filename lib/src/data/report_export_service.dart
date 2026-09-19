@@ -5,10 +5,12 @@ import 'package:csv/csv.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/widgets.dart' as pw;
 
-import '../domain/app_enums.dart';
-import '../domain/models.dart';
-import '../l10n/app_localizations.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
 
+/// A class representing ReportExportService.
+///
+/// Provides data structure and operations for ReportExportService.
 class ReportExportService {
   Future<_PdfFonts>? _pdfFonts;
 
@@ -39,7 +41,10 @@ class ReportExportService {
     return const ListToCsvConverter().convert(rows);
   }
 
-  String suggestedOrdersCsv(List<SuggestedOrder> orders, {String languageCode = 'en'}) {
+  String suggestedOrdersCsv(
+    List<SuggestedOrder> orders, {
+    String languageCode = 'en',
+  }) {
     final rows = [
       [
         'hotel_id',
@@ -238,7 +243,9 @@ class ReportExportService {
               alertProduct,
             );
             return [
-              l10n.tParams('alertsSeverityLabel', {'severity': '${alert.severity}'}),
+              l10n.tParams('alertsSeverityLabel', {
+                'severity': '${alert.severity}',
+              }),
               l10n.alertTypeLabel(alert.type),
               localizedTitle,
               _formatDateTime(alert.createdAt),
@@ -261,20 +268,14 @@ class ReportExportService {
     pdf.addPage(
       pw.MultiPage(
         textDirection: textDirection,
-        theme: pw.ThemeData.withFont(
-          base: fonts.regular,
-          bold: fonts.bold,
-        ),
+        theme: pw.ThemeData.withFont(base: fonts.regular, bold: fonts.bold),
         build: (context) => [
           pw.Text(
             title,
             style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
           ),
           pw.SizedBox(height: 16),
-          pw.TableHelper.fromTextArray(
-            headers: headers,
-            data: data,
-          ),
+          pw.TableHelper.fromTextArray(headers: headers, data: data),
         ],
       ),
     );
@@ -288,10 +289,7 @@ class ReportExportService {
   Future<_PdfFonts> _loadPdfFontsFromAssets() async {
     final regular = await rootBundle.load('assets/fonts/DejaVuSans.ttf');
     final bold = await rootBundle.load('assets/fonts/DejaVuSans-Bold.ttf');
-    return _PdfFonts(
-      regular: pw.Font.ttf(regular),
-      bold: pw.Font.ttf(bold),
-    );
+    return _PdfFonts(regular: pw.Font.ttf(regular), bold: pw.Font.ttf(bold));
   }
 
   String _suggestedOrdersTitle(String languageCode) {
@@ -329,11 +327,11 @@ class ReportExportService {
   }
 }
 
+/// A class representing _PdfFonts.
+///
+/// Provides data structure and operations for _PdfFonts.
 class _PdfFonts {
-  const _PdfFonts({
-    required this.regular,
-    required this.bold,
-  });
+  const _PdfFonts({required this.regular, required this.bold});
 
   final pw.Font regular;
   final pw.Font bold;

@@ -34,7 +34,9 @@ void main() {
     final service = OfflineSyncService();
     final container = makeContainer(repository);
 
-    final before = (await repository.roomProducts(hotelId: 'hotel-seaside'))
+    final before = (await repository.roomProducts(
+      hotelId: 'hotel-seaside',
+    ))
         .firstWhere((item) => item.canRefill);
 
     // Queue a refill that has NOT been applied on the server yet.
@@ -60,7 +62,9 @@ void main() {
     final service = OfflineSyncService();
     final container = makeContainer(repository);
 
-    final target = (await repository.roomProducts(hotelId: 'hotel-seaside'))
+    final target = (await repository.roomProducts(
+      hotelId: 'hotel-seaside',
+    ))
         .firstWhere((item) => item.canRefill);
 
     // Queue a refill action.
@@ -77,7 +81,9 @@ void main() {
       roomProductId: target.id,
       clientRequestId: action.id,
     );
-    final serverCount = (await repository.roomProducts(hotelId: 'hotel-seaside'))
+    final serverCount = (await repository.roomProducts(
+      hotelId: 'hotel-seaside',
+    ))
         .firstWhere((item) => item.id == target.id)
         .refillCount;
     expect(serverCount, target.refillCount + 1);
@@ -91,7 +97,8 @@ void main() {
     expect(await service.pendingActions(), isEmpty);
   });
 
-  test('pending stock adjustment already applied is not double-counted and is '
+  test(
+      'pending stock adjustment already applied is not double-counted and is '
       'pruned', () async {
     SharedPreferences.setMockInitialValues({});
     final repository = MockIvraRepository();
@@ -117,14 +124,17 @@ void main() {
       fullBottlesDelta: 5,
       clientRequestId: action.id,
     );
-    final serverFull = (await repository.inventory(hotelId: 'hotel-seaside'))
+    final serverFull = (await repository.inventory(
+      hotelId: 'hotel-seaside',
+    ))
         .firstWhere((item) => item.product.id == stock.product.id)
         .fullBottles;
     expect(serverFull, stock.fullBottles + 5);
 
     final result = await container.read(inventoryProvider.future);
-    final reconciled =
-        result.firstWhere((item) => item.product.id == stock.product.id);
+    final reconciled = result.firstWhere(
+      (item) => item.product.id == stock.product.id,
+    );
 
     expect(reconciled.fullBottles, serverFull); // not serverFull + 5
     expect(await service.pendingActions(), isEmpty);
@@ -144,36 +154,40 @@ void main() {
     expect(await repository.appliedClientRequestIds(), contains('crid-123'));
   });
 
-  test('pending refill offline adjusts open bidon volume and counts in inventoryProvider', () async {
-    SharedPreferences.setMockInitialValues({});
-    final repository = MockIvraRepository();
-    final service = OfflineSyncService();
-    final container = makeContainer(repository);
+  test(
+    'pending refill offline adjusts open bidon volume and counts in inventoryProvider',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final repository = MockIvraRepository();
+      final service = OfflineSyncService();
+      final container = makeContainer(repository);
 
-    // Initial inventory for shampoo (hotel-seaside)
-    final initialShampoo = (await repository.inventory(hotelId: 'hotel-seaside'))
-        .firstWhere((item) => item.product.id == 'prod-shampoo');
+      // Initial inventory for shampoo (hotel-seaside)
+      final initialShampoo = (await repository.inventory(
+        hotelId: 'hotel-seaside',
+      ))
+          .firstWhere((item) => item.product.id == 'prod-shampoo');
 
-    expect(initialShampoo.openBidonVolumeLeftMl, 2500.0);
-    expect(initialShampoo.fullBidons, 3);
-    expect(initialShampoo.emptyBidons, 5);
+      expect(initialShampoo.openBidonVolumeLeftMl, 2500.0);
+      expect(initialShampoo.fullBidons, 3);
+      expect(initialShampoo.emptyBidons, 5);
 
-    // Queue a 100% refill for rp-101-shampoo (prod-shampoo) which has bottle volume of 1000ml.
-    // 100% refill of 1000ml bottle. This should subtract 1000ml from active open bidon volume.
-    await service.enqueue(
-      type: SyncActionType.refill,
-      payload: {
-        'roomProductId': 'rp-101-shampoo',
-        'notes': '[Refill: 100%]',
-      },
-    );
+      // Queue a 100% refill for rp-101-shampoo (prod-shampoo) which has bottle volume of 1000ml.
+      // 100% refill of 1000ml bottle. This should subtract 1000ml from active open bidon volume.
+      await service.enqueue(
+        type: SyncActionType.refill,
+        payload: {'roomProductId': 'rp-101-shampoo', 'notes': '[Refill: 100%]'},
+      );
 
-    final result = await container.read(inventoryProvider.future);
-    final reconciledShampoo = result.firstWhere((item) => item.product.id == 'prod-shampoo');
+      final result = await container.read(inventoryProvider.future);
+      final reconciledShampoo = result.firstWhere(
+        (item) => item.product.id == 'prod-shampoo',
+      );
 
-    // Should deduct 1000ml from 2500ml, leaving 1500ml
-    expect(reconciledShampoo.openBidonVolumeLeftMl, 1500.0);
-    expect(reconciledShampoo.fullBidons, 3);
-    expect(reconciledShampoo.emptyBidons, 5);
-  });
+      // Should deduct 1000ml from 2500ml, leaving 1500ml
+      expect(reconciledShampoo.openBidonVolumeLeftMl, 1500.0);
+      expect(reconciledShampoo.fullBidons, 3);
+      expect(reconciledShampoo.emptyBidons, 5);
+    },
+  );
 }

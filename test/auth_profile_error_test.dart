@@ -7,12 +7,14 @@ void main() {
     test('treats network failures as transient', () {
       expect(
         isTransientProfileError(
-            Exception('SocketException: Failed host lookup')),
+          Exception('SocketException: Failed host lookup'),
+        ),
         isTrue,
       );
       expect(
         isTransientProfileError(
-            Exception('ClientException: Connection closed')),
+          Exception('ClientException: Connection closed'),
+        ),
         isTrue,
       );
       expect(isTransientProfileError(Exception('Request timed out')), isTrue);
@@ -38,8 +40,10 @@ void main() {
     test('treats a missing profile row as a genuine (non-transient) error', () {
       expect(
         isTransientProfileError(
-          Exception('PGRST116: JSON object requested, multiple (or no) rows '
-              'returned'),
+          Exception(
+            'PGRST116: JSON object requested, multiple (or no) rows '
+            'returned',
+          ),
         ),
         isFalse,
       );

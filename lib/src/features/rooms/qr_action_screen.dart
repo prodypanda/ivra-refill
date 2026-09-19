@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../shared/shimmer_loading.dart';
+import 'package:ivra_refill/src/features/shared/shimmer_loading.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,21 +11,23 @@ import 'package:collection/collection.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:intl/intl.dart';
 
-import '../../domain/app_enums.dart';
-import '../../domain/models.dart';
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
-import '../shared/async_value_view.dart';
-import '../shared/product_image.dart';
-import '../shared/glass_card.dart';
-import '../shared/premium_snackbar.dart';
-import '../shared/refill_percentage_dialog.dart';
-import '../../ui/ivra_icons.dart';
-import 'rooms_screen.dart'; // Reuses exposed dialog functions: showRefillHistory, showMarkDamagedDialog, showMarkLostDialog, replaceBottle
-import '../../services/qr_code_pdf_service.dart';
+import 'package:ivra_refill/src/domain/app_enums.dart';
+import 'package:ivra_refill/src/domain/models.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
+import 'package:ivra_refill/src/features/shared/async_value_view.dart';
+import 'package:ivra_refill/src/features/shared/product_image.dart';
+import 'package:ivra_refill/src/features/shared/glass_card.dart';
+import 'package:ivra_refill/src/features/shared/premium_snackbar.dart';
+import 'package:ivra_refill/src/features/shared/refill_percentage_dialog.dart';
+import 'package:ivra_refill/src/ui/ivra_icons.dart';
+import 'package:ivra_refill/src/features/rooms/rooms_screen.dart'; // Reuses exposed dialog functions: showRefillHistory, showMarkDamagedDialog, showMarkLostDialog, replaceBottle
+import 'package:ivra_refill/src/services/qr_code_pdf_service.dart';
 
 enum ActionResult { none, success, failure }
+
 enum _QrTab { scan, generate }
+
 enum _QrScope { room, dispenser }
 
 class QrActionScreen extends ConsumerStatefulWidget {
@@ -93,7 +95,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         widget.room.isEmpty ||
         widget.sku.isEmpty;
 
-    final bool isTestEnv = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+    final bool isTestEnv =
+        !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
 
     if (isScanMode && !isTestEnv) {
       _scanController.repeat(reverse: true);
@@ -106,7 +109,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
   }
 
   void _initCamera() {
-    final bool isTestEnv = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+    final bool isTestEnv =
+        !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
     if (isTestEnv) {
       return;
     }
@@ -145,7 +149,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       _cameraController = null;
       _initCamera();
 
-      final bool isTestEnv = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+      final bool isTestEnv =
+          !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
       if (!isTestEnv) {
         _scanController.repeat(reverse: true);
       }
@@ -204,7 +209,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
 
     // Fallback: Check if it looks like a manual segment paste
     if (hotelId == null && normalized.contains('/')) {
-      final segments = normalized.split('/').where((s) => s.isNotEmpty).toList();
+      final segments =
+          normalized.split('/').where((s) => s.isNotEmpty).toList();
       if (segments.length >= 3) {
         // Find if any segment is a known product SKU or similar, or just assume format
         hotelId = segments[0];
@@ -226,7 +232,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       if (expressQrEnabled && sku != null && sku.trim().isNotEmpty) {
         context.go('/q/$hotelId/$floor/$room/$sku');
       } else {
-        context.go('/rooms?hotelId=$hotelId&floorNumber=$floor&roomNumber=$room');
+        context.go(
+          '/rooms?hotelId=$hotelId&floorNumber=$floor&roomNumber=$room',
+        );
       }
     } else {
       PremiumSnackbar.show(
@@ -264,9 +272,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               onTap: () => context.go('/rooms'),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
-                  color: Colors.black.withValues(alpha: 0.65),
-                ),
+                child: Container(color: Colors.black.withValues(alpha: 0.65)),
               ),
             ),
           ),
@@ -326,7 +332,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                         child: Text(
                           _activeTab == _QrTab.scan
                               ? (l10n.t('qrScanTitle') ?? 'Scan QR Code')
-                              : (l10n.t('qrGenerateTabGenerate') ?? 'Generate QR Codes'),
+                              : (l10n.t('qrGenerateTabGenerate') ??
+                                  'Generate QR Codes'),
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
@@ -377,14 +384,17 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                     _activeTab = newTab;
                   });
                   _initCamera();
-                  final bool isTestEnv = !kIsWeb && io.Platform.environment.containsKey('FLUTTER_TEST');
+                  final bool isTestEnv = !kIsWeb &&
+                      io.Platform.environment.containsKey('FLUTTER_TEST');
                   if (!isTestEnv) {
                     _scanController.repeat(reverse: true);
                   }
                 }
               },
               style: SegmentedButton.styleFrom(
-                selectedBackgroundColor: colorScheme.primary.withValues(alpha: 0.15),
+                selectedBackgroundColor: colorScheme.primary.withValues(
+                  alpha: 0.15,
+                ),
                 selectedForegroundColor: colorScheme.primary,
                 visualDensity: VisualDensity.compact,
               ),
@@ -414,7 +424,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                           child: Icon(
                             Icons.camera_alt_outlined,
                             size: 48,
-                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                            color: colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.4,
+                            ),
                           ),
                         )
                       else
@@ -424,15 +436,18 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                             children: [
                               MobileScanner(
                                 controller: _cameraController,
-                                scanWindow: precisionScanWindow ? const Rect.fromLTWH(0, 0, 240, 240) : null,
+                                scanWindow: precisionScanWindow
+                                    ? const Rect.fromLTWH(0, 0, 240, 240)
+                                    : null,
                                 onDetect: (capture) {
-                                  final List<Barcode> barcodes = capture.barcodes;
+                                  final List<Barcode> barcodes =
+                                      capture.barcodes;
                                   final sensorSize = capture.size;
-                                  if (sensorSize != null) {
-                                    _lastCaptureSize = sensorSize;
-                                  }
+                                  _lastCaptureSize = sensorSize;
 
-                                  final filtered = barcodes.where((b) => b.rawValue != null).toList();
+                                  final filtered = barcodes
+                                      .where((b) => b.rawValue != null)
+                                      .toList();
                                   if (filtered.isEmpty) return;
 
                                   if (tapToScanEnabled) {
@@ -440,13 +455,16 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                     setState(() {
                                       _detectedBarcodes = filtered;
                                     });
-                                    _clearBarcodesTimer = Timer(const Duration(milliseconds: 2000), () {
-                                      if (mounted) {
-                                        setState(() {
-                                          _detectedBarcodes = [];
-                                        });
-                                      }
-                                    });
+                                    _clearBarcodesTimer = Timer(
+                                      const Duration(milliseconds: 2000),
+                                      () {
+                                        if (mounted) {
+                                          setState(() {
+                                            _detectedBarcodes = [];
+                                          });
+                                        }
+                                      },
+                                    );
                                   } else {
                                     _onCodeScanned(filtered.first.rawValue!);
                                   }
@@ -470,11 +488,18 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                           const SizedBox(height: 8),
                                           Text(
                                             isPermission
-                                                ? (l10n.t('qrCameraPermission') ?? 'Camera permission denied')
-                                                : (l10n.t('qrCameraUnavailable') ?? 'Camera unavailable'),
+                                                ? (l10n.t(
+                                                      'qrCameraPermission',
+                                                    ) ??
+                                                    'Camera permission denied')
+                                                : (l10n.t(
+                                                      'qrCameraUnavailable',
+                                                    ) ??
+                                                    'Camera unavailable'),
                                             style: TextStyle(
                                               fontSize: 12,
-                                              color: colorScheme.onSurfaceVariant,
+                                              color:
+                                                  colorScheme.onSurfaceVariant,
                                               fontWeight: FontWeight.bold,
                                             ),
                                             textAlign: TextAlign.center,
@@ -486,7 +511,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                 },
                               ),
                               if (tapToScanEnabled)
-                                ..._buildInteractiveBoxes(const Size(240, 240), theme),
+                                ..._buildInteractiveBoxes(
+                                  const Size(240, 240),
+                                  theme,
+                                ),
                             ],
                           ),
                         ),
@@ -529,7 +557,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               if (tapToScanEnabled && _detectedBarcodes.length > 1) ...[
                 const SizedBox(height: 12),
                 Text(
-                  l10n.t('qrMultipleDetected') ?? 'Multiple QR codes detected. Tap to select:',
+                  l10n.t('qrMultipleDetected') ??
+                      'Multiple QR codes detected. Tap to select:',
                   style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.primary,
@@ -550,15 +579,21 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                       // Map label for button
                       String label = '';
                       final uri = Uri.tryParse(val);
-                      final products = ref.read(productsProvider).valueOrNull ?? [];
+                      final products =
+                          ref.read(productsProvider).valueOrNull ?? [];
                       if (uri != null) {
                         final segments = uri.pathSegments;
                         if (segments.length >= 5) {
                           final sku = segments.last;
-                          final prod = products.firstWhereOrNull((p) => p.sku.toLowerCase() == sku.toLowerCase());
-                          label = prod != null ? '${prod.label(language)} ($sku)' : sku;
+                          final prod = products.firstWhereOrNull(
+                            (p) => p.sku.toLowerCase() == sku.toLowerCase(),
+                          );
+                          label = prod != null
+                              ? '${prod.label(language)} ($sku)'
+                              : sku;
                         } else if (segments.length >= 4) {
-                          label = '${l10n.t('room') ?? 'Room'} ${segments.last}';
+                          label =
+                              '${l10n.t('room') ?? 'Room'} ${segments.last}';
                         }
                       }
                       if (label.isEmpty) {
@@ -568,7 +603,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: ActionChip(
-                          avatar: Icon(Icons.qr_code_2_rounded, size: 16, color: colorScheme.primary),
+                          avatar: Icon(
+                            Icons.qr_code_2_rounded,
+                            size: 16,
+                            color: colorScheme.primary,
+                          ),
                           label: Text(
                             label,
                             style: TextStyle(
@@ -577,8 +616,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                               fontSize: 12,
                             ),
                           ),
-                          backgroundColor: colorScheme.primaryContainer.withValues(alpha: 0.7),
-                          side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.5)),
+                          backgroundColor: colorScheme.primaryContainer
+                              .withValues(alpha: 0.7),
+                          side: BorderSide(
+                            color: colorScheme.primary.withValues(alpha: 0.5),
+                          ),
                           onPressed: () {
                             HapticFeedback.mediumImpact();
                             _onCodeScanned(val);
@@ -595,7 +637,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               TextField(
                 controller: _inputController,
                 decoration: InputDecoration(
-                  hintText: l10n.t('qrScanPlaceholder') ?? 'Enter code or URL manually...',
+                  hintText: l10n.t('qrScanPlaceholder') ??
+                      'Enter code or URL manually...',
                   prefixIcon: const Icon(Icons.link_rounded, size: 20),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.arrow_forward_rounded, size: 20),
@@ -604,7 +647,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
                 onSubmitted: _onCodeScanned,
               ),
@@ -628,10 +674,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                     children: [
                       for (final code in demoQrCodes)
                         ActionChip(
-                          avatar: const Icon(
-                            Icons.qr_code_2_rounded,
-                            size: 14,
-                          ),
+                          avatar: const Icon(Icons.qr_code_2_rounded, size: 14),
                           label: Text(
                             _extractDemoLabel(code),
                             style: const TextStyle(fontSize: 11),
@@ -640,8 +683,13 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                          backgroundColor: theme
+                              .colorScheme.surfaceContainerHighest
+                              .withValues(alpha: 0.5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 4,
+                          ),
                         ),
                     ],
                   ),
@@ -669,7 +717,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       if (rawValue == null) return const SizedBox.shrink();
 
       final corners = barcode.corners;
-      if (corners == null || corners.isEmpty) return const SizedBox.shrink();
+      if (corners.isEmpty) return const SizedBox.shrink();
       double minX = corners[0].dx;
       double minY = corners[0].dy;
       double maxX = corners[0].dx;
@@ -710,7 +758,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         final segments = uri.pathSegments;
         if (segments.length >= 5) {
           final sku = segments.last;
-          final prod = products.firstWhereOrNull((p) => p.sku.toLowerCase() == sku.toLowerCase());
+          final prod = products.firstWhereOrNull(
+            (p) => p.sku.toLowerCase() == sku.toLowerCase(),
+          );
           label = prod != null ? prod.label(language) : sku;
         } else if (segments.length >= 4) {
           label = '${l10n.t('room') ?? 'Room'} ${segments.last}';
@@ -733,17 +783,14 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           child: Container(
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withValues(alpha: 0.15),
-              border: Border.all(
-                color: theme.colorScheme.primary,
-                width: 3,
-              ),
+              border: Border.all(color: theme.colorScheme.primary, width: 3),
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
                   color: theme.colorScheme.primary.withValues(alpha: 0.3),
                   blurRadius: 8,
                   spreadRadius: 2,
-                )
+                ),
               ],
             ),
             child: Stack(
@@ -755,7 +802,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   right: 0,
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(4),
@@ -789,8 +839,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
 
     final hotelsAsync = ref.watch(hotelsProvider);
     final roomProductsAsync = ref.watch(allRoomProductsProvider);
-    final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
-    final isSpecialUser = currentUser?.role == UserRole.appAdmin || currentUser?.role == UserRole.appManager;
+    final currentUser = ref.watch(
+      currentUserProvider.select((s) => s.valueOrNull),
+    );
+    final isSpecialUser = currentUser?.role == UserRole.appAdmin ||
+        currentUser?.role == UserRole.appManager;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -801,8 +854,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           onRetry: () => ref.invalidate(hotelsProvider),
           builder: (hotels) {
             // Set initial selected hotel ID if not set or invalid
-            if (_selectedHotelId == null || !hotels.any((h) => h.id == _selectedHotelId)) {
-              if (currentUser != null && !isSpecialUser && currentUser.hotelId != null) {
+            if (_selectedHotelId == null ||
+                !hotels.any((h) => h.id == _selectedHotelId)) {
+              if (currentUser != null &&
+                  !isSpecialUser &&
+                  currentUser.hotelId != null) {
                 _selectedHotelId = currentUser.hotelId;
               } else if (hotels.isNotEmpty) {
                 _selectedHotelId = hotels.first.id;
@@ -814,24 +870,28 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               children: [
                 Text(
                   l10n.t('qrGenerateHotel') ?? 'Hotel',
-                  style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 if (isSpecialUser)
                   DropdownButtonFormField<String>(
                     isExpanded: true,
-                    value: _selectedHotelId,
+                    initialValue: _selectedHotelId,
                     borderRadius: BorderRadius.circular(16),
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
                     items: [
                       for (final h in hotels)
-                        DropdownMenuItem(
-                          value: h.id,
-                          child: Text(h.name),
-                        ),
+                        DropdownMenuItem(value: h.id, child: Text(h.name)),
                     ],
                     onChanged: (val) {
                       setState(() {
@@ -844,14 +904,28 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                 else
                   // For managers/staff, display non-editable card
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+                      color: colorScheme.surfaceContainerHighest.withValues(
+                        alpha: 0.35,
+                      ),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.35)),
+                      border: Border.all(
+                        color: colorScheme.outlineVariant.withValues(
+                          alpha: 0.35,
+                        ),
+                      ),
                     ),
                     child: Text(
-                      hotels.firstWhere((h) => h.id == _selectedHotelId, orElse: () => hotels.first).name,
+                      hotels
+                          .firstWhere(
+                            (h) => h.id == _selectedHotelId,
+                            orElse: () => hotels.first,
+                          )
+                          .name,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -865,19 +939,25 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           // QR Label Scope Selector
           Text(
             l10n.t('qrGenerateScope') ?? 'QR Label Type',
-            style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           SegmentedButton<_QrScope>(
             segments: [
               ButtonSegment<_QrScope>(
                 value: _QrScope.room,
-                label: Text(l10n.t('qrGenerateScopeRoom') ?? 'Room Door (No SKU)'),
+                label: Text(
+                  l10n.t('qrGenerateScopeRoom') ?? 'Room Door (No SKU)',
+                ),
                 icon: const Icon(Icons.meeting_room_outlined),
               ),
               ButtonSegment<_QrScope>(
                 value: _QrScope.dispenser,
-                label: Text(l10n.t('qrGenerateScopeDispenser') ?? 'Dispenser (With SKU)'),
+                label: Text(
+                  l10n.t('qrGenerateScopeDispenser') ?? 'Dispenser (With SKU)',
+                ),
                 icon: const Icon(Icons.sanitizer_outlined),
               ),
             ],
@@ -891,7 +971,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               });
             },
             style: SegmentedButton.styleFrom(
-              selectedBackgroundColor: colorScheme.primary.withValues(alpha: 0.15),
+              selectedBackgroundColor: colorScheme.primary.withValues(
+                alpha: 0.15,
+              ),
               selectedForegroundColor: colorScheme.primary,
               visualDensity: VisualDensity.compact,
             ),
@@ -904,34 +986,38 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           value: roomProductsAsync,
           onRetry: () => ref.invalidate(allRoomProductsProvider),
           builder: (allProducts) {
-            final hotelProducts = allProducts.where((p) => p.hotelId == _selectedHotelId).toList();
+            final hotelProducts = allProducts
+                .where((p) => p.hotelId == _selectedHotelId)
+                .toList();
 
             // Get unique room numbers
-            final rooms = hotelProducts
-                .map((p) => p.roomNumber)
-                .toSet()
-                .toList()
-              ..sort((a, b) {
-                final na = int.tryParse(a);
-                final nb = int.tryParse(b);
-                if (na != null && nb != null) return na.compareTo(nb);
-                return a.compareTo(b);
-              });
+            final rooms =
+                hotelProducts.map((p) => p.roomNumber).toSet().toList()
+                  ..sort((a, b) {
+                    final na = int.tryParse(a);
+                    final nb = int.tryParse(b);
+                    if (na != null && nb != null) return na.compareTo(nb);
+                    return a.compareTo(b);
+                  });
 
             final productsAsync = ref.watch(productsProvider);
             return AsyncValueView<List<Product>>(
               value: productsAsync,
               onRetry: () => ref.invalidate(productsProvider),
               builder: (masterProducts) {
-                final sortedMasterProducts = masterProducts.toList()..sort((a, b) => a.sku.compareTo(b.sku));
+                final sortedMasterProducts = masterProducts.toList()
+                  ..sort((a, b) => a.sku.compareTo(b.sku));
 
                 // Validate active choices
-                if (_selectedRoomNumber != 'all_rooms' && !rooms.contains(_selectedRoomNumber)) {
+                if (_selectedRoomNumber != 'all_rooms' &&
+                    !rooms.contains(_selectedRoomNumber)) {
                   _selectedRoomNumber = 'all_rooms';
                 }
                 if (_selectedProductSku != 'all_room_products' &&
                     _selectedProductSku != 'all_inventory_products' &&
-                    !sortedMasterProducts.any((p) => p.sku == _selectedProductSku)) {
+                    !sortedMasterProducts.any(
+                      (p) => p.sku == _selectedProductSku,
+                    )) {
                   _selectedProductSku = 'all_room_products';
                 }
 
@@ -941,26 +1027,39 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                     // Room Selector
                     Text(
                       l10n.t('qrGenerateRoom') ?? 'Room',
-                      style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<String>(
                       isExpanded: true,
-                      value: _selectedRoomNumber,
+                      initialValue: _selectedRoomNumber,
                       borderRadius: BorderRadius.circular(16),
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       items: [
                         DropdownMenuItem(
                           value: 'all_rooms',
-                          child: Text(l10n.t('qrGenerateAllRooms') ?? 'All Rooms'),
+                          child: Text(
+                            l10n.t('qrGenerateAllRooms') ?? 'All Rooms',
+                          ),
                         ),
                         for (final r in rooms)
                           DropdownMenuItem(
                             value: r,
-                            child: Text(l10n.tParams('roomNumberLabel', {'number': r.toString()})),
+                            child: Text(
+                              l10n.tParams('roomNumberLabel', {
+                                'number': r.toString(),
+                              }),
+                            ),
                           ),
                       ],
                       onChanged: (val) {
@@ -975,30 +1074,48 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                     if (_scope == _QrScope.dispenser) ...[
                       Text(
                         l10n.t('qrGenerateProduct') ?? 'Product',
-                        style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         isExpanded: true,
-                        value: _selectedProductSku,
+                        initialValue: _selectedProductSku,
                         borderRadius: BorderRadius.circular(16),
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         items: [
                           DropdownMenuItem(
                             value: 'all_room_products',
-                            child: Text(l10n.t('qrGenAllRoomProducts') ?? 'All products in the selected room'),
+                            child: Text(
+                              l10n.t('qrGenAllRoomProducts') ??
+                                  'All products in the selected room',
+                            ),
                           ),
                           DropdownMenuItem(
                             value: 'all_inventory_products',
-                            child: Text(l10n.t('qrGenAllInventoryProducts') ?? 'All products in the inventory'),
+                            child: Text(
+                              l10n.t('qrGenAllInventoryProducts') ??
+                                  'All products in the inventory',
+                            ),
                           ),
                           for (final p in sortedMasterProducts)
                             DropdownMenuItem(
                               value: p.sku,
-                              child: Text(l10n.tParams('productSkuLabelReverse', {'sku': p.sku, 'label': p.label(language)})),
+                              child: Text(
+                                l10n.tParams('productSkuLabelReverse', {
+                                  'sku': p.sku,
+                                  'label': p.label(language),
+                                }),
+                              ),
                             ),
                         ],
                         onChanged: (val) {
@@ -1033,7 +1150,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                 ),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
       ],
@@ -1047,7 +1166,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     final language = Localizations.localeOf(context).languageCode;
 
     try {
-      final allRoomProducts = ref.read(allRoomProductsProvider).valueOrNull ?? [];
+      final allRoomProducts =
+          ref.read(allRoomProductsProvider).valueOrNull ?? [];
       final hotels = ref.read(hotelsProvider).valueOrNull ?? [];
       final masterProducts = ref.read(productsProvider).valueOrNull ?? [];
 
@@ -1056,7 +1176,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         throw Exception('Selected hotel not found');
       }
 
-      final hotelProducts = allRoomProducts.where((p) => p.hotelId == _selectedHotelId).toList();
+      final hotelProducts =
+          allRoomProducts.where((p) => p.hotelId == _selectedHotelId).toList();
 
       // Get unique rooms in the hotel with their floor numbers
       final uniqueRoomsMap = <String, int>{}; // roomNumber -> floorNumber
@@ -1082,27 +1203,34 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         // Room Door QR (No SKU)
         for (final roomNum in roomsToProcess) {
           final floorNum = uniqueRoomsMap[roomNum] ?? 1;
-          labelList.add(QrCodeLabelData(
-            hotelName: hotel.name,
-            floor: '$floorNum',
-            room: roomNum,
-            url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/$floorNum/$roomNum',
-          ));
+          labelList.add(
+            QrCodeLabelData(
+              hotelName: hotel.name,
+              floor: '$floorNum',
+              room: roomNum,
+              url:
+                  'https://refill.ivra-cosmetics.com/q/${hotel.id}/$floorNum/$roomNum',
+            ),
+          );
         }
       } else {
         // Dispenser scope (with SKU)
         if (_selectedProductSku == 'all_room_products') {
           // Only generate for products already placed in the selected room(s)
           for (final item in hotelProducts) {
-            if (_selectedRoomNumber == 'all_rooms' || item.roomNumber == _selectedRoomNumber) {
-              labelList.add(QrCodeLabelData(
-                hotelName: hotel.name,
-                floor: '${item.floorNumber}',
-                room: item.roomNumber,
-                productName: item.product.label(language),
-                productSku: item.product.sku,
-                url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/${item.floorNumber}/${item.roomNumber}/${item.product.sku.toUpperCase().startsWith('IVR-') ? item.product.sku : 'IVR-${item.product.sku}'}',
-              ));
+            if (_selectedRoomNumber == 'all_rooms' ||
+                item.roomNumber == _selectedRoomNumber) {
+              labelList.add(
+                QrCodeLabelData(
+                  hotelName: hotel.name,
+                  floor: '${item.floorNumber}',
+                  room: item.roomNumber,
+                  productName: item.product.label(language),
+                  productSku: item.product.sku,
+                  url:
+                      'https://refill.ivra-cosmetics.com/q/${hotel.id}/${item.floorNumber}/${item.roomNumber}/${item.product.sku.toUpperCase().startsWith('IVR-') ? item.product.sku : 'IVR-${item.product.sku}'}',
+                ),
+              );
             }
           }
         } else if (_selectedProductSku == 'all_inventory_products') {
@@ -1110,32 +1238,40 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           for (final roomNum in roomsToProcess) {
             final floorNum = uniqueRoomsMap[roomNum] ?? 1;
             for (final p in masterProducts) {
-              labelList.add(QrCodeLabelData(
-                hotelName: hotel.name,
-                floor: '$floorNum',
-                room: roomNum,
-                productName: p.label(language),
-                productSku: p.sku,
-                url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/$floorNum/$roomNum/${p.sku.toUpperCase().startsWith('IVR-') ? p.sku : 'IVR-${p.sku}'}',
-              ));
+              labelList.add(
+                QrCodeLabelData(
+                  hotelName: hotel.name,
+                  floor: '$floorNum',
+                  room: roomNum,
+                  productName: p.label(language),
+                  productSku: p.sku,
+                  url:
+                      'https://refill.ivra-cosmetics.com/q/${hotel.id}/$floorNum/$roomNum/${p.sku.toUpperCase().startsWith('IVR-') ? p.sku : 'IVR-${p.sku}'}',
+                ),
+              );
             }
           }
         } else {
           // Specific SKU selected
-          final selectedProd = masterProducts.firstWhereOrNull((p) => p.sku == _selectedProductSku);
+          final selectedProd = masterProducts.firstWhereOrNull(
+            (p) => p.sku == _selectedProductSku,
+          );
           if (selectedProd == null) {
             throw Exception('Selected product SKU not found in catalog');
           }
           for (final roomNum in roomsToProcess) {
             final floorNum = uniqueRoomsMap[roomNum] ?? 1;
-            labelList.add(QrCodeLabelData(
-              hotelName: hotel.name,
-              floor: '$floorNum',
-              room: roomNum,
-              productName: selectedProd.label(language),
-              productSku: selectedProd.sku,
-              url: 'https://refill.ivra-cosmetics.com/q/${hotel.id}/$floorNum/$roomNum/${selectedProd.sku.toUpperCase().startsWith('IVR-') ? selectedProd.sku : 'IVR-${selectedProd.sku}'}',
-            ));
+            labelList.add(
+              QrCodeLabelData(
+                hotelName: hotel.name,
+                floor: '$floorNum',
+                room: roomNum,
+                productName: selectedProd.label(language),
+                productSku: selectedProd.sku,
+                url:
+                    'https://refill.ivra-cosmetics.com/q/${hotel.id}/$floorNum/$roomNum/${selectedProd.sku.toUpperCase().startsWith('IVR-') ? selectedProd.sku : 'IVR-${selectedProd.sku}'}',
+              ),
+            );
           }
         }
       }
@@ -1164,7 +1300,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       );
 
       // Trigger download
-      final fileName = 'ivra-qr-codes-${_normalize(hotel.name)}-${_scope.name}.pdf';
+      final fileName =
+          'ivra-qr-codes-${_normalize(hotel.name)}-${_scope.name}.pdf';
       await ref.read(exportFileServiceProvider).saveBytes(
             fileName: fileName,
             bytes: pdfBytes,
@@ -1174,7 +1311,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       if (mounted) {
         PremiumSnackbar.show(
           context,
-          l10n.t('qrGenerateSuccess') ?? 'PDF generated and downloaded successfully',
+          l10n.t('qrGenerateSuccess') ??
+              'PDF generated and downloaded successfully',
           icon: Icons.check_circle_outline_rounded,
         );
       }
@@ -1199,7 +1337,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       final segments = uri.pathSegments;
       final qIndex = segments.indexOf('q');
       if (qIndex != -1 && segments.length > qIndex + 4) {
-        final hotel = segments[qIndex + 1].replaceAll('hotel-', '').toUpperCase();
+        final hotel =
+            segments[qIndex + 1].replaceAll('hotel-', '').toUpperCase();
         final room = segments[qIndex + 3];
         final sku = segments[qIndex + 4].replaceAll('IVR-', '');
         return '$hotel R$room • $sku';
@@ -1236,12 +1375,17 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
             return _buildErrorCard(
               context,
               title: l10n.t('hotelNotFound') ?? 'Hotel Not Found',
-              message: l10n.tParams('qrHotelNotFoundMessage', {'hotel': widget.hotelSlugOrId}) ?? 'Could not match hotel: "${widget.hotelSlugOrId}"',
+              message: l10n.tParams('qrHotelNotFoundMessage', {
+                    'hotel': widget.hotelSlugOrId,
+                  }) ??
+                  'Could not match hotel: "${widget.hotelSlugOrId}"',
             );
           }
 
           // 2. Security Check (Gate hotel access)
-          final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
+          final currentUser = ref.watch(
+            currentUserProvider.select((s) => s.valueOrNull),
+          );
           final isAuthorized = currentUser != null &&
               (currentUser.isIvraUser == true ||
                   currentUser.role == UserRole.hotelManager ||
@@ -1256,7 +1400,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                 final floorInt = int.tryParse(widget.floor) ?? -1;
                 return item.hotelId == hotel.id &&
                     item.floorNumber == floorInt &&
-                    item.roomNumber.toLowerCase() == widget.room.toLowerCase() &&
+                    item.roomNumber.toLowerCase() ==
+                        widget.room.toLowerCase() &&
                     item.product.sku.toLowerCase() == widget.sku.toLowerCase();
               });
 
@@ -1316,7 +1461,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
-                                  l10n.tParams('qrFloorRoom', {'floor': widget.floor, 'room': widget.room}) ?? 'Floor ${widget.floor} \u2022 Room ${widget.room}',
+                                  l10n.tParams('qrFloorRoom', {
+                                        'floor': widget.floor,
+                                        'room': widget.room,
+                                      }) ??
+                                      'Floor ${widget.floor} \u2022 Room ${widget.room}',
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                   ),
@@ -1358,7 +1507,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: theme.colorScheme.secondaryContainer,
                                     borderRadius: BorderRadius.circular(6),
@@ -1366,7 +1518,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                   child: Text(
                                     matchedItem.product.sku,
                                     style: theme.textTheme.labelSmall?.copyWith(
-                                      color: theme.colorScheme.onSecondaryContainer,
+                                      color: theme
+                                          .colorScheme.onSecondaryContainer,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1397,18 +1550,23 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                         _buildStatsRow(
                           context,
                           label: l10n.t('roomsFillCount') ?? 'Refill Count',
-                          value: '${matchedItem.refillCount} / ${matchedItem.product.maxRefillCount}',
-                          isWarning: matchedItem.status == BottleStatus.refillLimitReached,
+                          value:
+                              '${matchedItem.refillCount} / ${matchedItem.product.maxRefillCount}',
+                          isWarning: matchedItem.status ==
+                              BottleStatus.refillLimitReached,
                         ),
                         const SizedBox(height: 8),
                       ],
                       _buildStatsRow(
                         context,
-                        label: l10n.t('roomsBottleStatus') ?? 'Dispenser Status',
+                        label:
+                            l10n.t('roomsBottleStatus') ?? 'Dispenser Status',
                         value: _getStatusText(context, matchedItem),
-                        isWarning: matchedItem.status == BottleStatus.needsReplacement ||
+                        isWarning: matchedItem.status ==
+                                BottleStatus.needsReplacement ||
                             matchedItem.status == BottleStatus.tooOld ||
-                            matchedItem.status == BottleStatus.refillLimitReached ||
+                            matchedItem.status ==
+                                BottleStatus.refillLimitReached ||
                             matchedItem.status == BottleStatus.damaged ||
                             matchedItem.status == BottleStatus.lost,
                       ),
@@ -1419,7 +1577,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.errorContainer.withValues(alpha: 0.8),
+                            color: theme.colorScheme.errorContainer.withValues(
+                              alpha: 0.8,
+                            ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: theme.colorScheme.error),
                           ),
@@ -1427,13 +1587,19 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.gpp_bad, color: theme.colorScheme.error),
+                                  Icon(
+                                    Icons.gpp_bad,
+                                    color: theme.colorScheme.error,
+                                  ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      l10n.t('errorPermissionDenied') ?? 'Access Denied',
-                                      style: theme.textTheme.titleSmall?.copyWith(
-                                        color: theme.colorScheme.onErrorContainer,
+                                      l10n.t('errorPermissionDenied') ??
+                                          'Access Denied',
+                                      style:
+                                          theme.textTheme.titleSmall?.copyWith(
+                                        color:
+                                            theme.colorScheme.onErrorContainer,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -1481,7 +1647,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                             icon: const Icon(IvraIcons.refillAction),
                             label: Text(
                               l10n.t('roomsBtnRefillBottle') ?? 'Refill bottle',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -1497,19 +1666,23 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                   : theme.colorScheme.outlineVariant,
                             ),
                             foregroundColor: isAuthorized
-                                  ? theme.colorScheme.error
-                                  : theme.colorScheme.onSurfaceVariant,
+                                ? theme.colorScheme.error
+                                : theme.colorScheme.onSurfaceVariant,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                           ),
-                          onPressed: isAuthorized && matchedItem.status != BottleStatus.recycled
+                          onPressed: isAuthorized &&
+                                  matchedItem.status != BottleStatus.recycled
                               ? () => _executeReplacement(context, matchedItem)
                               : null,
                           icon: const Icon(IvraIcons.replaceAction),
                           label: Text(
                             l10n.t('roomsBtnReplaceBottle') ?? 'Replace bottle',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -1523,23 +1696,33 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                               icon: Icons.history_outlined,
                               label: l10n.t('roomsBtnHistory') ?? 'History',
                               isEnabled: isAuthorized,
-                              onPressed: () => showRefillHistory(context, ref, matchedItem),
+                              onPressed: () =>
+                                  showRefillHistory(context, ref, matchedItem),
                             ),
                             _buildSmallActionButton(
                               context,
                               icon: Icons.report_problem_outlined,
                               label: l10n.t('bottleStatusDamaged') ?? 'Damaged',
                               color: theme.colorScheme.error,
-                              isEnabled: isAuthorized && matchedItem.status != BottleStatus.damaged && matchedItem.status != BottleStatus.lost,
-                              onPressed: () => showMarkDamagedDialog(context, ref, matchedItem),
+                              isEnabled: isAuthorized &&
+                                  matchedItem.status != BottleStatus.damaged &&
+                                  matchedItem.status != BottleStatus.lost,
+                              onPressed: () => showMarkDamagedDialog(
+                                context,
+                                ref,
+                                matchedItem,
+                              ),
                             ),
                             _buildSmallActionButton(
                               context,
                               icon: Icons.search_off_outlined,
                               label: l10n.t('bottleStatusLost') ?? 'Lost',
                               color: theme.colorScheme.onSurfaceVariant,
-                              isEnabled: isAuthorized && matchedItem.status != BottleStatus.lost && matchedItem.status != BottleStatus.damaged,
-                              onPressed: () => showMarkLostDialog(context, ref, matchedItem),
+                              isEnabled: isAuthorized &&
+                                  matchedItem.status != BottleStatus.lost &&
+                                  matchedItem.status != BottleStatus.damaged,
+                              onPressed: () =>
+                                  showMarkLostDialog(context, ref, matchedItem),
                             ),
                           ],
                         ),
@@ -1582,22 +1765,28 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                         : colorScheme.error.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSuccess ? const Color(0xFF267D65) : colorScheme.error,
+                      color: isSuccess
+                          ? const Color(0xFF267D65)
+                          : colorScheme.error,
                       width: 3,
                     ),
                   ),
                   child: Icon(
                     isSuccess ? Icons.check_rounded : Icons.close_rounded,
-                    color: isSuccess ? const Color(0xFF267D65) : colorScheme.error,
+                    color:
+                        isSuccess ? const Color(0xFF267D65) : colorScheme.error,
                     size: 40,
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  isSuccess ? (l10n.t('qrActionSuccess') ?? 'Action Successful') : (l10n.t('qrActionFailed') ?? 'Action Failed'),
+                  isSuccess
+                      ? (l10n.t('qrActionSuccess') ?? 'Action Successful')
+                      : (l10n.t('qrActionFailed') ?? 'Action Failed'),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isSuccess ? const Color(0xFF267D65) : colorScheme.error,
+                    color:
+                        isSuccess ? const Color(0xFF267D65) : colorScheme.error,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -1627,7 +1816,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+              color: colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.35,
+              ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: colorScheme.outlineVariant.withValues(alpha: 0.15),
@@ -1660,7 +1851,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                             ),
                           ),
                           Text(
-                            l10n.tParams('qrRoomFloor', {'room': updatedItem.roomNumber, 'floor': '${updatedItem.floorNumber}'}) ?? 'Room ${updatedItem.roomNumber} \u2022 Floor ${updatedItem.floorNumber}',
+                            l10n.tParams('qrRoomFloor', {
+                                  'room': updatedItem.roomNumber,
+                                  'floor': '${updatedItem.floorNumber}',
+                                }) ??
+                                'Room ${updatedItem.roomNumber} \u2022 Floor ${updatedItem.floorNumber}',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -1677,8 +1872,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   _buildStatsRow(
                     context,
                     label: l10n.t('roomsFillCount') ?? 'Refill Count',
-                    value: '${updatedItem.refillCount} / ${updatedItem.product.maxRefillCount}',
-                    isWarning: updatedItem.status == BottleStatus.refillLimitReached,
+                    value:
+                        '${updatedItem.refillCount} / ${updatedItem.product.maxRefillCount}',
+                    isWarning:
+                        updatedItem.status == BottleStatus.refillLimitReached,
                   ),
                   const SizedBox(height: 8),
                 ],
@@ -1686,9 +1883,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   context,
                   label: l10n.t('roomsBottleStatus') ?? 'Dispenser Status',
                   value: _getStatusText(context, updatedItem),
-                  isWarning: updatedItem.status == BottleStatus.needsReplacement ||
-                      updatedItem.status == BottleStatus.tooOld ||
-                      updatedItem.status == BottleStatus.refillLimitReached,
+                  isWarning:
+                      updatedItem.status == BottleStatus.needsReplacement ||
+                          updatedItem.status == BottleStatus.tooOld ||
+                          updatedItem.status == BottleStatus.refillLimitReached,
                 ),
               ],
             ),
@@ -1741,7 +1939,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     required bool isEnabled,
   }) {
     final theme = Theme.of(context);
-    final finalColor = isEnabled ? (color ?? theme.colorScheme.primary) : theme.colorScheme.outlineVariant;
+    final finalColor = isEnabled
+        ? (color ?? theme.colorScheme.primary)
+        : theme.colorScheme.outlineVariant;
 
     return Expanded(
       child: Tooltip(
@@ -1804,7 +2004,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
             textAlign: TextAlign.end,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: isWarning ? theme.colorScheme.error : theme.colorScheme.onSurface,
+              color: isWarning
+                  ? theme.colorScheme.error
+                  : theme.colorScheme.onSurface,
             ),
           ),
         ),
@@ -1842,7 +2044,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               Row(
                 children: [
                   Icon(
-                    isSuccess ? Icons.check_circle_rounded : Icons.error_outline_rounded,
+                    isSuccess
+                        ? Icons.check_circle_rounded
+                        : Icons.error_outline_rounded,
                     color: isSuccess ? Colors.green : colorScheme.error,
                     size: 36,
                   ),
@@ -1850,7 +2054,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   Expanded(
                     child: Text(
                       isSuccess
-                          ? (l10n.t('scanAssignSuccess') ?? 'Product Assigned Successfully')
+                          ? (l10n.t('scanAssignSuccess') ??
+                              'Product Assigned Successfully')
                           : (l10n.t('scanAssignFailed') ?? 'Assignment Failed'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -1875,7 +2080,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               ),
               const SizedBox(height: 12),
               FilledButton.icon(
-                onPressed: () => context.go('/rooms?hotelId=${hotel.id}&floorNumber=$floor&roomNumber=$room'),
+                onPressed: () => context.go(
+                  '/rooms?hotelId=${hotel.id}&floorNumber=$floor&roomNumber=$room',
+                ),
                 icon: const Icon(Icons.meeting_room_rounded),
                 label: Text(l10n.t('goToRoom') ?? 'Go to Room'),
                 style: FilledButton.styleFrom(
@@ -1889,7 +2096,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     }
 
     return productsAsync.when(
-      loading: () => Padding(padding: EdgeInsets.all(16.0), child: ShimmerLoading(width: double.infinity, height: 100)),
+      loading: () => const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: ShimmerLoading(width: double.infinity, height: 100),
+      ),
       error: (e, _) => _buildErrorCard(
         context,
         title: l10n.t('errorLoadingProducts') ?? 'Error',
@@ -1912,7 +2122,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         final productName = product.label(language);
 
         return inventoryAsync.when(
-          loading: () => Padding(padding: EdgeInsets.all(16.0), child: ShimmerLoading(width: double.infinity, height: 100)),
+          loading: () => const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: ShimmerLoading(width: double.infinity, height: 100),
+          ),
           error: (e, _) => _buildErrorCard(
             context,
             title: l10n.t('errorLoadingInventory') ?? 'Error',
@@ -1920,7 +2133,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           ),
           data: (inventoryItems) {
             final inventoryItem = inventoryItems.firstWhereOrNull(
-              (i) => i.hotelId == hotel.id && i.product.sku.toLowerCase() == sku.toLowerCase(),
+              (i) =>
+                  i.hotelId == hotel.id &&
+                  i.product.sku.toLowerCase() == sku.toLowerCase(),
             );
             final stock = inventoryItem?.fullBottles ?? 0;
             final hasStock = stock > 0;
@@ -1951,7 +2166,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            l10n.t('scanAssignTitle') ?? 'Assign Product to Room',
+                            l10n.t('scanAssignTitle') ??
+                                'Assign Product to Room',
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -1964,7 +2180,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                     // Location
                     Row(
                       children: [
-                        Icon(Icons.hotel_rounded, size: 16, color: colorScheme.primary),
+                        Icon(
+                          Icons.hotel_rounded,
+                          size: 16,
+                          color: colorScheme.primary,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -1983,7 +2203,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.5,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -2021,7 +2243,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
 
                     // Inventory Status
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: hasStock
                             ? Colors.green.withValues(alpha: 0.1)
@@ -2036,7 +2261,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                       child: Row(
                         children: [
                           Icon(
-                            hasStock ? Icons.inventory_2_rounded : Icons.warning_amber_rounded,
+                            hasStock
+                                ? Icons.inventory_2_rounded
+                                : Icons.warning_amber_rounded,
                             size: 18,
                             color: hasStock ? Colors.green : Colors.orange,
                           ),
@@ -2044,13 +2271,17 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                           Expanded(
                             child: Text(
                               hasStock
-                                  ? (l10n.tParams('scanAssignInStock', {'count': stock.toString()}) ??
+                                  ? (l10n.tParams('scanAssignInStock', {
+                                        'count': stock.toString(),
+                                      }) ??
                                       '$stock in stock — will deduct 1 and assign to room')
                                   : (l10n.t('scanAssignOutOfStock') ??
                                       'Out of stock — 1 unit will be auto-added to inventory then assigned'),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: hasStock ? Colors.green.shade700 : Colors.orange.shade700,
+                                color: hasStock
+                                    ? Colors.green.shade700
+                                    : Colors.orange.shade700,
                               ),
                             ),
                           ),
@@ -2081,7 +2312,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                             autoAdjustInventory: false,
                           ),
                           icon: const Icon(Icons.add_task_rounded),
-                          label: Text(l10n.t('scanAssignButton') ?? 'Assign to Room'),
+                          label: Text(
+                            l10n.t('scanAssignButton') ?? 'Assign to Room',
+                          ),
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
@@ -2096,7 +2329,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                             productName: productName,
                           ),
                           icon: const Icon(Icons.add_shopping_cart_rounded),
-                          label: Text(l10n.t('scanAssignAutoAdd') ?? 'Add to Inventory & Assign'),
+                          label: Text(
+                            l10n.t('scanAssignAutoAdd') ??
+                                'Add to Inventory & Assign',
+                          ),
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             backgroundColor: Colors.orange,
@@ -2134,7 +2370,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        icon: Icon(Icons.inventory_2_outlined, color: theme.colorScheme.tertiary, size: 36),
+        icon: Icon(
+          Icons.inventory_2_outlined,
+          color: theme.colorScheme.tertiary,
+          size: 36,
+        ),
         title: Text(l10n.t('scanAssignAutoAddTitle') ?? 'Add to Inventory?'),
         content: Text(
           l10n.tParams('scanAssignAutoAddMessage', {'product': productName}) ??
@@ -2182,14 +2422,19 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     if (isHousekeeper) {
       try {
         final products = await ref.read(productsProvider.future);
-        final selectedProduct = products.firstWhereOrNull((p) => p.sku == productSku);
+        final selectedProduct = products.firstWhereOrNull(
+          (p) => p.sku == productSku,
+        );
         if (selectedProduct == null) {
           throw StateError('Unknown product SKU: $productSku');
         }
-        final language = mounted ? Localizations.localeOf(context).languageCode : 'en';
+        final language =
+            mounted ? Localizations.localeOf(context).languageCode : 'en';
         final productName = selectedProduct.label(language);
 
-        final allocations = await ref.read(housekeeperAllocationsProvider.future);
+        final allocations = await ref.read(
+          housekeeperAllocationsProvider.future,
+        );
         final allocation = allocations.firstWhereOrNull(
           (a) => a.product.id == selectedProduct.id,
         );
@@ -2313,7 +2558,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           children: [
             Row(
               children: [
-                Icon(Icons.warning_amber_rounded, color: theme.colorScheme.error, size: 36),
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: theme.colorScheme.error,
+                  size: 36,
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
@@ -2327,10 +2576,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              message,
-              style: theme.textTheme.bodyMedium,
-            ),
+            Text(message, style: theme.textTheme.bodyMedium),
             const SizedBox(height: 24),
             Row(
               children: [
@@ -2338,7 +2584,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   child: OutlinedButton.icon(
                     onPressed: () => context.go('/qr'),
                     icon: const Icon(Icons.qr_code_scanner_rounded),
-                    label: Text(l10n.t('qrTryScanAgain') ?? 'Try scanning again'),
+                    label: Text(
+                      l10n.t('qrTryScanAgain') ?? 'Try scanning again',
+                    ),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
@@ -2365,11 +2613,14 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     final l10n = AppLocalizations.of(context);
     return switch (status) {
       BottleStatus.active => l10n.t('bottleStatusActive') ?? 'Active',
-      BottleStatus.needsRefill => l10n.t('bottleStatusNeedsRefill') ?? 'Needs Refill',
+      BottleStatus.needsRefill =>
+        l10n.t('bottleStatusNeedsRefill') ?? 'Needs Refill',
       BottleStatus.refilled => l10n.t('bottleStatusRefilled') ?? 'Refilled',
-      BottleStatus.refillLimitReached => l10n.t('bottleStatusRefillLimitReached') ?? 'Refill Limit Reached',
+      BottleStatus.refillLimitReached =>
+        l10n.t('bottleStatusRefillLimitReached') ?? 'Refill Limit Reached',
       BottleStatus.tooOld => l10n.t('bottleStatusTooOld') ?? 'Too Old',
-      BottleStatus.needsReplacement => l10n.t('bottleStatusNeedsReplacement') ?? 'Needs Replacement',
+      BottleStatus.needsReplacement =>
+        l10n.t('bottleStatusNeedsReplacement') ?? 'Needs Replacement',
       BottleStatus.recycled => l10n.t('bottleStatusRecycled') ?? 'Recycled',
       BottleStatus.damaged => l10n.t('bottleStatusDamaged') ?? 'Damaged',
       BottleStatus.lost => l10n.t('bottleStatusLost') ?? 'Lost',
@@ -2379,7 +2630,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
   String _getStatusText(BuildContext context, RoomProduct item) {
     final statusText = _getLocalizedStatusName(context, item.status);
     if (item.status == BottleStatus.refilled && item.lastRefillAt != null) {
-      final dateStr = DateFormat('yyyy-MM-dd HH:mm').format(item.lastRefillAt!.toLocal());
+      final dateStr = DateFormat(
+        'yyyy-MM-dd HH:mm',
+      ).format(item.lastRefillAt!.toLocal());
       return '$statusText ($dateStr)';
     }
     return statusText;
@@ -2403,7 +2656,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     // Housekeepers use their own cart stock first; if empty, they are asked
     // to transfer a bidon from the hotel inventory to their cart before refilling.
     if (!mounted) return;
-    final canProceed = await checkAndCheckoutHousekeeperRefillStock(context, ref, item);
+    final canProceed = await checkAndCheckoutHousekeeperRefillStock(
+      context,
+      ref,
+      item,
+    );
     if (!canProceed) return;
     if (!mounted) return;
 
@@ -2415,10 +2672,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     try {
       if (!isOffline) {
         try {
-          await ref.read(repositoryProvider).recordRefill(
-                roomProductId: item.id,
-                notes: structuredNotes,
-              );
+          await ref
+              .read(repositoryProvider)
+              .recordRefill(roomProductId: item.id, notes: structuredNotes);
         } catch (e) {
           if (e.toString().contains('SocketException') ||
               e.toString().contains('ClientException') ||
@@ -2433,12 +2689,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
 
       if (isOffline) {
         await ref.read(offlineSyncServiceProvider).enqueue(
-              type: SyncActionType.refill,
-              payload: {
-                'roomProductId': item.id,
-                'notes': structuredNotes,
-              },
-            );
+          type: SyncActionType.refill,
+          payload: {'roomProductId': item.id, 'notes': structuredNotes},
+        );
         ref.invalidate(offlineActionsProvider);
       }
 
@@ -2475,7 +2728,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     }
   }
 
-  Future<void> _executeReplacement(BuildContext context, RoomProduct item) async {
+  Future<void> _executeReplacement(
+    BuildContext context,
+    RoomProduct item,
+  ) async {
     setState(() => _isPerformingAction = true);
     final l10n = AppLocalizations.of(context);
     try {
@@ -2488,7 +2744,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
       if (mounted) {
         setState(() {
           _actionResult = ActionResult.success;
-          _actionMessage = '${l10n.t('roomsReplacementRecorded') ?? 'Replacement recorded'} ${item.roomNumber}';
+          _actionMessage =
+              '${l10n.t('roomsReplacementRecorded') ?? 'Replacement recorded'} ${item.roomNumber}';
         });
       }
     } catch (e) {

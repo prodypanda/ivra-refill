@@ -5,23 +5,19 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // Conditional import for web-only sessionStorage access
-import 'set_password_stub.dart' if (dart.library.html) 'set_password_web.dart'
-    as platform;
+import 'package:ivra_refill/src/features/auth/set_password_stub.dart'
+    if (dart.library.html) 'set_password_web.dart' as platform;
 
-import '../../l10n/app_localizations.dart';
-import '../../state/app_state.dart';
+import 'package:ivra_refill/src/l10n/app_localizations.dart';
+import 'package:ivra_refill/src/state/app_state.dart';
 
-import '../dashboard/dashboard_screen.dart';
-import '../shared/glass_card.dart';
-import '../shared/page_scaffold.dart';
-import 'auth_validation.dart';
+import 'package:ivra_refill/src/features/dashboard/dashboard_screen.dart';
+import 'package:ivra_refill/src/features/shared/glass_card.dart';
+import 'package:ivra_refill/src/features/shared/page_scaffold.dart';
+import 'package:ivra_refill/src/features/auth/auth_validation.dart';
 
 class SetPasswordScreen extends ConsumerStatefulWidget {
-  const SetPasswordScreen({
-    this.refreshToken,
-    this.accessToken,
-    super.key,
-  });
+  const SetPasswordScreen({this.refreshToken, this.accessToken, super.key});
 
   static const route = '/set-password';
 
@@ -133,7 +129,11 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
     } catch (e) {
       ref.read(passwordSetProvider.notifier).state = false;
       setState(() {
-        _error = localizeAuthError(AppLocalizations.of(context), e, fallbackKey: 'resetPasswordError');
+        _error = localizeAuthError(
+          AppLocalizations.of(context),
+          e,
+          fallbackKey: 'resetPasswordError',
+        );
       });
     } finally {
       if (mounted) {
@@ -213,10 +213,17 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
                     labelText: l10n.t('password'),
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -226,7 +233,9 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
                   decoration: InputDecoration(
                     labelText: l10n.t('confirmPassword'),
                     prefixIcon: const Icon(Icons.lock_outline),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   onSubmitted: (_) => _updatePassword(),
                 ),
@@ -243,7 +252,10 @@ class _SetPasswordScreenState extends ConsumerState<SetPasswordScreen> {
                       ? const SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
                       : Text(l10n.t('setPasswordButton')),
                 ),
