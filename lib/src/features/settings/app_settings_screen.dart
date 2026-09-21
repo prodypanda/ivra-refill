@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../../app/theme.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/premium_snackbar.dart';
 
@@ -16,6 +17,8 @@ class AppSettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final isMobile = MediaQuery.sizeOf(context).width < 720;
     final percentageRefillEnabled = ref.watch(percentageRefillEnabledProvider);
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
@@ -47,9 +50,13 @@ class AppSettingsScreen extends ConsumerWidget {
                 elevation: isMobile ? 0 : null,
                 shape: isMobile
                     ? RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(
+                            themeExt?.cardBorderRadius ?? 24.0),
                         side: BorderSide(
-                          color: theme.colorScheme.outlineVariant,
+                          color: isBotanical
+                              ? (themeExt?.cardBorderColor ??
+                                  theme.colorScheme.outlineVariant)
+                              : theme.colorScheme.outlineVariant,
                         ),
                       )
                     : null,
@@ -90,9 +97,13 @@ class AppSettingsScreen extends ConsumerWidget {
               elevation: isMobile ? 0 : null,
               shape: isMobile
                   ? RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(
+                          themeExt?.cardBorderRadius ?? 24.0),
                       side: BorderSide(
-                        color: theme.colorScheme.outlineVariant,
+                        color: isBotanical
+                            ? (themeExt?.cardBorderColor ??
+                                theme.colorScheme.outlineVariant)
+                            : theme.colorScheme.outlineVariant,
                       ),
                     )
                   : null,
@@ -113,9 +124,13 @@ class AppSettingsScreen extends ConsumerWidget {
               elevation: isMobile ? 0 : null,
               shape: isMobile
                   ? RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(
+                          themeExt?.cardBorderRadius ?? 24.0),
                       side: BorderSide(
-                        color: theme.colorScheme.outlineVariant,
+                        color: isBotanical
+                            ? (themeExt?.cardBorderColor ??
+                                theme.colorScheme.outlineVariant)
+                            : theme.colorScheme.outlineVariant,
                       ),
                     )
                   : null,

@@ -249,8 +249,9 @@ class AlertsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final confirmed = await PremiumConfirmDialog.show(
       context,
-      title: l10n.t('delete'),
+      title: l10n.t('deleteAll'),
       message: l10n.t('confirmDeleteAllAlerts'),
+      confirmLabel: l10n.t('deleteAll'),
     );
 
     if (confirmed && context.mounted) {
@@ -1016,29 +1017,9 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                         ),
                       ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(effectiveRadius),
-                child: IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // ── Colored left severity strip ──
-                      Container(
-                        width: isBotanical ? 3 : 4,
-                        decoration: BoxDecoration(
-                          color: severityCol.withValues(
-                              alpha: isResolved ? 0.3 : 1.0),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(effectiveRadius),
-                            bottomLeft: Radius.circular(effectiveRadius),
-                          ),
-                        ),
-                      ),
-                      // ── Card content ──
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 18, 16),
-                          child: Column(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 18, 16),
+                child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // ── Header row: icon + title + time ──
@@ -1209,15 +1190,10 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+              );
   }
 }
 

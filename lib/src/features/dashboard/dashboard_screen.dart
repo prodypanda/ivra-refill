@@ -364,6 +364,8 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final l10n = AppLocalizations.of(context);
     final languageCode = Localizations.localeOf(context).languageCode;
 
@@ -387,109 +389,106 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
             ))
         .toList();
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                Icon(Icons.insights_outlined, color: theme.colorScheme.primary),
-                const SizedBox(width: 10),
-                Expanded(
-                    child: Text(l10n.t('dashboardOpsAnalytics'),
-                        style: theme.textTheme.titleLarge
-                            ?.copyWith(fontWeight: FontWeight.w800))),
-                OutlinedButton.icon(
-                  onPressed: () => _exportSummary(
-                      context,
-                      ref,
-                      analyticsData.daily,
-                      analyticsData.weekly,
-                      analyticsData.monthly,
-                      analyticsData.attentionRoomsCount,
-                      forecasts),
-                  icon: const Icon(Icons.download_outlined),
-                  label: Text(l10n.t('dashboardExport')),
-                ),
-              ],
+            Icon(Icons.insights_outlined, color: theme.colorScheme.primary),
+            const SizedBox(width: 10),
+            Expanded(
+                child: Text(l10n.t('dashboardOpsAnalytics'),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: isBotanical ? FontWeight.w600 : FontWeight.w800,
+                      letterSpacing: isBotanical ? -0.2 : -0.5,
+                    ))),
+            OutlinedButton.icon(
+              onPressed: () => _exportSummary(
+                  context,
+                  ref,
+                  analyticsData.daily,
+                  analyticsData.weekly,
+                  analyticsData.monthly,
+                  analyticsData.attentionRoomsCount,
+                  forecasts),
+              icon: const Icon(Icons.download_outlined, size: 18),
+              label: Text(l10n.t('dashboardExport')),
             ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                _AnalyticsChip(
-                    label: l10n.t('dashboardDaily'),
-                    value: analyticsData.daily.toString(),
-                    icon: Icons.today_outlined),
-                _AnalyticsChip(
-                    label: l10n.t('dashboardWeekly'),
-                    value: analyticsData.weekly.toString(),
-                    icon: Icons.date_range_outlined),
-                _AnalyticsChip(
-                    label: l10n.t('dashboardMonthly'),
-                    value: analyticsData.monthly.toString(),
-                    icon: Icons.calendar_month_outlined),
-                _AnalyticsChip(
-                  label: l10n.t('dashboardRoomsAttention'),
-                  value: analyticsData.attentionRoomsCount.toString(),
-                  icon: Icons.room_preferences_outlined,
-                  width: 290,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            LayoutBuilder(builder: (context, constraints) {
-              final wide = constraints.maxWidth >= 860;
-              final cards = [
-                _AnalyticsListCard(
-                    title: l10n.t('dashboardProductUsage'),
-                    icon: Icons.spa_outlined,
-                    rows: _topRows(analyticsData.productUsage)),
-                _AnalyticsListCard(
-                    title: l10n.t('dashboardUsageByFloor'),
-                    icon: Icons.layers_outlined,
-                    rows: _topRows(floorUsage)),
-                _AnalyticsListCard(
-                    title: l10n.t('dashboardStockForecast'),
-                    icon: Icons.trending_down_outlined,
-                    rows: forecasts.isEmpty
-                        ? [MapEntry(l10n.t('dashboardNoStockData'), '')]
-                        : forecasts.take(5).toList()),
-                _AnalyticsListCard(
-                    title: l10n.t('dashboardUnusualPatterns'),
-                    icon: Icons.warning_amber_outlined,
-                    rows: analyticsData.attentionRoomsCount > 8
-                        ? [
-                            MapEntry(
-                                l10n.tParams('dashboardRoomsRequireReview', {
-                                  'count':
-                                      '${analyticsData.attentionRoomsCount}'
-                                }),
-                                l10n.t('dashboardHighPriority'))
-                          ]
-                        : [MapEntry(l10n.t('dashboardNoUnusualPatterns'), '')]),
-              ];
-              if (!wide)
-                return Column(
-                    children: cards
-                        .map((c) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: c))
-                        .toList());
-              return Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: cards
-                      .map((c) => SizedBox(
-                          width: (constraints.maxWidth - 12) / 2, child: c))
-                      .toList());
-            }),
           ],
         ),
-      ),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            _AnalyticsChip(
+                label: l10n.t('dashboardDaily'),
+                value: analyticsData.daily.toString(),
+                icon: Icons.today_outlined),
+            _AnalyticsChip(
+                label: l10n.t('dashboardWeekly'),
+                value: analyticsData.weekly.toString(),
+                icon: Icons.date_range_outlined),
+            _AnalyticsChip(
+                label: l10n.t('dashboardMonthly'),
+                value: analyticsData.monthly.toString(),
+                icon: Icons.calendar_month_outlined),
+            _AnalyticsChip(
+              label: l10n.t('dashboardRoomsAttention'),
+              value: analyticsData.attentionRoomsCount.toString(),
+              icon: Icons.room_preferences_outlined,
+              width: 290,
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        LayoutBuilder(builder: (context, constraints) {
+          final wide = constraints.maxWidth >= 860;
+          final cards = [
+            _AnalyticsListCard(
+                title: l10n.t('dashboardProductUsage'),
+                icon: Icons.spa_outlined,
+                rows: _topRows(analyticsData.productUsage)),
+            _AnalyticsListCard(
+                title: l10n.t('dashboardUsageByFloor'),
+                icon: Icons.layers_outlined,
+                rows: _topRows(floorUsage)),
+            _AnalyticsListCard(
+                title: l10n.t('dashboardStockForecast'),
+                icon: Icons.trending_down_outlined,
+                rows: forecasts.isEmpty
+                    ? [MapEntry(l10n.t('dashboardNoStockData'), '')]
+                    : forecasts.take(5).toList()),
+            _AnalyticsListCard(
+                title: l10n.t('dashboardUnusualPatterns'),
+                icon: Icons.warning_amber_outlined,
+                rows: analyticsData.attentionRoomsCount > 8
+                    ? [
+                        MapEntry(
+                            l10n.tParams('dashboardRoomsRequireReview', {
+                              'count':
+                                  '${analyticsData.attentionRoomsCount}'
+                            }),
+                            l10n.t('dashboardHighPriority'))
+                      ]
+                    : [MapEntry(l10n.t('dashboardNoUnusualPatterns'), '')]),
+          ];
+          if (!wide)
+            return Column(
+                children: cards
+                    .map((c) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: c))
+                    .toList());
+          return Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: cards
+                  .map((c) => SizedBox(
+                      width: (constraints.maxWidth - 12) / 2, child: c))
+                  .toList());
+        }),
+      ],
     );
   }
 

@@ -362,7 +362,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: l10n.t('roomsSearchPlaceholder'),
+                    hintText: l10n.t('roomsSearchProductPlaceholder'),
                     prefixIcon:
                         const Icon(Icons.search, size: 20, color: Colors.grey),
                     suffixIcon: Row(
@@ -566,7 +566,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       if (context.mounted) {
         PremiumSnackbar.show(
           context,
-          l10n.t('roomsNoRoomsFound'),
+          l10n.t('productNotFound'),
           icon: Icons.error_outline_rounded,
         );
       }
