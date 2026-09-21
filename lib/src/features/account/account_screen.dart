@@ -14,6 +14,7 @@ import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../../services/audit_service.dart';
 import '../shared/premium_snackbar.dart';
+import '../../app/theme.dart';
 
 class AccountScreen extends ConsumerStatefulWidget {
   const AccountScreen({super.key});
@@ -699,7 +700,7 @@ class _TeamMemberTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: member.isActive
-              ? Colors.green.withValues(alpha: 0.1)
+              ? (theme.extension<IvraThemeExtension>()?.successContainer ?? Colors.green.withValues(alpha: 0.1))
               : theme.colorScheme.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
@@ -707,7 +708,7 @@ class _TeamMemberTile extends StatelessWidget {
           member.isActive ? l10n.t('accountActive') : l10n.t('accountInactive'),
           style: theme.textTheme.labelSmall?.copyWith(
             color: member.isActive
-                ? Colors.green.shade700
+                ? (theme.extension<IvraThemeExtension>()?.success ?? Colors.green.shade700)
                 : theme.colorScheme.error,
             fontWeight: FontWeight.bold,
           ),

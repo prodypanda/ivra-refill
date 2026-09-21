@@ -95,11 +95,13 @@ class PremiumSnackbar {
   }
 
   static void showSuccess(BuildContext context, String message) {
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     show(
       context,
       message,
       icon: Icons.check_circle_outline,
-      iconColor: Colors.green,
+      iconColor: themeExt?.success ?? Colors.green,
       isError: false,
     );
   }

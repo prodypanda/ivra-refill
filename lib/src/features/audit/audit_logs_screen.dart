@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
@@ -40,8 +41,11 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
   Color _getActionColor(BuildContext context, String action) {
     final lower = action.toLowerCase();
     final colorScheme = Theme.of(context).colorScheme;
+    final themeExt = Theme.of(context).extension<IvraThemeExtension>();
     if (lower.contains('delete') || lower.contains('clear') || lower.contains('reject')) return colorScheme.error;
-    if (lower.contains('create') || lower.contains('add') || lower.contains('approve')) return Colors.green.shade700;
+    if (lower.contains('create') || lower.contains('add') || lower.contains('approve')) {
+      return themeExt?.success ?? colorScheme.primary;
+    }
     if (lower.contains('update') || lower.contains('edit')) return colorScheme.primary;
     if (lower.contains('login') || lower.contains('logout') || lower.contains('sync')) return colorScheme.secondary;
     return colorScheme.outline;
@@ -196,10 +200,10 @@ class _AuditLogsScreenState extends ConsumerState<AuditLogsScreen> {
                                         children: [
                                           Text(log.action, style: const TextStyle(fontWeight: FontWeight.w600)),
                                           if (log.details != null && log.details!.isNotEmpty)
-                                            Text(
-                                              log.details!.entries.map((e) => '${e.key}: ${e.value}').join(', '),
-                                              style: const TextStyle(fontSize: 12, color: Colors.grey),
-                                            ),
+                                              Text(
+                                                log.details!.entries.map((e) => '${e.key}: ${e.value}').join(', '),
+                                                style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                              ),
                                         ],
                                       ),
                                     ),

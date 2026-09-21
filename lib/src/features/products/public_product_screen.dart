@@ -8,6 +8,7 @@ import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
 import '../shared/product_image.dart';
 import '../shared/glass_card.dart';
+import '../../app/theme.dart';
 
 class PublicProductScreen extends ConsumerWidget {
   const PublicProductScreen({super.key, required this.sku});
@@ -19,6 +20,7 @@ class PublicProductScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     final productsAsync = ref.watch(productsProvider);
 
     return Scaffold(
@@ -231,12 +233,12 @@ class PublicProductScreen extends ConsumerWidget {
                                 Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: Colors.green.shade50,
+                                    color: themeExt?.successContainer ?? Colors.green.shade50,
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
                                     Icons.eco_outlined,
-                                    color: Colors.green.shade700,
+                                    color: themeExt?.success ?? Colors.green.shade700,
                                     size: 32,
                                   ),
                                 ),
@@ -249,7 +251,7 @@ class PublicProductScreen extends ConsumerWidget {
                                         l10n.t('ecoFriendlyTitle') ?? 'Sustainable Luxury',
                                         style: theme.textTheme.titleSmall?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.green.shade800,
+                                          color: themeExt?.onSuccessContainer ?? (themeExt?.success ?? Colors.green.shade800),
                                         ),
                                       ),
                                       const SizedBox(height: 4),

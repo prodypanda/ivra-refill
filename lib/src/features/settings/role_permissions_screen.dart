@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/theme.dart';
+import '../../data/ivra_repository.dart';
+import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
-import '../../data/ivra_repository.dart';
-import '../../domain/app_enums.dart';
-import '../../data/ivra_repository.dart';
 import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
-import '../../state/app_state.dart';
-import '../../data/ivra_repository.dart';
-import '../../domain/app_enums.dart';
-import '../../data/ivra_repository.dart';
 
 // Create dedicated providers
 final rolesProvider = FutureProvider<List<String>>((ref) async {
@@ -88,7 +84,9 @@ class RolePermissionsScreen extends ConsumerWidget {
                           DataCell(
                             Icon(
                               permissions[role]?.contains(permission) == true ? Icons.check_circle : Icons.cancel,
-                              color: permissions[role]?.contains(permission) == true ? Colors.green : Colors.grey,
+                              color: permissions[role]?.contains(permission) == true
+                                  ? (theme.extension<IvraThemeExtension>()?.success ?? theme.colorScheme.primary)
+                                  : theme.colorScheme.outlineVariant,
                               size: 20,
                             ),
                           ),

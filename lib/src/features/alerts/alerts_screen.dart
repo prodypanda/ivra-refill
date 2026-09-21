@@ -45,10 +45,10 @@ IconData _alertTypeIcon(AlertType type) {
 }
 
 /// Returns the accent colour for a given severity level.
-Color _severityColor(int severity, ColorScheme colorScheme) {
+Color _severityColor(int severity, ColorScheme colorScheme, [IvraThemeExtension? themeExt]) {
   if (severity >= 3) return colorScheme.error;
-  if (severity == 2) return Colors.amber.shade700;
-  return Colors.blue.shade600;
+  if (severity == 2) return themeExt?.warning ?? Colors.amber.shade700;
+  return themeExt?.info ?? Colors.blue.shade600;
 }
 
 // ---------------------------------------------------------------------------
@@ -772,17 +772,14 @@ class _MetricsSummary extends StatelessWidget {
             label: l10n.t('alertsStatusResolved'),
             value: '$resolvedCount',
             icon: Icons.check_circle_outline_rounded,
-            gradientColors: isBotanical
-                ? [
-                    Colors.green.withValues(alpha: 0.08),
-                    Colors.green.withValues(alpha: 0.02),
-                  ]
-                : [
-                    Colors.green.withValues(alpha: 0.15),
-                    Colors.green.withValues(alpha: 0.05),
-                  ],
-            iconColor: Colors.green.shade700,
-            valueColor: Colors.green.shade800,
+            gradientColors: [
+              (themeExt?.successContainer ?? Colors.green.withValues(alpha: 0.15))
+                  .withValues(alpha: isBotanical ? 0.35 : 0.5),
+              (themeExt?.successContainer ?? Colors.green.withValues(alpha: 0.05))
+                  .withValues(alpha: isBotanical ? 0.1 : 0.2),
+            ],
+            iconColor: themeExt?.success ?? Colors.green.shade700,
+            valueColor: themeExt?.onSuccessContainer ?? (themeExt?.success ?? Colors.green.shade800),
             width: cardWidth,
           ),
         ];
@@ -915,7 +912,7 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
     final isBotanical = themeExt?.isBotanical ?? false;
     final colorScheme = theme.colorScheme;
     final isResolved = widget.alert.isResolved;
-    final severityCol = _severityColor(widget.alert.severity, colorScheme);
+    final severityCol = _severityColor(widget.alert.severity, colorScheme, themeExt);
     final l10n = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
     final effectiveRadius =
@@ -949,7 +946,7 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 24),
         decoration: BoxDecoration(
-          color: Colors.green.shade600,
+          color: themeExt?.success ?? Colors.green.shade600,
           borderRadius: BorderRadius.circular(effectiveRadius),
         ),
         child: const Icon(Icons.check_circle_outline,
@@ -1142,16 +1139,16 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                         Icon(
                                           Icons.check_circle_outline_rounded,
                                           size: 16,
-                                          color: Colors.green.shade600
-                                              .withValues(alpha: 0.6),
+                                          color: (themeExt?.success ?? Colors.green.shade600)
+                                              .withValues(alpha: 0.8),
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
                                           l10n.t('alertsStatusResolved'),
                                           style: theme.textTheme.labelSmall
                                               ?.copyWith(
-                                            color: Colors.green.shade600
-                                                .withValues(alpha: 0.6),
+                                            color: (themeExt?.success ?? Colors.green.shade600)
+                                                .withValues(alpha: 0.8),
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),

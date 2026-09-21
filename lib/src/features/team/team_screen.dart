@@ -1076,7 +1076,7 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: member.isActive
-                            ? Colors.green.withValues(alpha: 0.2)
+                            ? (themeExt?.successContainer ?? Colors.green.withValues(alpha: 0.2))
                             : theme.colorScheme.errorContainer,
                         borderRadius: BorderRadius.circular(6),
                       ),
@@ -1086,7 +1086,7 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                             : l10n.t('teamStatusInactive'),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: member.isActive
-                              ? Colors.green[800]
+                              ? (themeExt?.onSuccessContainer ?? Colors.green[800])
                               : theme.colorScheme.onErrorContainer,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1256,13 +1256,13 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.2),
+                        color: themeExt?.warningContainer ?? Colors.orange.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         l10n.invitationStatusLabel(invitation.status),
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.orange[800],
+                          color: themeExt?.onWarningContainer ?? Colors.orange[800],
                           fontWeight: FontWeight.bold,
                         ),
                       ),

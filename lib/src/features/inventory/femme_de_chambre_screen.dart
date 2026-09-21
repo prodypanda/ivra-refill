@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import '../../app/theme.dart';
 import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
@@ -33,6 +34,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     final isDark = theme.brightness == Brightness.dark;
     
     // Aesthetic gradient background
@@ -118,6 +120,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     final allocationsAsync = ref.watch(housekeeperAllocationsProvider);
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
 
     return AsyncValueView(
       value: allocationsAsync,
@@ -176,21 +179,21 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                         title: l10n.t('inventoryTableEmptyBottlesGeneric'),
                         value: '$totalEmptyBottles',
                         icon: IvraIcons.emptyBottleWithPump,
-                        color: Colors.redAccent,
+                        color: theme.colorScheme.error,
                       ),
                       _buildSummaryCard(
                         context,
                         title: l10n.t('inventoryTableFullBidonsGeneric'),
                         value: '$totalFullBidons',
                         icon: IvraIcons.fullRefillBottle,
-                        color: Colors.blueAccent,
+                        color: themeExt?.info ?? theme.colorScheme.secondary,
                       ),
                       _buildSummaryCard(
                         context,
                         title: l10n.t('inventoryTableOpenBidons'),
                         value: '$totalOpenBidons',
                         icon: IvraIcons.refillAction,
-                        color: Colors.teal,
+                        color: theme.colorScheme.primary,
                       ),
                     ],
                   );
@@ -659,7 +662,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                         ),
                         PopupMenuItem(
                           value: 'delete',
-                          child: Text(l10n.t('deleteGeneric'), style: const TextStyle(color: Colors.red)),
+                          child: Text(l10n.t('deleteGeneric'), style: TextStyle(color: Theme.of(context).colorScheme.error)),
                         ),
                       ],
                     ),
@@ -751,7 +754,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                       ),
                       PopupMenuItem(
                         value: 'delete',
-                        child: Text(l10n.t('deleteGeneric'), style: const TextStyle(color: Colors.red)),
+                        child: Text(l10n.t('deleteGeneric'), style: TextStyle(color: Theme.of(context).colorScheme.error)),
                       ),
                     ],
                   )
@@ -942,7 +945,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                                 ? event.product.nameFr
                                 : event.product.nameEn);
 
-                        final meta = _stockEventMeta(l10n, event);
+                        final meta = _stockEventMeta(context, event);
                         final displayLabel = event.roomNumber != null && event.roomNumber!.isNotEmpty
                             ? (event.eventType == HousekeeperStockEventType.roomPlacement
                                 ? '${meta.label} ${event.roomNumber}'
@@ -1040,6 +1043,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
 
   Widget _buildAllocationCard(BuildContext context, HousekeeperAllocation allocation, String housekeeperId) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final pName = isAr
         ? allocation.product.nameAr
@@ -1173,7 +1177,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                   icon: allocation.product.bottleType == BottleType.withPump
                       ? IvraIcons.fullBottleWithPump
                       : IvraIcons.fullBottleWithoutPump,
-                  color: Colors.green,
+                  color: themeExt?.success ?? theme.colorScheme.primary,
                 ),
                 _buildMiniDetail(
                   context,
@@ -1182,7 +1186,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                   icon: allocation.product.bottleType == BottleType.withPump
                       ? IvraIcons.emptyBottleWithPump
                       : IvraIcons.emptyBottleWithoutPump,
-                  color: Colors.redAccent,
+                  color: theme.colorScheme.error,
                 ),
                 if (allocation.product.isRefillable) ...[
                   _buildMiniDetail(
@@ -1190,21 +1194,21 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                     label: AppLocalizations.of(context).t('inventoryTableFullBidonsGeneric'),
                     value: '${allocation.fullBidons}',
                     icon: IvraIcons.fullRefillBottle,
-                    color: Colors.blueAccent,
+                    color: themeExt?.info ?? theme.colorScheme.secondary,
                   ),
                   _buildMiniDetail(
                     context,
                     label: AppLocalizations.of(context).t('inventoryTableOpenBidons'),
                     value: '${allocation.openBidons}',
                     icon: IvraIcons.refillAction,
-                    color: Colors.teal,
+                    color: theme.colorScheme.primary,
                   ),
                   _buildMiniDetail(
                     context,
                     label: AppLocalizations.of(context).t('inventoryTableEmptyBidons'),
                     value: '${allocation.emptyBidons}',
                     icon: IvraIcons.emptyRefillBottle,
-                    color: Colors.grey,
+                    color: theme.colorScheme.outlineVariant,
                   ),
                 ],
               ],
@@ -1235,8 +1239,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 child: LinearProgressIndicator(
                   value: openBidonPercentage / 100,
                   minHeight: 8,
-                  backgroundColor: Colors.grey.withOpacity(0.1),
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.teal),
+                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                  valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
                 ),
               ),
             ],
@@ -1549,12 +1553,14 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             final theme = Theme.of(context);
+            final themeExt = theme.extension<IvraThemeExtension>();
+            final isAr = Localizations.localeOf(context).languageCode == 'ar';
             final maxVolume = selectedAllocation.product.bidonVolumeMl.toDouble();
             
             return AlertDialog(
               title: Row(
                 children: [
-                  const Icon(Icons.assignment_return, color: Colors.blueAccent),
+                  Icon(Icons.assignment_return, color: themeExt?.info ?? theme.colorScheme.secondary),
                   const SizedBox(width: 10),
                   Text(l10n.t('returnStock')),
                 ],
@@ -1570,38 +1576,37 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                       DropdownButtonFormField<HousekeeperAllocation>(
                         value: selectedAllocation,
                         decoration: InputDecoration(
-                          labelText: l10n.t('inventoryTableProduct'),
-                          border: const OutlineInputBorder(),
+                          labelText: l10n.t('productsTitle'),
+                          prefixIcon: const Icon(Icons.inventory_2_outlined),
                         ),
-                        items: allocations.map((a) {
-                          final isAr = Localizations.localeOf(context).languageCode == 'ar';
+                        items: allocations.map((alloc) {
                           final pName = isAr
-                              ? a.product.nameAr
+                              ? alloc.product.nameAr
                               : (Localizations.localeOf(context).languageCode == 'fr'
-                                  ? a.product.nameFr
-                                  : a.product.nameEn);
+                                  ? alloc.product.nameFr
+                                  : alloc.product.nameEn);
                           return DropdownMenuItem<HousekeeperAllocation>(
-                            value: a,
+                            value: alloc,
                             child: Text(pName),
                           );
                         }).toList(),
-                        onChanged: (val) {
-                          if (val != null) {
+                        onChanged: (newAlloc) {
+                          if (newAlloc != null) {
                             setDialogState(() {
-                              selectedAllocation = val;
-                              fullBottles = val.fullBottles;
-                              emptyBottles = val.emptyBottles;
-                              fullBidons = val.fullBidons;
-                              openBidons = val.openBidons;
-                              emptyBidons = val.emptyBidons;
-                              openBidonVolume = val.openBidonVolumeLeftMl;
+                              selectedAllocation = newAlloc;
+                              fullBottles = 0;
+                              emptyBottles = 0;
+                              fullBidons = 0;
+                              openBidons = 0;
+                              emptyBidons = 0;
+                              openBidonVolume = newAlloc.openBidonVolumeLeftMl;
                             });
                           }
                         },
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
 
-                      // Full Bottles Slider/Counter
+                      // Spinners
                       _buildCounterRow(
                         context,
                         title: l10n.t('fullBottles'),
@@ -1609,7 +1614,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                         max: selectedAllocation.fullBottles,
                         onChanged: (val) => setDialogState(() => fullBottles = val),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Empty Bottles Counter
                       _buildCounterRow(
@@ -1619,9 +1624,9 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                         max: selectedAllocation.emptyBottles,
                         onChanged: (val) => setDialogState(() => emptyBottles = val),
                       ),
-                      const SizedBox(height: 16),
 
                       if (selectedAllocation.product.isRefillable) ...[
+                        const SizedBox(height: 12),
                         // Full Bidons Counter
                         _buildCounterRow(
                           context,
@@ -1630,7 +1635,17 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                           max: selectedAllocation.fullBidons,
                           onChanged: (val) => setDialogState(() => fullBidons = val),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
+
+                        // Empty Bidons Counter
+                        _buildCounterRow(
+                          context,
+                          title: l10n.t('inventoryTableEmptyBidons'),
+                          value: emptyBidons,
+                          max: selectedAllocation.emptyBidons,
+                          onChanged: (val) => setDialogState(() => emptyBidons = val),
+                        ),
+                        const SizedBox(height: 12),
 
                         // Open Bidons Counter
                         _buildCounterRow(
@@ -1641,27 +1656,17 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                           onChanged: (val) {
                             setDialogState(() {
                               openBidons = val;
-                              if (openBidons == 0) {
+                              if (val == 0) {
                                 openBidonVolume = 0.0;
                               } else if (openBidonVolume == 0.0) {
-                                openBidonVolume = maxVolume;
+                                openBidonVolume = selectedAllocation.openBidonVolumeLeftMl;
                               }
                             });
                           },
                         ),
-                        const SizedBox(height: 16),
-
-                        // Empty Bidons Counter
-                        _buildCounterRow(
-                          context,
-                          title: l10n.t('inventoryTableEmptyBidons'),
-                          value: emptyBidons,
-                          max: selectedAllocation.emptyBidons,
-                          onChanged: (val) => setDialogState(() => emptyBidons = val),
-                        ),
 
                         if (openBidons > 0) ...[
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 12),
                           // Slider for Open Bidon Volume
                           Text(
                             '${l10n.t('openBidonVolumeLeft')} (${openBidonVolume.toInt()} ml):',
@@ -1672,7 +1677,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                             min: 0.0,
                             max: maxVolume,
                             divisions: (maxVolume / 50).round(),
-                            activeColor: Colors.teal,
+                            activeColor: theme.colorScheme.primary,
                             onChanged: (val) {
                               setDialogState(() => openBidonVolume = val);
                             },
@@ -1690,8 +1695,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    foregroundColor: Colors.white,
+                    backgroundColor: themeExt?.info ?? theme.colorScheme.secondary,
+                    foregroundColor: themeExt?.onInfo ?? theme.colorScheme.onSecondary,
                   ),
                   onPressed: (fullBottles == 0 &&
                           emptyBottles == 0 &&
@@ -1757,7 +1762,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
         Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.remove_circle_outline, color: Colors.grey),
+              icon: Icon(Icons.remove_circle_outline,
+                  color: value > 0 ? theme.colorScheme.onSurfaceVariant : theme.colorScheme.outlineVariant),
               onPressed: value > 0 ? () => onChanged(value - 1) : null,
             ),
             Container(
@@ -1769,7 +1775,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.add_circle_outline, color: Colors.grey),
+              icon: Icon(Icons.add_circle_outline,
+                  color: (max == null || value < max) ? theme.colorScheme.onSurfaceVariant : theme.colorScheme.outlineVariant),
               onPressed: (max == null || value < max) ? () => onChanged(value + 1) : null,
             ),
           ],
@@ -1840,7 +1847,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                       separatorBuilder: (_, __) => const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final event = events[index];
-                        final meta = _stockEventMeta(l10n, event);
+                        final meta = _stockEventMeta(context, event);
                         final deltas = _stockEventDeltas(l10n, event);
                         final dateStr =
                             DateFormat('yyyy-MM-dd HH:mm').format(event.createdAt.toLocal());
@@ -1893,33 +1900,36 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
   }
 
   ({IconData icon, Color color, String label}) _stockEventMeta(
-    AppLocalizations l10n,
+    BuildContext context,
     HousekeeperStockEvent event,
   ) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     return switch (event.eventType) {
       HousekeeperStockEventType.checkout => (
           icon: Icons.add_shopping_cart_rounded,
-          color: const Color(0xFFD97706),
+          color: themeExt?.warning ?? const Color(0xFFD97706),
           label: l10n.t('stockEventCheckout'),
         ),
       HousekeeperStockEventType.returned => (
           icon: Icons.assignment_return_outlined,
-          color: Colors.blueAccent,
+          color: themeExt?.info ?? theme.colorScheme.secondary,
           label: l10n.t('stockEventReturn'),
         ),
       HousekeeperStockEventType.roomPlacement => (
           icon: Icons.meeting_room_outlined,
-          color: Colors.green,
+          color: themeExt?.success ?? theme.colorScheme.primary,
           label: l10n.t('stockEventRoomPlacement'),
         ),
       HousekeeperStockEventType.refillUse => (
           icon: Icons.water_drop_outlined,
-          color: Colors.teal,
+          color: theme.colorScheme.primary,
           label: l10n.t('stockEventRefillUse'),
         ),
       HousekeeperStockEventType.replaceUse => (
           icon: Icons.swap_horiz_rounded,
-          color: Colors.deepOrange,
+          color: themeExt?.warning ?? theme.colorScheme.secondary,
           label: l10n.t('stockEventReplaceUse'),
         ),
     };

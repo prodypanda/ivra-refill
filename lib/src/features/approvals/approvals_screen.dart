@@ -8,6 +8,7 @@ import '../../domain/app_enums.dart';
 import '../../domain/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
+import '../../app/theme.dart';
 import '../shared/async_value_view.dart';
 import '../shared/empty_state.dart';
 import '../shared/glass_card.dart';
@@ -23,6 +24,8 @@ class ApprovalsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final canReviewRequests = ref.watch(hasPermissionProvider('approve_corrections'));
 
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     final l10n = AppLocalizations.of(context);
     return PageScaffold(
       title: l10n.t('approvals'),
@@ -53,7 +56,7 @@ class ApprovalsScreen extends ConsumerWidget {
                       : DismissDirection.none,
                   background: Container(
                     decoration: BoxDecoration(
-                      color: Colors.green.shade600,
+                      color: themeExt?.success ?? Colors.green,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     alignment: Alignment.centerLeft,
@@ -62,7 +65,7 @@ class ApprovalsScreen extends ConsumerWidget {
                   ),
                   secondaryBackground: Container(
                     decoration: BoxDecoration(
-                      color: Colors.red.shade600,
+                      color: theme.colorScheme.error,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     alignment: Alignment.centerRight,
@@ -148,19 +151,20 @@ class _ApprovalStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     final l10n = AppLocalizations.of(context);
     final color = switch (status) {
-      ApprovalStatus.approved => Colors.green,
+      ApprovalStatus.approved => themeExt?.success ?? Colors.green,
       ApprovalStatus.rejected => theme.colorScheme.error,
-      ApprovalStatus.cancelled => Colors.orange,
-      ApprovalStatus.pending => Colors.blue,
+      ApprovalStatus.cancelled => themeExt?.warning ?? Colors.orange,
+      ApprovalStatus.pending => themeExt?.info ?? Colors.blue,
     };
     final label = l10n.approvalStatusLabel(status);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
+        color: color.withValues(alpha: 0.12),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
@@ -211,6 +215,9 @@ class _ApprovalCardState extends State<_ApprovalCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final successColor = themeExt?.success ?? Colors.green;
+    final onSuccessColor = themeExt?.onSuccess ?? Colors.white;
     final request = widget.request;
     final disableAnim = MediaQuery.maybeOf(context)?.disableAnimations == true;
     final cappedIndex = widget.staggerIndex.clamp(0, 6);
@@ -324,13 +331,13 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                           children: [
                             Text(
                               l10n.t('approvalsNewValue'),
-                              style: theme.textTheme.labelSmall?.copyWith(color: Colors.green),
+                              style: theme.textTheme.labelSmall?.copyWith(color: successColor),
                             ),
                             Text(
                               request.newValue,
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.green[700],
+                                color: successColor,
                               ),
                             ),
                           ],
@@ -360,8 +367,8 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                         icon: const Icon(Icons.check_outlined),
                         label: Text(l10n.t('approvalsApprove')),
                         style: FilledButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
+                          backgroundColor: successColor,
+                          foregroundColor: onSuccessColor,
                           minimumSize: const Size(44, 44),
                         ),
                         onPressed: widget.onApprove,

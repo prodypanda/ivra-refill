@@ -264,7 +264,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               label: l10n.t('metricRooms'),
               value: data.roomCount,
               icon: Icons.meeting_room_outlined,
-              iconColor: isBotanical ? const Color(0xFF10B981) : Colors.orange,
+              iconColor: themeExt?.info ?? theme.colorScheme.primary,
               staggerIndex: visibleCards.length,
               onTap: () => context.go('/rooms'),
             ));
@@ -274,7 +274,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 label: l10n.t('metricPendingApprovals'),
                 value: data.pendingApprovals,
                 icon: Icons.fact_check_outlined,
-                iconColor: isBotanical ? const Color(0xFFD97706) : Colors.amber.shade800,
+                iconColor: themeExt?.warning ?? theme.colorScheme.tertiary,
                 staggerIndex: visibleCards.length,
                 onTap: () => context.go('/approvals'),
               ));
@@ -295,7 +295,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               label: l10n.t('metricBottlesToReplace'),
               value: data.bottlesToReplace,
               icon: IvraIcons.replaceAction,
-              iconColor: isBotanical ? const Color(0xFF059669) : Colors.orange.shade700,
+              iconColor: themeExt?.warning ?? theme.colorScheme.error,
               staggerIndex: visibleCards.length,
               onTap: () => context.go('/rooms'),
             ));
@@ -305,7 +305,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 label: l10n.t('metricLowStockProducts'),
                 value: data.lowStockProducts,
                 icon: Icons.inventory_2_outlined,
-                iconColor: isBotanical ? const Color(0xFF0D9488) : Colors.indigo.shade600,
+                iconColor: theme.colorScheme.secondary,
                 staggerIndex: visibleCards.length,
                 onTap: () => context.go('/inventory'),
               ));

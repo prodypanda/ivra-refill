@@ -763,7 +763,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                     message: l10n.t('roomsStatusRefillNeeded'),
                     child: Icon(
                       Icons.hourglass_empty_rounded,
-                      color: Colors.orange.shade700,
+                      color: themeExt?.warning ?? Colors.orange.shade700,
                       size: 20,
                     ),
                   ),
@@ -829,6 +829,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     final userIsHotelScoped =
         userHotelId != null && hotels.any((hotel) => hotel.id == userHotelId);
     final isScoped = userIsHotelScoped || hotels.length == 1;
+    final themeExt = theme.extension<IvraThemeExtension>();
 
     return GlassCard(
       padding: const EdgeInsets.all(16),
@@ -892,7 +893,7 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                   decoration: InputDecoration(
                     hintText: l10n.t('roomsSearchPlaceholder'),
                     prefixIcon:
-                        const Icon(Icons.search, size: 20, color: Colors.grey),
+                        Icon(Icons.search, size: 20, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -943,8 +944,8 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                   controller: _productSearchController,
                   decoration: InputDecoration(
                     hintText: l10n.t('roomsSearchProductPlaceholder'),
-                    prefixIcon: const Icon(Icons.spa_outlined,
-                        size: 20, color: Colors.grey),
+                    prefixIcon: Icon(Icons.spa_outlined,
+                        size: 20, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -1066,15 +1067,15 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 ),
                 const SizedBox(width: 8),
                 FilterChip(
-                  avatar: const Icon(Icons.check_circle_outline,
-                      size: 16, color: Colors.green),
+                  avatar: Icon(Icons.check_circle_outline,
+                      size: 16, color: themeExt?.success ?? Colors.green),
                   label: Text(l10n.t('roomsStatusAllOk')),
                   selected: _statusFilter == 'ok',
-                  selectedColor: Colors.green.withValues(alpha: 0.15),
-                  checkmarkColor: Colors.green,
+                  selectedColor: themeExt?.successContainer ?? Colors.green.withValues(alpha: 0.15),
+                  checkmarkColor: themeExt?.success ?? Colors.green,
                   labelStyle: TextStyle(
                     color: _statusFilter == 'ok'
-                        ? Colors.green.shade800
+                        ? (themeExt?.onSuccessContainer ?? Colors.green.shade800)
                         : theme.colorScheme.onSurface,
                     fontWeight: _statusFilter == 'ok'
                         ? FontWeight.bold
@@ -1088,14 +1089,14 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                 const SizedBox(width: 8),
                 FilterChip(
                   avatar: Icon(Icons.hourglass_empty_rounded,
-                      size: 16, color: Colors.orange.shade700),
+                      size: 16, color: themeExt?.warning ?? Colors.orange.shade700),
                   label: Text(l10n.t('roomsStatusRefillNeeded')),
                   selected: _statusFilter == 'refill',
-                  selectedColor: Colors.orange.withValues(alpha: 0.15),
-                  checkmarkColor: Colors.orange.shade700,
+                  selectedColor: themeExt?.warningContainer ?? Colors.orange.withValues(alpha: 0.15),
+                  checkmarkColor: themeExt?.warning ?? Colors.orange.shade700,
                   labelStyle: TextStyle(
                     color: _statusFilter == 'refill'
-                        ? Colors.orange.shade800
+                        ? (themeExt?.onWarningContainer ?? Colors.orange.shade800)
                         : theme.colorScheme.onSurface,
                     fontWeight: _statusFilter == 'refill'
                         ? FontWeight.bold
@@ -1400,7 +1401,7 @@ class _CompactRoomTile extends ConsumerWidget {
     final tileRadius =
         themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 16.0);
 
-    Color overallColor = Colors.green;
+    Color overallColor = themeExt?.success ?? Colors.green;
     var overallIcon = Icons.check_circle_outline;
 
     final hasCritical = roomProducts.any((item) =>
@@ -1414,13 +1415,13 @@ class _CompactRoomTile extends ConsumerWidget {
         roomProducts.any((item) => item.status == BottleStatus.needsRefill);
 
     if (roomProducts.isEmpty) {
-      overallColor = Colors.blue.shade600;
+      overallColor = themeExt?.info ?? Colors.blue.shade600;
       overallIcon = Icons.info_outline;
     } else if (hasCritical) {
       overallColor = theme.colorScheme.error;
       overallIcon = Icons.warning_amber_rounded;
     } else if (hasWarning) {
-      overallColor = Colors.orange.shade700;
+      overallColor = themeExt?.warning ?? Colors.orange.shade700;
       overallIcon = Icons.hourglass_empty_rounded;
     }
 
@@ -2500,7 +2501,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
               context: context,
               builder: (ctx) {
                 return AlertDialog(
-                  icon: Icon(Icons.inventory_2_outlined, color: Colors.orange.shade700, size: 36),
+                  icon: Icon(Icons.inventory_2_outlined, color: Theme.of(ctx).extension<IvraThemeExtension>()?.warning ?? Colors.orange.shade700, size: 36),
                   title: Text(l10n.t('scanAssignAutoAddTitle')),
                   content: Text(
                     l10n.tParams('scanAssignAutoAddMessage', {'product': productName}),
@@ -2746,7 +2747,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
     final canEditRoomProducts = isHousekeeper || canManageRooms;
 
     var overallStatus = l10n.t('roomsStatusAllOk');
-    var overallColor = Colors.orange.shade700;
+    var overallColor = themeExt?.success ?? Colors.green;
     var overallIcon = Icons.check_circle_outline;
 
     final hasCritical = roomProducts.any((item) =>
@@ -2761,7 +2762,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
 
     if (roomProducts.isEmpty) {
       overallStatus = l10n.t('roomsStatusNoProducts');
-      overallColor = Colors.blue.shade600;
+      overallColor = themeExt?.info ?? Colors.blue.shade600;
       overallIcon = Icons.info_outline;
     } else if (hasCritical) {
       overallStatus = l10n.t('roomsStatusAttentionRequired');
@@ -2769,10 +2770,10 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
       overallIcon = Icons.warning_amber_rounded;
     } else if (hasWarning) {
       overallStatus = l10n.t('roomsStatusRefillNeeded');
-      overallColor = Colors.orange.shade700;
+      overallColor = themeExt?.warning ?? Colors.orange.shade700;
       overallIcon = Icons.hourglass_empty_rounded;
     } else {
-      overallColor = Colors.green;
+      overallColor = themeExt?.success ?? Colors.green;
       overallIcon = Icons.check_circle_outline;
     }
 
@@ -3372,13 +3373,13 @@ class _RoomsMobileSummary extends StatelessWidget {
             value: refill,
             label: l10n.t('roomsStatusRefillNeeded'),
             icon: Icons.hourglass_empty_rounded,
-            color: Colors.orange.shade700,
+            color: themeExt?.warning ?? Colors.orange.shade700,
           ),
           _RoomsSummaryTile(
             value: ok,
             label: l10n.t('roomsStatusAllOk'),
             icon: Icons.check_circle_outline,
-            color: Colors.green.shade700,
+            color: themeExt?.success ?? Colors.green.shade700,
           ),
         ],
       ),
@@ -3445,6 +3446,7 @@ class _RoomCardProductRow extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     final currentUser =
         ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final canSubmitEditRequests =
@@ -3499,8 +3501,8 @@ class _RoomCardProductRow extends ConsumerWidget {
       BottleStatus.damaged ||
       BottleStatus.lost =>
         theme.colorScheme.error,
-      BottleStatus.needsRefill => Colors.orange.shade700,
-      _ => Colors.green.shade700,
+      BottleStatus.needsRefill => themeExt?.warning ?? Colors.orange.shade700,
+      _ => themeExt?.success ?? Colors.green.shade700,
     };
 
     Future<void> performRefill() async {
@@ -4550,7 +4552,7 @@ class _RoomEditRequestDialogState
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Text(
                         l10n.t('noProductsFound'),
-                        style: TextStyle(color: Colors.grey.shade500),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                       ),
                     )
                   else

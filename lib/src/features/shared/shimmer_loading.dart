@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../app/theme.dart';
+
 class ShimmerLoading extends StatelessWidget {
   const ShimmerLoading({
     super.key,
@@ -15,20 +17,27 @@ class ShimmerLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isLight = theme.brightness == Brightness.light;
+    final baseColor = themeExt?.shimmerBase ??
+        (isLight ? Colors.grey.shade200 : Colors.grey.shade800);
+    final highlightColor = themeExt?.shimmerHighlight ??
+        (isLight ? Colors.grey.shade50 : Colors.grey.shade700);
+
     // Shimmer placeholders are purely decorative loading affordances. Hide them
     // from assistive technologies so screen-reader users are not read a stream
     // of meaningless empty boxes while content loads.
     return ExcludeSemantics(
       child: Shimmer.fromColors(
-        baseColor: isLight ? Colors.grey.shade200 : Colors.grey.shade800,
-        highlightColor: isLight ? Colors.grey.shade50 : Colors.grey.shade700,
+        baseColor: baseColor,
+        highlightColor: highlightColor,
         period: const Duration(milliseconds: 1500),
         child: Container(
           width: width,
           height: height,
           decoration: BoxDecoration(
-            color: isLight ? Colors.white : Colors.black,
+            color: baseColor,
             borderRadius: BorderRadius.circular(borderRadius),
           ),
         ),

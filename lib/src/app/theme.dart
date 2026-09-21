@@ -20,6 +20,20 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
     required this.cardShadowColor,
     required this.buttonBorderRadius,
     required this.buttonLetterSpacing,
+    required this.success,
+    required this.onSuccess,
+    required this.successContainer,
+    required this.onSuccessContainer,
+    required this.warning,
+    required this.onWarning,
+    required this.warningContainer,
+    required this.onWarningContainer,
+    required this.info,
+    required this.onInfo,
+    required this.infoContainer,
+    required this.onInfoContainer,
+    required this.shimmerBase,
+    required this.shimmerHighlight,
   });
 
   final AppThemeStyle style;
@@ -33,6 +47,22 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
   final Color cardShadowColor;
   final double buttonBorderRadius;
   final double buttonLetterSpacing;
+
+  // Semantic color roles
+  final Color success;
+  final Color onSuccess;
+  final Color successContainer;
+  final Color onSuccessContainer;
+  final Color warning;
+  final Color onWarning;
+  final Color warningContainer;
+  final Color onWarningContainer;
+  final Color info;
+  final Color onInfo;
+  final Color infoContainer;
+  final Color onInfoContainer;
+  final Color shimmerBase;
+  final Color shimmerHighlight;
 
   bool get isBotanical => style == AppThemeStyle.botanicalHaute;
 
@@ -49,6 +79,20 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
     Color? cardShadowColor,
     double? buttonBorderRadius,
     double? buttonLetterSpacing,
+    Color? success,
+    Color? onSuccess,
+    Color? successContainer,
+    Color? onSuccessContainer,
+    Color? warning,
+    Color? onWarning,
+    Color? warningContainer,
+    Color? onWarningContainer,
+    Color? info,
+    Color? onInfo,
+    Color? infoContainer,
+    Color? onInfoContainer,
+    Color? shimmerBase,
+    Color? shimmerHighlight,
   }) {
     return IvraThemeExtension(
       style: style ?? this.style,
@@ -62,6 +106,20 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
       cardShadowColor: cardShadowColor ?? this.cardShadowColor,
       buttonBorderRadius: buttonBorderRadius ?? this.buttonBorderRadius,
       buttonLetterSpacing: buttonLetterSpacing ?? this.buttonLetterSpacing,
+      success: success ?? this.success,
+      onSuccess: onSuccess ?? this.onSuccess,
+      successContainer: successContainer ?? this.successContainer,
+      onSuccessContainer: onSuccessContainer ?? this.onSuccessContainer,
+      warning: warning ?? this.warning,
+      onWarning: onWarning ?? this.onWarning,
+      warningContainer: warningContainer ?? this.warningContainer,
+      onWarningContainer: onWarningContainer ?? this.onWarningContainer,
+      info: info ?? this.info,
+      onInfo: onInfo ?? this.onInfo,
+      infoContainer: infoContainer ?? this.infoContainer,
+      onInfoContainer: onInfoContainer ?? this.onInfoContainer,
+      shimmerBase: shimmerBase ?? this.shimmerBase,
+      shimmerHighlight: shimmerHighlight ?? this.shimmerHighlight,
     );
   }
 
@@ -80,8 +138,29 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
       cardShadowColor: Color.lerp(cardShadowColor, other.cardShadowColor, t) ?? cardShadowColor,
       buttonBorderRadius: lerpDouble(buttonBorderRadius, other.buttonBorderRadius, t) ?? buttonBorderRadius,
       buttonLetterSpacing: lerpDouble(buttonLetterSpacing, other.buttonLetterSpacing, t) ?? buttonLetterSpacing,
+      success: Color.lerp(success, other.success, t) ?? success,
+      onSuccess: Color.lerp(onSuccess, other.onSuccess, t) ?? onSuccess,
+      successContainer: Color.lerp(successContainer, other.successContainer, t) ?? successContainer,
+      onSuccessContainer: Color.lerp(onSuccessContainer, other.onSuccessContainer, t) ?? onSuccessContainer,
+      warning: Color.lerp(warning, other.warning, t) ?? warning,
+      onWarning: Color.lerp(onWarning, other.onWarning, t) ?? onWarning,
+      warningContainer: Color.lerp(warningContainer, other.warningContainer, t) ?? warningContainer,
+      onWarningContainer: Color.lerp(onWarningContainer, other.onWarningContainer, t) ?? onWarningContainer,
+      info: Color.lerp(info, other.info, t) ?? info,
+      onInfo: Color.lerp(onInfo, other.onInfo, t) ?? onInfo,
+      infoContainer: Color.lerp(infoContainer, other.infoContainer, t) ?? infoContainer,
+      onInfoContainer: Color.lerp(onInfoContainer, other.onInfoContainer, t) ?? onInfoContainer,
+      shimmerBase: Color.lerp(shimmerBase, other.shimmerBase, t) ?? shimmerBase,
+      shimmerHighlight: Color.lerp(shimmerHighlight, other.shimmerHighlight, t) ?? shimmerHighlight,
     );
   }
+}
+
+extension IvraSemanticColors on ThemeData {
+  IvraThemeExtension? get ivraExt => extension<IvraThemeExtension>();
+  Color get successColor => ivraExt?.success ?? const Color(0xFF10B981);
+  Color get warningColor => ivraExt?.warning ?? const Color(0xFFF59E0B);
+  Color get infoColor => ivraExt?.info ?? const Color(0xFF0284C7);
 }
 
 ThemeData buildIvraTheme(
@@ -180,6 +259,20 @@ ThemeData _buildSolarInfusionTheme(Brightness brightness, bool isLight) {
     cardShadowColor: const Color(0xFF92400E),
     buttonBorderRadius: 999.0,
     buttonLetterSpacing: 0.0,
+    success: isLight ? const Color(0xFF2E6B34) : const Color(0xFF81C784),
+    onSuccess: isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0F3814),
+    successContainer: isLight ? const Color(0xFFD5ECD5) : const Color(0xFF1B4321),
+    onSuccessContainer: isLight ? const Color(0xFF0F3814) : const Color(0xFFB2E2B5),
+    warning: isLight ? const Color(0xFFB45309) : const Color(0xFFFFB74D),
+    onWarning: isLight ? const Color(0xFFFFFFFF) : const Color(0xFF422200),
+    warningContainer: isLight ? const Color(0xFFFEF3C7) : const Color(0xFF5D3500),
+    onWarningContainer: isLight ? const Color(0xFF451A03) : const Color(0xFFFFDDB8),
+    info: isLight ? const Color(0xFF1D5A85) : const Color(0xFF82B6E6),
+    onInfo: isLight ? const Color(0xFFFFFFFF) : const Color(0xFF00324E),
+    infoContainer: isLight ? const Color(0xFFD6EEFF) : const Color(0xFF004971),
+    onInfoContainer: isLight ? const Color(0xFF00344F) : const Color(0xFFC7E7FF),
+    shimmerBase: isLight ? const Color(0xFFF2E7DC) : const Color(0xFF2B241D),
+    shimmerHighlight: isLight ? const Color(0xFFFFF8F3) : const Color(0xFF3B3229),
   );
 
   return ThemeData(
@@ -442,6 +535,20 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
     cardShadowColor: const Color(0xFF021B14).withValues(alpha: 0.06),
     buttonBorderRadius: 6.0,
     buttonLetterSpacing: 1.2,
+    success: isLight ? const Color(0xFF065F46) : const Color(0xFF34D399),
+    onSuccess: isLight ? const Color(0xFFFFFFFF) : const Color(0xFF022C22),
+    successContainer: isLight ? const Color(0xFFD1FAE5) : const Color(0xFF064E3B),
+    onSuccessContainer: isLight ? const Color(0xFF022C22) : const Color(0xFFA7F3D0),
+    warning: isLight ? const Color(0xFFB45309) : const Color(0xFFFCD34D),
+    onWarning: isLight ? const Color(0xFFFFFFFF) : const Color(0xFF451A03),
+    warningContainer: isLight ? const Color(0xFFFEF3C7) : const Color(0xFF78350F),
+    onWarningContainer: isLight ? const Color(0xFF451A03) : const Color(0xFFFEF3C7),
+    info: isLight ? const Color(0xFF0F5B68) : const Color(0xFF5EEAD4),
+    onInfo: isLight ? const Color(0xFFFFFFFF) : const Color(0xFF00373E),
+    infoContainer: isLight ? const Color(0xFFCCF2F4) : const Color(0xFF0F4E56),
+    onInfoContainer: isLight ? const Color(0xFF02363E) : const Color(0xFFA5F3FC),
+    shimmerBase: isLight ? const Color(0xFFE3EFE8) : const Color(0xFF14241E),
+    shimmerHighlight: isLight ? const Color(0xFFF2FBF6) : const Color(0xFF1D352C),
   );
 
   final baseTextTheme = GoogleFonts.outfitTextTheme(

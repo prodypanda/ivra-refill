@@ -23,6 +23,7 @@ import '../shared/refill_percentage_dialog.dart';
 import '../../ui/ivra_icons.dart';
 import 'rooms_screen.dart'; // Reuses exposed dialog functions: showRefillHistory, showMarkDamagedDialog, showMarkLostDialog, replaceBottle
 import '../../services/qr_code_pdf_service.dart';
+import '../../app/theme.dart';
 
 enum ActionResult { none, success, failure }
 enum _QrTab { scan, generate }
@@ -1823,7 +1824,10 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     required String language,
   }) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     final colorScheme = theme.colorScheme;
+    final successColor = themeExt?.success ?? Colors.green;
+    final warningColor = themeExt?.warning ?? Colors.orange;
     final l10n = AppLocalizations.of(context);
     final inventoryAsync = ref.watch(inventoryProvider);
     final productsAsync = ref.watch(productsProvider);
@@ -1843,7 +1847,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                 children: [
                   Icon(
                     isSuccess ? Icons.check_circle_rounded : Icons.error_outline_rounded,
-                    color: isSuccess ? Colors.green : colorScheme.error,
+                    color: isSuccess ? successColor : colorScheme.error,
                     size: 36,
                   ),
                   const SizedBox(width: 16),
@@ -1854,7 +1858,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                           : (l10n.t('scanAssignFailed') ?? 'Assignment Failed'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: isSuccess ? Colors.green : colorScheme.error,
+                        color: isSuccess ? successColor : colorScheme.error,
                       ),
                     ),
                   ),
@@ -2024,13 +2028,13 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: hasStock
-                            ? Colors.green.withValues(alpha: 0.1)
-                            : Colors.orange.withValues(alpha: 0.1),
+                            ? (themeExt?.successContainer ?? successColor.withValues(alpha: 0.12))
+                            : (themeExt?.warningContainer ?? warningColor.withValues(alpha: 0.12)),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: hasStock
-                              ? Colors.green.withValues(alpha: 0.3)
-                              : Colors.orange.withValues(alpha: 0.3),
+                              ? successColor.withValues(alpha: 0.35)
+                              : warningColor.withValues(alpha: 0.35),
                         ),
                       ),
                       child: Row(
@@ -2038,7 +2042,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                           Icon(
                             hasStock ? Icons.inventory_2_rounded : Icons.warning_amber_rounded,
                             size: 18,
-                            color: hasStock ? Colors.green : Colors.orange,
+                            color: hasStock ? successColor : warningColor,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
@@ -2050,7 +2054,9 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                       'Out of stock — 1 unit will be auto-added to inventory then assigned'),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: hasStock ? Colors.green.shade700 : Colors.orange.shade700,
+                                color: hasStock
+                                    ? (themeExt?.onSuccessContainer ?? successColor)
+                                    : (themeExt?.onWarningContainer ?? warningColor),
                               ),
                             ),
                           ),
@@ -2063,9 +2069,11 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                     Text(
                       l10n.t('scanAssignDescription') ??
                           'This product is not yet assigned to this room. Tap below to assign it.',
-                      style: theme.textTheme.bodyMedium,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
 
                     // Action buttons
                     if (_isPerformingAction)
@@ -2099,7 +2107,8 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                           label: Text(l10n.t('scanAssignAutoAdd') ?? 'Add to Inventory & Assign'),
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
-                            backgroundColor: Colors.orange,
+                            backgroundColor: warningColor,
+                            foregroundColor: themeExt?.onWarning ?? Colors.white,
                           ),
                         ),
                       const SizedBox(height: 12),

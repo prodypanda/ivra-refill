@@ -512,6 +512,8 @@ class _DrawerFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final footerColor = theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       child: Column(
@@ -520,18 +522,18 @@ class _DrawerFooter extends StatelessWidget {
         children: [
           Text(
             'v$appVersion',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
-              color: Colors.grey,
+              color: footerColor,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'iVRA Refill, by Pulire Tunisia',
             style: TextStyle(
               fontSize: 10,
-              color: Colors.grey,
+              color: footerColor,
             ),
             textAlign: TextAlign.center,
           ),
@@ -548,10 +550,16 @@ Widget _buildNavItemIcon(WidgetRef ref, _NavItem item) {
       data: (alerts) {
         final openCount = alerts.where((a) => !a.isResolved).length;
         if (openCount > 0) {
-          return Badge(
-            backgroundColor: Colors.orange,
-            label: Text('$openCount'),
-            child: Icon(item.icon),
+          return Builder(
+            builder: (context) {
+              final theme = Theme.of(context);
+              final themeExt = theme.extension<IvraThemeExtension>();
+              return Badge(
+                backgroundColor: themeExt?.warning ?? theme.colorScheme.error,
+                label: Text('$openCount'),
+                child: Icon(item.icon),
+              );
+            },
           );
         }
         return Icon(item.icon);

@@ -524,7 +524,7 @@ class _AuthorizationsScreenState extends ConsumerState<AuthorizationsScreen> wit
                                                           ),
                                                         ),
                                                       ),
-                                                      const Text('|', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                                                      Text('|', style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.outlineVariant)),
                                                       InkWell(
                                                         onTap: () => _bulkSetPermissions(role, false),
                                                         child: Padding(

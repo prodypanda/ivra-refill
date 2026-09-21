@@ -365,7 +365,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   decoration: InputDecoration(
                     hintText: l10n.t('roomsSearchProductPlaceholder'),
                     prefixIcon:
-                        const Icon(Icons.search, size: 20, color: Colors.grey),
+                        Icon(Icons.search, size: 20, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -462,7 +462,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                const Icon(Icons.sort, size: 18, color: Colors.grey),
+                Icon(Icons.sort, size: 18, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
                 const SizedBox(width: 8),
                 ChoiceChip(
                   label: Text(l10n.t('sortNameAsc') ?? 'Name (A-Z)'),
@@ -1073,7 +1073,7 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                 icon: widget.item.product.bottleType == BottleType.withPump
                     ? IvraIcons.fullBottleWithPump
                     : IvraIcons.fullBottleWithoutPump,
-                color: Colors.orange,
+                color: themeExt?.warning ?? Colors.orange,
               ),
               if (widget.item.product.isRefillable) ...[
                 const SizedBox(height: 12),
@@ -1949,7 +1949,7 @@ class _SuggestedOrders extends StatelessWidget {
                       'orderNewBottlesText',
                       {'count': '${order.bottlesToOrder}'},
                     ),
-                    Colors.orange,
+                    themeExt?.warning ?? Colors.orange,
                   ),
                   const SizedBox(height: 8),
                 ],
@@ -2494,14 +2494,14 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                   void addDeltaSpan(int delta, String label) {
                     if (delta == 0) return;
                     if (spans.isNotEmpty) {
-                      spans.add(const TextSpan(
-                          text: ', ', style: TextStyle(color: Colors.grey)));
+                      spans.add(TextSpan(
+                          text: ', ', style: TextStyle(color: theme.colorScheme.outlineVariant)));
                     }
                     final sign = delta > 0 ? "+" : "";
                     spans.add(TextSpan(
                       text: '$sign$delta ',
                       style: TextStyle(
-                        color: delta > 0 ? Colors.green : Colors.redAccent,
+                        color: delta > 0 ? (themeExt?.success ?? Colors.green) : theme.colorScheme.error,
                         fontWeight: FontWeight.bold,
                       ),
                     ));
@@ -2532,7 +2532,7 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                           ?.fullName ??
                       e.performedBy;
 
-                  final color = Colors.orangeAccent;
+                  final color = themeExt?.warning ?? Colors.orangeAccent;
 
                   allEvents.add(_UnifiedHistoryItem(
                     id: e.id,
@@ -2654,7 +2654,7 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                               title: l10n.t('productHistoryStatReplacements'),
                               value: replacementsCount.toString(),
                               icon: IvraIcons.replaceAction,
-                              color: Colors.blueAccent,
+                              color: themeExt?.info ?? Colors.blueAccent,
                             ),
                             const SizedBox(width: 8),
                             _buildStatCard(
@@ -2662,7 +2662,7 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                               title: l10n.t('productHistoryStatAdjustments'),
                               value: adjustmentsCount.toString(),
                               icon: Icons.inventory_2_outlined,
-                              color: Colors.orangeAccent,
+                              color: themeExt?.warning ?? Colors.orangeAccent,
                             ),
                           ],
                         ),
