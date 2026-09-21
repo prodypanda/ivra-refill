@@ -485,75 +485,87 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                                   : null,
                             );
                           })(),
-                          if (_expandedFloors.contains(floor) ||
-                              _searchQuery.isNotEmpty ||
-                              _productSearchQuery.isNotEmpty) ...[
-                            const SizedBox(height: 12),
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              transitionBuilder: (child, animation) =>
-                                  FadeTransition(
-                                opacity: animation,
-                                child: SlideTransition(
-                                  position: Tween<Offset>(
-                                    begin: const Offset(0, 0.05),
-                                    end: Offset.zero,
-                                  ).animate(animation),
-                                  child: child,
+                          AnimatedCrossFade(
+                            duration: MediaQuery.maybeOf(context)?.disableAnimations == true
+                                ? Duration.zero
+                                : const Duration(milliseconds: 280),
+                            firstCurve: Curves.easeOutCubic,
+                            secondCurve: Curves.easeInCubic,
+                            sizeCurve: Curves.easeOutCubic,
+                            crossFadeState: (_expandedFloors.contains(floor) ||
+                                    _searchQuery.isNotEmpty ||
+                                    _productSearchQuery.isNotEmpty)
+                                ? CrossFadeState.showFirst
+                                : CrossFadeState.showSecond,
+                            firstChild: Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                transitionBuilder: (child, animation) =>
+                                    FadeTransition(
+                                  opacity: animation,
+                                  child: SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0, 0.05),
+                                      end: Offset.zero,
+                                    ).animate(animation),
+                                    child: child,
+                                  ),
                                 ),
-                              ),
-                              child: _showDetailedView
-                                  ? Column(
-                                      key: const ValueKey('detailed_view'),
-                                      children: [
-                                        for (final group in _sortRoomsInFloor(
-                                            roomsByFloor[floor]!))
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 16),
-                                            child: _RoomCard(
-                                              roomId: group.roomId,
-                                              roomProducts: group.products,
-                                              roomNumber: group.roomNumber,
-                                              floorNumber: group.floorNumber,
-                                              hotelId: group.hotelId,
-                                              onDeleteRoom: canDeleteRooms
-                                                  ? () => _confirmDeleteRoom(
-                                                      context,
-                                                      ref,
-                                                      group.roomId,
-                                                      group.roomNumber)
-                                                  : null,
-                                              productSearchQuery:
-                                                  _productSearchQuery,
-                                            ),
-                                          ),
-                                      ],
-                                    )
-                                  : Padding(
-                                      key: const ValueKey('compact_view'),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      child: Wrap(
-                                        spacing: 12,
-                                        runSpacing: 12,
+                                child: _showDetailedView
+                                    ? Column(
+                                        key: const ValueKey('detailed_view'),
                                         children: [
                                           for (final group in _sortRoomsInFloor(
                                               roomsByFloor[floor]!))
-                                            _CompactRoomTile(
-                                              roomNumber: group.roomNumber,
-                                              roomProducts: group.products,
-                                              onTap: () =>
-                                                  _showRoomDetailsDialog(
-                                                context,
-                                                group,
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 16),
+                                              child: _RoomCard(
+                                                roomId: group.roomId,
+                                                roomProducts: group.products,
+                                                roomNumber: group.roomNumber,
+                                                floorNumber: group.floorNumber,
+                                                hotelId: group.hotelId,
+                                                onDeleteRoom: canDeleteRooms
+                                                    ? () => _confirmDeleteRoom(
+                                                        context,
+                                                        ref,
+                                                        group.roomId,
+                                                        group.roomNumber)
+                                                    : null,
+                                                productSearchQuery:
+                                                    _productSearchQuery,
                                               ),
                                             ),
                                         ],
+                                      )
+                                    : Padding(
+                                        key: const ValueKey('compact_view'),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Wrap(
+                                          spacing: 12,
+                                          runSpacing: 12,
+                                          children: [
+                                            for (final group in _sortRoomsInFloor(
+                                                roomsByFloor[floor]!))
+                                              _CompactRoomTile(
+                                                roomNumber: group.roomNumber,
+                                                roomProducts: group.products,
+                                                onTap: () =>
+                                                    _showRoomDetailsDialog(
+                                                  context,
+                                                  group,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
+                              ),
                             ),
-                          ],
+                            secondChild: const SizedBox.shrink(),
+                          ),
                         ],
                         const SizedBox(height: 40),
                       ],

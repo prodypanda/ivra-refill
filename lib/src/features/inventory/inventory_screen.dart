@@ -1286,27 +1286,37 @@ class _VisualStockBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
-            FractionallySizedBox(
-              widthFactor: percentage,
-              child: Container(
-                height: 8,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      displayColor.withValues(alpha: 0.7),
-                      displayColor,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: displayColor.withValues(alpha: 0.4),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+            TweenAnimationBuilder<double>(
+              key: ValueKey('stock_bar_${label}_$value'),
+              tween: Tween<double>(begin: 0.0, end: percentage),
+              duration: MediaQuery.maybeOf(context)?.disableAnimations == true
+                  ? Duration.zero
+                  : const Duration(milliseconds: 400),
+              curve: Curves.easeOutCubic,
+              builder: (context, animatedPercentage, _) {
+                return FractionallySizedBox(
+                  widthFactor: animatedPercentage,
+                  child: Container(
+                    height: 8,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          displayColor.withValues(alpha: 0.7),
+                          displayColor,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: displayColor.withValues(alpha: 0.4),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
             // Threshold marker
             Positioned(

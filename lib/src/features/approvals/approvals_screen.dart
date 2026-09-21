@@ -43,12 +43,12 @@ class ApprovalsScreen extends ConsumerWidget {
           }
           return Column(
           children: [
-            for (final request in requests)
+            for (var i = 0; i < requests.length; i++)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Dismissible(
-                  key: ValueKey(request.id),
-                  direction: (canReviewRequests && request.status == ApprovalStatus.pending)
+                  key: ValueKey(requests[i].id),
+                  direction: (canReviewRequests && requests[i].status == ApprovalStatus.pending)
                       ? DismissDirection.horizontal
                       : DismissDirection.none,
                   background: Container(
@@ -73,10 +73,10 @@ class ApprovalsScreen extends ConsumerWidget {
                     HapticFeedback.lightImpact();
                     try {
                       if (direction == DismissDirection.startToEnd) {
-                        await ref.read(repositoryProvider).approveRequest(approvalRequestId: request.id);
+                        await ref.read(repositoryProvider).approveRequest(approvalRequestId: requests[i].id);
                         if (context.mounted) PremiumSnackbar.show(context, l10n.t('approvalsApproved'), icon: Icons.check_circle_outline);
                       } else {
-                        await ref.read(repositoryProvider).rejectRequest(approvalRequestId: request.id);
+                        await ref.read(repositoryProvider).rejectRequest(approvalRequestId: requests[i].id);
                         if (context.mounted) PremiumSnackbar.show(context, l10n.t('approvalsRejected'), icon: Icons.info_outline);
                       }
                       _refreshAfterReview(ref);
@@ -86,11 +86,12 @@ class ApprovalsScreen extends ConsumerWidget {
                     }
                   },
                   child: _ApprovalCard(
-                    request: request,
+                    staggerIndex: i,
+                    request: requests[i],
                     canReviewRequests: canReviewRequests,
                     onApprove: () async {
                       try {
-                        await ref.read(repositoryProvider).approveRequest(approvalRequestId: request.id);
+                        await ref.read(repositoryProvider).approveRequest(approvalRequestId: requests[i].id);
                         _refreshAfterReview(ref);
                         if (context.mounted) {
                           PremiumSnackbar.show(context, l10n.t('approvalsApproved'), icon: Icons.check_circle_outline);
@@ -104,7 +105,7 @@ class ApprovalsScreen extends ConsumerWidget {
                     },
                     onReject: () async {
                       try {
-                        await ref.read(repositoryProvider).rejectRequest(approvalRequestId: request.id);
+                        await ref.read(repositoryProvider).rejectRequest(approvalRequestId: requests[i].id);
                         _refreshAfterReview(ref);
                         if (context.mounted) {
                           PremiumSnackbar.show(context, l10n.t('approvalsRejected'), icon: Icons.info_outline);
@@ -190,12 +191,14 @@ class _ApprovalCard extends StatefulWidget {
     required this.canReviewRequests,
     required this.onApprove,
     required this.onReject,
+    this.staggerIndex = 0,
   });
 
   final ApprovalRequest request;
   final bool canReviewRequests;
   final VoidCallback onApprove;
   final VoidCallback onReject;
+  final int staggerIndex;
 
   @override
   State<_ApprovalCard> createState() => _ApprovalCardState();
@@ -209,14 +212,32 @@ class _ApprovalCardState extends State<_ApprovalCard> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final request = widget.request;
+    final disableAnim = MediaQuery.maybeOf(context)?.disableAnimations == true;
+    final cappedIndex = widget.staggerIndex.clamp(0, 6);
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedScale(
-        scale: _isHovered ? 1.02 : 1.0,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutBack,
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('approval_${request.id}'),
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: disableAnim
+          ? Duration.zero
+          : Duration(milliseconds: 280 + (cappedIndex * 35)),
+      curve: Curves.easeOutCubic,
+      builder: (context, anim, child) {
+        return Transform.translate(
+          offset: Offset(0, 12 * (1 - anim)),
+          child: Opacity(
+            opacity: anim,
+            child: child,
+          ),
+        );
+      },
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedScale(
+          scale: _isHovered ? 1.02 : 1.0,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutBack,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
@@ -352,7 +373,8 @@ class _ApprovalCardState extends State<_ApprovalCard> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 

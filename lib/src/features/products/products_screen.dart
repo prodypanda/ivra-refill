@@ -108,11 +108,12 @@ class _ProductsTable extends ConsumerWidget {
               spacing: spacing,
               runSpacing: spacing,
               children: [
-                for (final product in products)
+                for (var i = 0; i < products.length; i++)
                   SizedBox(
                     width: cardWidth,
                     child: _PremiumProductCard(
-                      product: product,
+                      staggerIndex: i,
+                      product: products[i],
                       language: language,
                       canManage: canManage,
                     ),
@@ -131,11 +132,13 @@ class _PremiumProductCard extends ConsumerStatefulWidget {
     required this.product,
     required this.language,
     required this.canManage,
+    this.staggerIndex = 0,
   });
 
   final Product product;
   final String language;
   final bool canManage;
+  final int staggerIndex;
 
   @override
   ConsumerState<_PremiumProductCard> createState() =>
@@ -151,13 +154,31 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
     final themeExt = theme.extension<IvraThemeExtension>();
     final isBotanical = themeExt?.isBotanical ?? false;
     final l10n = AppLocalizations.of(context);
+    final disableAnim = MediaQuery.maybeOf(context)?.disableAnimations == true;
+    final cappedIndex = widget.staggerIndex.clamp(0, 6);
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedScale(
-        scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
-        duration: const Duration(milliseconds: 200),
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('product_${widget.product.id}'),
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: disableAnim
+          ? Duration.zero
+          : Duration(milliseconds: 280 + (cappedIndex * 35)),
+      curve: Curves.easeOutCubic,
+      builder: (context, anim, child) {
+        return Transform.translate(
+          offset: Offset(0, 12 * (1 - anim)),
+          child: Opacity(
+            opacity: anim,
+            child: child,
+          ),
+        );
+      },
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedScale(
+          scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
+          duration: const Duration(milliseconds: 200),
         curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
         child: Container(
           clipBehavior: Clip.antiAlias,
@@ -428,8 +449,9 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);

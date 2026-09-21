@@ -50,11 +50,12 @@ class HotelsScreen extends ConsumerWidget {
           spacing: 20,
           runSpacing: 20,
           children: [
-            for (final hotel in hotels)
+            for (var i = 0; i < hotels.length; i++)
               _PremiumHotelCard(
-                hotel: hotel,
-                onEdit: () => _showHotelEditRequestDialog(context, ref, hotel),
-                onDelete: canCreateHotel ? () => _confirmDeleteHotel(context, ref, hotel) : null,
+                staggerIndex: i,
+                hotel: hotels[i],
+                onEdit: () => _showHotelEditRequestDialog(context, ref, hotels[i]),
+                onDelete: canCreateHotel ? () => _confirmDeleteHotel(context, ref, hotels[i]) : null,
               ),
           ],
         ),
@@ -162,11 +163,17 @@ class _Line extends StatelessWidget {
 }
 
 class _PremiumHotelCard extends StatefulWidget {
-  const _PremiumHotelCard({required this.hotel, required this.onEdit, this.onDelete});
+  const _PremiumHotelCard({
+    required this.hotel,
+    required this.onEdit,
+    this.onDelete,
+    this.staggerIndex = 0,
+  });
 
   final Hotel hotel;
   final VoidCallback onEdit;
   final VoidCallback? onDelete;
+  final int staggerIndex;
 
   @override
   State<_PremiumHotelCard> createState() => _PremiumHotelCardState();
@@ -184,14 +191,32 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
     final hotel = widget.hotel;
     final effectiveRadius =
         themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 20.0);
+    final disableAnim = MediaQuery.maybeOf(context)?.disableAnimations == true;
+    final cappedIndex = widget.staggerIndex.clamp(0, 6);
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedScale(
-        scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
-        duration: const Duration(milliseconds: 200),
-        curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('hotel_${hotel.id}'),
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: disableAnim
+          ? Duration.zero
+          : Duration(milliseconds: 280 + (cappedIndex * 35)),
+      curve: Curves.easeOutCubic,
+      builder: (context, anim, child) {
+        return Transform.translate(
+          offset: Offset(0, 12 * (1 - anim)),
+          child: Opacity(
+            opacity: anim,
+            child: child,
+          ),
+        );
+      },
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedScale(
+          scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
         child: SizedBox(
           width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 360.0),
           child: Container(
@@ -416,8 +441,9 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _HotelOnboardingWizard extends ConsumerStatefulWidget {

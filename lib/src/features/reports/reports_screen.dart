@@ -771,10 +771,26 @@ class _KpiTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          Text(
-            value,
-            style: (isCompact ? theme.textTheme.titleMedium : theme.textTheme.titleLarge)?.copyWith(
-              fontWeight: isBotanical ? FontWeight.w600 : FontWeight.w900,
+          AnimatedSwitcher(
+            duration: MediaQuery.maybeOf(context)?.disableAnimations == true
+                ? Duration.zero
+                : const Duration(milliseconds: 250),
+            transitionBuilder: (child, anim) => FadeTransition(
+              opacity: anim,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 0.2),
+                  end: Offset.zero,
+                ).animate(anim),
+                child: child,
+              ),
+            ),
+            child: Text(
+              value,
+              key: ValueKey(value),
+              style: (isCompact ? theme.textTheme.titleMedium : theme.textTheme.titleLarge)?.copyWith(
+                fontWeight: isBotanical ? FontWeight.w600 : FontWeight.w900,
+              ),
             ),
           ),
         ],
@@ -870,6 +886,10 @@ class _TrendChart extends StatelessWidget {
             SizedBox(
               height: 200,
               child: BarChart(
+                swapAnimationDuration: MediaQuery.maybeOf(context)?.disableAnimations == true
+                    ? Duration.zero
+                    : const Duration(milliseconds: 350),
+                swapAnimationCurve: Curves.easeOutCubic,
                 BarChartData(
                   maxY: maxY,
                   minY: 0,
