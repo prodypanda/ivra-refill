@@ -17,6 +17,7 @@ import '../shared/page_scaffold.dart';
 import '../shared/product_image.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/premium_confirm_dialog.dart';
+import '../../app/theme.dart';
 
 class ProductsScreen extends ConsumerWidget {
   const ProductsScreen({super.key});
@@ -147,6 +148,8 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final l10n = AppLocalizations.of(context);
 
     return MouseRegion(
@@ -159,7 +162,8 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
         child: Container(
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(
+                themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 28.0)),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -170,16 +174,22 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.shadow
-                    .withValues(alpha: _isHovered ? 0.15 : 0.05),
-                blurRadius: _isHovered ? 24 : 12,
+                color: isBotanical
+                    ? (themeExt?.cardShadowColor ??
+                        Colors.black.withValues(alpha: 0.04))
+                    : theme.colorScheme.shadow
+                        .withValues(alpha: _isHovered ? 0.15 : 0.05),
+                blurRadius: isBotanical ? 20 : (_isHovered ? 24 : 12),
                 offset: const Offset(0, 8),
               ),
             ],
             border: Border.all(
-              color: theme.colorScheme.primary
-                  .withValues(alpha: _isHovered ? 0.4 : 0.15),
-              width: 1.5,
+              color: isBotanical
+                  ? (themeExt?.cardBorderColor ??
+                      theme.colorScheme.outlineVariant.withValues(alpha: 0.6))
+                  : theme.colorScheme.primary
+                      .withValues(alpha: _isHovered ? 0.4 : 0.15),
+              width: isBotanical ? 1.0 : 1.5,
             ),
           ),
           child: Column(
@@ -701,14 +711,19 @@ class _ProductDialogState extends ConsumerState<_ProductDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final l10n = AppLocalizations.of(context);
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(28),
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(isBotanical ? 12.0 : 28.0),
+        ),
       ),
       padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
       child: SafeArea(

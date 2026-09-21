@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../utils/error_translator.dart';
 import '../../l10n/app_localizations.dart';
+import '../../app/theme.dart';
 
 class PremiumSnackbar {
   static void show(
@@ -13,7 +14,10 @@ class PremiumSnackbar {
     bool isError = false,
   }) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final colorScheme = theme.colorScheme;
+    final effectiveRadius = BorderRadius.circular(isBotanical ? 8.0 : 20.0);
 
     final backgroundColor = isError
         ? colorScheme.errorContainer.withValues(alpha: 0.85)
@@ -31,16 +35,19 @@ class PremiumSnackbar {
       backgroundColor: Colors.transparent,
       padding: EdgeInsets.zero,
       content: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: effectiveRadius,
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: backgroundColor,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: effectiveRadius,
               border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+                color: isBotanical
+                    ? (themeExt?.cardBorderColor ??
+                        colorScheme.outlineVariant.withValues(alpha: 0.3))
+                    : colorScheme.outlineVariant.withValues(alpha: 0.3),
                 width: 1,
               ),
               boxShadow: [

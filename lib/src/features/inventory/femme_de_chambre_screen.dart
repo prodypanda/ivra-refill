@@ -169,7 +169,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                         title: l10n.t('fullBottles'),
                         value: '$totalFullBottles',
                         icon: IvraIcons.fullBottleWithPump,
-                        color: const Color(0xFFF2A900),
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       _buildSummaryCard(
                         context,
@@ -296,7 +296,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final primaryColor = const Color(0xFFF2A900); // Golden yellow/orange
+    final primaryColor = theme.colorScheme.primary;
 
     final hotels = hotelsAsync.valueOrNull ?? const <Hotel>[];
 
@@ -1070,12 +1070,12 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                           HoverImageTooltip(
                             imageUrl: allocation.product.imageUrl,
                             child: CircleAvatar(
-                              backgroundColor: const Color(0xFFF2A900).withOpacity(0.1),
+                              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                               backgroundImage: allocation.product.imageUrl != null && allocation.product.imageUrl!.isNotEmpty 
                                   ? NetworkImage(allocation.product.imageUrl!) 
                                   : null,
                               child: allocation.product.imageUrl == null || allocation.product.imageUrl!.isEmpty
-                                  ? const Icon(Icons.inventory_2_outlined, color: Color(0xFFF2A900))
+                                  ? Icon(Icons.inventory_2_outlined, color: theme.colorScheme.primary)
                                   : null,
                             ),
                           ),
@@ -1121,12 +1121,12 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                       HoverImageTooltip(
                         imageUrl: allocation.product.imageUrl,
                         child: CircleAvatar(
-                          backgroundColor: const Color(0xFFF2A900).withOpacity(0.1),
+                          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                           backgroundImage: allocation.product.imageUrl != null && allocation.product.imageUrl!.isNotEmpty 
                               ? NetworkImage(allocation.product.imageUrl!) 
                               : null,
                           child: allocation.product.imageUrl == null || allocation.product.imageUrl!.isEmpty
-                              ? const Icon(Icons.inventory_2_outlined, color: Color(0xFFF2A900))
+                              ? Icon(Icons.inventory_2_outlined, color: theme.colorScheme.primary)
                               : null,
                         ),
                       ),
@@ -1356,7 +1356,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
             return AlertDialog(
               title: Row(
                 children: [
-                  const Icon(Icons.add_shopping_cart, color: Color(0xFFF2A900)),
+                  Icon(Icons.add_shopping_cart, color: theme.colorScheme.primary),
                   const SizedBox(width: 10),
                   Text(l10n.t('checkoutStock')),
                 ],
@@ -1456,8 +1456,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF2A900),
-                    foregroundColor: Colors.white,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                   ),
                   onPressed: (fullBottles == 0 && fullBidons == 0)
                       ? null
@@ -1899,7 +1899,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     return switch (event.eventType) {
       HousekeeperStockEventType.checkout => (
           icon: Icons.add_shopping_cart_rounded,
-          color: const Color(0xFFF2A900),
+          color: const Color(0xFFD97706),
           label: l10n.t('stockEventCheckout'),
         ),
       HousekeeperStockEventType.returned => (

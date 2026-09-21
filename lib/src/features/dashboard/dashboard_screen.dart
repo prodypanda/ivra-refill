@@ -15,6 +15,7 @@ import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/shimmer_loading.dart';
 import '../shared/premium_snackbar.dart';
+import '../../app/theme.dart';
 
 class _AnalyticsData {
   _AnalyticsData({
@@ -240,6 +241,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 currentUser?.role == UserRole.appManager;
             final isAdmin = currentUser?.role == UserRole.appAdmin;
 
+            final themeExt = theme.extension<IvraThemeExtension>();
+            final isBotanical = themeExt?.isBotanical ?? false;
+
             // Compute visible cards dynamically
             final List<Widget> visibleCards = [];
 
@@ -258,7 +262,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               label: l10n.t('metricRooms'),
               value: data.roomCount,
               icon: Icons.meeting_room_outlined,
-              iconColor: Colors.orange,
+              iconColor: isBotanical ? const Color(0xFF10B981) : Colors.orange,
               onTap: () => context.go('/rooms'),
             ));
 
@@ -267,7 +271,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 label: l10n.t('metricPendingApprovals'),
                 value: data.pendingApprovals,
                 icon: Icons.fact_check_outlined,
-                iconColor: Colors.amber.shade800,
+                iconColor: isBotanical ? const Color(0xFFD97706) : Colors.amber.shade800,
                 onTap: () => context.go('/approvals'),
               ));
             }
@@ -286,7 +290,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               label: l10n.t('metricBottlesToReplace'),
               value: data.bottlesToReplace,
               icon: IvraIcons.replaceAction,
-              iconColor: Colors.orange.shade700,
+              iconColor: isBotanical ? const Color(0xFF059669) : Colors.orange.shade700,
               onTap: () => context.go('/rooms'),
             ));
 
@@ -295,7 +299,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 label: l10n.t('metricLowStockProducts'),
                 value: data.lowStockProducts,
                 icon: Icons.inventory_2_outlined,
-                iconColor: Colors.indigo.shade600,
+                iconColor: isBotanical ? const Color(0xFF0D9488) : Colors.indigo.shade600,
                 onTap: () => context.go('/inventory'),
               ));
             }
@@ -544,12 +548,20 @@ class _AnalyticsChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+
     return Container(
       width: width,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(16),
+        color: isBotanical
+            ? const Color(0xFF10B981).withValues(alpha: 0.12)
+            : theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(isBotanical ? 6.0 : 16.0),
+        border: isBotanical
+            ? Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.25), width: 1.0)
+            : null,
       ),
       child: Row(children: [
         Icon(icon, color: theme.colorScheme.primary),
@@ -574,11 +586,19 @@ class _AnalyticsListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-          border: Border.all(color: theme.colorScheme.outlineVariant),
-          borderRadius: BorderRadius.circular(18)),
+          border: Border.all(
+            color: isBotanical
+                ? const Color(0xFF10B981).withValues(alpha: 0.28)
+                : theme.colorScheme.outlineVariant,
+            width: 1.0,
+          ),
+          borderRadius: BorderRadius.circular(isBotanical ? 8.0 : 18.0)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
           Icon(icon, size: 18),
@@ -631,6 +651,11 @@ class _MetricCardState extends State<_MetricCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final cardRadius = themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 24.0);
+    final iconRadius = isBotanical ? 6.0 : 12.0;
+
     return TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
         duration: const Duration(milliseconds: 600),
@@ -656,7 +681,7 @@ class _MetricCardState extends State<_MetricCard> {
                 onTap: widget.onTap,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(cardRadius),
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -667,7 +692,9 @@ class _MetricCardState extends State<_MetricCard> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: widget.iconColor
+                        color: (isBotanical
+                                ? (themeExt?.cardShadowColor ?? const Color(0xFF064E3B))
+                                : widget.iconColor)
                             .withValues(alpha: _isHovered ? 0.15 : 0.05),
                         blurRadius: _isHovered ? 24 : 12,
                         offset: const Offset(0, 8),
@@ -679,9 +706,12 @@ class _MetricCardState extends State<_MetricCard> {
                       ),
                     ],
                     border: Border.all(
-                      color: widget.iconColor
-                          .withValues(alpha: _isHovered ? 0.3 : 0.1),
-                      width: 1.5,
+                      color: isBotanical
+                          ? (themeExt?.cardBorderColor ??
+                              const Color(0xFF10B981).withValues(alpha: 0.28))
+                          : widget.iconColor
+                              .withValues(alpha: _isHovered ? 0.3 : 0.1),
+                      width: isBotanical ? 1.0 : 1.5,
                     ),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -712,7 +742,7 @@ class _MetricCardState extends State<_MetricCard> {
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: widget.iconColor.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(iconRadius),
                             ),
                             child: Icon(widget.icon,
                                 size: 24, color: widget.iconColor),
@@ -752,6 +782,8 @@ class _MobileHeroState extends State<_MobileHero> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
 
     return TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
@@ -770,22 +802,35 @@ class _MobileHeroState extends State<_MobileHero> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(isBotanical ? 12.0 : 32.0),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                theme.colorScheme.primary,
-                theme.colorScheme.primary.withRed(220).withGreen(120),
-              ],
+              colors: isBotanical
+                  ? const [
+                      Color(0xFF064E3B), // Emerald deep
+                      Color(0xFF065F46), // Forest emerald
+                    ]
+                  : [
+                      theme.colorScheme.primary,
+                      theme.colorScheme.primary.withRed(220).withGreen(120),
+                    ],
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                color: isBotanical
+                    ? const Color(0xFF064E3B).withValues(alpha: 0.3)
+                    : theme.colorScheme.primary.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
             ],
+            border: isBotanical
+                ? Border.all(
+                    color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                    width: 1,
+                  )
+                : null,
           ),
           child: Stack(
             children: [
@@ -814,7 +859,8 @@ class _MobileHeroState extends State<_MobileHero> {
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius:
+                                  BorderRadius.circular(isBotanical ? 6.0 : 20.0),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -912,6 +958,8 @@ class _HeroPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final foregroundColor = color ?? theme.colorScheme.onSurface;
 
     return Expanded(
@@ -919,7 +967,7 @@ class _HeroPill extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(isBotanical ? 6.0 : 20.0),
           border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
         ),
         child: Row(
@@ -966,6 +1014,8 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final l10n = AppLocalizations.of(context);
 
     final hotels = ref.watch(hotelsProvider.select((s) => s.valueOrNull ?? []));
@@ -987,12 +1037,21 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
         },
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(
+                themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 24.0)),
             color: theme.colorScheme.surface,
+            border: isBotanical
+                ? Border.all(
+                    color: themeExt?.cardBorderColor ??
+                        theme.colorScheme.outlineVariant.withValues(alpha: 0.6),
+                    width: 1,
+                  )
+                : null,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 16,
+                color: themeExt?.cardShadowColor ??
+                    Colors.black.withValues(alpha: 0.04),
+                blurRadius: isBotanical ? 20 : 16,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -1425,14 +1484,22 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
     required IconData icon,
     required ThemeData theme,
   }) {
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final radius = BorderRadius.circular(isBotanical ? 6.0 : 16.0);
+
     return Container(
       height: 38,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: radius,
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+          color: isBotanical
+              ? (themeExt?.cardBorderColor ??
+                  theme.colorScheme.outlineVariant.withValues(alpha: 0.4))
+              : theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+          width: 1,
         ),
       ),
       child: Row(
@@ -1451,7 +1518,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
                 fontWeight: FontWeight.w700,
                 color: theme.colorScheme.onSurface,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: radius,
             ),
           ),
         ],

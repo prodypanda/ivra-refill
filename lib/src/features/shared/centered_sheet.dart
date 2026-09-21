@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import '../../app/theme.dart';
 
 /// Shows [child] as a centered, dialog-style popup instead of a
 /// bottom-anchored modal sheet.
@@ -90,12 +91,20 @@ class _CenteredFormSheetDialogState extends State<_CenteredFormSheetDialog> {
               maxHeight: maxHeight > 0 ? maxHeight : media.size.height,
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(
+                  theme.extension<IvraThemeExtension>()?.cardBorderRadius ??
+                      ((theme.extension<IvraThemeExtension>()?.isBotanical ?? false)
+                          ? 10.0
+                          : 28.0)),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                 child: Material(
                   color: theme.colorScheme.surface.withValues(alpha: 0.96),
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(
+                      theme.extension<IvraThemeExtension>()?.cardBorderRadius ??
+                          ((theme.extension<IvraThemeExtension>()?.isBotanical ?? false)
+                              ? 10.0
+                              : 28.0)),
                   clipBehavior: Clip.antiAlias,
                   child: childWidget,
                 ),

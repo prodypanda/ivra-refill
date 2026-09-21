@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../l10n/app_localizations.dart';
+import '../../app/theme.dart';
 
 class PremiumQrScannerDialog extends StatefulWidget {
   const PremiumQrScannerDialog({
@@ -78,15 +79,19 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
+    final effectiveRadius = BorderRadius.circular(
+        themeExt?.cardBorderRadius ?? (isBotanical ? 10.0 : 28.0));
 
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         constraints: const BoxConstraints(maxWidth: 420),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: effectiveRadius,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
             child: Material(
@@ -94,9 +99,12 @@ class _PremiumQrScannerDialogState extends State<PremiumQrScannerDialog>
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: effectiveRadius,
                   border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.25),
+                    color: isBotanical
+                        ? (themeExt?.cardBorderColor ??
+                            colorScheme.outlineVariant.withValues(alpha: 0.25))
+                        : colorScheme.outlineVariant.withValues(alpha: 0.25),
                     width: 1.5,
                   ),
                   boxShadow: [

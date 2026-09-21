@@ -28,6 +28,7 @@ import '../shared/premium_confirm_dialog.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/refill_percentage_dialog.dart';
 import '../../utils/qr_parser.dart';
+import '../../app/theme.dart';
 
 class RoomsScreen extends ConsumerStatefulWidget {
   const RoomsScreen({
@@ -640,25 +641,36 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
     VoidCallback? onAddRoom,
     VoidCallback? onDeleteFloor,
   }) {
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final headerRadius = BorderRadius.circular(
+        themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 20.0));
+
     return Padding(
       padding: const EdgeInsets.only(top: 32, bottom: 20),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onToggle,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: headerRadius,
           child: Container(
             decoration: BoxDecoration(
               color: theme.colorScheme.surface.withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: headerRadius,
               border: Border.all(
-                color: primaryColor.withValues(alpha: 0.2),
-                width: 1.5,
+                color: isBotanical
+                    ? (themeExt?.cardBorderColor ??
+                        primaryColor.withValues(alpha: 0.2))
+                    : primaryColor.withValues(alpha: 0.2),
+                width: isBotanical ? 1.0 : 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: primaryColor.withValues(alpha: 0.05),
-                  blurRadius: 16,
+                  color: isBotanical
+                      ? (themeExt?.cardShadowColor ??
+                          primaryColor.withValues(alpha: 0.05))
+                      : primaryColor.withValues(alpha: 0.05),
+                  blurRadius: isBotanical ? 20 : 16,
                   offset: const Offset(0, 4),
                 ),
               ],
@@ -5010,7 +5022,9 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                   decoration: BoxDecoration(
                                     color: housekeeperIds
                                             .contains(event.performedBy)
-                                        ? const Color(0xFFF2A900)
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .primary
                                             .withValues(alpha: 0.15)
                                         : Theme.of(context)
                                             .colorScheme
@@ -5029,7 +5043,9 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                         size: 12,
                                         color: housekeeperIds
                                                 .contains(event.performedBy)
-                                            ? const Color(0xFFB47E00)
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .onSecondaryContainer,

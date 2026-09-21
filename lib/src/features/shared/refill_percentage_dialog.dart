@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/models.dart';
 import 'animated_bottle_refill_indicator.dart';
+import '../../app/theme.dart';
 
 class RefillResult {
   const RefillResult({
@@ -57,8 +58,12 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
+    final effectiveRadius = BorderRadius.circular(
+        themeExt?.cardBorderRadius ?? (isBotanical ? 10.0 : 28.0));
 
     final int refillPercentInt = (_refillPercentage * 100).round();
     final int preExistingPercentInt = 100 - refillPercentInt;
@@ -66,15 +71,15 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
     // Design-system-aligned luxurious colors
     final Color baseColor = theme.colorScheme.primary;
     final Color accentColor = theme.brightness == Brightness.dark
-        ? Colors.cyanAccent.shade400
-        : Colors.teal.shade400;
+        ? (isBotanical ? const Color(0xFF10B981) : Colors.cyanAccent.shade400)
+        : (isBotanical ? const Color(0xFF059669) : Colors.teal.shade400);
 
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         constraints: const BoxConstraints(maxWidth: 420),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: effectiveRadius,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
             child: Material(
@@ -82,9 +87,12 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: effectiveRadius,
                   border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+                    color: isBotanical
+                        ? (themeExt?.cardBorderColor ??
+                            colorScheme.outlineVariant.withValues(alpha: 0.3))
+                        : colorScheme.outlineVariant.withValues(alpha: 0.3),
                     width: 1,
                   ),
                   boxShadow: [

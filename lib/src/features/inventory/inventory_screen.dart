@@ -18,6 +18,7 @@ import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/centered_sheet.dart';
 import '../shared/hover_image_tooltip.dart';
 import '../../utils/qr_parser.dart';
+import '../../app/theme.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
   final String? hotelId;
@@ -71,7 +72,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final primaryColor = const Color(0xFFF2A900); // Golden yellow/orange
+    final primaryColor = theme.colorScheme.primary;
 
     final currentUser =
         ref.watch(currentUserProvider.select((s) => s.valueOrNull));
@@ -789,6 +790,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final l10n = AppLocalizations.of(context);
     final currentUser =
         ref.watch(currentUserProvider.select((s) => s.valueOrNull));
@@ -807,7 +810,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
         curve: Curves.easeOutBack,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(
+                themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 28.0)),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -824,8 +828,11 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
               ),
             ],
             border: Border.all(
-              color: statusColor.withValues(alpha: _isHovered ? 0.4 : 0.15),
-              width: 1.5,
+              color: isBotanical
+                  ? (themeExt?.cardBorderColor ??
+                      statusColor.withValues(alpha: _isHovered ? 0.4 : 0.15))
+                  : statusColor.withValues(alpha: _isHovered ? 0.4 : 0.15),
+              width: isBotanical ? 1.0 : 1.5,
             ),
           ),
           padding: const EdgeInsets.all(20),
@@ -845,7 +852,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                           height: 56,
                           decoration: BoxDecoration(
                             color: statusColor.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius:
+                                BorderRadius.circular(isBotanical ? 6.0 : 20.0),
                             image: (widget.item.product.imageUrl != null && widget.item.product.imageUrl!.isNotEmpty && widget.item.product.imageUrl!.startsWith('http')) 
                                 ? DecorationImage(
                                     image: NetworkImage(widget.item.product.imageUrl!),
@@ -945,7 +953,8 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                               height: 56,
                               decoration: BoxDecoration(
                                 color: statusColor.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius:
+                                    BorderRadius.circular(isBotanical ? 6.0 : 20.0),
                                 image: (widget.item.product.imageUrl != null && widget.item.product.imageUrl!.isNotEmpty && widget.item.product.imageUrl!.startsWith('http')) 
                                     ? DecorationImage(
                                         image: NetworkImage(widget.item.product.imageUrl!),
@@ -1368,6 +1377,8 @@ class _InventoryStatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final l10n = AppLocalizations.of(context);
     final color =
         lowStock ? theme.colorScheme.error : theme.colorScheme.primary;
@@ -1376,7 +1387,13 @@ class _InventoryStatusPill extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(isBotanical ? 4.0 : 999.0),
+        border: isBotanical
+            ? Border.all(
+                color: color.withValues(alpha: 0.25),
+                width: 1,
+              )
+            : null,
       ),
       child: Text(
         lowStock
@@ -1385,6 +1402,7 @@ class _InventoryStatusPill extends StatelessWidget {
         style: theme.textTheme.labelSmall?.copyWith(
           color: color,
           fontWeight: FontWeight.w900,
+          letterSpacing: isBotanical ? 0.8 : null,
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
+import '../../app/theme.dart';
 
 class PremiumConfirmDialog extends StatelessWidget {
   const PremiumConfirmDialog({
@@ -45,8 +46,12 @@ class PremiumConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final colorScheme = theme.colorScheme;
     final l10n = AppLocalizations.of(context);
+    final effectiveRadius = BorderRadius.circular(
+        themeExt?.cardBorderRadius ?? (isBotanical ? 10.0 : 24.0));
 
     final highlightColor = isDestructive ? colorScheme.error : colorScheme.primary;
     final onHighlightColor = isDestructive ? colorScheme.onError : colorScheme.onPrimary;
@@ -56,7 +61,7 @@ class PremiumConfirmDialog extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         constraints: const BoxConstraints(maxWidth: 400),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: effectiveRadius,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
             child: Material(
@@ -64,9 +69,12 @@ class PremiumConfirmDialog extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: effectiveRadius,
                   border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+                    color: isBotanical
+                        ? (themeExt?.cardBorderColor ??
+                            colorScheme.outlineVariant.withValues(alpha: 0.3))
+                        : colorScheme.outlineVariant.withValues(alpha: 0.3),
                     width: 1,
                   ),
                   boxShadow: [

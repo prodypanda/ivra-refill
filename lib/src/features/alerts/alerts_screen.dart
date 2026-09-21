@@ -14,6 +14,7 @@ import '../shared/empty_state.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/shimmer_loading.dart';
 import '../shared/premium_confirm_dialog.dart';
+import '../../app/theme.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -716,7 +717,10 @@ class _MetricsSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final colorScheme = theme.colorScheme;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -743,12 +747,19 @@ class _MetricsSummary extends StatelessWidget {
             label: l10n.t('alertsStatusOpen'),
             value: '$openCount',
             icon: Icons.notifications_active_outlined,
-            gradientColors: [
-              Colors.amber.withValues(alpha: 0.18),
-              Colors.amber.withValues(alpha: 0.05),
-            ],
-            iconColor: Colors.amber.shade800,
-            valueColor: Colors.amber.shade900,
+            gradientColors: isBotanical
+                ? [
+                    const Color(0xFFD97706).withValues(alpha: 0.15),
+                    const Color(0xFFD97706).withValues(alpha: 0.04),
+                  ]
+                : [
+                    Colors.amber.withValues(alpha: 0.18),
+                    Colors.amber.withValues(alpha: 0.05),
+                  ],
+            iconColor:
+                isBotanical ? const Color(0xFFD97706) : Colors.amber.shade800,
+            valueColor:
+                isBotanical ? const Color(0xFFB45309) : Colors.amber.shade900,
             width: cardWidth,
           ),
           _MetricCard(
@@ -881,11 +892,15 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final colorScheme = theme.colorScheme;
     final isResolved = widget.alert.isResolved;
     final severityCol = _severityColor(widget.alert.severity, colorScheme);
     final l10n = AppLocalizations.of(context);
     final lang = Localizations.localeOf(context).languageCode;
+    final effectiveRadius =
+        themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 16.0);
 
     final productsAsync = ref.watch(productsProvider);
     final product = productsAsync.valueOrNull
@@ -916,7 +931,7 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
         padding: const EdgeInsets.only(right: 24),
         decoration: BoxDecoration(
           color: Colors.green.shade600,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(effectiveRadius),
         ),
         child: const Icon(Icons.check_circle_outline,
             color: Colors.white, size: 28),
@@ -949,25 +964,33 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                           colorScheme.surface.withValues(alpha: 0.8),
                         ],
                 ),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(effectiveRadius),
                 border: Border.all(
-                  color: severityCol.withValues(
-                      alpha: _isHovered && !isResolved ? 0.3 : 0.0),
-                  width: 1.5,
+                  color: isBotanical
+                      ? (themeExt?.cardBorderColor ??
+                          severityCol.withValues(
+                              alpha: _isHovered && !isResolved ? 0.3 : 0.0))
+                      : severityCol.withValues(
+                          alpha: _isHovered && !isResolved ? 0.3 : 0.0),
+                  width: isBotanical ? 1.0 : 1.5,
                 ),
                 boxShadow: isResolved
                     ? null
                     : [
                         BoxShadow(
-                          color: severityCol.withValues(
-                              alpha: _isHovered ? 0.15 : 0.08),
-                          blurRadius: _isHovered ? 24 : 16,
+                          color: isBotanical
+                              ? (themeExt?.cardShadowColor ??
+                                  severityCol.withValues(
+                                      alpha: _isHovered ? 0.15 : 0.08))
+                              : severityCol.withValues(
+                                  alpha: _isHovered ? 0.15 : 0.08),
+                          blurRadius: isBotanical ? 20 : (_isHovered ? 24 : 16),
                           offset: Offset(0, _isHovered ? 8 : 4),
                         ),
                       ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(effectiveRadius),
                 child: IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -978,9 +1001,9 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                         decoration: BoxDecoration(
                           color: severityCol.withValues(
                               alpha: isResolved ? 0.3 : 1.0),
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            bottomLeft: Radius.circular(16),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(effectiveRadius),
+                            bottomLeft: Radius.circular(effectiveRadius),
                           ),
                         ),
                       ),
@@ -1188,18 +1211,28 @@ class _PillChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(isBotanical ? 4.0 : 20.0),
+        border: isBotanical
+            ? Border.all(
+                color: textColor.withValues(alpha: 0.25),
+                width: 1,
+              )
+            : null,
       ),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.labelSmall?.copyWith(
               color: textColor,
               fontWeight: FontWeight.w600,
-              letterSpacing: 0.1,
+              letterSpacing: isBotanical ? 0.6 : 0.1,
             ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

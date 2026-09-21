@@ -11,6 +11,7 @@ import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/premium_snackbar.dart';
 import '../shared/premium_confirm_dialog.dart';
+import '../../app/theme.dart';
 
 class HotelsScreen extends ConsumerWidget {
   const HotelsScreen({super.key});
@@ -178,7 +179,11 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final hotel = widget.hotel;
+    final effectiveRadius =
+        themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 20.0);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -191,21 +196,26 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
           width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 360.0),
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(effectiveRadius),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary
-                      .withValues(alpha: _isHovered ? 0.15 : 0.0),
-                  blurRadius: _isHovered ? 20 : 0,
-                  spreadRadius: _isHovered ? 2 : 0,
+                  color: isBotanical
+                      ? (themeExt?.cardShadowColor ??
+                          Colors.black.withValues(alpha: 0.04))
+                      : theme.colorScheme.primary
+                          .withValues(alpha: _isHovered ? 0.15 : 0.0),
+                  blurRadius: isBotanical ? 20 : (_isHovered ? 20 : 0),
+                  spreadRadius: isBotanical ? 0 : (_isHovered ? 2 : 0),
                 ),
               ],
             ),
             child: GlassCard(
               padding: EdgeInsets.zero,
-              borderRadius: 20,
-              borderColor: theme.colorScheme.outline
-                  .withValues(alpha: _isHovered ? 0.3 : 0.1),
+              borderRadius: effectiveRadius,
+              borderColor: isBotanical
+                  ? themeExt?.cardBorderColor
+                  : theme.colorScheme.outline
+                      .withValues(alpha: _isHovered ? 0.3 : 0.1),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
