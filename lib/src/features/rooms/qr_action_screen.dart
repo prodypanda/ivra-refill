@@ -2467,7 +2467,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
           _actionResult = ActionResult.success;
           _actionMessage = isOffline
               ? '${l10n.t('roomsRefillQueued') ?? 'Refill queued'} ${item.roomNumber}'
-              : '${l10n.t('roomsRefillRecorded') ?? 'Refill recorded'} ${item.roomNumber}';
+              : '${l10n.t('roomsRefillRecorded') ?? 'Refill recorded'} ${item.roomNumber} • Single-use plastic diverted';
         });
       }
     } catch (e) {

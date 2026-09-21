@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/app_enums.dart';
@@ -286,6 +287,7 @@ class ThemeSelectorSection extends ConsumerWidget {
   }
 
   void _selectTheme(BuildContext context, WidgetRef ref, AppThemeStyle style, String name) {
+    HapticFeedback.mediumImpact();
     ref.read(appThemeStyleProvider.notifier).setStyle(style);
     final l10n = AppLocalizations.of(context);
     PremiumSnackbar.showSuccess(
@@ -451,30 +453,36 @@ class _ThemeOptionCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        if (isSelected)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: accentColor.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: accentColor, width: 1),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.check_circle, color: accentColor, size: 14),
-                                const SizedBox(width: 4),
-                                Text(
-                                  l10n.t('themeActive'),
-                                  style: TextStyle(
-                                    color: accentColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
+                        AnimatedScale(
+                          scale: isSelected ? 1.0 : 0.7,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOutBack,
+                          child: isSelected
+                              ? Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: accentColor.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: accentColor, width: 1),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.check_circle, color: accentColor, size: 14),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        l10n.t('themeActive'),
+                                        style: TextStyle(
+                                          color: accentColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 6),

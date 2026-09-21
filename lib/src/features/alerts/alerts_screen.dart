@@ -1258,7 +1258,12 @@ class _EmptyAlerts extends StatelessWidget {
       title: l10n.t('alertsEmptyTitle'),
       message: l10n.t('alertsEmptyMessage'),
       actionLabel: l10n.t('alertsEmptyAction'),
-      onAction: onRefresh,
+      onAction: () {
+        HapticFeedback.lightImpact();
+        onRefresh();
+      },
+      isCelebratory: true,
+      celebratoryBadge: 'Sanctuary Achieved',
     );
   }
 }

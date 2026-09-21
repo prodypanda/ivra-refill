@@ -42,6 +42,8 @@ class ApprovalsScreen extends ConsumerWidget {
               icon: Icons.fact_check_outlined,
               title: l10n.t('approvalsEmpty'),
               message: l10n.t('approvalsEmptySubtitle'),
+              isCelebratory: true,
+              celebratoryBadge: 'All Caught Up',
             );
           }
           return Column(
@@ -93,6 +95,7 @@ class ApprovalsScreen extends ConsumerWidget {
                     request: requests[i],
                     canReviewRequests: canReviewRequests,
                     onApprove: () async {
+                      HapticFeedback.mediumImpact();
                       try {
                         await ref.read(repositoryProvider).approveRequest(approvalRequestId: requests[i].id);
                         _refreshAfterReview(ref);
@@ -107,6 +110,7 @@ class ApprovalsScreen extends ConsumerWidget {
                       }
                     },
                     onReject: () async {
+                      HapticFeedback.lightImpact();
                       try {
                         await ref.read(repositoryProvider).rejectRequest(approvalRequestId: requests[i].id);
                         _refreshAfterReview(ref);

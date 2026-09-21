@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/models.dart';
 import 'animated_bottle_refill_indicator.dart';
@@ -230,11 +231,15 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                             });
                           },
                           onChangeEnd: (_) {
+                            HapticFeedback.selectionClick();
                             setState(() {
                               _isSliderInteracting = false;
                             });
                           },
                           onChanged: (val) {
+                            if ((val * 10).round() != (_refillPercentage * 10).round()) {
+                              HapticFeedback.selectionClick();
+                            }
                             setState(() {
                               _refillPercentage = val;
                             });
@@ -307,6 +312,7 @@ class _RefillPercentageDialogState extends State<RefillPercentageDialog> {
                                 ),
                               ),
                               onPressed: () {
+                                HapticFeedback.mediumImpact();
                                 Navigator.of(context).pop(
                                   RefillResult(
                                     refillPercentage: refillPercentInt,

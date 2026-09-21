@@ -2648,12 +2648,13 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
       ref.invalidate(inventoryProvider);
 
       if (mounted) {
+        HapticFeedback.mediumImpact();
         PremiumSnackbar.show(
           context,
           isOffline
               ? '${l10n.t('roomsRefillQueued')} ${item.roomNumber}'
-              : '${l10n.t('roomsRefillRecorded')} ${item.roomNumber}',
-          icon: Icons.check_circle_outline,
+              : '${l10n.t('roomsRefillRecorded')} ${item.roomNumber} • Single-use plastic diverted',
+          icon: Icons.eco_outlined,
         );
       }
     } catch (e) {
@@ -3564,7 +3565,7 @@ class _RoomCardProductRow extends ConsumerWidget {
           context,
           isOffline
               ? '${l10n.t('roomsRefillQueued')} ${item.roomNumber}'
-              : '${l10n.t('roomsRefillRecorded')} ${item.roomNumber}',
+              : '${l10n.t('roomsRefillRecorded')} ${item.roomNumber} • Single-use plastic diverted',
           icon: IvraIcons.refillAction,
         );
       }
