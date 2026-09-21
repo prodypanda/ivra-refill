@@ -96,7 +96,12 @@ class _AppShellState extends ConsumerState<AppShell> {
                       if (constraints.maxWidth >= 1180) const _DrawerFooter(),
                     ],
                   ),
-                  const VerticalDivider(width: 1, color: Colors.black12),
+                  VerticalDivider(
+                    width: 1,
+                    color: (themeExt?.isBotanical ?? false)
+                        ? const Color(0xFF10B981).withValues(alpha: 0.22)
+                        : Colors.black12,
+                  ),
                   Expanded(
                     child: Column(
                       children: [
@@ -251,6 +256,10 @@ class _MobileShell extends ConsumerWidget {
         : destinationCount - 1;
     final theme = Theme.of(context);
 
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final navRadius = isBotanical ? 14.0 : 28.0;
+
     return Container(
       decoration: background,
       child: Scaffold(
@@ -267,26 +276,31 @@ class _MobileShell extends ConsumerWidget {
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface.withValues(alpha: 0.94),
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(navRadius),
             border: Border.all(
-              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.45),
+              color: isBotanical
+                  ? const Color(0xFF10B981).withValues(alpha: 0.3)
+                  : theme.colorScheme.outlineVariant.withValues(alpha: 0.45),
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.primary.withValues(alpha: 0.16),
-                blurRadius: 24,
-                offset: const Offset(0, 12),
+                color: isBotanical
+                    ? const Color(0xFF064E3B).withValues(alpha: 0.18)
+                    : theme.colorScheme.primary.withValues(alpha: 0.16),
+                blurRadius: isBotanical ? 20 : 24,
+                offset: Offset(0, isBotanical ? 8 : 12),
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(navRadius),
             child: Theme(
               data: theme.copyWith(
                 navigationBarTheme: theme.navigationBarTheme.copyWith(
                   labelTextStyle: WidgetStateProperty.all(
                     theme.textTheme.labelSmall?.copyWith(
                       fontSize: 11,
+                      letterSpacing: isBotanical ? 0.6 : 0.0,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -369,10 +383,41 @@ class _BrandMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      'assets/images/logo-dark.png',
-      height: 110,
-      fit: BoxFit.contain,
+    final themeExt = Theme.of(context).extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          'assets/images/logo-dark.png',
+          height: 105,
+          fit: BoxFit.contain,
+        ),
+        if (isBotanical) ...[
+          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            decoration: BoxDecoration(
+              color: const Color(0xFF10B981).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(
+                color: const Color(0xFF10B981).withValues(alpha: 0.35),
+                width: 0.8,
+              ),
+            ),
+            child: const Text(
+              'HAUTE BOTANIQUE',
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.8,
+                color: Color(0xFF064E3B),
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

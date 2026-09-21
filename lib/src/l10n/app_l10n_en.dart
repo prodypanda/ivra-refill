@@ -9,6 +9,52 @@ class AppL10nEn extends AppL10n {
   AppL10nEn([String locale = 'en']) : super(locale);
 
   @override
+  String get appSettings => 'App Settings';
+
+  @override
+  String get appThemeStyle => 'App Theme & Visual Style';
+
+  @override
+  String get appThemeStyleSubtitle =>
+      'Global appearance for all staff and managers across all devices';
+
+  @override
+  String get themeSolarInfusion => 'Solar Infusion';
+
+  @override
+  String get themeSolarInfusionDesc =>
+      'Warm Mediterranean amber and sunlit cream palette with Plus Jakarta Sans typography.';
+
+  @override
+  String get themeBotanicalHaute => 'Botanical Haute';
+
+  @override
+  String get themeBotanicalHauteDesc =>
+      'Awwwards-level luxury midnight emerald and crisp alabaster palette with Outfit architectural typography.';
+
+  @override
+  String get themeActive => 'Active';
+
+  @override
+  String themeSwitchSuccess(String themeName) {
+    return 'App theme globally updated to $themeName';
+  }
+
+  @override
+  String get percentageRefillTitle => 'Percentage Refill';
+
+  @override
+  String get percentageRefillSubtitle =>
+      'Allow recording refill levels as percentages (1-100%)';
+
+  @override
+  String get expressQrTitle => 'Express QR Management';
+
+  @override
+  String get expressQrSubtitle =>
+      'Allow direct scanning of dispenser-level QR codes';
+
+  @override
   String get markAsRead => 'Mark as Read';
 
   @override
@@ -1012,13 +1058,6 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get roomsGestionQr => 'QR Code Management';
-
-  @override
-  String get expressQrTitle => 'Express QR Management';
-
-  @override
-  String get expressQrSubtitle =>
-      'Allow direct scanning of dispenser-level QR codes';
 
   @override
   String get roomsSelectHotelFirst => 'Select a hotel...';

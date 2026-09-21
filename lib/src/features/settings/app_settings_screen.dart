@@ -307,12 +307,16 @@ class _ThemeOptionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final isBotanicalOption = style == AppThemeStyle.botanicalHaute;
+    final cardRadius = isBotanicalOption ? 12.0 : 22.0;
+    final buttonRadius = isBotanicalOption ? 4.0 : 20.0;
+    final badgeRadius = isBotanicalOption ? 3.0 : 10.0;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(cardRadius),
         splashColor: accentColor.withValues(alpha: 0.15),
         highlightColor: accentColor.withValues(alpha: 0.08),
         child: AnimatedContainer(
@@ -320,7 +324,7 @@ class _ThemeOptionCard extends StatelessWidget {
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
             color: theme.colorScheme.surface.withValues(alpha: 0.85),
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(cardRadius),
             border: Border.all(
               color: isSelected ? accentColor : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
               width: isSelected ? 2.5 : 1.0,
@@ -349,7 +353,7 @@ class _ThemeOptionCard extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   gradient: previewGradient,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(cardRadius - 2)),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Column(
@@ -358,42 +362,55 @@ class _ThemeOptionCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: badgeColor.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: badgeColor.withValues(alpha: 0.3), width: 1),
-                          ),
-                          child: Text(
-                            'IVRA',
-                            style: TextStyle(
-                              color: badgeColor,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 10,
-                              letterSpacing: 1.2,
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: badgeColor.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(badgeRadius),
+                              border: Border.all(color: badgeColor.withValues(alpha: 0.3), width: 1),
+                            ),
+                            child: Text(
+                              'IVRA',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: badgeColor,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 10,
+                                letterSpacing: isBotanicalOption ? 1.4 : 1.2,
+                              ),
                             ),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: buttonColor,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: buttonColor.withValues(alpha: 0.4),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isBotanicalOption ? 12 : 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: buttonColor,
+                              borderRadius: BorderRadius.circular(buttonRadius),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: buttonColor.withValues(alpha: 0.4),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              isBotanicalOption ? 'REFILL 500ML' : 'Refill 500ml',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: isBotanicalOption ? 10 : 11,
+                                letterSpacing: isBotanicalOption ? 1.2 : 0.0,
                               ),
-                            ],
-                          ),
-                          child: const Text(
-                            'Refill 500ml',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11,
                             ),
                           ),
                         ),

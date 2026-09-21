@@ -33,6 +33,11 @@ void main() {
       expect(lightExt, isNotNull);
       expect(lightExt!.style, AppThemeStyle.solarInfusion);
       expect(lightExt.glowColor, const Color(0xFFF59E0B));
+      expect(lightExt.cardBorderRadius, 16.0);
+      expect(lightExt.cardShadowColor, const Color(0xFF92400E));
+      expect(lightExt.buttonBorderRadius, 999.0);
+      expect(lightExt.buttonLetterSpacing, 0.0);
+      expect(lightExt.isBotanical, isFalse);
 
       final darkExt = darkTheme.extension<IvraThemeExtension>();
       expect(darkExt, isNotNull);
@@ -52,6 +57,15 @@ void main() {
       expect(lightExt, isNotNull);
       expect(lightExt!.style, AppThemeStyle.botanicalHaute);
       expect(lightExt.glowColor, const Color(0xFF10B981));
+      expect(lightExt.cardBorderRadius, 8.0);
+      expect(lightExt.cardShadowColor, const Color(0xFF064E3B));
+      expect(lightExt.buttonBorderRadius, 6.0);
+      expect(lightExt.buttonLetterSpacing, 1.6);
+      expect(lightExt.isBotanical, isTrue);
+
+      // Verify architectural card and button geometry differences
+      expect((lightTheme.cardTheme.shape as RoundedRectangleBorder).borderRadius, const BorderRadius.all(Radius.circular(8)));
+      expect((lightTheme.filledButtonTheme.style?.shape?.resolve({}) as RoundedRectangleBorder).borderRadius, BorderRadius.circular(6));
 
       final darkExt = darkTheme.extension<IvraThemeExtension>();
       expect(darkExt, isNotNull);

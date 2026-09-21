@@ -9,6 +9,52 @@ class AppL10nAr extends AppL10n {
   AppL10nAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get appSettings => 'إعدادات التطبيق';
+
+  @override
+  String get appThemeStyle => 'سمة ونمط التطبيق المرئي';
+
+  @override
+  String get appThemeStyleSubtitle =>
+      'المظهر العام لجميع الموظفين والمديرين عبر جميع الأجهزة';
+
+  @override
+  String get themeSolarInfusion => 'سولار إنفيوجن (الدفء الذهبي)';
+
+  @override
+  String get themeSolarInfusionDesc =>
+      'لوحة كهرمانية دافئة وكريم مشمس مع خط بلس جاكرتا سانس.';
+
+  @override
+  String get themeBotanicalHaute => 'بوتانيكال هوت (الزمرد الفاخر)';
+
+  @override
+  String get themeBotanicalHauteDesc =>
+      'لوحة فاخرة من الزمرد الليلي والألباستر النقي مع خط أوتفيت المعماري.';
+
+  @override
+  String get themeActive => 'مفعّل';
+
+  @override
+  String themeSwitchSuccess(String themeName) {
+    return 'تم تغيير سمة التطبيق عالمياً إلى $themeName';
+  }
+
+  @override
+  String get percentageRefillTitle => 'إعادة التعبئة بالنسبة المئوية';
+
+  @override
+  String get percentageRefillSubtitle =>
+      'السماح بتسجيل مستويات التعبئة كنسب مئوية (1-100%)';
+
+  @override
+  String get expressQrTitle => 'الإدارة السريعة (QR)';
+
+  @override
+  String get expressQrSubtitle =>
+      'السماح بالمسح المباشر لرموز QR الخاصة بالموزع';
+
+  @override
   String get markAsRead => 'تحديد كمقروء';
 
   @override
@@ -1007,13 +1053,6 @@ class AppL10nAr extends AppL10n {
 
   @override
   String get roomsGestionQr => 'إدارة رموز QR';
-
-  @override
-  String get expressQrTitle => 'الإدارة السريعة (QR)';
-
-  @override
-  String get expressQrSubtitle =>
-      'السماح بالمسح المباشر لرموز QR الخاصة بالموزع';
 
   @override
   String get roomsSelectHotelFirst => 'اختر فندقاً...';

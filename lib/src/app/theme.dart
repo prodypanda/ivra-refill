@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -15,6 +16,10 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
     required this.badgeBackgroundColor,
     required this.badgeForegroundColor,
     required this.accentGlow,
+    required this.cardBorderRadius,
+    required this.cardShadowColor,
+    required this.buttonBorderRadius,
+    required this.buttonLetterSpacing,
   });
 
   final AppThemeStyle style;
@@ -24,6 +29,12 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
   final Color badgeBackgroundColor;
   final Color badgeForegroundColor;
   final Color accentGlow;
+  final double cardBorderRadius;
+  final Color cardShadowColor;
+  final double buttonBorderRadius;
+  final double buttonLetterSpacing;
+
+  bool get isBotanical => style == AppThemeStyle.botanicalHaute;
 
   @override
   IvraThemeExtension copyWith({
@@ -34,6 +45,10 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
     Color? badgeBackgroundColor,
     Color? badgeForegroundColor,
     Color? accentGlow,
+    double? cardBorderRadius,
+    Color? cardShadowColor,
+    double? buttonBorderRadius,
+    double? buttonLetterSpacing,
   }) {
     return IvraThemeExtension(
       style: style ?? this.style,
@@ -43,6 +58,10 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
       badgeBackgroundColor: badgeBackgroundColor ?? this.badgeBackgroundColor,
       badgeForegroundColor: badgeForegroundColor ?? this.badgeForegroundColor,
       accentGlow: accentGlow ?? this.accentGlow,
+      cardBorderRadius: cardBorderRadius ?? this.cardBorderRadius,
+      cardShadowColor: cardShadowColor ?? this.cardShadowColor,
+      buttonBorderRadius: buttonBorderRadius ?? this.buttonBorderRadius,
+      buttonLetterSpacing: buttonLetterSpacing ?? this.buttonLetterSpacing,
     );
   }
 
@@ -57,6 +76,10 @@ class IvraThemeExtension extends ThemeExtension<IvraThemeExtension> {
       badgeBackgroundColor: Color.lerp(badgeBackgroundColor, other.badgeBackgroundColor, t) ?? badgeBackgroundColor,
       badgeForegroundColor: Color.lerp(badgeForegroundColor, other.badgeForegroundColor, t) ?? badgeForegroundColor,
       accentGlow: Color.lerp(accentGlow, other.accentGlow, t) ?? accentGlow,
+      cardBorderRadius: lerpDouble(cardBorderRadius, other.cardBorderRadius, t) ?? cardBorderRadius,
+      cardShadowColor: Color.lerp(cardShadowColor, other.cardShadowColor, t) ?? cardShadowColor,
+      buttonBorderRadius: lerpDouble(buttonBorderRadius, other.buttonBorderRadius, t) ?? buttonBorderRadius,
+      buttonLetterSpacing: lerpDouble(buttonLetterSpacing, other.buttonLetterSpacing, t) ?? buttonLetterSpacing,
     );
   }
 }
@@ -153,6 +176,10 @@ ThemeData _buildSolarInfusionTheme(Brightness brightness, bool isLight) {
     badgeBackgroundColor: const Color(0xFFF59E0B).withValues(alpha: 0.15),
     badgeForegroundColor: const Color(0xFF855300),
     accentGlow: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+    cardBorderRadius: 16.0,
+    cardShadowColor: const Color(0xFF92400E),
+    buttonBorderRadius: 999.0,
+    buttonLetterSpacing: 0.0,
   );
 
   return ThemeData(
@@ -377,39 +404,91 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
           ),
     glowColor: const Color(0xFF10B981),
     cardBorderColor: isLight
-        ? const Color(0xFF10B981).withValues(alpha: 0.16)
-        : const Color(0xFF34D399).withValues(alpha: 0.22),
+        ? const Color(0xFF10B981).withValues(alpha: 0.28)
+        : const Color(0xFF34D399).withValues(alpha: 0.32),
     badgeBackgroundColor: const Color(0xFF10B981).withValues(alpha: 0.16),
     badgeForegroundColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
     accentGlow: const Color(0xFF10B981).withValues(alpha: 0.45),
+    cardBorderRadius: 8.0,
+    cardShadowColor: const Color(0xFF064E3B),
+    buttonBorderRadius: 6.0,
+    buttonLetterSpacing: 1.6,
+  );
+
+  final baseTextTheme = GoogleFonts.outfitTextTheme(
+    ThemeData(brightness: brightness).textTheme,
+  );
+
+  final editorialTextTheme = baseTextTheme.copyWith(
+    displayLarge: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.displayLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -1.0,
+      ),
+    ),
+    displayMedium: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.displayMedium?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.8,
+      ),
+    ),
+    displaySmall: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.displaySmall?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.5,
+      ),
+    ),
+    headlineLarge: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.headlineLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.6,
+      ),
+    ),
+    headlineMedium: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.headlineMedium?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.4,
+      ),
+    ),
+    headlineSmall: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.3,
+      ),
+    ),
+    titleLarge: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+        fontSize: 22,
+        letterSpacing: -0.2,
+      ),
+    ),
+  ).apply(
+    bodyColor: colorScheme.onSurface,
+    displayColor: colorScheme.onSurface,
   );
 
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
     extensions: [customExt],
-    // High-end architectural luxury typography (Outfit)
-    textTheme: GoogleFonts.outfitTextTheme(
-      ThemeData(brightness: brightness).textTheme,
-    ).apply(
-      bodyColor: colorScheme.onSurface,
-      displayColor: colorScheme.onSurface,
-    ),
+    textTheme: editorialTextTheme,
     chipTheme: ChipThemeData(
       backgroundColor: isLight ? const Color(0xFFE5F5ED) : const Color(0xFF0E2B21),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(4),
       ),
       side: BorderSide(
         color: isLight
-            ? const Color(0xFF10B981).withValues(alpha: 0.25)
-            : const Color(0xFF34D399).withValues(alpha: 0.25),
+            ? const Color(0xFF10B981).withValues(alpha: 0.35)
+            : const Color(0xFF34D399).withValues(alpha: 0.35),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       labelStyle: TextStyle(
-        fontWeight: FontWeight.w600,
-        color: colorScheme.onSurface,
-        letterSpacing: 0.2,
+        fontWeight: FontWeight.w700,
+        color: isLight ? const Color(0xFF064E3B) : const Color(0xFFECFDF5),
+        letterSpacing: 0.8,
+        fontSize: 11.5,
       ),
     ),
     listTileTheme: ListTileThemeData(
@@ -428,21 +507,21 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
     ),
     scaffoldBackgroundColor: Colors.transparent,
     visualDensity: VisualDensity.standard,
-    // Glassmorphic / Crystalline Luxury Cards
+    // Architectural Crystalline Luxury Cards
     cardTheme: CardThemeData(
       elevation: 0,
       color: isLight
-          ? Colors.white.withValues(alpha: 0.82)
-          : colorScheme.surfaceContainer.withValues(alpha: 0.8),
-      shadowColor: const Color(0xFF064E3B).withValues(alpha: 0.08),
+          ? Colors.white.withValues(alpha: 0.88)
+          : colorScheme.surfaceContainer.withValues(alpha: 0.85),
+      shadowColor: const Color(0xFF064E3B).withValues(alpha: 0.10),
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
         side: BorderSide(
           color: isLight
-              ? const Color(0xFF10B981).withValues(alpha: 0.18)
-              : const Color(0xFF34D399).withValues(alpha: 0.22),
-          width: 1,
+              ? const Color(0xFF10B981).withValues(alpha: 0.28)
+              : const Color(0xFF34D399).withValues(alpha: 0.32),
+          width: 1.0,
         ),
       ),
     ),
@@ -452,55 +531,76 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
           ? const Color(0xFFEFF8F4)
           : colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
       labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-      floatingLabelStyle: TextStyle(color: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399), fontWeight: FontWeight.w600),
+      floatingLabelStyle: TextStyle(
+        color: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.5,
+      ),
       hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
       border: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        borderRadius: const BorderRadius.all(Radius.circular(6)),
         borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.25)),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        borderRadius: const BorderRadius.all(Radius.circular(6)),
         borderSide: BorderSide(
           color: isLight
-              ? const Color(0xFF10B981).withValues(alpha: 0.25)
-              : const Color(0xFF34D399).withValues(alpha: 0.25),
+              ? const Color(0xFF10B981).withValues(alpha: 0.3)
+              : const Color(0xFF34D399).withValues(alpha: 0.3),
         ),
       ),
       focusedBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(16)),
+        borderRadius: BorderRadius.all(Radius.circular(6)),
         borderSide: BorderSide(
           color: Color(0xFF10B981),
-          width: 2.0,
+          width: 1.8,
         ),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
     ),
-    // Radiant Emerald Luxury Buttons with micro-glow
+    // Architectural Luxury Buttons with tracked lettering
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: const Color(0xFF10B981),
-        foregroundColor: Colors.white,
-        shape: const StadiumBorder(),
-        elevation: 3,
-        shadowColor: const Color(0xFF10B981).withValues(alpha: 0.45),
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        backgroundColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF10B981),
+        foregroundColor: isLight ? const Color(0xFFECFDF5) : const Color(0xFF022C22),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6),
+        ),
+        elevation: 2,
+        shadowColor: const Color(0xFF064E3B).withValues(alpha: 0.35),
+        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 15),
         textStyle: const TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 15,
-          letterSpacing: 0.3,
+          fontWeight: FontWeight.w800,
+          fontSize: 12.5,
+          letterSpacing: 1.6,
         ),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        shape: const StadiumBorder(),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6),
+        ),
         foregroundColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
-        side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        side: BorderSide(
+          color: isLight ? const Color(0xFF10B981) : const Color(0xFF34D399),
+          width: 1.2,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 15),
+        textStyle: const TextStyle(
+          fontWeight: FontWeight.w800,
+          fontSize: 12.5,
+          letterSpacing: 1.6,
+        ),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
         textStyle: const TextStyle(
           fontWeight: FontWeight.w700,
-          fontSize: 15,
-          letterSpacing: 0.3,
+          fontSize: 12.5,
+          letterSpacing: 1.2,
         ),
       ),
     ),
@@ -510,6 +610,9 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
       centerTitle: false,
     ),
     navigationBarTheme: NavigationBarThemeData(
+      indicatorShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
       indicatorColor: const Color(0xFF10B981).withValues(alpha: 0.22),
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         final selected = states.contains(WidgetState.selected);
@@ -517,6 +620,7 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
           color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
           fontSize: 11,
           fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
+          letterSpacing: 0.5,
         );
       }),
       iconTheme: WidgetStateProperty.resolveWith((states) {
@@ -530,29 +634,38 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
     bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: isLight ? const Color(0xFFF6FBF8) : colorScheme.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
     ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: isLight ? const Color(0xFFF6FBF8).withValues(alpha: 0.6) : null,
-      selectedIconTheme: IconThemeData(color: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399)),
+      backgroundColor: isLight ? const Color(0xFFF6FBF8).withValues(alpha: 0.7) : null,
+      indicatorShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(6),
+      ),
+      indicatorColor: const Color(0xFF10B981).withValues(alpha: 0.22),
+      selectedIconTheme: IconThemeData(
+        color: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
+        size: 24,
+      ),
       selectedLabelTextStyle: TextStyle(
         color: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
         fontWeight: FontWeight.w800,
-        fontSize: 13,
+        fontSize: 12,
+        letterSpacing: 0.8,
       ),
       unselectedLabelTextStyle: TextStyle(
         color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
-        fontSize: 12,
+        fontSize: 11.5,
+        letterSpacing: 0.4,
       ),
     ),
     dialogTheme: DialogThemeData(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(8),
         side: BorderSide(
           color: isLight
-              ? const Color(0xFF10B981).withValues(alpha: 0.2)
-              : const Color(0xFF34D399).withValues(alpha: 0.2),
+              ? const Color(0xFF10B981).withValues(alpha: 0.3)
+              : const Color(0xFF34D399).withValues(alpha: 0.3),
         ),
       ),
       backgroundColor: isLight ? const Color(0xFFF6FBF8) : colorScheme.surfaceContainer,

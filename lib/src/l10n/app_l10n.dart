@@ -101,6 +101,84 @@ abstract class AppL10n {
     Locale('it')
   ];
 
+  /// No description provided for @appSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'App Settings'**
+  String get appSettings;
+
+  /// No description provided for @appThemeStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'App Theme & Visual Style'**
+  String get appThemeStyle;
+
+  /// No description provided for @appThemeStyleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Global appearance for all staff and managers across all devices'**
+  String get appThemeStyleSubtitle;
+
+  /// No description provided for @themeSolarInfusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Solar Infusion'**
+  String get themeSolarInfusion;
+
+  /// No description provided for @themeSolarInfusionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm Mediterranean amber and sunlit cream palette with Plus Jakarta Sans typography.'**
+  String get themeSolarInfusionDesc;
+
+  /// No description provided for @themeBotanicalHaute.
+  ///
+  /// In en, this message translates to:
+  /// **'Botanical Haute'**
+  String get themeBotanicalHaute;
+
+  /// No description provided for @themeBotanicalHauteDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Awwwards-level luxury midnight emerald and crisp alabaster palette with Outfit architectural typography.'**
+  String get themeBotanicalHauteDesc;
+
+  /// No description provided for @themeActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get themeActive;
+
+  /// No description provided for @themeSwitchSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'App theme globally updated to {themeName}'**
+  String themeSwitchSuccess(String themeName);
+
+  /// No description provided for @percentageRefillTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage Refill'**
+  String get percentageRefillTitle;
+
+  /// No description provided for @percentageRefillSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow recording refill levels as percentages (1-100%)'**
+  String get percentageRefillSubtitle;
+
+  /// No description provided for @expressQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Express QR Management'**
+  String get expressQrTitle;
+
+  /// No description provided for @expressQrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow direct scanning of dispenser-level QR codes'**
+  String get expressQrSubtitle;
+
   /// No description provided for @markAsRead.
   ///
   /// In en, this message translates to:
@@ -1960,18 +2038,6 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'QR Code Management'**
   String get roomsGestionQr;
-
-  /// No description provided for @expressQrTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Express QR Management'**
-  String get expressQrTitle;
-
-  /// No description provided for @expressQrSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Allow direct scanning of dispenser-level QR codes'**
-  String get expressQrSubtitle;
 
   /// No description provided for @roomsSelectHotelFirst.
   ///

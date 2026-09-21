@@ -9,6 +9,52 @@ class AppL10nIt extends AppL10n {
   AppL10nIt([String locale = 'it']) : super(locale);
 
   @override
+  String get appSettings => 'Impostazioni dell\'app';
+
+  @override
+  String get appThemeStyle => 'Tema e stile visivo';
+
+  @override
+  String get appThemeStyleSubtitle =>
+      'Aspetto globale per tutto il personale e i manager su tutti i dispositivi';
+
+  @override
+  String get themeSolarInfusion => 'Infusione Solare';
+
+  @override
+  String get themeSolarInfusionDesc =>
+      'Calda tavolozza di ambra mediterranea e crema solare con tipografia Plus Jakarta Sans.';
+
+  @override
+  String get themeBotanicalHaute => 'Alta Botanica';
+
+  @override
+  String get themeBotanicalHauteDesc =>
+      'Tavolozza di lusso smeraldo di mezzanotte e alabastro puro con tipografia architettonica Outfit.';
+
+  @override
+  String get themeActive => 'Attivo';
+
+  @override
+  String themeSwitchSuccess(String themeName) {
+    return 'Tema dell\'app modificato a livello globale in $themeName';
+  }
+
+  @override
+  String get percentageRefillTitle => 'Ricarica in percentuale';
+
+  @override
+  String get percentageRefillSubtitle =>
+      'Consenti la registrazione dei livelli di ricarica in percentuale (1-100%)';
+
+  @override
+  String get expressQrTitle => 'Gestione Espressa (QR)';
+
+  @override
+  String get expressQrSubtitle =>
+      'Consenti la scansione diretta dei codici QR del distributore';
+
+  @override
   String get markAsRead => 'Segna come letto';
 
   @override
@@ -1019,13 +1065,6 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get roomsGestionQr => 'Gestione Codici QR';
-
-  @override
-  String get expressQrTitle => 'Gestione Espressa (QR)';
-
-  @override
-  String get expressQrSubtitle =>
-      'Consenti la scansione diretta dei codici QR del distributore';
 
   @override
   String get roomsSelectHotelFirst => 'Seleziona hotel...';
