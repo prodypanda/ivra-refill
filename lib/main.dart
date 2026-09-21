@@ -13,8 +13,15 @@ import 'src/state/app_state.dart';
 import 'src/services/notification_service.dart';
 import 'src/utils/app_logger.dart';
 
-const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+const _isDemo = bool.fromEnvironment('DEMO', defaultValue: false);
+const _supabaseUrl = String.fromEnvironment(
+  'SUPABASE_URL',
+  defaultValue: 'https://tozmdkasyzdzrbhvfxis.supabase.co',
+);
+const _supabaseAnonKey = String.fromEnvironment(
+  'SUPABASE_ANON_KEY',
+  defaultValue: 'sb_publishable_oxa275DytFvFQNOmmtWelg_8Dc2aLod',
+);
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -26,7 +33,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    final useSupabase = _supabaseUrl.isNotEmpty && _supabaseAnonKey.isNotEmpty;
+    final useSupabase = !_isDemo && _supabaseUrl.isNotEmpty && _supabaseAnonKey.isNotEmpty;
     if (useSupabase) {
       await Supabase.initialize(
         url: _supabaseUrl,
@@ -89,7 +96,7 @@ Future<void> main() async {
     }
   }
 
-  final useSupabase = _supabaseUrl.isNotEmpty && _supabaseAnonKey.isNotEmpty;
+  final useSupabase = !_isDemo && _supabaseUrl.isNotEmpty && _supabaseAnonKey.isNotEmpty;
   if (useSupabase) {
     await Supabase.initialize(
       url: _supabaseUrl,

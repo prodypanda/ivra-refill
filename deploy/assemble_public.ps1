@@ -8,17 +8,35 @@
 # Then deploy `public/` with your host of choice (see deploy/DEPLOYMENT.md).
 
 param(
-  [Parameter(Mandatory = $true)] [string] $SupabaseUrl,
-  [Parameter(Mandatory = $true)] [string] $SupabaseAnonKey
+  [string] $SupabaseUrl = "",
+  [string] $SupabaseAnonKey = ""
 )
 
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $repoRoot
 
+if ([string]::IsNullOrWhiteSpace($SupabaseUrl) -or [string]::IsNullOrWhiteSpace($SupabaseAnonKey)) {
+  $envFile = Join-Path $repoRoot ".env"
+  if (Test-Path $envFile) {
+    Get-Content $envFile | ForEach-Object {
+      if ($_ -match '^(.*?)=(.*)$') {
+        $name = $matches[1].Trim()
+        $value = $matches[2].Trim() -replace '^"|"$','' -replace "^'|'$",""
+        if ($name -eq "SUPABASE_URL" -and [string]::IsNullOrWhiteSpace($SupabaseUrl)) { $SupabaseUrl = $value }
+        if ($name -eq "SUPABASE_ANON_KEY" -and [string]::IsNullOrWhiteSpace($SupabaseAnonKey)) { $SupabaseAnonKey = $value }
+      }
+    }
+  }
+}
+
+if ([string]::IsNullOrWhiteSpace($SupabaseUrl)) { $SupabaseUrl = "https://tozmdkasyzdzrbhvfxis.supabase.co" }
+if ([string]::IsNullOrWhiteSpace($SupabaseAnonKey)) { $SupabaseAnonKey = "sb_publishable_oxa275DytFvFQNOmmtWelg_8Dc2aLod" }
+
 Write-Host "==> Building Flutter web app (base href /app/)..." -ForegroundColor Cyan
 flutter build web --release `
   --tree-shake-icons `
+  --no-wasm-dry-run `
   --base-href "/app/" `
   --dart-define=SUPABASE_URL=$SupabaseUrl `
   --dart-define=SUPABASE_ANON_KEY=$SupabaseAnonKey
