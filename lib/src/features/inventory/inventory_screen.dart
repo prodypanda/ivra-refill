@@ -890,9 +890,11 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: isBotanical
+                                      ? FontWeight.w600
+                                      : FontWeight.w900,
                                   height: 1.1,
-                                  letterSpacing: -0.3,
+                                  letterSpacing: isBotanical ? 0.0 : -0.3,
                                 ),
                             ),
                             const SizedBox(height: 6),
@@ -991,9 +993,11 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: isBotanical
+                                        ? FontWeight.w600
+                                        : FontWeight.w900,
                                     height: 1.2,
-                                    letterSpacing: -0.3,
+                                    letterSpacing: isBotanical ? 0.0 : -0.3,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -1885,6 +1889,8 @@ class _SuggestedOrders extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final isMobile = MediaQuery.sizeOf(context).width < 720;
 
     if (orders.isEmpty) {
@@ -1901,6 +1907,7 @@ class _SuggestedOrders extends StatelessWidget {
           width: isMobile ? double.infinity : 320,
           child: GlassCard(
             padding: const EdgeInsets.all(18),
+            borderRadius: themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1913,7 +1920,10 @@ class _SuggestedOrders extends StatelessWidget {
                       child: Text(
                         order.product.label(language),
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: isBotanical
+                              ? FontWeight.w600
+                              : FontWeight.w900,
+                          letterSpacing: isBotanical ? 0.0 : null,
                         ),
                       ),
                     ),
@@ -2364,6 +2374,8 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
 
     final refillEventsAsync = ref.watch(refillEventsProvider);
     final inventoryEventsAsync = ref.watch(inventoryEventsProvider);
@@ -2602,8 +2614,11 @@ class _ProductHistoryDialogState extends ConsumerState<_ProductHistoryDialog> {
                                       widget.item.product.label(language),
                                       style:
                                           theme.textTheme.titleLarge?.copyWith(
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: -0.5,
+                                        fontWeight: isBotanical
+                                            ? FontWeight.w600
+                                            : FontWeight.w900,
+                                        letterSpacing:
+                                            isBotanical ? 0.0 : -0.5,
                                       ),
                                     ),
                                   ],

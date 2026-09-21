@@ -709,9 +709,11 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
                   child: Text(
                     '${l10n.t('roomsLabelFloor')} $floor',
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: isBotanical
+                          ? FontWeight.w600
+                          : FontWeight.w900,
                       color: theme.colorScheme.onSurface,
-                      letterSpacing: -0.5,
+                      letterSpacing: isBotanical ? 0.0 : -0.5,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -1381,6 +1383,10 @@ class _CompactRoomTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final tileRadius =
+        themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 16.0);
 
     Color overallColor = Colors.green;
     var overallIcon = Icons.check_circle_outline;
@@ -1408,7 +1414,7 @@ class _CompactRoomTile extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(tileRadius),
         boxShadow: [
           BoxShadow(
             color: overallColor.withValues(alpha: 0.1),
@@ -1421,7 +1427,7 @@ class _CompactRoomTile extends ConsumerWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(tileRadius),
           splashColor: overallColor.withValues(alpha: 0.2),
           highlightColor: overallColor.withValues(alpha: 0.1),
           child: Ink(
@@ -1436,7 +1442,7 @@ class _CompactRoomTile extends ConsumerWidget {
                   overallColor.withValues(alpha: 0.03),
                 ],
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(tileRadius),
               border: Border.all(
                 color: overallColor.withValues(alpha: 0.3),
                 width: 1.5,
@@ -1493,10 +1499,12 @@ class _CompactRoomTile extends ConsumerWidget {
                       Text(
                         roomNumber,
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: isBotanical
+                              ? FontWeight.w600
+                              : FontWeight.w900,
                           fontSize: 22,
                           color: theme.colorScheme.onSurface,
-                          letterSpacing: -0.5,
+                          letterSpacing: isBotanical ? 0.0 : -0.5,
                         ),
                       ),
                       Text(
@@ -3167,6 +3175,8 @@ class _MobileRoomHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -3178,7 +3188,7 @@ class _MobileRoomHeader extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: statusColor.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(isBotanical ? 6.0 : 18.0),
               ),
               child: Icon(Icons.meeting_room_outlined, color: statusColor),
             ),
@@ -3187,8 +3197,10 @@ class _MobileRoomHeader extends StatelessWidget {
               child: Text(
                 '${l10n.t('roomsLabelRoom')} $roomNumber',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -0.4,
+                  fontWeight: isBotanical
+                      ? FontWeight.w600
+                      : FontWeight.w900,
+                  letterSpacing: isBotanical ? 0.0 : -0.4,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -3263,6 +3275,8 @@ class _RoomHeaderChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -3270,7 +3284,7 @@ class _RoomHeaderChip extends StatelessWidget {
         color: filled
             ? color.withValues(alpha: 0.12)
             : theme.colorScheme.surface.withValues(alpha: 0.74),
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(isBotanical ? 4.0 : 999.0),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -3282,7 +3296,8 @@ class _RoomHeaderChip extends StatelessWidget {
             label,
             style: theme.textTheme.labelSmall?.copyWith(
               color: color,
-              fontWeight: FontWeight.w900,
+              fontWeight: isBotanical ? FontWeight.w700 : FontWeight.w900,
+              letterSpacing: isBotanical ? 0.6 : null,
             ),
           ),
         ],
@@ -3304,6 +3319,8 @@ class _RoomsMobileSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     var attention = 0;
     var refill = 0;
     var ok = 0;
@@ -3323,7 +3340,7 @@ class _RoomsMobileSummary extends StatelessWidget {
 
     return GlassCard(
       padding: const EdgeInsets.all(16),
-      borderRadius: 28,
+      borderRadius: themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 28.0),
       color: theme.colorScheme.primary.withValues(alpha: 0.08),
       child: Row(
         children: [
@@ -3373,6 +3390,8 @@ class _RoomsSummaryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
 
     return Expanded(
       child: Column(
@@ -3382,7 +3401,7 @@ class _RoomsSummaryTile extends StatelessWidget {
           Text(
             value.toString(),
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w900,
+              fontWeight: isBotanical ? FontWeight.w600 : FontWeight.w900,
               color: theme.colorScheme.onSurface,
             ),
           ),

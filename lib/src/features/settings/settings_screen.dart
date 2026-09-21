@@ -15,6 +15,7 @@ import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/premium_snackbar.dart';
 import '../../version.dart';
+import '../../app/theme.dart';
 import 'app_settings_screen.dart';
 
 
@@ -84,7 +85,10 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final isMobile = MediaQuery.sizeOf(context).width < 720;
+    final effectiveRadius = themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : (isMobile ? 24.0 : 16.0));
     final locale = ref.watch(localeProvider);
     final useSupabase = ref.watch(useSupabaseProvider);
     final offlineMode = ref.watch(offlineModeProvider);
@@ -156,7 +160,7 @@ class SettingsScreen extends ConsumerWidget {
               elevation: isMobile ? 0 : null,
               shape: isMobile
                   ? RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(effectiveRadius),
                       side: BorderSide(
                         color: theme.colorScheme.outlineVariant,
                       ),
@@ -180,7 +184,7 @@ class SettingsScreen extends ConsumerWidget {
               elevation: isMobile ? 0 : null,
               shape: isMobile
                   ? RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(effectiveRadius),
                       side: BorderSide(
                         color: theme.colorScheme.outlineVariant,
                       ),
@@ -229,7 +233,7 @@ class SettingsScreen extends ConsumerWidget {
                 elevation: isMobile ? 0 : null,
                 shape: isMobile
                     ? RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(effectiveRadius),
                         side: BorderSide(
                           color: theme.colorScheme.outlineVariant,
                         ),
@@ -550,6 +554,9 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final effectiveRadius = themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 24.0);
     final biometricAccount = ref.watch(biometricAccountProvider);
     final currentEmail = ref.watch(currentUserProvider.select((s) => s.valueOrNull?.email));
     final enabled = isBiometricEnabledForEmail(biometricAccount, currentEmail);
@@ -559,7 +566,7 @@ class _BiometricSettingTileState extends ConsumerState<_BiometricSettingTile> {
       elevation: widget.isMobile ? 0 : null,
       shape: widget.isMobile
           ? RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(effectiveRadius),
               side: BorderSide(color: theme.colorScheme.outlineVariant),
             )
           : null,
@@ -586,12 +593,16 @@ class _SettingsMobileStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final effectiveRadius = themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 20.0);
 
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(effectiveRadius),
         side: BorderSide(color: colorScheme.outlineVariant),
       ),
       child: ListTile(

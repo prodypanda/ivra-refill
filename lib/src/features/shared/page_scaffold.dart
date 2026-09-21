@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../state/app_state.dart';
 import '../account/account_screen.dart';
+import '../../app/theme.dart';
 
 class PageScaffold extends ConsumerWidget {
   const PageScaffold({
@@ -21,6 +22,9 @@ class PageScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final user = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     String initials = '';
     if (user != null) {
@@ -36,22 +40,34 @@ class PageScaffold extends ConsumerWidget {
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () => context.go(AccountScreen.route),
-          child: CircleAvatar(
-            radius: 17,
-            backgroundColor: Theme.of(context).colorScheme.primary,
+          child: Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary,
+              borderRadius: BorderRadius.circular(isBotanical ? 6.0 : 999.0),
+              border: isBotanical
+                  ? Border.all(
+                      color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                      width: 1.0,
+                    )
+                  : null,
+            ),
+            alignment: Alignment.center,
             child: user != null
                 ? Text(
                     initials,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontSize: 13,
+                      color: theme.colorScheme.onPrimary,
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
+                      letterSpacing: isBotanical ? 0.5 : 0.0,
                     ),
                   )
                 : Icon(
                     Icons.person,
                     size: 18,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: theme.colorScheme.onPrimary,
                   ),
           ),
         ),
@@ -81,9 +97,9 @@ class PageScaffold extends ConsumerWidget {
           title: Text(
             title,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -0.7,
+            style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: isBotanical ? FontWeight.w600 : FontWeight.w900,
+                  letterSpacing: isBotanical ? 0.0 : -0.7,
                 ),
           ),
           actions: [...actions, accountButton],

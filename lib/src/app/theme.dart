@@ -320,6 +320,34 @@ ThemeData _buildSolarInfusionTheme(Brightness brightness, bool isLight) {
       ),
       backgroundColor: isLight ? const Color(0xFFFFF8F5) : null,
     ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: const Color(0xFFF59E0B),
+      selectionColor: const Color(0xFFF59E0B).withValues(alpha: 0.28),
+      selectionHandleColor: const Color(0xFFF59E0B),
+    ),
+    scrollbarTheme: ScrollbarThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.dragged) ||
+            states.contains(WidgetState.hovered)) {
+          return const Color(0xFFF59E0B).withValues(alpha: 0.6);
+        }
+        return const Color(0xFFF59E0B).withValues(alpha: 0.25);
+      }),
+      trackColor: const WidgetStatePropertyAll(Colors.transparent),
+      radius: const Radius.circular(8),
+      thickness: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.hovered) ? 8.0 : 5.0,
+      ),
+    ),
+    tabBarTheme: TabBarThemeData(
+      indicatorColor: colorScheme.primary,
+      labelColor: colorScheme.primary,
+      unselectedLabelColor: colorScheme.onSurfaceVariant,
+      indicatorSize: TabBarIndicatorSize.label,
+      labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+      unselectedLabelStyle: const TextStyle(fontSize: 13),
+    ),
+    focusColor: const Color(0xFFF59E0B).withValues(alpha: 0.15),
   );
 }
 
@@ -682,5 +710,43 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
       backgroundColor:
           isLight ? const Color(0xFFF6FBF8) : colorScheme.surfaceContainer,
     ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF10B981),
+      selectionColor: (isLight ? const Color(0xFF10B981) : const Color(0xFF34D399))
+          .withValues(alpha: 0.24),
+      selectionHandleColor:
+          isLight ? const Color(0xFF064E3B) : const Color(0xFF10B981),
+    ),
+    scrollbarTheme: ScrollbarThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        final color = isLight ? const Color(0xFF064E3B) : const Color(0xFF10B981);
+        if (states.contains(WidgetState.dragged) ||
+            states.contains(WidgetState.hovered)) {
+          return color.withValues(alpha: 0.6);
+        }
+        return color.withValues(alpha: 0.25);
+      }),
+      trackColor: const WidgetStatePropertyAll(Colors.transparent),
+      radius: const Radius.circular(3),
+      thickness: WidgetStateProperty.resolveWith(
+        (states) => states.contains(WidgetState.hovered) ? 7.0 : 4.0,
+      ),
+    ),
+    tabBarTheme: TabBarThemeData(
+      indicatorColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
+      labelColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
+      unselectedLabelColor: colorScheme.onSurfaceVariant,
+      indicatorSize: TabBarIndicatorSize.label,
+      labelStyle: const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 12,
+        letterSpacing: 0.6,
+      ),
+      unselectedLabelStyle: const TextStyle(
+        fontSize: 12,
+        letterSpacing: 0.3,
+      ),
+    ),
+    focusColor: const Color(0xFF10B981).withValues(alpha: 0.15),
   );
 }

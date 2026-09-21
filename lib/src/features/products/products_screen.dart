@@ -322,8 +322,11 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
                         widget.product.label(widget.language),
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: Colors.white,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: isBotanical
+                              ? FontWeight.w600
+                              : FontWeight.w900,
                           height: 1.1,
+                          letterSpacing: isBotanical ? 0.0 : -0.3,
                           shadows: [
                             const Shadow(
                               color: Colors.black87,

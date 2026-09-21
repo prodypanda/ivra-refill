@@ -613,9 +613,12 @@ class _ReportAnalytics extends StatelessWidget {
         ? (screenWidth - 40 - 12) / 2
         : (screenWidth < 600 ? 170.0 : 190.0);
 
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+
     return GlassCard(
       padding: const EdgeInsets.all(20),
-      borderRadius: 24,
+      borderRadius: themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -627,7 +630,12 @@ class _ReportAnalytics extends StatelessWidget {
                 Expanded(
                   child: Text(
                     l10n.t('reportAnalyticsTitle'),
-                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: isBotanical
+                          ? FontWeight.w600
+                          : FontWeight.w900,
+                      letterSpacing: isBotanical ? 0.0 : -0.5,
+                    ),
                   ),
                 ),
                 OutlinedButton.icon(
@@ -648,7 +656,12 @@ class _ReportAnalytics extends StatelessWidget {
                     Expanded(
                       child: Text(
                         l10n.t('reportAnalyticsTitle'),
-                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: isBotanical
+                              ? FontWeight.w600
+                              : FontWeight.w900,
+                          letterSpacing: isBotanical ? 0.0 : -0.5,
+                        ),
                       ),
                     ),
                   ],
@@ -732,13 +745,15 @@ class _KpiTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final isCompact = width < 160;
     return Container(
       width: width,
       padding: EdgeInsets.all(isCompact ? 10 : 14),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(isBotanical ? 6.0 : 16.0),
       ),
       child: Row(
         children: [
@@ -759,7 +774,7 @@ class _KpiTile extends StatelessWidget {
           Text(
             value,
             style: (isCompact ? theme.textTheme.titleMedium : theme.textTheme.titleLarge)?.copyWith(
-              fontWeight: FontWeight.w900,
+              fontWeight: isBotanical ? FontWeight.w600 : FontWeight.w900,
             ),
           ),
         ],
@@ -1116,8 +1131,11 @@ class _ReportActionState extends State<_ReportAction> {
                           child: Text(
                             widget.title,
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -0.5,
+                              fontWeight: (themeExt?.isBotanical ?? false)
+                                  ? FontWeight.w600
+                                  : FontWeight.w900,
+                              letterSpacing:
+                                  (themeExt?.isBotanical ?? false) ? 0.0 : -0.5,
                             ),
                           ),
                         ),

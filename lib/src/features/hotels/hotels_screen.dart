@@ -247,9 +247,11 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
                               child: Text(
                                 hotel.name,
                                 style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: isBotanical
+                                      ? FontWeight.w600
+                                      : FontWeight.w900,
                                   color: theme.colorScheme.onSurface,
-                                  letterSpacing: -0.5,
+                                  letterSpacing: isBotanical ? 0.0 : -0.5,
                                 ),
                               ),
                             ),

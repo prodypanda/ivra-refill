@@ -15,6 +15,7 @@ import '../shared/premium_snackbar.dart';
 import '../shared/premium_confirm_dialog.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/glass_card.dart';
+import '../../app/theme.dart';
 
 class TeamScreen extends ConsumerWidget {
   const TeamScreen({super.key});
@@ -976,6 +977,9 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final effectiveRadius = themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 20.0);
     final member = widget.member;
 
     return MouseRegion(
@@ -988,6 +992,7 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
         child: SizedBox(
           width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 320.0),
           child: GlassCard(
+            borderRadius: effectiveRadius,
             padding: const EdgeInsets.all(20),
             borderColor: member.isActive
                 ? theme.colorScheme.primary
@@ -1011,7 +1016,8 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
-                        shape: BoxShape.circle,
+                        borderRadius: isBotanical ? BorderRadius.circular(6.0) : null,
+                        shape: isBotanical ? BoxShape.rectangle : BoxShape.circle,
                       ),
                       alignment: Alignment.center,
                       child: Text(
@@ -1030,8 +1036,8 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
                           Text(
                             member.fullName,
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.5,
+                              fontWeight: isBotanical ? FontWeight.w600 : FontWeight.w800,
+                              letterSpacing: isBotanical ? 0.0 : -0.5,
                             ),
                           ),
                           Text(
@@ -1159,6 +1165,9 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final effectiveRadius = themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 20.0);
     final invitation = widget.invitation;
 
     return MouseRegion(
@@ -1171,6 +1180,7 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
         child: SizedBox(
           width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 320.0),
           child: GlassCard(
+            borderRadius: effectiveRadius,
             padding: const EdgeInsets.all(20),
             borderColor: theme.colorScheme.tertiary
                 .withValues(alpha: _isHovered ? 0.5 : 0.2),
@@ -1185,7 +1195,8 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                       height: 48,
                       decoration: BoxDecoration(
                         color: theme.colorScheme.surfaceContainerHighest,
-                        shape: BoxShape.circle,
+                        borderRadius: isBotanical ? BorderRadius.circular(6.0) : null,
+                        shape: isBotanical ? BoxShape.rectangle : BoxShape.circle,
                         border: Border.all(
                           color:
                               theme.colorScheme.tertiary.withValues(alpha: 0.3),
@@ -1206,8 +1217,8 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
                           Text(
                             invitation.fullName,
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.5,
+                              fontWeight: isBotanical ? FontWeight.w600 : FontWeight.w800,
+                              letterSpacing: isBotanical ? 0.0 : -0.5,
                             ),
                           ),
                           Text(
