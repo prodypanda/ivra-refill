@@ -52,10 +52,10 @@ class GlassCard extends StatelessWidget {
         [
           BoxShadow(
             color: defaultShadowColor.withValues(
-              alpha: isMobile ? 0.12 : 0.08,
+              alpha: isMobile ? 0.08 : 0.04,
             ),
-            blurRadius: isMobile ? 20.0 : 12.0,
-            offset: Offset(0, isMobile ? 10 : 4),
+            blurRadius: isMobile ? 16.0 : 10.0,
+            offset: Offset(0, isMobile ? 6 : 3),
           ),
         ];
 

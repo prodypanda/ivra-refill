@@ -735,10 +735,15 @@ class _MetricsSummary extends StatelessWidget {
             label: l10n.t('alertsMetricCritical'),
             value: '$criticalCount',
             icon: Icons.error_outline_rounded,
-            gradientColors: [
-              colorScheme.error.withValues(alpha: 0.15),
-              colorScheme.error.withValues(alpha: 0.05),
-            ],
+            gradientColors: isBotanical
+                ? [
+                    colorScheme.error.withValues(alpha: 0.08),
+                    colorScheme.error.withValues(alpha: 0.02),
+                  ]
+                : [
+                    colorScheme.error.withValues(alpha: 0.15),
+                    colorScheme.error.withValues(alpha: 0.05),
+                  ],
             iconColor: colorScheme.error,
             valueColor: colorScheme.error,
             width: cardWidth,
@@ -749,8 +754,8 @@ class _MetricsSummary extends StatelessWidget {
             icon: Icons.notifications_active_outlined,
             gradientColors: isBotanical
                 ? [
-                    const Color(0xFFD97706).withValues(alpha: 0.15),
-                    const Color(0xFFD97706).withValues(alpha: 0.04),
+                    const Color(0xFFD97706).withValues(alpha: 0.08),
+                    const Color(0xFFD97706).withValues(alpha: 0.02),
                   ]
                 : [
                     Colors.amber.withValues(alpha: 0.18),
@@ -766,10 +771,15 @@ class _MetricsSummary extends StatelessWidget {
             label: l10n.t('alertsStatusResolved'),
             value: '$resolvedCount',
             icon: Icons.check_circle_outline_rounded,
-            gradientColors: [
-              Colors.green.withValues(alpha: 0.15),
-              Colors.green.withValues(alpha: 0.05),
-            ],
+            gradientColors: isBotanical
+                ? [
+                    Colors.green.withValues(alpha: 0.08),
+                    Colors.green.withValues(alpha: 0.02),
+                  ]
+                : [
+                    Colors.green.withValues(alpha: 0.15),
+                    Colors.green.withValues(alpha: 0.05),
+                  ],
             iconColor: Colors.green.shade700,
             valueColor: Colors.green.shade800,
             width: cardWidth,
@@ -808,6 +818,8 @@ class _MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
 
     return SizedBox(
       width: width,
@@ -819,9 +831,12 @@ class _MetricCard extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: gradientColors,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(isBotanical ? 8 : 16),
           border: Border.all(
-            color: iconColor.withValues(alpha: 0.12),
+            color: isBotanical
+                ? (themeExt?.cardBorderColor ??
+                    iconColor.withValues(alpha: 0.12))
+                : iconColor.withValues(alpha: 0.12),
           ),
         ),
         child: Row(
@@ -830,7 +845,7 @@ class _MetricCard extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: iconColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(isBotanical ? 6 : 12),
               ),
               child: Icon(icon, size: 22, color: iconColor),
             ),
@@ -842,17 +857,20 @@ class _MetricCard extends StatelessWidget {
                   Text(
                     value,
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w900,
+                      fontWeight:
+                          isBotanical ? FontWeight.w600 : FontWeight.w900,
                       color: valueColor,
-                      letterSpacing: -0.5,
+                      letterSpacing: isBotanical ? -0.2 : -0.5,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     label,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      fontWeight:
+                          isBotanical ? FontWeight.w500 : FontWeight.w600,
+                      color:
+                          theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -944,9 +962,11 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
           onEnter: (_) => setState(() => _isHovered = true),
           onExit: (_) => setState(() => _isHovered = false),
           child: AnimatedScale(
-            scale: _isHovered && !isResolved ? 1.02 : 1.0,
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeOutBack,
+            scale: _isHovered && !isResolved
+                ? (isBotanical ? 1.006 : 1.02)
+                : 1.0,
+            duration: const Duration(milliseconds: 200),
+            curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -981,11 +1001,18 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                           color: isBotanical
                               ? (themeExt?.cardShadowColor ??
                                   severityCol.withValues(
-                                      alpha: _isHovered ? 0.15 : 0.08))
+                                      alpha: _isHovered ? 0.08 : 0.03))
                               : severityCol.withValues(
                                   alpha: _isHovered ? 0.15 : 0.08),
-                          blurRadius: isBotanical ? 20 : (_isHovered ? 24 : 16),
-                          offset: Offset(0, _isHovered ? 8 : 4),
+                          blurRadius: isBotanical
+                              ? (_isHovered ? 16 : 10)
+                              : (_isHovered ? 24 : 16),
+                          offset: Offset(
+                            0,
+                            _isHovered
+                                ? (isBotanical ? 4 : 8)
+                                : (isBotanical ? 2 : 4),
+                          ),
                         ),
                       ],
               ),
@@ -997,7 +1024,7 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                     children: [
                       // ── Colored left severity strip ──
                       Container(
-                        width: 4,
+                        width: isBotanical ? 3 : 4,
                         decoration: BoxDecoration(
                           color: severityCol.withValues(
                               alpha: isResolved ? 0.3 : 1.0),

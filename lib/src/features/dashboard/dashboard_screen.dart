@@ -674,9 +674,9 @@ class _MetricCardState extends State<_MetricCard> {
             onExit: (_) => setState(() => _isHovered = false),
             cursor: SystemMouseCursors.click,
             child: AnimatedScale(
-              scale: _isHovered ? 1.02 : 1.0,
+              scale: _isHovered ? 1.006 : 1.0,
               duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOutBack,
+              curve: Curves.easeOutCubic,
               child: GestureDetector(
                 onTap: widget.onTap,
                 child: Container(
@@ -695,12 +695,12 @@ class _MetricCardState extends State<_MetricCard> {
                         color: (isBotanical
                                 ? (themeExt?.cardShadowColor ?? const Color(0xFF064E3B))
                                 : widget.iconColor)
-                            .withValues(alpha: _isHovered ? 0.15 : 0.05),
-                        blurRadius: _isHovered ? 24 : 12,
-                        offset: const Offset(0, 8),
+                            .withValues(alpha: _isHovered ? 0.08 : 0.03),
+                        blurRadius: _isHovered ? 20 : 10,
+                        offset: const Offset(0, 4),
                       ),
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.03),
+                        color: Colors.black.withValues(alpha: 0.02),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -708,9 +708,9 @@ class _MetricCardState extends State<_MetricCard> {
                     border: Border.all(
                       color: isBotanical
                           ? (themeExt?.cardBorderColor ??
-                              const Color(0xFF10B981).withValues(alpha: 0.28))
+                              const Color(0xFF10B981).withValues(alpha: 0.14))
                           : widget.iconColor
-                              .withValues(alpha: _isHovered ? 0.3 : 0.1),
+                              .withValues(alpha: _isHovered ? 0.25 : 0.08),
                       width: isBotanical ? 1.0 : 1.5,
                     ),
                   ),
@@ -731,7 +731,9 @@ class _MetricCardState extends State<_MetricCard> {
                                     .withValues(
                                   alpha: 0.9,
                                 ),
-                                fontWeight: FontWeight.w700,
+                                fontWeight: isBotanical
+                                    ? FontWeight.w600
+                                    : FontWeight.w700,
                                 letterSpacing: 0.2,
                               ),
                               maxLines: 2,
@@ -752,9 +754,11 @@ class _MetricCardState extends State<_MetricCard> {
                       Text(
                         widget.value.toString(),
                         style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: isBotanical
+                              ? FontWeight.w600
+                              : FontWeight.w900,
                           color: theme.colorScheme.onSurface,
-                          letterSpacing: -1.0,
+                          letterSpacing: isBotanical ? -0.5 : -1.0,
                           height: 1.1,
                         ),
                       ),
@@ -835,16 +839,17 @@ class _MobileHeroState extends State<_MobileHero> {
           child: Stack(
             children: [
               Positioned(
-                right: -20,
-                top: -20,
+                right: isBotanical ? -10 : -20,
+                top: isBotanical ? -10 : -20,
                 child: Icon(
                   Icons.spa,
-                  size: 140,
-                  color: Colors.white.withValues(alpha: 0.1),
+                  size: isBotanical ? 80 : 140,
+                  color: Colors.white
+                      .withValues(alpha: isBotanical ? 0.06 : 0.1),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(isBotanical ? 16 : 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -892,12 +897,14 @@ class _MobileHeroState extends State<_MobileHero> {
                       secondChild: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 24),
+                          SizedBox(height: isBotanical ? 16 : 24),
                           Text(
                             widget.data.bottlesToReplace.toString(),
                             style: theme.textTheme.displayMedium?.copyWith(
                               color: Colors.white,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: isBotanical
+                                  ? FontWeight.w700
+                                  : FontWeight.w900,
                               height: 1.1,
                             ),
                           ),
@@ -908,7 +915,7 @@ class _MobileHeroState extends State<_MobileHero> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: isBotanical ? 16 : 24),
                           Row(
                             children: [
                               _HeroPill(
@@ -964,7 +971,8 @@ class _HeroPill extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+        padding: EdgeInsets.symmetric(
+            vertical: isBotanical ? 10 : 14, horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(isBotanical ? 6.0 : 20.0),
@@ -973,15 +981,15 @@ class _HeroPill extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 20, color: foregroundColor),
+            Icon(icon, size: 18, color: foregroundColor),
             const SizedBox(width: 8),
             Flexible(
               child: Text(
                 '$value ${label.toLowerCase()}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: isBotanical ? FontWeight.w700 : FontWeight.w800,
                   color: foregroundColor,
                 ),
               ),
@@ -1050,13 +1058,13 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
             boxShadow: [
               BoxShadow(
                 color: themeExt?.cardShadowColor ??
-                    Colors.black.withValues(alpha: 0.04),
-                blurRadius: isBotanical ? 20 : 16,
+                    Colors.black.withValues(alpha: 0.03),
+                blurRadius: isBotanical ? 16 : 16,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(isBotanical ? 20 : 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1069,8 +1077,8 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
                         ? l10n.t('myCompletedTasksThisWeek')
                         : l10n.t('refillActivity'),
                     style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
+                      fontWeight: isBotanical ? FontWeight.w600 : FontWeight.w800,
+                      letterSpacing: isBotanical ? -0.2 : -0.5,
                     ),
                   );
 
@@ -1104,7 +1112,7 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
                   );
                 },
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: isBotanical ? 20 : 32),
               // Chart Body
               refillEventsAsync.when(
                 loading: () => const SizedBox(

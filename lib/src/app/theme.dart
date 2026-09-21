@@ -372,12 +372,12 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
           onError: Color(0xFF690005),
           errorContainer: Color(0xFF93000A),
           onErrorContainer: Color(0xFFFFDAD6),
-          surface: Color(0xFF05130E), // Midnight Obsidian Jade
+          surface: Color(0xFF0B1411), // Calm Deep Obsidian Jade (softened from harsh 0xFF05130E)
           onSurface: Color(0xFFECFDF5), // Crisp Mint White
-          surfaceContainerLow: Color(0xFF071812),
-          surfaceContainer: Color(0xFF091F18),
-          surfaceContainerHigh: Color(0xFF0E2B21),
-          surfaceContainerHighest: Color(0xFF14382B),
+          surfaceContainerLow: Color(0xFF0E1A16),
+          surfaceContainer: Color(0xFF12221D),
+          surfaceContainerHigh: Color(0xFF172B25),
+          surfaceContainerHighest: Color(0xFF1D352E),
           onSurfaceVariant: Color(0xFF94B8AA),
           outline: Color(0xFF3F6E5D),
           outlineVariant: Color(0xFF1C4134),
@@ -398,21 +398,22 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF04100C),
-              Color(0xFF08221A),
+              Color(0xFF0B1411),
+              Color(0xFF0F1B17),
             ],
           ),
-    glowColor: const Color(0xFF10B981),
+    glowColor: const Color(0xFF10B981).withValues(alpha: 0.08),
     cardBorderColor: isLight
-        ? const Color(0xFF10B981).withValues(alpha: 0.28)
-        : const Color(0xFF34D399).withValues(alpha: 0.32),
-    badgeBackgroundColor: const Color(0xFF10B981).withValues(alpha: 0.16),
-    badgeForegroundColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
-    accentGlow: const Color(0xFF10B981).withValues(alpha: 0.45),
+        ? const Color(0xFF10B981).withValues(alpha: 0.14)
+        : const Color(0xFF34D399).withValues(alpha: 0.12),
+    badgeBackgroundColor: const Color(0xFF10B981).withValues(alpha: 0.10),
+    badgeForegroundColor:
+        isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
+    accentGlow: const Color(0xFF10B981).withValues(alpha: 0.08),
     cardBorderRadius: 8.0,
-    cardShadowColor: const Color(0xFF064E3B),
+    cardShadowColor: const Color(0xFF021B14).withValues(alpha: 0.06),
     buttonBorderRadius: 6.0,
-    buttonLetterSpacing: 1.6,
+    buttonLetterSpacing: 1.2,
   );
 
   final baseTextTheme = GoogleFonts.outfitTextTheme(
@@ -422,45 +423,45 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
   final editorialTextTheme = baseTextTheme.copyWith(
     displayLarge: GoogleFonts.cormorantGaramond(
       textStyle: baseTextTheme.displayLarge?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -1.0,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
       ),
     ),
     displayMedium: GoogleFonts.cormorantGaramond(
       textStyle: baseTextTheme.displayMedium?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.8,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
       ),
     ),
     displaySmall: GoogleFonts.cormorantGaramond(
       textStyle: baseTextTheme.displaySmall?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.5,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.1,
       ),
     ),
     headlineLarge: GoogleFonts.cormorantGaramond(
       textStyle: baseTextTheme.headlineLarge?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.6,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
       ),
     ),
     headlineMedium: GoogleFonts.cormorantGaramond(
       textStyle: baseTextTheme.headlineMedium?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.4,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.1,
       ),
     ),
     headlineSmall: GoogleFonts.cormorantGaramond(
       textStyle: baseTextTheme.headlineSmall?.copyWith(
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.3,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.0,
       ),
     ),
     titleLarge: GoogleFonts.cormorantGaramond(
       textStyle: baseTextTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         fontSize: 22,
-        letterSpacing: -0.2,
+        letterSpacing: 0.0,
       ),
     ),
   ).apply(
@@ -474,20 +475,21 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
     extensions: [customExt],
     textTheme: editorialTextTheme,
     chipTheme: ChipThemeData(
-      backgroundColor: isLight ? const Color(0xFFE5F5ED) : const Color(0xFF0E2B21),
+      backgroundColor:
+          isLight ? const Color(0xFFE5F5ED) : const Color(0xFF122820),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(4),
       ),
       side: BorderSide(
         color: isLight
-            ? const Color(0xFF10B981).withValues(alpha: 0.35)
-            : const Color(0xFF34D399).withValues(alpha: 0.35),
+            ? const Color(0xFF10B981).withValues(alpha: 0.20)
+            : const Color(0xFF34D399).withValues(alpha: 0.18),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       labelStyle: TextStyle(
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         color: isLight ? const Color(0xFF064E3B) : const Color(0xFFECFDF5),
-        letterSpacing: 0.8,
+        letterSpacing: 0.6,
         fontSize: 11.5,
       ),
     ),
@@ -497,9 +499,9 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
     ),
     dataTableTheme: DataTableThemeData(
       headingTextStyle: TextStyle(
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         color: colorScheme.onSurface,
-        letterSpacing: 0.3,
+        letterSpacing: 0.2,
       ),
       dataTextStyle: TextStyle(
         color: colorScheme.onSurface,
@@ -511,16 +513,16 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
     cardTheme: CardThemeData(
       elevation: 0,
       color: isLight
-          ? Colors.white.withValues(alpha: 0.88)
+          ? Colors.white.withValues(alpha: 0.90)
           : colorScheme.surfaceContainer.withValues(alpha: 0.85),
-      shadowColor: const Color(0xFF064E3B).withValues(alpha: 0.10),
+      shadowColor: const Color(0xFF021B14).withValues(alpha: 0.04),
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: const BorderRadius.all(Radius.circular(8)),
         side: BorderSide(
           color: isLight
-              ? const Color(0xFF10B981).withValues(alpha: 0.28)
-              : const Color(0xFF34D399).withValues(alpha: 0.32),
+              ? const Color(0xFF10B981).withValues(alpha: 0.14)
+              : const Color(0xFF34D399).withValues(alpha: 0.12),
           width: 1.0,
         ),
       ),
@@ -533,27 +535,29 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
       labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
       floatingLabelStyle: TextStyle(
         color: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
-        fontWeight: FontWeight.w700,
-        letterSpacing: 0.5,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.4,
       ),
-      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
+      hintStyle:
+          TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
       border: OutlineInputBorder(
         borderRadius: const BorderRadius.all(Radius.circular(6)),
-        borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.25)),
+        borderSide:
+            BorderSide(color: colorScheme.outline.withValues(alpha: 0.20)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: const BorderRadius.all(Radius.circular(6)),
         borderSide: BorderSide(
           color: isLight
-              ? const Color(0xFF10B981).withValues(alpha: 0.3)
-              : const Color(0xFF34D399).withValues(alpha: 0.3),
+              ? const Color(0xFF10B981).withValues(alpha: 0.18)
+              : const Color(0xFF34D399).withValues(alpha: 0.16),
         ),
       ),
-      focusedBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(6)),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: const BorderRadius.all(Radius.circular(6)),
         borderSide: BorderSide(
-          color: Color(0xFF10B981),
-          width: 1.8,
+          color: const Color(0xFF10B981).withValues(alpha: 0.8),
+          width: 1.2,
         ),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
@@ -561,18 +565,20 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
     // Architectural Luxury Buttons with tracked lettering
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF10B981),
-        foregroundColor: isLight ? const Color(0xFFECFDF5) : const Color(0xFF022C22),
+        backgroundColor:
+            isLight ? const Color(0xFF064E3B) : const Color(0xFF10B981),
+        foregroundColor:
+            isLight ? const Color(0xFFECFDF5) : const Color(0xFF022C22),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6),
         ),
-        elevation: 2,
-        shadowColor: const Color(0xFF064E3B).withValues(alpha: 0.35),
-        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 15),
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         textStyle: const TextStyle(
-          fontWeight: FontWeight.w800,
-          fontSize: 12.5,
-          letterSpacing: 1.6,
+          fontWeight: FontWeight.w600,
+          fontSize: 12.0,
+          letterSpacing: 1.2,
         ),
       ),
     ),
@@ -581,26 +587,30 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6),
         ),
-        foregroundColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
+        foregroundColor:
+            isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
         side: BorderSide(
-          color: isLight ? const Color(0xFF10B981) : const Color(0xFF34D399),
-          width: 1.2,
+          color: isLight
+              ? const Color(0xFF10B981).withValues(alpha: 0.4)
+              : const Color(0xFF34D399).withValues(alpha: 0.4),
+          width: 1.0,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         textStyle: const TextStyle(
-          fontWeight: FontWeight.w800,
-          fontSize: 12.5,
-          letterSpacing: 1.6,
+          fontWeight: FontWeight.w600,
+          fontSize: 12.0,
+          letterSpacing: 1.2,
         ),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
+        foregroundColor:
+            isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
         textStyle: const TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 12.5,
-          letterSpacing: 1.2,
+          fontWeight: FontWeight.w600,
+          fontSize: 12.0,
+          letterSpacing: 0.8,
         ),
       ),
     ),
@@ -613,21 +623,21 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
       indicatorShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
-      indicatorColor: const Color(0xFF10B981).withValues(alpha: 0.22),
+      indicatorColor: const Color(0xFF10B981).withValues(alpha: 0.12),
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         final selected = states.contains(WidgetState.selected);
         return TextStyle(
           color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
           fontSize: 11,
-          fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
-          letterSpacing: 0.5,
+          fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+          letterSpacing: 0.4,
         );
       }),
       iconTheme: WidgetStateProperty.resolveWith((states) {
         final selected = states.contains(WidgetState.selected);
         return IconThemeData(
           color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
-          size: selected ? 26 : 24,
+          size: selected ? 25 : 24,
         );
       }),
     ),
@@ -638,25 +648,26 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
       ),
     ),
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: isLight ? const Color(0xFFF6FBF8).withValues(alpha: 0.7) : null,
+      backgroundColor:
+          isLight ? const Color(0xFFF6FBF8).withValues(alpha: 0.7) : null,
       indicatorShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(6),
       ),
-      indicatorColor: const Color(0xFF10B981).withValues(alpha: 0.22),
+      indicatorColor: const Color(0xFF10B981).withValues(alpha: 0.12),
       selectedIconTheme: IconThemeData(
         color: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
         size: 24,
       ),
       selectedLabelTextStyle: TextStyle(
         color: isLight ? const Color(0xFF064E3B) : const Color(0xFF34D399),
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w600,
         fontSize: 12,
-        letterSpacing: 0.8,
+        letterSpacing: 0.6,
       ),
       unselectedLabelTextStyle: TextStyle(
         color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
         fontSize: 11.5,
-        letterSpacing: 0.4,
+        letterSpacing: 0.3,
       ),
     ),
     dialogTheme: DialogThemeData(
@@ -664,11 +675,12 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
           color: isLight
-              ? const Color(0xFF10B981).withValues(alpha: 0.3)
-              : const Color(0xFF34D399).withValues(alpha: 0.3),
+              ? const Color(0xFF10B981).withValues(alpha: 0.14)
+              : const Color(0xFF34D399).withValues(alpha: 0.12),
         ),
       ),
-      backgroundColor: isLight ? const Color(0xFFF6FBF8) : colorScheme.surfaceContainer,
+      backgroundColor:
+          isLight ? const Color(0xFFF6FBF8) : colorScheme.surfaceContainer,
     ),
   );
 }

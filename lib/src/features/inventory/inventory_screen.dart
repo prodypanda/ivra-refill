@@ -805,9 +805,9 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedScale(
-        scale: _isHovered ? 1.02 : 1.0,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutBack,
+        scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(
@@ -822,20 +822,27 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
             ),
             boxShadow: [
               BoxShadow(
-                color: statusColor.withValues(alpha: _isHovered ? 0.15 : 0.05),
-                blurRadius: _isHovered ? 24 : 12,
-                offset: const Offset(0, 8),
+                color: (isBotanical
+                        ? (themeExt?.cardShadowColor ?? statusColor)
+                        : statusColor)
+                    .withValues(
+                  alpha: _isHovered
+                      ? (isBotanical ? 0.08 : 0.15)
+                      : (isBotanical ? 0.03 : 0.05),
+                ),
+                blurRadius: _isHovered ? 20 : 12,
+                offset: const Offset(0, 4),
               ),
             ],
             border: Border.all(
               color: isBotanical
                   ? (themeExt?.cardBorderColor ??
-                      statusColor.withValues(alpha: _isHovered ? 0.4 : 0.15))
+                      statusColor.withValues(alpha: _isHovered ? 0.25 : 0.12))
                   : statusColor.withValues(alpha: _isHovered ? 0.4 : 0.15),
               width: isBotanical ? 1.0 : 1.5,
             ),
           ),
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(isBotanical ? 16 : 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

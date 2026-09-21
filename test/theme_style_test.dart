@@ -51,16 +51,16 @@ void main() {
       expect(lightTheme.colorScheme.primary, const Color(0xFF064E3B));
       expect(lightTheme.colorScheme.surface, const Color(0xFFF6FBF8));
       expect(darkTheme.colorScheme.primary, const Color(0xFF34D399));
-      expect(darkTheme.colorScheme.surface, const Color(0xFF05130E));
+      expect(darkTheme.colorScheme.surface, const Color(0xFF0B1411));
 
       final lightExt = lightTheme.extension<IvraThemeExtension>();
       expect(lightExt, isNotNull);
       expect(lightExt!.style, AppThemeStyle.botanicalHaute);
-      expect(lightExt.glowColor, const Color(0xFF10B981));
+      expect(lightExt.glowColor, const Color(0xFF10B981).withValues(alpha: 0.08));
       expect(lightExt.cardBorderRadius, 8.0);
-      expect(lightExt.cardShadowColor, const Color(0xFF064E3B));
+      expect(lightExt.cardShadowColor, const Color(0xFF021B14).withValues(alpha: 0.06));
       expect(lightExt.buttonBorderRadius, 6.0);
-      expect(lightExt.buttonLetterSpacing, 1.6);
+      expect(lightExt.buttonLetterSpacing, 1.2);
       expect(lightExt.isBotanical, isTrue);
 
       // Verify architectural card and button geometry differences

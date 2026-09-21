@@ -189,9 +189,9 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedScale(
-        scale: _isHovered ? 1.02 : 1.0,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutBack,
+        scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
         child: SizedBox(
           width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 360.0),
           child: Container(
@@ -201,10 +201,10 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
                 BoxShadow(
                   color: isBotanical
                       ? (themeExt?.cardShadowColor ??
-                          Colors.black.withValues(alpha: 0.04))
+                          Colors.black.withValues(alpha: 0.03))
                       : theme.colorScheme.primary
                           .withValues(alpha: _isHovered ? 0.15 : 0.0),
-                  blurRadius: isBotanical ? 20 : (_isHovered ? 20 : 0),
+                  blurRadius: isBotanical ? (_isHovered ? 16 : 10) : (_isHovered ? 20 : 0),
                   spreadRadius: isBotanical ? 0 : (_isHovered ? 2 : 0),
                 ),
               ],

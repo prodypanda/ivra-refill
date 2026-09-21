@@ -156,9 +156,9 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedScale(
-        scale: _isHovered ? 1.02 : 1.0,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutBack,
+        scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
         child: Container(
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
@@ -176,11 +176,11 @@ class _PremiumProductCardState extends ConsumerState<_PremiumProductCard> {
               BoxShadow(
                 color: isBotanical
                     ? (themeExt?.cardShadowColor ??
-                        Colors.black.withValues(alpha: 0.04))
+                        Colors.black.withValues(alpha: 0.03))
                     : theme.colorScheme.shadow
                         .withValues(alpha: _isHovered ? 0.15 : 0.05),
-                blurRadius: isBotanical ? 20 : (_isHovered ? 24 : 12),
-                offset: const Offset(0, 8),
+                blurRadius: isBotanical ? (_isHovered ? 20 : 12) : (_isHovered ? 24 : 12),
+                offset: const Offset(0, 4),
               ),
             ],
             border: Border.all(
