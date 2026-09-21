@@ -23,13 +23,14 @@ class IvraApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     final locale = ref.watch(localeProvider);
+    final themeStyle = ref.watch(appThemeStyleProvider);
 
     return MaterialApp.router(
       scaffoldMessengerKey: scaffoldMessengerKey,
       title: 'Ivra',
       debugShowCheckedModeBanner: false,
-      theme: buildIvraTheme(Brightness.light),
-      darkTheme: buildIvraTheme(Brightness.dark),
+      theme: buildIvraTheme(Brightness.light, style: themeStyle),
+      darkTheme: buildIvraTheme(Brightness.dark, style: themeStyle),
       themeMode: ThemeMode.light,
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,

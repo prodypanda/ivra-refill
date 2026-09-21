@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../app/theme.dart';
 import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
@@ -51,19 +52,10 @@ class _AppShellState extends ConsumerState<AppShell> {
       (item) => location == item.route,
     );
 
-    // Global warm gradient for the Solar Infusion design system
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final globalBackground = isLight
-        ? const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFFFFF8F5), // Surface
-                Color(0xFFFFF4D9), // Warm golden cream
-              ],
-            ),
-          )
+    // Global gradient background adapted to the active theme system
+    final themeExt = Theme.of(context).extension<IvraThemeExtension>();
+    final globalBackground = themeExt != null
+        ? BoxDecoration(gradient: themeExt.backgroundGradient)
         : null;
 
     return LayoutBuilder(

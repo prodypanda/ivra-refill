@@ -260,6 +260,11 @@ abstract class IvraRepository {
 
   Future<void> removeProductFromRoom({required String roomProductId});
 
+  /// App theme style persistence and real-time observation
+  Future<AppThemeStyle> getAppThemeStyle();
+  Future<void> setAppThemeStyle(AppThemeStyle style);
+  Stream<AppThemeStyle> watchAppThemeStyle();
+
   /// Clear any locally persisted offline read-cache. Called on sign-out so a
   /// different account signing in offline can't be served the previous user's
   /// cached data.

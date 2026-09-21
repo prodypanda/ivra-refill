@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'dart:io' show Platform;
@@ -445,6 +446,24 @@ class MockIvraRepository implements IvraRepository {
   final Map<String, double> _openBidonVolumeLeft = {};
   final List<HousekeeperAllocation> _housekeeperAllocations = [];
 
+
+  AppThemeStyle _themeStyle = AppThemeStyle.solarInfusion;
+  final _themeStyleController = StreamController<AppThemeStyle>.broadcast();
+
+  @override
+  Future<AppThemeStyle> getAppThemeStyle() async => _themeStyle;
+
+  @override
+  Future<void> setAppThemeStyle(AppThemeStyle style) async {
+    _themeStyle = style;
+    _themeStyleController.add(style);
+  }
+
+  @override
+  Stream<AppThemeStyle> watchAppThemeStyle() async* {
+    yield _themeStyle;
+    yield* _themeStyleController.stream;
+  }
 
   @override
   Future<void> clearCachedData() async {}

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -211,6 +212,102 @@ class SupabaseIvraRepository implements IvraRepository {
     for (final key in keys) {
       await prefs.remove(key);
     }
+  }
+
+  RealtimeChannel? _themeChannel;
+  StreamController<AppThemeStyle>? _themeStreamController;
+
+  @override
+  Future<AppThemeStyle> getAppThemeStyle() async {
+    try {
+      final res = await _client
+          .from('app_settings')
+          .select('value')
+          .eq('key', 'app_theme_style')
+          .maybeSingle();
+
+      if (res != null && res['value'] != null) {
+        final val = res['value'];
+        final str = val is String ? val : val.toString();
+        final style = AppThemeStyle.fromValue(str);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('app_theme_style', style.value);
+        return style;
+      }
+    } catch (e) {
+      AppLogger.info('Failed to fetch app_theme_style from Supabase: $e');
+    }
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cached = prefs.getString('app_theme_style');
+      if (cached != null) {
+        return AppThemeStyle.fromValue(cached);
+      }
+    } catch (_) {}
+
+    return AppThemeStyle.solarInfusion;
+  }
+
+  @override
+  Future<void> setAppThemeStyle(AppThemeStyle style) async {
+    final user = _client.auth.currentUser;
+    await _client.from('app_settings').upsert({
+      'key': 'app_theme_style',
+      'value': style.value,
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+      if (user != null) 'updated_by': user.id,
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('app_theme_style', style.value);
+
+    _themeStreamController?.add(style);
+  }
+
+  @override
+  Stream<AppThemeStyle> watchAppThemeStyle() {
+    if (_themeStreamController != null && !_themeStreamController!.isClosed) {
+      return _themeStreamController!.stream;
+    }
+
+    final controller = StreamController<AppThemeStyle>.broadcast();
+    _themeStreamController = controller;
+
+    getAppThemeStyle().then((style) {
+      if (!controller.isClosed) {
+        controller.add(style);
+      }
+    });
+
+    try {
+      _themeChannel?.unsubscribe();
+      _themeChannel = _client.channel('public:app_settings')
+        ..onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'app_settings',
+          callback: (payload) {
+            final newRecord = payload.newRecord;
+            if (newRecord['key'] == 'app_theme_style') {
+              final rawVal = newRecord['value'];
+              final styleStr = rawVal is String ? rawVal : rawVal.toString();
+              final style = AppThemeStyle.fromValue(styleStr);
+              SharedPreferences.getInstance().then((prefs) {
+                prefs.setString('app_theme_style', style.value);
+              });
+              if (!controller.isClosed) {
+                controller.add(style);
+              }
+            }
+          },
+        )
+        ..subscribe();
+    } catch (e) {
+      AppLogger.info('Failed to subscribe to realtime app_settings: $e');
+    }
+
+    return controller.stream;
   }
 
   Future<void> _clearRefillEventsCache() async {

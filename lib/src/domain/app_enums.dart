@@ -167,3 +167,22 @@ enum RefillType {
   }
 }
 
+enum AppThemeStyle {
+  solarInfusion('solar_infusion'),
+  botanicalHaute('botanical_haute');
+
+  const AppThemeStyle(this.value);
+  final String value;
+
+  static AppThemeStyle fromValue(String? value) {
+    if (value == null) return AppThemeStyle.solarInfusion;
+    if (value == 'emerald_noir' || value == 'noir_emerald' || value == 'botanical_luxury') {
+      return AppThemeStyle.botanicalHaute;
+    }
+    return AppThemeStyle.values.firstWhere(
+      (s) => s.value == value || s.name == value,
+      orElse: () => AppThemeStyle.solarInfusion,
+    );
+  }
+}
+

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -109,6 +110,44 @@ final percentageRefillEnabledProvider = StateProvider<bool>((ref) {
     return prefs.getBool('percentage_refill_enabled') ?? true;
   }
   return true;
+});
+
+class AppThemeNotifier extends StateNotifier<AppThemeStyle> {
+  AppThemeNotifier(this._ref, AppThemeStyle initial) : super(initial) {
+    _subscription = _ref.read(repositoryProvider).watchAppThemeStyle().listen((style) {
+      if (mounted && state != style) {
+        state = style;
+      }
+    });
+  }
+
+  final Ref _ref;
+  StreamSubscription<AppThemeStyle>? _subscription;
+
+  Future<void> setStyle(AppThemeStyle newStyle) async {
+    if (state == newStyle) return;
+    state = newStyle;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('app_theme_style', newStyle.value);
+    } catch (e) {
+      debugPrint('Error saving theme style locally: $e');
+    }
+    await _ref.read(repositoryProvider).setAppThemeStyle(newStyle);
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+}
+
+final appThemeStyleProvider = StateNotifierProvider<AppThemeNotifier, AppThemeStyle>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  final initialStr = prefs?.getString('app_theme_style');
+  final initial = AppThemeStyle.fromValue(initialStr);
+  return AppThemeNotifier(ref, initial);
 });
 
 final expressQrEnabledOverrideProvider = StateProvider<Map<String, bool>>((ref) => {});

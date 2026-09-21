@@ -1,5 +1,25 @@
 {
   "@@locale": "en",
+  "appSettings": "App Settings",
+  "appThemeStyle": "App Theme & Visual Style",
+  "appThemeStyleSubtitle": "Global appearance for all staff and managers across all devices",
+  "themeSolarInfusion": "Solar Infusion",
+  "themeSolarInfusionDesc": "Warm Mediterranean amber and sunlit cream palette with Plus Jakarta Sans typography.",
+  "themeBotanicalHaute": "Botanical Haute",
+  "themeBotanicalHauteDesc": "Awwwards-level luxury midnight emerald and crisp alabaster palette with Outfit architectural typography.",
+  "themeActive": "Active",
+  "themeSwitchSuccess": "App theme globally updated to {themeName}",
+  "@themeSwitchSuccess": {
+    "placeholders": {
+      "themeName": {
+        "type": "String"
+      }
+    }
+  },
+  "percentageRefillTitle": "Percentage Refill",
+  "percentageRefillSubtitle": "Allow recording refill levels as percentages (1-100%)",
+  "expressQrTitle": "Express QR Scanning",
+  "expressQrSubtitle": "Instantly register bottle refills when scanning QR code",
   "markAsRead": "Mark as Read",
   "confirmDeleteHotel": "Are you sure you want to delete the hotel '{hotelName}'? This action is permanent, cannot be undone, and will permanently remove all associated rooms, staff assignments, and records.",
   "@confirmDeleteHotel": {
