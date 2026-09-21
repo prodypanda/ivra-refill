@@ -571,9 +571,12 @@ class _AnalyticsChip extends StatelessWidget {
     final theme = Theme.of(context);
     final themeExt = theme.extension<IvraThemeExtension>();
     final isBotanical = themeExt?.isBotanical ?? false;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final effectiveWidth =
+        width > (screenWidth - 32) ? (screenWidth - 32) : width;
 
     return Container(
-      width: width,
+      width: effectiveWidth,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isBotanical

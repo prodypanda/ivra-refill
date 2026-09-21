@@ -14,6 +14,7 @@ import '../../state/app_state.dart';
 import '../auth/auth_validation.dart';
 import '../shared/glass_card.dart';
 import '../shared/page_scaffold.dart';
+import '../../app/theme.dart';
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -1048,6 +1049,8 @@ class _ReportActionState extends State<_ReportAction> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final effectiveRadius = themeExt?.cardBorderRadius ?? 20.0;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -1060,7 +1063,7 @@ class _ReportActionState extends State<_ReportAction> {
           width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 360.0),
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(effectiveRadius),
               boxShadow: [
                 BoxShadow(
                   color: theme.colorScheme.primary
@@ -1072,7 +1075,7 @@ class _ReportActionState extends State<_ReportAction> {
             ),
             child: GlassCard(
               padding: EdgeInsets.zero,
-              borderRadius: 20,
+              borderRadius: effectiveRadius,
               borderColor: theme.colorScheme.outline
                   .withValues(alpha: _isHovered ? 0.3 : 0.1),
               child: Column(
@@ -1091,9 +1094,9 @@ class _ReportActionState extends State<_ReportAction> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(effectiveRadius),
+                        topRight: Radius.circular(effectiveRadius),
                       ),
                     ),
                     child: Row(

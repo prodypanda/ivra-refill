@@ -64,7 +64,9 @@ class PageScaffold extends ConsumerWidget {
         : width < 720
             ? 20.0
             : 24.0;
-    final bottomPadding = isMobile ? 104.0 : 24.0;
+    final bottomPadding = isMobile
+        ? (104.0 + MediaQuery.paddingOf(context).bottom)
+        : 24.0;
 
     final scrollView = CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),

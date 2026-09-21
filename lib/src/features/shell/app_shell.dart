@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -273,7 +275,12 @@ class _MobileShell extends ConsumerWidget {
           ],
         ),
         bottomNavigationBar: Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          margin: EdgeInsets.fromLTRB(
+            16,
+            0,
+            16,
+            math.max(16.0, MediaQuery.paddingOf(context).bottom),
+          ),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface.withValues(alpha: 0.94),
             borderRadius: BorderRadius.circular(navRadius),

@@ -328,14 +328,21 @@ class _ApprovalCardState extends State<_ApprovalCard> {
                       TextButton.icon(
                         icon: const Icon(Icons.close_outlined),
                         label: Text(l10n.t('approvalsReject')),
-                        style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
+                        style: TextButton.styleFrom(
+                          foregroundColor: theme.colorScheme.error,
+                          minimumSize: const Size(44, 44),
+                        ),
                         onPressed: widget.onReject,
                       ),
                       const SizedBox(width: 8),
                       FilledButton.icon(
                         icon: const Icon(Icons.check_outlined),
                         label: Text(l10n.t('approvalsApprove')),
-                        style: FilledButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(44, 44),
+                        ),
                         onPressed: widget.onApprove,
                       ),
                     ],

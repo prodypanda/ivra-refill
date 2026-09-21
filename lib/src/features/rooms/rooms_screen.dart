@@ -2711,7 +2711,10 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
 
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     final isMobile = MediaQuery.sizeOf(context).width < 720 && !widget.isDialog;
+    final effectiveRadius =
+        themeExt?.cardBorderRadius ?? (isMobile ? 28.0 : 16.0);
     final currentUser =
         ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     final selectedHotelId = ref.watch(selectedHotelIdProvider);
@@ -2771,7 +2774,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
         curve: Curves.easeOutBack,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(isMobile ? 28 : 16),
+            borderRadius: BorderRadius.circular(effectiveRadius),
             boxShadow: [
               BoxShadow(
                 color: overallColor.withValues(alpha: _isHovered ? 0.3 : 0.0),
@@ -2782,7 +2785,7 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
           ),
           child: GlassCard(
             padding: EdgeInsets.zero,
-            borderRadius: isMobile ? 28 : 16,
+            borderRadius: effectiveRadius,
             borderColor: overallColor.withValues(alpha: _isHovered ? 0.6 : 0.2),
             borderWidth: _isHovered ? 2.0 : 1.5,
             child: Column(
@@ -2796,8 +2799,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
                     color:
                         overallColor.withValues(alpha: isMobile ? 0.14 : 0.08),
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(isMobile ? 28 : 16),
-                      topRight: Radius.circular(isMobile ? 28 : 16),
+                      topLeft: Radius.circular(effectiveRadius),
+                      topRight: Radius.circular(effectiveRadius),
                     ),
                   ),
                   child: widget.isDialog

@@ -232,9 +232,9 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(effectiveRadius),
+                        topRight: Radius.circular(effectiveRadius),
                       ),
                     ),
                     child: Column(
