@@ -35,7 +35,7 @@ class AppSettingsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 1. Awwwards-Level Global Theme & Visual Style Section
-            const _ThemeSelectorSection(),
+            const ThemeSelectorSection(),
             const SizedBox(height: 24),
 
             const Divider(height: 1),
@@ -159,8 +159,8 @@ class AppSettingsScreen extends ConsumerWidget {
   }
 }
 
-class _ThemeSelectorSection extends ConsumerWidget {
-  const _ThemeSelectorSection();
+class ThemeSelectorSection extends ConsumerWidget {
+  const ThemeSelectorSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

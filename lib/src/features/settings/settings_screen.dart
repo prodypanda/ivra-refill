@@ -223,6 +223,8 @@ class SettingsScreen extends ConsumerWidget {
             ),
             if (isAppAdmin) ...[
               const SizedBox(height: 20),
+              const ThemeSelectorSection(),
+              const SizedBox(height: 20),
               Card(
                 elevation: isMobile ? 0 : null,
                 shape: isMobile
@@ -236,7 +238,9 @@ class SettingsScreen extends ConsumerWidget {
                 child: ListTile(
                   leading: const Icon(Icons.admin_panel_settings_outlined),
                   title: Text(l10n.t('appSettings')),
-                  subtitle: Text(l10n.t('percentageRefillTitle')),
+                  subtitle: Text(
+                    '${l10n.t('hotels')} • ${l10n.t('percentageRefillTitle')} • ${l10n.t('expressQrTitle')}',
+                  ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push(AppSettingsScreen.route),
                 ),
