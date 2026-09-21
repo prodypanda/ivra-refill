@@ -17,6 +17,7 @@ import '../shared/shimmer_loading.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/centered_sheet.dart';
 import '../shared/hover_image_tooltip.dart';
+import '../shared/stock_velocity_sparkline.dart';
 import '../../utils/qr_parser.dart';
 import '../../app/theme.dart';
 

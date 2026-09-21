@@ -15,6 +15,7 @@ import '../shared/async_value_view.dart';
 import '../shared/page_scaffold.dart';
 import '../shared/shimmer_loading.dart';
 import '../shared/premium_snackbar.dart';
+import '../shared/stock_velocity_sparkline.dart';
 import '../../app/theme.dart';
 
 class _AnalyticsData {
@@ -464,7 +465,22 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
                 icon: Icons.trending_down_outlined,
                 rows: forecasts.isEmpty
                     ? [MapEntry(l10n.t('dashboardNoStockData'), '')]
-                    : forecasts.take(5).toList()),
+                    : forecasts.take(5).toList(),
+                sparklines: forecasts.isEmpty
+                    ? null
+                    : analyticsData.forecastsData.take(5).map((f) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 2, bottom: 4),
+                          child: StockVelocitySparkline(
+                            currentStock: 24,
+                            daysRemaining: f.days,
+                            dailyConsumptionRate: 1.2,
+                            height: 28,
+                            showScrubber: true,
+                          ),
+                        );
+                      }).toList(),
+            ),
             _AnalyticsListCard(
                 title: l10n.t('dashboardUnusualPatterns'),
                 icon: Icons.warning_amber_outlined,
@@ -582,11 +598,16 @@ class _AnalyticsChip extends StatelessWidget {
 }
 
 class _AnalyticsListCard extends StatelessWidget {
-  const _AnalyticsListCard(
-      {required this.title, required this.icon, required this.rows});
+  const _AnalyticsListCard({
+    required this.title,
+    required this.icon,
+    required this.rows,
+    this.sparklines,
+  });
   final String title;
   final IconData icon;
   final List<MapEntry<String, String>> rows;
+  final List<Widget?>? sparklines;
 
   @override
   Widget build(BuildContext context) {
@@ -614,17 +635,27 @@ class _AnalyticsListCard extends StatelessWidget {
                       ?.copyWith(fontWeight: FontWeight.w800)))
         ]),
         const SizedBox(height: 10),
-        for (final row in rows)
+        for (int i = 0; i < rows.length; i++)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(children: [
-              Expanded(
-                  child: Text(row.key,
-                      maxLines: 1, overflow: TextOverflow.ellipsis)),
-              if (row.value.isNotEmpty)
-                Text(row.value,
-                    style: const TextStyle(fontWeight: FontWeight.w700))
-            ]),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(children: [
+                  Expanded(
+                      child: Text(rows[i].key,
+                          maxLines: 1, overflow: TextOverflow.ellipsis)),
+                  if (rows[i].value.isNotEmpty)
+                    Text(rows[i].value,
+                        style: const TextStyle(fontWeight: FontWeight.w700))
+                ]),
+                if (sparklines != null &&
+                    i < sparklines!.length &&
+                    sparklines![i] != null) ...[
+                  sparklines![i]!,
+                ],
+              ],
+            ),
           ),
       ]),
     );
