@@ -253,6 +253,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 value: data.hotelCount,
                 icon: Icons.apartment_outlined,
                 iconColor: theme.colorScheme.primary,
+                staggerIndex: visibleCards.length,
                 onTap: () => context.go('/hotels'),
               ));
             }
@@ -263,6 +264,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               value: data.roomCount,
               icon: Icons.meeting_room_outlined,
               iconColor: isBotanical ? const Color(0xFF10B981) : Colors.orange,
+              staggerIndex: visibleCards.length,
               onTap: () => context.go('/rooms'),
             ));
 
@@ -272,6 +274,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 value: data.pendingApprovals,
                 icon: Icons.fact_check_outlined,
                 iconColor: isBotanical ? const Color(0xFFD97706) : Colors.amber.shade800,
+                staggerIndex: visibleCards.length,
                 onTap: () => context.go('/approvals'),
               ));
             }
@@ -282,6 +285,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               value: data.openAlerts,
               icon: Icons.notifications_active_outlined,
               iconColor: theme.colorScheme.error,
+              staggerIndex: visibleCards.length,
               onTap: () => context.go('/alerts'),
             ));
 
@@ -291,6 +295,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               value: data.bottlesToReplace,
               icon: IvraIcons.replaceAction,
               iconColor: isBotanical ? const Color(0xFF059669) : Colors.orange.shade700,
+              staggerIndex: visibleCards.length,
               onTap: () => context.go('/rooms'),
             ));
 
@@ -300,6 +305,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 value: data.lowStockProducts,
                 icon: Icons.inventory_2_outlined,
                 iconColor: isBotanical ? const Color(0xFF0D9488) : Colors.indigo.shade600,
+                staggerIndex: visibleCards.length,
                 onTap: () => context.go('/inventory'),
               ));
             }
@@ -631,6 +637,7 @@ class _MetricCard extends StatefulWidget {
     required this.value,
     required this.icon,
     required this.iconColor,
+    this.staggerIndex = 0,
     this.onTap,
   });
 
@@ -638,6 +645,7 @@ class _MetricCard extends StatefulWidget {
   final int value;
   final IconData icon;
   final Color iconColor;
+  final int staggerIndex;
   final VoidCallback? onTap;
 
   @override
@@ -656,14 +664,15 @@ class _MetricCardState extends State<_MetricCard> {
     final iconRadius = isBotanical ? 6.0 : 12.0;
 
     return TweenAnimationBuilder<double>(
+        key: ValueKey('metric_${widget.label}_${widget.staggerIndex}'),
         tween: Tween(begin: 0.0, end: 1.0),
-        duration: const Duration(milliseconds: 600),
+        duration: Duration(milliseconds: 380 + (widget.staggerIndex * 40)),
         curve: Curves.easeOutCubic,
-        builder: (context, value, child) {
+        builder: (context, animValue, child) {
           return Transform.translate(
-            offset: Offset(0, 20 * (1 - value)),
+            offset: Offset(0, 16 * (1 - animValue)),
             child: Opacity(
-              opacity: value,
+              opacity: animValue,
               child: child,
             ),
           );
@@ -673,30 +682,47 @@ class _MetricCardState extends State<_MetricCard> {
             onExit: (_) => setState(() => _isHovered = false),
             cursor: SystemMouseCursors.click,
             child: AnimatedScale(
-              scale: _isHovered ? 1.006 : 1.0,
-              duration: const Duration(milliseconds: 200),
+              scale: _isHovered ? 1.008 : 1.0,
+              duration: const Duration(milliseconds: 220),
               curve: Curves.easeOutCubic,
               child: GestureDetector(
                 onTap: widget.onTap,
-                child: Container(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOutCubic,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(cardRadius),
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        theme.colorScheme.surface.withValues(alpha: 0.9),
-                        theme.colorScheme.surface.withValues(alpha: 0.7),
-                      ],
+                      colors: isBotanical
+                          ? [
+                              theme.colorScheme.surface.withValues(
+                                alpha: _isHovered ? 0.96 : 0.90,
+                              ),
+                              theme.colorScheme.surface.withValues(
+                                alpha: _isHovered ? 0.82 : 0.72,
+                              ),
+                            ]
+                          : [
+                              theme.colorScheme.surface.withValues(alpha: 0.9),
+                              theme.colorScheme.surface.withValues(alpha: 0.7),
+                            ],
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: (isBotanical
-                                ? (themeExt?.cardShadowColor ?? const Color(0xFF064E3B))
+                                ? (_isHovered
+                                    ? const Color(0xFF10B981).withValues(alpha: 0.16)
+                                    : (themeExt?.cardShadowColor ?? const Color(0xFF064E3B)))
                                 : widget.iconColor)
-                            .withValues(alpha: _isHovered ? 0.08 : 0.03),
+                            .withValues(
+                          alpha: _isHovered
+                              ? (isBotanical ? 0.16 : 0.08)
+                              : 0.03,
+                        ),
                         blurRadius: _isHovered ? 20 : 10,
-                        offset: const Offset(0, 4),
+                        offset: _isHovered ? const Offset(0, 6) : const Offset(0, 4),
                       ),
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.02),
@@ -706,8 +732,10 @@ class _MetricCardState extends State<_MetricCard> {
                     ],
                     border: Border.all(
                       color: isBotanical
-                          ? (themeExt?.cardBorderColor ??
-                              const Color(0xFF10B981).withValues(alpha: 0.14))
+                          ? (_isHovered
+                              ? const Color(0xFF34D399).withValues(alpha: 0.38)
+                              : (themeExt?.cardBorderColor ??
+                                  const Color(0xFF10B981).withValues(alpha: 0.14)))
                           : widget.iconColor
                               .withValues(alpha: _isHovered ? 0.25 : 0.08),
                       width: isBotanical ? 1.0 : 1.5,
@@ -739,27 +767,51 @@ class _MetricCardState extends State<_MetricCard> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Container(
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 220),
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: widget.iconColor.withValues(alpha: 0.12),
+                              color: widget.iconColor.withValues(
+                                alpha: _isHovered ? 0.20 : 0.12,
+                              ),
                               borderRadius: BorderRadius.circular(iconRadius),
+                              border: isBotanical && _isHovered
+                                  ? Border.all(
+                                      color: widget.iconColor.withValues(alpha: 0.30),
+                                      width: 1,
+                                    )
+                                  : null,
                             ),
-                            child: Icon(widget.icon,
-                                size: 24, color: widget.iconColor),
+                            child: Hero(
+                              tag: 'metric_icon_${widget.label}',
+                              child: Icon(widget.icon,
+                                  size: 24, color: widget.iconColor),
+                            ),
                           ),
                         ],
                       ),
-                      Text(
-                        widget.value.toString(),
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: isBotanical
-                              ? FontWeight.w600
-                              : FontWeight.w900,
-                          color: theme.colorScheme.onSurface,
-                          letterSpacing: isBotanical ? -0.5 : -1.0,
-                          height: 1.1,
+                      TweenAnimationBuilder<double>(
+                        tween: Tween<double>(
+                          begin: 0,
+                          end: widget.value.toDouble(),
                         ),
+                        duration: Duration(
+                          milliseconds: 600 + (widget.staggerIndex * 50),
+                        ),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, val, _) {
+                          return Text(
+                            val.round().toString(),
+                            style: theme.textTheme.headlineMedium?.copyWith(
+                              fontWeight: isBotanical
+                                  ? FontWeight.w600
+                                  : FontWeight.w900,
+                              color: theme.colorScheme.onSurface,
+                              letterSpacing: isBotanical ? -0.5 : -1.0,
+                              height: 1.1,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -897,15 +949,25 @@ class _MobileHeroState extends State<_MobileHero> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: isBotanical ? 16 : 24),
-                          Text(
-                            widget.data.bottlesToReplace.toString(),
-                            style: theme.textTheme.displayMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: isBotanical
-                                  ? FontWeight.w700
-                                  : FontWeight.w900,
-                              height: 1.1,
+                          TweenAnimationBuilder<double>(
+                            tween: Tween<double>(
+                              begin: 0,
+                              end: widget.data.bottlesToReplace.toDouble(),
                             ),
+                            duration: const Duration(milliseconds: 650),
+                            curve: Curves.easeOutCubic,
+                            builder: (context, val, _) {
+                              return Text(
+                                val.round().toString(),
+                                style: theme.textTheme.displayMedium?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: isBotanical
+                                      ? FontWeight.w700
+                                      : FontWeight.w900,
+                                  height: 1.1,
+                                ),
+                              );
+                            },
                           ),
                           Text(
                             l10n.t('metricBottlesToReplace'),
@@ -983,14 +1045,22 @@ class _HeroPill extends StatelessWidget {
             Icon(icon, size: 18, color: foregroundColor),
             const SizedBox(width: 8),
             Flexible(
-              child: Text(
-                '$value ${label.toLowerCase()}',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  fontWeight: isBotanical ? FontWeight.w700 : FontWeight.w800,
-                  color: foregroundColor,
-                ),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0, end: value.toDouble()),
+                duration: const Duration(milliseconds: 600),
+                curve: Curves.easeOutCubic,
+                builder: (context, animVal, _) {
+                  return Text(
+                    '${animVal.round()} ${label.toLowerCase()}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      fontWeight:
+                          isBotanical ? FontWeight.w700 : FontWeight.w800,
+                      color: foregroundColor,
+                    ),
+                  );
+                },
               ),
             ),
           ],
