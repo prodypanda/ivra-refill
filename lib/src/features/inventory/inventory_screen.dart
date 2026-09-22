@@ -1260,7 +1260,7 @@ class _VisualStockBar extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w900,
                       color: displayColor,
-                    ),
+                    ).withTabularFigures(),
                   ),
                   if (valueSuffix != null)
                     TextSpan(
@@ -1268,7 +1268,7 @@ class _VisualStockBar extends StatelessWidget {
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: displayColor.withValues(alpha: 0.8),
-                      ),
+                      ).withTabularFigures(),
                     ),
                 ],
               ),
@@ -1316,7 +1316,7 @@ class _MiniStat extends StatelessWidget {
                 value.toString(),
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w900,
-                ),
+                ).withTabularFigures(),
               ),
               Text(
                 label,

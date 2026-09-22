@@ -1065,7 +1065,7 @@ class _TopList extends StatelessWidget {
                   child: Row(
                     children: [
                       Expanded(child: Text(row.key, overflow: TextOverflow.ellipsis)),
-                      Text(row.value.toString(), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w900)),
+                      Text(row.value.toString(), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w900).withTabularFigures()),
                     ],
                   ),
                 ),
@@ -1213,7 +1213,15 @@ class _ReportActionState extends State<_ReportAction> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 12),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(
+                                        themeExt?.buttonBorderRadius ?? 12),
+                                  ),
+                                  textStyle: TextStyle(
+                                    letterSpacing:
+                                        themeExt?.buttonLetterSpacing ?? 0.0,
+                                    fontWeight: (themeExt?.isBotanical ?? false)
+                                        ? FontWeight.w600
+                                        : FontWeight.bold,
                                   ),
                                 ),
                               ),
@@ -1224,9 +1232,9 @@ class _ReportActionState extends State<_ReportAction> {
                   ),
                 ],
               ),
+            ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

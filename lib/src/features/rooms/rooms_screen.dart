@@ -1516,7 +1516,7 @@ class _CompactRoomTile extends ConsumerWidget {
                           fontSize: 22,
                           color: theme.colorScheme.onSurface,
                           letterSpacing: isBotanical ? 0.0 : -0.5,
-                        ),
+                        ).withTabularFigures(),
                       ),
                       Text(
                         l10n.t('roomsLabelRoom'),
@@ -3643,7 +3643,7 @@ class _RoomCardProductRow extends ConsumerWidget {
                 ),
                 child: Text(
                   '${l10n.t('roomsLabelRefills')}: ${item.refillCount}/${item.product.maxRefillCount}',
-                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 12).withTabularFigures(),
                 ),
               ),
             Container(
@@ -3654,7 +3654,7 @@ class _RoomCardProductRow extends ConsumerWidget {
               ),
               child: Text(
                 '${l10n.t('roomsLabelAge')}: ${item.bottleAgeDays(DateTime.now())}${l10n.t('roomsLabelDaysUnit')}/${item.product.maxBottleAgeDays}${l10n.t('roomsLabelDaysUnit')}',
-                style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                style: theme.textTheme.bodySmall?.copyWith(fontSize: 12).withTabularFigures(),
               ),
             ),
             Container(

@@ -1225,7 +1225,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                   const SizedBox(width: 8),
                   Text(
                     '${allocation.openBidonVolumeLeftMl.toInt()} / ${allocation.product.bidonVolumeMl} ml (${openBidonPercentage.toInt()}%)',
-                    style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold).withTabularFigures(),
                   ),
                 ],
               ),
@@ -1258,11 +1258,13 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
           const SizedBox(width: 4),
           Text(
             '$label: ',
-            style: theme.textTheme.bodySmall?.copyWith(color: theme.textTheme.bodySmall?.color?.withOpacity(0.6)),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+            ),
           ),
           Text(
             value,
-            style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold).withTabularFigures(),
           ),
         ],
       ),

@@ -592,9 +592,12 @@ class _AnalyticsChip extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
             child: Text(label, maxLines: 2, overflow: TextOverflow.ellipsis)),
-        Text(value,
-            style: theme.textTheme.titleMedium
-                ?.copyWith(fontWeight: FontWeight.w900))
+        Text(
+          value,
+          style: theme.textTheme.titleMedium
+              ?.copyWith(fontWeight: FontWeight.w800)
+              .withTabularFigures(),
+        ),
       ]),
     );
   }
@@ -843,7 +846,7 @@ class _MetricCardState extends State<_MetricCard> {
                               color: theme.colorScheme.onSurface,
                               letterSpacing: isBotanical ? -0.5 : -1.0,
                               height: 1.1,
-                            ),
+                            ).withTabularFigures(),
                           );
                         },
                       ),
@@ -999,7 +1002,7 @@ class _MobileHeroState extends State<_MobileHero> {
                                       ? FontWeight.w700
                                       : FontWeight.w900,
                                   height: 1.1,
-                                ),
+                                ).withTabularFigures(),
                               );
                             },
                           ),
@@ -1092,7 +1095,7 @@ class _HeroPill extends StatelessWidget {
                       fontWeight:
                           isBotanical ? FontWeight.w700 : FontWeight.w800,
                       color: foregroundColor,
-                    ),
+                    ).withTabularFigures(),
                   );
                 },
               ),

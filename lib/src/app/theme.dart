@@ -163,6 +163,32 @@ extension IvraSemanticColors on ThemeData {
   Color get infoColor => ivraExt?.info ?? const Color(0xFF0284C7);
 }
 
+/// Fallback font list supporting Arabic (Cairo, Noto Sans Arabic) and clean platform fallbacks.
+const List<String> kIvraFontFallback = [
+  'Cairo',
+  'Noto Sans Arabic',
+  'Segoe UI',
+  'Roboto',
+  'Helvetica Neue',
+  'sans-serif',
+];
+
+/// Typographic extensions for tabular numerals and data-dense layouts.
+extension IvraTextStyleX on TextStyle? {
+  /// Returns a copy of the [TextStyle] with [FontFeature.tabularFigures()] enabled,
+  /// ensuring monospaced number alignment in metrics, stock levels, and data tables.
+  TextStyle withTabularFigures() {
+    final base = this ?? const TextStyle();
+    final existingFeatures = base.fontFeatures ?? const <FontFeature>[];
+    return base.copyWith(
+      fontFeatures: [
+        ...existingFeatures.where((f) => f.feature != 'tnum'),
+        const FontFeature.tabularFigures(),
+      ],
+    );
+  }
+}
+
 ThemeData buildIvraTheme(
   Brightness brightness, {
   AppThemeStyle style = AppThemeStyle.solarInfusion,
@@ -279,12 +305,7 @@ ThemeData _buildSolarInfusionTheme(Brightness brightness, bool isLight) {
     useMaterial3: true,
     colorScheme: colorScheme,
     extensions: [customExt],
-    textTheme: GoogleFonts.plusJakartaSansTextTheme(
-      ThemeData(brightness: brightness).textTheme,
-    ).apply(
-      bodyColor: colorScheme.onSurface,
-      displayColor: colorScheme.onSurface,
-    ),
+    textTheme: _buildSolarInfusionTextTheme(brightness, colorScheme),
     chipTheme: ChipThemeData(
       backgroundColor: colorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(
@@ -551,64 +572,11 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
     shimmerHighlight: isLight ? const Color(0xFFF2FBF6) : const Color(0xFF1D352C),
   );
 
-  final baseTextTheme = GoogleFonts.outfitTextTheme(
-    ThemeData(brightness: brightness).textTheme,
-  );
-
-  final editorialTextTheme = baseTextTheme.copyWith(
-    displayLarge: GoogleFonts.cormorantGaramond(
-      textStyle: baseTextTheme.displayLarge?.copyWith(
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.2,
-      ),
-    ),
-    displayMedium: GoogleFonts.cormorantGaramond(
-      textStyle: baseTextTheme.displayMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.2,
-      ),
-    ),
-    displaySmall: GoogleFonts.cormorantGaramond(
-      textStyle: baseTextTheme.displaySmall?.copyWith(
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.1,
-      ),
-    ),
-    headlineLarge: GoogleFonts.cormorantGaramond(
-      textStyle: baseTextTheme.headlineLarge?.copyWith(
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.2,
-      ),
-    ),
-    headlineMedium: GoogleFonts.cormorantGaramond(
-      textStyle: baseTextTheme.headlineMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.1,
-      ),
-    ),
-    headlineSmall: GoogleFonts.cormorantGaramond(
-      textStyle: baseTextTheme.headlineSmall?.copyWith(
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.0,
-      ),
-    ),
-    titleLarge: GoogleFonts.cormorantGaramond(
-      textStyle: baseTextTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.w600,
-        fontSize: 22,
-        letterSpacing: 0.0,
-      ),
-    ),
-  ).apply(
-    bodyColor: colorScheme.onSurface,
-    displayColor: colorScheme.onSurface,
-  );
-
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
     extensions: [customExt],
-    textTheme: editorialTextTheme,
+    textTheme: _buildBotanicalHauteTextTheme(brightness, colorScheme),
     chipTheme: ChipThemeData(
       backgroundColor:
           isLight ? const Color(0xFFE5F5ED) : const Color(0xFF122820),
@@ -855,5 +823,227 @@ ThemeData _buildBotanicalHauteTheme(Brightness brightness, bool isLight) {
       ),
     ),
     focusColor: const Color(0xFF10B981).withValues(alpha: 0.15),
+  );
+}
+
+/// Factory building calibrated typography for Solar Infusion (Plus Jakarta Sans).
+TextTheme _buildSolarInfusionTextTheme(Brightness brightness, ColorScheme colorScheme) {
+  final base = GoogleFonts.plusJakartaSansTextTheme(
+    ThemeData(brightness: brightness).textTheme,
+  );
+
+  return base.copyWith(
+    displayLarge: base.displayLarge?.copyWith(
+      fontSize: 44,
+      fontWeight: FontWeight.w800,
+      letterSpacing: -0.8,
+      height: 1.12,
+    ),
+    displayMedium: base.displayMedium?.copyWith(
+      fontSize: 36,
+      fontWeight: FontWeight.w800,
+      letterSpacing: -0.6,
+      height: 1.15,
+    ),
+    displaySmall: base.displaySmall?.copyWith(
+      fontSize: 28,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.4,
+      height: 1.18,
+    ),
+    headlineLarge: base.headlineLarge?.copyWith(
+      fontSize: 26,
+      fontWeight: FontWeight.w800,
+      letterSpacing: -0.4,
+      height: 1.20,
+    ),
+    headlineMedium: base.headlineMedium?.copyWith(
+      fontSize: 22,
+      fontWeight: FontWeight.w800,
+      letterSpacing: -0.3,
+      height: 1.22,
+    ),
+    headlineSmall: base.headlineSmall?.copyWith(
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.2,
+      height: 1.25,
+    ),
+    titleLarge: base.titleLarge?.copyWith(
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.1,
+      height: 1.30,
+    ),
+    titleMedium: base.titleMedium?.copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.0,
+      height: 1.35,
+    ),
+    titleSmall: base.titleSmall?.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.1,
+      height: 1.35,
+    ),
+    bodyLarge: base.bodyLarge?.copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.1,
+      height: 1.50,
+    ),
+    bodyMedium: base.bodyMedium?.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.05,
+      height: 1.45,
+    ),
+    bodySmall: base.bodySmall?.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.15,
+      height: 1.40,
+    ),
+    labelLarge: base.labelLarge?.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.2,
+      height: 1.20,
+    ),
+    labelMedium: base.labelMedium?.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.25,
+      height: 1.20,
+    ),
+    labelSmall: base.labelSmall?.copyWith(
+      fontSize: 11,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.3,
+      height: 1.20,
+    ),
+  ).apply(
+    fontFamilyFallback: kIvraFontFallback,
+    bodyColor: colorScheme.onSurface,
+    displayColor: colorScheme.onSurface,
+  );
+}
+
+/// Factory building calibrated typography for Botanical Haute (Cormorant Garamond + Outfit).
+TextTheme _buildBotanicalHauteTextTheme(Brightness brightness, ColorScheme colorScheme) {
+  final baseTextTheme = GoogleFonts.outfitTextTheme(
+    ThemeData(brightness: brightness).textTheme,
+  );
+
+  return baseTextTheme.copyWith(
+    displayLarge: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.displayLarge?.copyWith(
+        fontSize: 48,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.4,
+        height: 1.10,
+      ),
+    ),
+    displayMedium: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.displayMedium?.copyWith(
+        fontSize: 38,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.3,
+        height: 1.14,
+      ),
+    ),
+    displaySmall: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.displaySmall?.copyWith(
+        fontSize: 30,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
+        height: 1.18,
+      ),
+    ),
+    headlineLarge: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.headlineLarge?.copyWith(
+        fontSize: 28,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
+        height: 1.20,
+      ),
+    ),
+    headlineMedium: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.headlineMedium?.copyWith(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.1,
+        height: 1.22,
+      ),
+    ),
+    headlineSmall: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.headlineSmall?.copyWith(
+        fontSize: 21,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.0,
+        height: 1.25,
+      ),
+    ),
+    titleLarge: GoogleFonts.cormorantGaramond(
+      textStyle: baseTextTheme.titleLarge?.copyWith(
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.0,
+        height: 1.28,
+      ),
+    ),
+    titleMedium: baseTextTheme.titleMedium?.copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.2,
+      height: 1.35,
+    ),
+    titleSmall: baseTextTheme.titleSmall?.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.2,
+      height: 1.35,
+    ),
+    bodyLarge: baseTextTheme.bodyLarge?.copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.15,
+      height: 1.50,
+    ),
+    bodyMedium: baseTextTheme.bodyMedium?.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.10,
+      height: 1.45,
+    ),
+    bodySmall: baseTextTheme.bodySmall?.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.20,
+      height: 1.40,
+    ),
+    labelLarge: baseTextTheme.labelLarge?.copyWith(
+      fontSize: 13.5,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.8,
+      height: 1.20,
+    ),
+    labelMedium: baseTextTheme.labelMedium?.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.6,
+      height: 1.20,
+    ),
+    labelSmall: baseTextTheme.labelSmall?.copyWith(
+      fontSize: 11,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.6,
+      height: 1.20,
+    ),
+  ).apply(
+    fontFamilyFallback: kIvraFontFallback,
+    bodyColor: colorScheme.onSurface,
+    displayColor: colorScheme.onSurface,
   );
 }

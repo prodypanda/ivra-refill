@@ -857,7 +857,7 @@ class _MetricCard extends StatelessWidget {
                           isBotanical ? FontWeight.w600 : FontWeight.w900,
                       color: valueColor,
                       letterSpacing: isBotanical ? -0.2 : -0.5,
-                    ),
+                    ).withTabularFigures(),
                   ),
                   const SizedBox(height: 2),
                   Text(
