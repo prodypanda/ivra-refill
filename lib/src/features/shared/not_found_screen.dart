@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/theme.dart';
 import '../../l10n/app_localizations.dart';
-import '../../routing/app_router.dart';
 import '../dashboard/dashboard_screen.dart';
 
 class NotFoundScreen extends StatelessWidget {
@@ -13,17 +13,21 @@ class NotFoundScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final cardRadius = themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 24.0);
+    final buttonRadius = themeExt?.buttonBorderRadius ?? (isBotanical ? 6.0 : 999.0);
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: themeExt?.backgroundGradient ?? LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               theme.colorScheme.surface,
-              theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             ],
           ),
         ),
@@ -35,12 +39,12 @@ class NotFoundScreen extends StatelessWidget {
               child: Card(
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(cardRadius),
                   side: BorderSide(
-                    color: theme.colorScheme.outlineVariant.withOpacity(0.3),
+                    color: themeExt?.cardBorderColor ?? theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
                   ),
                 ),
-                color: theme.colorScheme.surface.withOpacity(0.8),
+                color: theme.colorScheme.surface.withValues(alpha: 0.8),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 48.0),
                   child: Column(
@@ -49,7 +53,7 @@ class NotFoundScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primaryContainer.withOpacity(0.5),
+                          color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -62,7 +66,7 @@ class NotFoundScreen extends StatelessWidget {
                       Text(
                         '404',
                         style: theme.textTheme.displayMedium?.copyWith(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: isBotanical ? FontWeight.w700 : FontWeight.w900,
                           color: theme.colorScheme.primary,
                         ),
                       ),
@@ -87,8 +91,8 @@ class NotFoundScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.errorContainer.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(12),
+                            color: theme.colorScheme.errorContainer.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(isBotanical ? 6 : 12),
                           ),
                           child: Text(
                             error.toString(),
@@ -117,7 +121,7 @@ class NotFoundScreen extends StatelessWidget {
                             vertical: 16,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(buttonRadius),
                           ),
                         ),
                       ),

@@ -841,8 +841,8 @@ class _BottlePainter extends CustomPainter {
             style: TextStyle(
               fontSize: 8.5,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white.withOpacity(0.55) : Colors.black.withOpacity(0.45),
-            ),
+              color: isDark ? Colors.white.withValues(alpha: 0.55) : Colors.black.withValues(alpha: 0.45),
+            ).withTabularFigures(),
           ),
           textDirection: TextDirection.ltr,
         )..layout();

@@ -36,7 +36,6 @@ class StockVelocitySparkline extends StatefulWidget {
 
 class _StockVelocitySparklineState extends State<StockVelocitySparkline> {
   double? _scrubFraction;
-  bool _isHovering = false;
 
   void _handleScrub(double localX, double totalWidth) {
     if (!widget.showScrubber || totalWidth <= 0) return;
@@ -56,7 +55,6 @@ class _StockVelocitySparklineState extends State<StockVelocitySparkline> {
     if (_scrubFraction != null) {
       setState(() {
         _scrubFraction = null;
-        _isHovering = false;
       });
     }
   }
@@ -83,7 +81,6 @@ class _StockVelocitySparklineState extends State<StockVelocitySparkline> {
           cursor: widget.showScrubber
               ? SystemMouseCursors.resizeLeftRight
               : SystemMouseCursors.basic,
-          onEnter: (_) => setState(() => _isHovering = true),
           onExit: (_) => _clearScrub(),
           onHover: (e) => _handleScrub(e.localPosition.dx, totalWidth),
           child: GestureDetector(

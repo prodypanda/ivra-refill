@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -133,9 +132,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         final currentHotelId = hotelId ?? ref.read(selectedHotelIdProvider);
         final matchedHotels = hotels.where((h) => h.id == currentHotelId);
         final expressQrEnabled = matchedHotels.isNotEmpty ? matchedHotels.first.expressQrEnabled : false;
-        
-        final isStaffOrHousekeeper = currentUser?.role == UserRole.hotelStaff ||
-            currentUser?.role == UserRole.housekeeper;
 
         if (!expressQrEnabled) {
           if (path.startsWith('/qr') || path.startsWith('/app/qr')) {

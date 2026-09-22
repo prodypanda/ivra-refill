@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ivra_refill/src/app/ivra_app.dart';
 import 'package:ivra_refill/src/domain/app_enums.dart';
 import 'package:ivra_refill/src/domain/models.dart';

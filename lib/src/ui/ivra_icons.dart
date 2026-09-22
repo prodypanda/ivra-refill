@@ -2,6 +2,8 @@
 ///
 /// Generated from FlutterIcon.com using custom SVG designs.
 /// Font file: assets/fonts/MyFlutterApp.ttf
+library;
+
 import 'package:flutter/widgets.dart';
 
 /// Custom icon set for Ivra Refill app.

@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import '../domain/models.dart';
 import '../l10n/app_localizations.dart';
 
 class QrCodeLabelData {
@@ -52,9 +51,7 @@ class QrCodePdfService {
     final pdf = pw.Document();
 
     final l10n = AppLocalizations(Locale(languageCode));
-    final scanInstructions = l10n.t('qrLabelScanInstructions') ?? 'Scan with IVRA app to refill or replace';
-    final floorLabel = l10n.t('qrFloorRoom') != null ? '' : 'Floor'; // helper if custom text needed
-    final roomLabel = l10n.t('qrFloorRoom') != null ? '' : 'Room';
+    final scanInstructions = l10n.t('qrLabelScanInstructions');
 
     // Chunk labels into pages (12 labels per page max)
     final chunkedLabels = <List<QrCodeLabelData>>[];
@@ -115,8 +112,7 @@ class QrCodePdfService {
                             pw.SizedBox(height: 2),
                             // Room/Floor details
                             pw.Text(
-                              l10n.tParams('qrFloorRoom', {'floor': label.floor, 'room': label.room}) ??
-                                  '$floorLabel ${label.floor} \u2022 $roomLabel ${label.room}',
+                              l10n.tParams('qrFloorRoom', {'floor': label.floor, 'room': label.room}),
                               style: pw.TextStyle(
                                 fontSize: 9,
                                 fontWeight: pw.FontWeight.bold,

@@ -349,6 +349,11 @@ class _MobileShell extends ConsumerWidget {
   }
 
   void _showMoreDestinations(BuildContext context, WidgetRef ref, List<_NavItem> moreItems) {
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
+    final itemRadius = isBotanical ? 8.0 : 18.0;
+
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -368,7 +373,7 @@ class _MobileShell extends ConsumerWidget {
                       leading: _buildNavItemIcon(ref, item),
                       title: Text(item.label),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(itemRadius),
                       ),
                       onTap: () {
                         Navigator.of(context).pop();
@@ -392,8 +397,10 @@ class _BrandMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeExt = Theme.of(context).extension<IvraThemeExtension>();
+    final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
     final isBotanical = themeExt?.isBotanical ?? false;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -408,20 +415,20 @@ class _BrandMark extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
             decoration: BoxDecoration(
-              color: const Color(0xFF10B981).withValues(alpha: 0.12),
+              color: const Color(0xFF10B981).withValues(alpha: isDark ? 0.18 : 0.12),
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
-                color: const Color(0xFF10B981).withValues(alpha: 0.35),
+                color: const Color(0xFF10B981).withValues(alpha: isDark ? 0.45 : 0.35),
                 width: 0.8,
               ),
             ),
-            child: const Text(
+            child: Text(
               'HAUTE BOTANIQUE',
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.8,
-                color: Color(0xFF064E3B),
+                color: isDark ? const Color(0xFF34D399) : const Color(0xFF064E3B),
               ),
             ),
           ),

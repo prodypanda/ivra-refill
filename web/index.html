@@ -31,9 +31,67 @@
       font-family: system-ui, -apple-system, sans-serif;
     }
 
+    /* Browser Surfaces: Selection, Scrollbars, Caret, Underlines */
+    ::selection {
+      background-color: rgba(245, 158, 11, 0.28);
+      color: #1F1B17;
+    }
+
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(245, 158, 11, 0.35) transparent;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(245, 158, 11, 0.35);
+      border-radius: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(245, 158, 11, 0.65);
+    }
+
+    input, textarea {
+      caret-color: #F59E0B;
+    }
+
+    a {
+      text-underline-offset: 3px;
+    }
+
     @media (prefers-color-scheme: dark) {
       body {
         background-color: #0B1411;
+      }
+
+      ::selection {
+        background-color: rgba(52, 211, 153, 0.24);
+        color: #ECFDF5;
+      }
+
+      * {
+        scrollbar-color: rgba(52, 211, 153, 0.3) transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(52, 211, 153, 0.3);
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(52, 211, 153, 0.6);
+      }
+
+      input, textarea {
+        caret-color: #34D399;
       }
     }
 

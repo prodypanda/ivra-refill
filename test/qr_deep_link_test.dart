@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ivra_refill/src/app/ivra_app.dart';
 import 'package:ivra_refill/src/domain/app_enums.dart';
 import 'package:ivra_refill/src/domain/models.dart';
 import 'package:ivra_refill/src/features/products/public_product_screen.dart';
 import 'package:ivra_refill/src/features/rooms/qr_action_screen.dart';
-import 'package:ivra_refill/src/features/rooms/rooms_screen.dart';
 import 'package:ivra_refill/src/features/auth/login_screen.dart';
 import 'package:ivra_refill/src/features/shared/offline_banner.dart';
 import 'package:ivra_refill/src/state/app_state.dart';

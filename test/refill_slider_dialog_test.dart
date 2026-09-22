@@ -100,7 +100,7 @@ void main() {
 
     // Find cancel button and tap it
     final l10n = AppLocalizations(const Locale('en'));
-    final cancelText = l10n.t('btnCancel') ?? 'Cancel';
+    final cancelText = l10n.t('btnCancel');
     expect(find.text(cancelText), findsOneWidget);
 
     await tester.tap(find.text(cancelText));
@@ -144,7 +144,7 @@ void main() {
 
     // Confirm refill
     final l10n = AppLocalizations(const Locale('en'));
-    final confirmText = l10n.t('dialogRefillConfirm') ?? 'Confirm Refill';
+    final confirmText = l10n.t('dialogRefillConfirm');
     expect(find.text(confirmText), findsOneWidget);
 
     await tester.tap(find.text(confirmText));

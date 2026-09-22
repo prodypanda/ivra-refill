@@ -581,7 +581,7 @@ class _InviteTeamMemberDialogState
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<UserRole>(
-                  value: _role,
+                  initialValue: _role,
                   decoration:
                       InputDecoration(labelText: l10n.t('teamTableColumnRole')),
                   items: [
@@ -1407,7 +1407,7 @@ class _EditProfileDialogState extends ConsumerState<_EditProfileDialog> {
               if (canEditRole) ...[
                 const SizedBox(height: 16),
                 DropdownButtonFormField<UserRole>(
-                  value: _role,
+                  initialValue: _role,
                   decoration: InputDecoration(labelText: l10n.t('teamTableColumnRole')),
                   items: [
                     for (final role in UserRole.values)

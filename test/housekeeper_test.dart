@@ -1,6 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ivra_refill/src/domain/app_enums.dart';
-import 'package:ivra_refill/src/domain/models.dart';
 import 'package:ivra_refill/src/data/mock_ivra_repository.dart';
 
 void main() {
