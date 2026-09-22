@@ -12,6 +12,7 @@ class PageScaffold extends ConsumerWidget {
     required this.child,
     this.actions = const [],
     this.onRefresh,
+    this.maxContentWidth = 1280.0,
     super.key,
   });
 
@@ -19,6 +20,7 @@ class PageScaffold extends ConsumerWidget {
   final Widget child;
   final List<Widget> actions;
   final Future<void> Function()? onRefresh;
+  final double maxContentWidth;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -75,11 +77,15 @@ class PageScaffold extends ConsumerWidget {
     );
     final width = MediaQuery.sizeOf(context).width;
     final isMobile = width < 720;
-    final horizontalPadding = width < 420
+    final basePadding = width < 420
         ? 16.0
         : width < 720
             ? 20.0
             : 24.0;
+    final effectiveHorizontalPadding =
+        width > (maxContentWidth + (basePadding * 2))
+            ? ((width - maxContentWidth) / 2)
+            : basePadding;
     final bottomPadding = isMobile
         ? (104.0 + MediaQuery.paddingOf(context).bottom)
         : 24.0;
@@ -93,7 +99,7 @@ class PageScaffold extends ConsumerWidget {
           backgroundColor: Colors.transparent,
           scrolledUnderElevation: 0,
           toolbarHeight: isMobile ? 84 : kToolbarHeight,
-          titleSpacing: horizontalPadding,
+          titleSpacing: effectiveHorizontalPadding,
           title: Text(
             title,
             overflow: TextOverflow.ellipsis,
@@ -102,13 +108,18 @@ class PageScaffold extends ConsumerWidget {
                   letterSpacing: isBotanical ? 0.0 : -0.7,
                 ),
           ),
-          actions: [...actions, accountButton],
+          actions: [
+            ...actions,
+            accountButton,
+            if (effectiveHorizontalPadding > basePadding)
+              SizedBox(width: effectiveHorizontalPadding - basePadding),
+          ],
         ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(
-            horizontalPadding,
+            effectiveHorizontalPadding,
             isMobile ? 8 : 16,
-            horizontalPadding,
+            effectiveHorizontalPadding,
             bottomPadding,
           ),
           sliver: SliverToBoxAdapter(child: child),

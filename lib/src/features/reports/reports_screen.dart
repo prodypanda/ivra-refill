@@ -86,11 +86,26 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             onScheduleEmail: () => _showScheduleEmailDialog(context),
           ),
           const SizedBox(height: 16),
-          Wrap(
-            spacing: 16,
-            runSpacing: 16,
-            children: [
-          _ReportAction(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 720;
+              final columns = isNarrow
+                  ? 1
+                  : constraints.maxWidth >= 1080
+                      ? 3
+                      : 2;
+              const spacing = 16.0;
+              final cardWidth = columns == 1
+                  ? constraints.maxWidth
+                  : (constraints.maxWidth - (spacing * (columns - 1))) / columns;
+
+              return Wrap(
+                spacing: spacing,
+                runSpacing: spacing,
+                children: [
+                  SizedBox(
+                    width: cardWidth,
+                    child: _ReportAction(
             title: l10n.t('reportRefillHistoryTitle'),
             body: l10n.t('reportRefillHistoryBody'),
             icon: Icons.history_outlined,
@@ -144,7 +159,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               ),
             ],
           ),
-          _ReportAction(
+        ),
+        SizedBox(
+          width: cardWidth,
+          child: _ReportAction(
             title: l10n.t('suggestedOrders'),
             body: l10n.t('reportSuggestedOrdersBody'),
             icon: Icons.request_quote_outlined,
@@ -195,7 +213,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               ),
             ],
           ),
-          _ReportAction(
+        ),
+        SizedBox(
+          width: cardWidth,
+          child: _ReportAction(
             title: l10n.t('reportInventorySnapshotTitle'),
             body: l10n.t('reportInventorySnapshotBody'),
             icon: Icons.inventory_2_outlined,
@@ -245,7 +266,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               ),
             ],
           ),
-          _ReportAction(
+        ),
+        SizedBox(
+          width: cardWidth,
+          child: _ReportAction(
             title: l10n.t('reportOpenAlertsTitle'),
             body: l10n.t('reportOpenAlertsBody'),
             icon: Icons.notification_important_outlined,
@@ -298,8 +322,11 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               ),
             ],
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  },
+),
     ],
   ),
 );
@@ -1094,21 +1121,19 @@ class _ReportActionState extends State<_ReportAction> {
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutBack,
-        child: SizedBox(
-          width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 360.0),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(effectiveRadius),
-              boxShadow: [
-                BoxShadow(
-                  color: theme.colorScheme.primary
-                      .withValues(alpha: _isHovered ? 0.15 : 0.0),
-                  blurRadius: _isHovered ? 20 : 0,
-                  spreadRadius: _isHovered ? 2 : 0,
-                ),
-              ],
-            ),
-            child: GlassCard(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(effectiveRadius),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary
+                    .withValues(alpha: _isHovered ? 0.15 : 0.0),
+                blurRadius: _isHovered ? 20 : 0,
+                spreadRadius: _isHovered ? 2 : 0,
+              ),
+            ],
+          ),
+          child: GlassCard(
               padding: EdgeInsets.zero,
               borderRadius: effectiveRadius,
               borderColor: theme.colorScheme.outline
@@ -1199,7 +1224,6 @@ class _ReportActionState extends State<_ReportAction> {
                   ),
                 ],
               ),
-            ),
           ),
         ),
       ),

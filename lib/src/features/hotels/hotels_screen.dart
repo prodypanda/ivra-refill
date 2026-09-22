@@ -46,18 +46,36 @@ class HotelsScreen extends ConsumerWidget {
       child: AsyncValueView(
         value: ref.watch(hotelsProvider),
         onRetry: () => ref.invalidate(hotelsProvider),
-        builder: (hotels) => Wrap(
-          spacing: 20,
-          runSpacing: 20,
-          children: [
-            for (var i = 0; i < hotels.length; i++)
-              _PremiumHotelCard(
-                staggerIndex: i,
-                hotel: hotels[i],
-                onEdit: () => _showHotelEditRequestDialog(context, ref, hotels[i]),
-                onDelete: canCreateHotel ? () => _confirmDeleteHotel(context, ref, hotels[i]) : null,
-              ),
-          ],
+        builder: (hotels) => LayoutBuilder(
+          builder: (context, constraints) {
+            final contentWidth = constraints.maxWidth;
+            final columns = contentWidth >= 1000
+                ? 3
+                : contentWidth >= 640
+                    ? 2
+                    : 1;
+            final spacing = contentWidth < 420 ? 12.0 : 20.0;
+            final cardWidth = columns == 1
+                ? contentWidth
+                : (contentWidth - (spacing * (columns - 1))) / columns;
+
+            return Wrap(
+              spacing: spacing,
+              runSpacing: spacing,
+              children: [
+                for (var i = 0; i < hotels.length; i++)
+                  SizedBox(
+                    width: cardWidth,
+                    child: _PremiumHotelCard(
+                      staggerIndex: i,
+                      hotel: hotels[i],
+                      onEdit: () => _showHotelEditRequestDialog(context, ref, hotels[i]),
+                      onDelete: canCreateHotel ? () => _confirmDeleteHotel(context, ref, hotels[i]) : null,
+                    ),
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -217,9 +235,7 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
           scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
           duration: const Duration(milliseconds: 200),
           curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
-        child: SizedBox(
-          width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 360.0),
-          child: Container(
+        child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(effectiveRadius),
               boxShadow: [
@@ -441,9 +457,8 @@ class _PremiumHotelCardState extends State<_PremiumHotelCard> {
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class _HotelOnboardingWizard extends ConsumerStatefulWidget {

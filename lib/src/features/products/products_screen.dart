@@ -91,36 +91,32 @@ class _ProductsTable extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final contentWidth = constraints.maxWidth.clamp(0, 1280).toDouble();
+        final contentWidth = constraints.maxWidth;
         final columns = contentWidth >= 1100
             ? 3
             : contentWidth >= 720
                 ? 2
                 : 1;
         final spacing = contentWidth < 420 ? 12.0 : 20.0;
-        final cardWidth = (contentWidth - (spacing * (columns - 1))) / columns;
+        final cardWidth = columns == 1
+            ? contentWidth
+            : (contentWidth - (spacing * (columns - 1))) / columns;
 
-        return Align(
-          alignment: AlignmentDirectional.topStart,
-          child: SizedBox(
-            width: contentWidth,
-            child: Wrap(
-              spacing: spacing,
-              runSpacing: spacing,
-              children: [
-                for (var i = 0; i < products.length; i++)
-                  SizedBox(
-                    width: cardWidth,
-                    child: _PremiumProductCard(
-                      staggerIndex: i,
-                      product: products[i],
-                      language: language,
-                      canManage: canManage,
-                    ),
-                  ),
-              ],
-            ),
-          ),
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: [
+            for (var i = 0; i < products.length; i++)
+              SizedBox(
+                width: cardWidth,
+                child: _PremiumProductCard(
+                  staggerIndex: i,
+                  product: products[i],
+                  language: language,
+                  canManage: canManage,
+                ),
+              ),
+          ],
         );
       },
     );

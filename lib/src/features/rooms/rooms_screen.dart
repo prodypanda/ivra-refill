@@ -271,15 +271,12 @@ class _RoomsScreenState extends ConsumerState<RoomsScreen> {
           ref.invalidate(hotelsProvider);
           ref.invalidate(roomProductsProvider);
         },
-        loadingWidget: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: List.generate(
-              4,
-              (index) => const Padding(
-                padding: EdgeInsets.only(bottom: 16),
-                child: CardShimmer(),
-              ),
+        loadingWidget: Column(
+          children: List.generate(
+            4,
+            (index) => const Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: CardShimmer(),
             ),
           ),
         ),

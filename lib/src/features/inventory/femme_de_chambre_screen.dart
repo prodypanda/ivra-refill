@@ -107,12 +107,9 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                   ),
                 ),
       ],
-      child: Container(
-        decoration: BoxDecoration(gradient: backgroundGradient),
-        child: isHousekeeper 
+      child: isHousekeeper 
           ? _buildHousekeeperView(context, currentUser)
           : _buildManagementView(context, currentUser),
-      ),
     );
   }
 
@@ -129,7 +126,8 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
           return Column(
             children: [
               _buildAvatarHeader(context, currentUser),
-              Expanded(
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
                 child: EmptyState(
                   icon: Icons.shopping_bag_outlined,
                   title: l10n.t('housekeeperCart'),
@@ -147,12 +145,10 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
         final totalFullBidons = allocations.fold<int>(0, (sum, item) => sum + item.fullBidons);
         final totalOpenBidons = allocations.fold<int>(0, (sum, item) => sum + item.openBidons);
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildAvatarHeader(context, currentUser),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildAvatarHeader(context, currentUser),
               const SizedBox(height: 24),
               
               // Summary cards row
@@ -223,11 +219,10 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                 },
               ),
             ],
-          ),
-        );
-      },
-    );
-  }
+          );
+        },
+      );
+    }
 
   Widget _buildAvatarHeader(BuildContext context, UserProfile user) {
     final theme = Theme.of(context);
@@ -335,7 +330,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
       children: [
         // Control panel with hotel selection dropdown — always visible
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          padding: const EdgeInsets.only(bottom: 16),
           child: GlassCard(
             padding: const EdgeInsets.all(16),
             color: theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.4),
@@ -429,7 +424,7 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.zero,
           itemCount: housekeepers.length,
           separatorBuilder: (_, __) => const SizedBox(height: 16),
           itemBuilder: (context, index) {

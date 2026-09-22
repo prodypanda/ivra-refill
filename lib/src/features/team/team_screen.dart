@@ -399,23 +399,41 @@ class _MembersTable extends ConsumerWidget {
         hotel.id: hotel.name,
     };
 
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: [
-        for (final member in members)
-          _PremiumMemberCard(
-            currentUser: currentUser,
-            member: member,
-            hotelsById: hotelsById,
-            canManageHotels: canManageHotels,
-            onSetActive: onSetActive,
-            onManageHotels: onManageHotels,
-            onEditProfile: onEditProfile,
-            onDelete: onDelete,
-            onViewAs: onViewAs,
-          ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final contentWidth = constraints.maxWidth;
+        final columns = contentWidth >= 960
+            ? 3
+            : contentWidth >= 600
+                ? 2
+                : 1;
+        final spacing = contentWidth < 420 ? 12.0 : 16.0;
+        final cardWidth = columns == 1
+            ? contentWidth
+            : (contentWidth - (spacing * (columns - 1))) / columns;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: [
+            for (final member in members)
+              SizedBox(
+                width: cardWidth,
+                child: _PremiumMemberCard(
+                  currentUser: currentUser,
+                  member: member,
+                  hotelsById: hotelsById,
+                  canManageHotels: canManageHotels,
+                  onSetActive: onSetActive,
+                  onManageHotels: onManageHotels,
+                  onEditProfile: onEditProfile,
+                  onDelete: onDelete,
+                  onViewAs: onViewAs,
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -447,19 +465,37 @@ class _InvitationsTable extends StatelessWidget {
       );
     }
 
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: [
-        for (final invitation in invitations)
-          _PremiumInvitationCard(
-            currentUser: currentUser,
-            invitation: invitation,
-            onResend: onResend,
-            onCancel: onCancel,
-            onCopyLink: onCopyLink,
-          ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final contentWidth = constraints.maxWidth;
+        final columns = contentWidth >= 960
+            ? 3
+            : contentWidth >= 600
+                ? 2
+                : 1;
+        final spacing = contentWidth < 420 ? 12.0 : 16.0;
+        final cardWidth = columns == 1
+            ? contentWidth
+            : (contentWidth - (spacing * (columns - 1))) / columns;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: [
+            for (final invitation in invitations)
+              SizedBox(
+                width: cardWidth,
+                child: _PremiumInvitationCard(
+                  currentUser: currentUser,
+                  invitation: invitation,
+                  onResend: onResend,
+                  onCancel: onCancel,
+                  onCopyLink: onCopyLink,
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -989,10 +1025,8 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutBack,
-        child: SizedBox(
-          width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 320.0),
-          child: GlassCard(
-            borderRadius: effectiveRadius,
+        child: GlassCard(
+          borderRadius: effectiveRadius,
             padding: const EdgeInsets.all(20),
             borderColor: member.isActive
                 ? theme.colorScheme.primary
@@ -1134,8 +1168,7 @@ class _PremiumMemberCardState extends State<_PremiumMemberCard> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -1177,10 +1210,8 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutBack,
-        child: SizedBox(
-          width: (MediaQuery.of(context).size.width - 32).clamp(0.0, 320.0),
-          child: GlassCard(
-            borderRadius: effectiveRadius,
+        child: GlassCard(
+          borderRadius: effectiveRadius,
             padding: const EdgeInsets.all(20),
             borderColor: theme.colorScheme.tertiary
                 .withValues(alpha: _isHovered ? 0.5 : 0.2),
@@ -1301,8 +1332,7 @@ class _PremiumInvitationCardState extends State<_PremiumInvitationCard> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
 

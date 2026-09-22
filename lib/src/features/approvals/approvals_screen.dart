@@ -29,6 +29,7 @@ class ApprovalsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     return PageScaffold(
       title: l10n.t('approvals'),
+      maxContentWidth: 920.0,
       onRefresh: () async {
         ref.invalidate(approvalsProvider);
         await ref.read(approvalsProvider.future);

@@ -65,6 +65,7 @@ class AlertsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     return PageScaffold(
       title: l10n.t('alerts'),
+      maxContentWidth: 1080.0,
       onRefresh: () async {
         ref.invalidate(alertsProvider);
         await ref.read(alertsProvider.future);
@@ -79,10 +80,8 @@ class AlertsScreen extends ConsumerWidget {
       child: AsyncValueView(
         value: ref.watch(alertsProvider),
         onRetry: () => ref.invalidate(alertsProvider),
-        loadingWidget: const Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
+        loadingWidget: const Column(
+          children: [
             Padding(
               padding: EdgeInsets.only(bottom: 12),
               child: CardShimmer(),
@@ -100,7 +99,6 @@ class AlertsScreen extends ConsumerWidget {
               child: CardShimmer(),
             ),
           ],
-        ),
         ),
         builder: (alerts) => _AlertsList(
           alerts: alerts,

@@ -180,8 +180,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     children: List.generate(
                       3,
                       (index) => const Padding(
-                        padding:
-                            EdgeInsets.only(bottom: 12, left: 16, right: 16),
+                        padding: EdgeInsets.only(bottom: 12),
                         child: CardShimmer(isCompact: true),
                       ),
                     ),
@@ -249,8 +248,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     children: List.generate(
                       2,
                       (index) => const Padding(
-                        padding:
-                            EdgeInsets.only(bottom: 16, left: 16, right: 16),
+                        padding: EdgeInsets.only(bottom: 16),
                         child: CardShimmer(),
                       ),
                     ),
