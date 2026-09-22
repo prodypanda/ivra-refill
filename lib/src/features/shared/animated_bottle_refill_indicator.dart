@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
+import '../../app/theme.dart';
+
 class AnimatedBottleRefillIndicator extends StatefulWidget {
   const AnimatedBottleRefillIndicator({
     super.key,
@@ -50,6 +52,8 @@ class _AnimatedBottleRefillIndicatorState
   late final AnimationController _waveController;
   late final AnimationController _oldLiquidController;
   late final AnimationController _newLiquidController;
+  late final AnimationController _sloshController;
+  double _sloshIntensity = 0.0;
 
   late Animation<double> _oldLiquidAnimation;
   late Animation<double> _newLiquidAnimation;
@@ -70,6 +74,11 @@ class _AnimatedBottleRefillIndicatorState
     _newLiquidController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
+    );
+
+    _sloshController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
     );
 
     final targetOld = (1.0 - widget.refillPercentage).clamp(0.0, 1.0);
@@ -97,8 +106,12 @@ class _AnimatedBottleRefillIndicatorState
 
     final targetOld = (1.0 - widget.refillPercentage).clamp(0.0, 1.0);
 
-    // If target percentage changed, animate the old liquid level smoothly (Evaporation/Adjusting)
+    // If target percentage changed, animate the old liquid level smoothly and trigger hydrodynamic slosh
     if (oldWidget.refillPercentage != widget.refillPercentage) {
+      final delta = widget.refillPercentage - oldWidget.refillPercentage;
+      _sloshIntensity = (delta * 3.5).clamp(-1.0, 1.0);
+      _sloshController.forward(from: 0.0);
+
       _oldLiquidController.stop();
       _oldLiquidAnimation = Tween<double>(
         begin: _oldLiquidAnimation.value,
@@ -118,7 +131,10 @@ class _AnimatedBottleRefillIndicatorState
         // While dragging, new liquid is instantly hidden
         _newLiquidAnimation = const AlwaysStoppedAnimation<double>(0.0);
       } else {
-        // On release, animate new liquid up from 0.0
+        // On release, animate new liquid up from 0.0 with secondary slosh bounce
+        _sloshIntensity = 0.6;
+        _sloshController.forward(from: 0.0);
+
         _newLiquidAnimation = Tween<double>(
           begin: 0.0,
           end: widget.refillPercentage,
@@ -148,13 +164,18 @@ class _AnimatedBottleRefillIndicatorState
     _waveController.dispose();
     _oldLiquidController.dispose();
     _newLiquidController.dispose();
+    _sloshController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeExt = theme.extension<IvraThemeExtension>();
+    final isBotanical = themeExt?.isBotanical ?? false;
     final isDark = theme.brightness == Brightness.dark;
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
     // Design-system-aligned luxurious colors
     final finalBaseColor = widget.baseColor ?? theme.colorScheme.primary;
@@ -162,7 +183,12 @@ class _AnimatedBottleRefillIndicatorState
         (isDark ? Colors.cyanAccent.shade400 : Colors.teal.shade400);
 
     return AnimatedBuilder(
-      animation: Listenable.merge([_waveController, _oldLiquidController, _newLiquidController]),
+      animation: Listenable.merge([
+        _waveController,
+        _oldLiquidController,
+        _newLiquidController,
+        _sloshController,
+      ]),
       builder: (context, child) {
         return CustomPaint(
           size: Size(widget.width, widget.height),
@@ -172,10 +198,14 @@ class _AnimatedBottleRefillIndicatorState
             targetRefillPercentage: widget.refillPercentage,
             isInteracting: widget.isInteracting,
             bottleVolumeMl: widget.bottleVolumeMl,
-            waveValue: _waveController.value,
+            waveValue: disableAnimations ? 0.0 : _waveController.value,
+            sloshProgress: disableAnimations ? 1.0 : _sloshController.value,
+            sloshIntensity: disableAnimations ? 0.0 : _sloshIntensity,
             baseColor: finalBaseColor,
             accentColor: finalAccentColor,
             isDark: isDark,
+            isBotanical: isBotanical,
+            disableAnimations: disableAnimations,
             existingLabel: widget.existingLabel ?? "Existing",
             toAddLabel: widget.toAddLabel ?? "To Add",
           ),
@@ -193,9 +223,13 @@ class _BottlePainter extends CustomPainter {
     required this.isInteracting,
     required this.bottleVolumeMl,
     required this.waveValue,
+    required this.sloshProgress,
+    required this.sloshIntensity,
     required this.baseColor,
     required this.accentColor,
     required this.isDark,
+    required this.isBotanical,
+    required this.disableAnimations,
     required this.existingLabel,
     required this.toAddLabel,
   });
@@ -206,9 +240,13 @@ class _BottlePainter extends CustomPainter {
   final bool isInteracting;
   final int bottleVolumeMl;
   final double waveValue;
+  final double sloshProgress;
+  final double sloshIntensity;
   final Color baseColor;
   final Color accentColor;
   final bool isDark;
+  final bool isBotanical;
+  final bool disableAnimations;
   final String existingLabel;
   final String toAddLabel;
 
@@ -296,6 +334,16 @@ class _BottlePainter extends CustomPainter {
       }
     }
 
+    // Calculate dynamic slosh physics
+    final t = sloshProgress;
+    final sloshDecay = math.exp(-3.2 * t);
+    final sloshTilt = disableAnimations
+        ? 0.0
+        : (sloshIntensity * 0.12 * math.sin(t * 14.0 * math.pi) * sloshDecay);
+    final activeSloshWave = disableAnimations
+        ? 0.0
+        : (sloshIntensity.abs() * 4.2 * math.sin(t * 16.0 * math.pi) * sloshDecay);
+
     // Calculate dynamic wave dampening factor
     double waveFactor = 0.0;
     if (!isInteracting && targetRefillPercentage > 0.001) {
@@ -304,6 +352,10 @@ class _BottlePainter extends CustomPainter {
       if (progress >= 0.98) {
         waveFactor = 0.0;
       }
+    }
+    if (isInteracting) {
+      // During active interaction, maintain subtle responsiveness
+      waveFactor = 0.4;
     }
 
     // A. Draw newly added liquid (accentColor) at the top
@@ -314,29 +366,36 @@ class _BottlePainter extends CustomPainter {
 
       addedWavePath.moveTo(xLeft - 10, size.height);
       for (double x = xLeft - 10; x <= xRight + 10; x += 2.0) {
-        // Physical Splash Ripple Perturbation: decays exponentially from the stream impact point
         final double centerDist = (x - xCenter).abs();
-        final double ripplePerturbation = math.sin((centerDist * 0.15) - (waveValue * 8 * math.pi)) * 
-            6.0 * streamOpacity * math.exp(-centerDist * 0.04);
+        final double ripplePerturbation = disableAnimations
+            ? 0.0
+            : math.sin((centerDist * 0.15) - (waveValue * 8 * math.pi)) *
+                6.0 * streamOpacity * math.exp(-centerDist * 0.04);
+        final xNorm = (x - xCenter) / ((xRight - xLeft) / 2.0);
+        final sloshOffset = xNorm * sloshTilt * (xRight - xLeft) * 0.35;
 
-        final y = yNewSurface + ripplePerturbation +
-            waveAmplitude *
-                math.sin((x * waveFrequency) + (waveValue * 2 * math.pi));
+        final y = yNewSurface + ripplePerturbation + sloshOffset +
+            (disableAnimations
+                ? 0.0
+                : (waveAmplitude + activeSloshWave.abs()) *
+                    math.sin((x * waveFrequency) + (waveValue * 2 * math.pi)));
         addedWavePath.lineTo(x, y);
       }
       addedWavePath.lineTo(xRight + 10, size.height);
       addedWavePath.lineTo(xLeft - 10, size.height);
       addedWavePath.close();
 
-      // Liquid container linear gradient for rich 3D shading
+      // Liquid container linear gradient with deep fluid caustics
       final paintAdded = Paint()
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            accentColor.withOpacity(0.85),
+            accentColor.withValues(alpha: 0.90),
             accentColor,
+            Color.lerp(accentColor, Colors.black, isDark ? 0.25 : 0.15)!,
           ],
+          stops: const [0.0, 0.5, 1.0],
         ).createShader(Rect.fromLTRB(xLeft, yNewSurface, xRight, yMinLiquid));
       canvas.drawPath(addedWavePath, paintAdded);
 
@@ -344,22 +403,42 @@ class _BottlePainter extends CustomPainter {
       final addedSurfaceWave = Path();
       for (double x = xLeft; x <= xRight; x += 2.0) {
         final double centerDist = (x - xCenter).abs();
-        final double ripplePerturbation = math.sin((centerDist * 0.15) - (waveValue * 8 * math.pi)) * 
-            6.0 * streamOpacity * math.exp(-centerDist * 0.04);
+        final double ripplePerturbation = disableAnimations
+            ? 0.0
+            : math.sin((centerDist * 0.15) - (waveValue * 8 * math.pi)) *
+                6.0 * streamOpacity * math.exp(-centerDist * 0.04);
+        final xNorm = (x - xCenter) / ((xRight - xLeft) / 2.0);
+        final sloshOffset = xNorm * sloshTilt * (xRight - xLeft) * 0.35;
 
-        final y = yNewSurface + ripplePerturbation +
-            waveAmplitude *
-                math.sin((x * waveFrequency) + (waveValue * 2 * math.pi));
+        final y = yNewSurface + ripplePerturbation + sloshOffset +
+            (disableAnimations
+                ? 0.0
+                : (waveAmplitude + activeSloshWave.abs()) *
+                    math.sin((x * waveFrequency) + (waveValue * 2 * math.pi)));
         if (x == xLeft) {
           addedSurfaceWave.moveTo(x, y);
         } else {
           addedSurfaceWave.lineTo(x, y);
         }
       }
-      final surfaceCapPaint = Paint()
-        ..color = Colors.white.withOpacity(0.55)
+
+      final meniscusColor = isBotanical
+          ? (isDark ? const Color(0xFF6EE7B7) : const Color(0xFFD4AF37)) // Jade / gold leaf
+          : (isDark ? const Color(0xFFFDE68A) : const Color(0xFFF59E0B)); // Champagne amber
+
+      // 1. Soft glowing aura pass
+      final meniscusAuraPaint = Paint()
+        ..color = meniscusColor.withValues(alpha: 0.35)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.8;
+        ..strokeWidth = 3.6
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
+      canvas.drawPath(addedSurfaceWave, meniscusAuraPaint);
+
+      // 2. Crisp specular light thread
+      final surfaceCapPaint = Paint()
+        ..color = Colors.white.withValues(alpha: 0.85)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.6;
       canvas.drawPath(addedSurfaceWave, surfaceCapPaint);
     }
 
@@ -371,10 +450,14 @@ class _BottlePainter extends CustomPainter {
 
       existingWavePath.moveTo(xLeft - 10, size.height);
       for (double x = xLeft - 10; x <= xRight + 10; x += 2.0) {
-        // Draw with inverted phase to make the liquid interface look dynamically wavy
-        final y = ySplit +
-            waveAmplitude *
-                math.sin((x * waveFrequency) - (waveValue * 2 * math.pi));
+        final xNorm = (x - xCenter) / ((xRight - xLeft) / 2.0);
+        final sloshOffset = xNorm * sloshTilt * (xRight - xLeft) * 0.25;
+
+        final y = ySplit + sloshOffset +
+            (disableAnimations
+                ? 0.0
+                : (waveAmplitude + activeSloshWave.abs() * 0.7) *
+                    math.sin((x * waveFrequency) - (waveValue * 2 * math.pi)));
         existingWavePath.lineTo(x, y);
       }
       existingWavePath.lineTo(xRight + 10, size.height);
@@ -386,26 +469,42 @@ class _BottlePainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            baseColor.withOpacity(0.9),
+            baseColor.withValues(alpha: 0.92),
             baseColor,
+            Color.lerp(baseColor, Colors.black, isDark ? 0.25 : 0.15)!,
           ],
+          stops: const [0.0, 0.5, 1.0],
         ).createShader(Rect.fromLTRB(xLeft, ySplit, xRight, yMinLiquid));
       canvas.drawPath(existingWavePath, paintExisting);
 
       // Meniscus Glowing Highlight along the surface wave of the existing liquid
       final existingSurfaceWave = Path();
       for (double x = xLeft; x <= xRight; x += 2.0) {
-        final y = ySplit +
-            waveAmplitude *
-                math.sin((x * waveFrequency) - (waveValue * 2 * math.pi));
+        final xNorm = (x - xCenter) / ((xRight - xLeft) / 2.0);
+        final sloshOffset = xNorm * sloshTilt * (xRight - xLeft) * 0.25;
+
+        final y = ySplit + sloshOffset +
+            (disableAnimations
+                ? 0.0
+                : (waveAmplitude + activeSloshWave.abs() * 0.7) *
+                    math.sin((x * waveFrequency) - (waveValue * 2 * math.pi)));
         if (x == xLeft) {
           existingSurfaceWave.moveTo(x, y);
         } else {
           existingSurfaceWave.lineTo(x, y);
         }
       }
+
+      final existingAuraPaint = Paint()
+        ..color = (isBotanical ? const Color(0xFF10B981) : baseColor)
+            .withValues(alpha: 0.3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.8
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
+      canvas.drawPath(existingSurfaceWave, existingAuraPaint);
+
       final existingCapPaint = Paint()
-        ..color = Colors.white.withOpacity(0.4)
+        ..color = Colors.white.withValues(alpha: 0.65)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.2;
       canvas.drawPath(existingSurfaceWave, existingCapPaint);
@@ -762,9 +861,13 @@ class _BottlePainter extends CustomPainter {
         oldDelegate.isInteracting != isInteracting ||
         oldDelegate.bottleVolumeMl != bottleVolumeMl ||
         oldDelegate.waveValue != waveValue ||
+        oldDelegate.sloshProgress != sloshProgress ||
+        oldDelegate.sloshIntensity != sloshIntensity ||
         oldDelegate.baseColor != baseColor ||
         oldDelegate.accentColor != accentColor ||
         oldDelegate.isDark != isDark ||
+        oldDelegate.isBotanical != isBotanical ||
+        oldDelegate.disableAnimations != disableAnimations ||
         oldDelegate.existingLabel != existingLabel ||
         oldDelegate.toAddLabel != toAddLabel;
   }

@@ -27,6 +27,7 @@ import '../shared/shimmer_loading.dart';
 import '../shared/premium_confirm_dialog.dart';
 import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/refill_percentage_dialog.dart';
+import '../shared/fluid_liquid_gauge.dart';
 import '../../utils/qr_parser.dart';
 import '../../app/theme.dart';
 
@@ -3663,13 +3664,28 @@ class _RoomCardProductRow extends ConsumerWidget {
                 border: Border.all(color: statusColor.withValues(alpha: 0.4)),
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: Text(
-                _getLocalizedBottleStatus(context, item.status),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontSize: 11,
-                  color: statusColor,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (item.product.isRefillable) ...[
+                    FluidLiquidGauge(
+                      percentage: item.status == BottleStatus.needsRefill ? 0.15 : 0.85,
+                      width: 24,
+                      height: 6,
+                      color: statusColor,
+                      threshold: 0.20,
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                  Text(
+                    _getLocalizedBottleStatus(context, item.status),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontSize: 11,
+                      color: statusColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

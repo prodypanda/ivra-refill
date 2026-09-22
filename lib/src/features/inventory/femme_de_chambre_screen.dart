@@ -18,6 +18,7 @@ import '../shared/premium_snackbar.dart';
 import '../shared/premium_confirm_dialog.dart';
 import '../shared/premium_loading.dart';
 import '../shared/hover_image_tooltip.dart';
+import '../shared/fluid_liquid_gauge.dart';
 
 class FemmeDeChambreScreen extends ConsumerStatefulWidget {
   const FemmeDeChambreScreen({super.key});
@@ -1228,15 +1229,11 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: openBidonPercentage / 100,
-                  minHeight: 8,
-                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
-                ),
+              const SizedBox(height: 8),
+              FluidLiquidGauge(
+                percentage: openBidonPercentage / 100,
+                height: 12,
+                threshold: 0.20,
               ),
             ],
           ],

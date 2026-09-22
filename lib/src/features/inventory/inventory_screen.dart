@@ -18,6 +18,7 @@ import '../shared/premium_qr_scanner_dialog.dart';
 import '../shared/centered_sheet.dart';
 import '../shared/hover_image_tooltip.dart';
 import '../shared/stock_velocity_sparkline.dart';
+import '../shared/fluid_liquid_gauge.dart';
 import '../../utils/qr_parser.dart';
 import '../../app/theme.dart';
 
@@ -1275,65 +1276,11 @@ class _VisualStockBar extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        Stack(
-          children: [
-            Container(
-              height: 8,
-              decoration: BoxDecoration(
-                color: displayColor.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            TweenAnimationBuilder<double>(
-              key: ValueKey('stock_bar_${label}_$value'),
-              tween: Tween<double>(begin: 0.0, end: percentage),
-              duration: MediaQuery.maybeOf(context)?.disableAnimations == true
-                  ? Duration.zero
-                  : const Duration(milliseconds: 400),
-              curve: Curves.easeOutCubic,
-              builder: (context, animatedPercentage, _) {
-                return FractionallySizedBox(
-                  widthFactor: animatedPercentage,
-                  child: Container(
-                    height: 8,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          displayColor.withValues(alpha: 0.7),
-                          displayColor,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: displayColor.withValues(alpha: 0.4),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-            // Threshold marker
-            Positioned(
-              left: 0,
-              right: 0,
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: (threshold / maxExpected).clamp(0.0, 1.0),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    width: 2,
-                    height: 8,
-                    color: theme.colorScheme.error,
-                  ),
-                ),
-              ),
-            ),
-          ],
+        FluidLiquidGauge(
+          percentage: percentage,
+          height: 10,
+          color: displayColor,
+          threshold: (threshold / maxExpected).clamp(0.0, 1.0),
         ),
       ],
     );
