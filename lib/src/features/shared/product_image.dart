@@ -22,6 +22,8 @@ class ProductImage extends StatelessWidget {
       return CachedNetworkImage(
         imageUrl: imagePath,
         fit: fit,
+        memCacheWidth: 400,
+        memCacheHeight: 400,
         placeholder: (context, url) => _FallbackImage(iconSize: iconSize),
         errorWidget: (context, url, error) => _FallbackImage(iconSize: iconSize),
       );
@@ -35,6 +37,8 @@ class ProductImage extends StatelessWidget {
       return Image.memory(
         bytes,
         fit: fit,
+        cacheWidth: 400,
+        cacheHeight: 400,
         errorBuilder: (context, error, stackTrace) =>
             _FallbackImage(iconSize: iconSize),
       );
@@ -43,6 +47,8 @@ class ProductImage extends StatelessWidget {
     return Image.asset(
       imagePath,
       fit: fit,
+      cacheWidth: 400,
+      cacheHeight: 400,
       errorBuilder: (context, error, stackTrace) => _FallbackImage(iconSize: iconSize),
     );
   }

@@ -700,7 +700,8 @@ class _MetricCardState extends State<_MetricCard> {
     final cardRadius = themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 24.0);
     final iconRadius = isBotanical ? 6.0 : 12.0;
 
-    return TweenAnimationBuilder<double>(
+    return RepaintBoundary(
+      child: TweenAnimationBuilder<double>(
         key: ValueKey('metric_${widget.label}_${widget.staggerIndex}'),
         tween: Tween(begin: 0.0, end: 1.0),
         duration: Duration(milliseconds: 380 + (widget.staggerIndex * 40)),
@@ -791,12 +792,9 @@ class _MetricCardState extends State<_MetricCard> {
                             child: Text(
                               widget.label,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant
-                                    .withValues(
-                                  alpha: 0.9,
-                                ),
+                                color: theme.colorScheme.onSurfaceVariant,
                                 fontWeight: isBotanical
-                                    ? FontWeight.w600
+                                    ? FontWeight.w500
                                     : FontWeight.w700,
                                 letterSpacing: 0.2,
                               ),
@@ -854,7 +852,8 @@ class _MetricCardState extends State<_MetricCard> {
                   ),
                 ),
               ),
-            )));
+            ))),
+      );
   }
 }
 
@@ -877,7 +876,8 @@ class _MobileHeroState extends State<_MobileHero> {
     final themeExt = theme.extension<IvraThemeExtension>();
     final isBotanical = themeExt?.isBotanical ?? false;
 
-    return TweenAnimationBuilder<double>(
+    return RepaintBoundary(
+      child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeOutCubic,
@@ -949,32 +949,33 @@ class _MobileHeroState extends State<_MobileHero> {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
+                                horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius:
-                                  BorderRadius.circular(isBotanical ? 6.0 : 20.0),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.insights,
-                                    color: Colors.white, size: 16),
-                                const SizedBox(width: 6),
+                                Icon(Icons.bolt,
+                                    size: 14, color: Colors.amber.shade300),
+                                const SizedBox(width: 4),
                                 Text(
-                                  l10n.t('dashboardHeroTitle'),
-                                  style: theme.textTheme.labelMedium?.copyWith(
+                                  l10n.t('metricCriticalFocus'),
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
+                                    fontSize: 11,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           Icon(
-                            _isExpanded ? Icons.expand_less : Icons.expand_more,
-                            color: Colors.white,
+                            _isExpanded
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: Colors.white.withValues(alpha: 0.8),
                           ),
                         ],
                       ),
@@ -1043,7 +1044,9 @@ class _MobileHeroState extends State<_MobileHero> {
               ),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
@@ -1390,7 +1393,8 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
 
                   return SizedBox(
                     height: 220,
-                    child: LineChart(
+                    child: RepaintBoundary(
+                      child: LineChart(
                       LineChartData(
                         gridData: FlGridData(
                           show: true,
@@ -1520,7 +1524,8 @@ class _ActivityChartState extends ConsumerState<_ActivityChart> {
                         ],
                       ),
                     ),
-                  );
+                  ),
+                );
                 },
               ),
             ],

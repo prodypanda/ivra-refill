@@ -274,70 +274,72 @@ class _MobileShell extends ConsumerWidget {
             Expanded(child: child),
           ],
         ),
-        bottomNavigationBar: Container(
-          margin: EdgeInsets.fromLTRB(
-            16,
-            0,
-            16,
-            math.max(16.0, MediaQuery.paddingOf(context).bottom),
-          ),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.94),
-            borderRadius: BorderRadius.circular(navRadius),
-            border: Border.all(
-              color: isBotanical
-                  ? const Color(0xFF10B981).withValues(alpha: 0.3)
-                  : theme.colorScheme.outlineVariant.withValues(alpha: 0.45),
+        bottomNavigationBar: RepaintBoundary(
+          child: Container(
+            margin: EdgeInsets.fromLTRB(
+              16,
+              0,
+              16,
+              math.max(16.0, MediaQuery.paddingOf(context).bottom),
             ),
-            boxShadow: [
-              BoxShadow(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface.withValues(alpha: 0.94),
+              borderRadius: BorderRadius.circular(navRadius),
+              border: Border.all(
                 color: isBotanical
-                    ? const Color(0xFF064E3B).withValues(alpha: 0.18)
-                    : theme.colorScheme.primary.withValues(alpha: 0.16),
-                blurRadius: isBotanical ? 20 : 24,
-                offset: Offset(0, isBotanical ? 8 : 12),
+                    ? const Color(0xFF10B981).withValues(alpha: 0.3)
+                    : theme.colorScheme.outlineVariant.withValues(alpha: 0.45),
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(navRadius),
-            child: Theme(
-              data: theme.copyWith(
-                navigationBarTheme: theme.navigationBarTheme.copyWith(
-                  labelTextStyle: WidgetStateProperty.all(
-                    theme.textTheme.labelSmall?.copyWith(
-                      fontSize: 11,
-                      letterSpacing: isBotanical ? 0.6 : 0.0,
-                      overflow: TextOverflow.ellipsis,
+              boxShadow: [
+                BoxShadow(
+                  color: isBotanical
+                      ? const Color(0xFF064E3B).withValues(alpha: 0.18)
+                      : theme.colorScheme.primary.withValues(alpha: 0.16),
+                  blurRadius: isBotanical ? 20 : 24,
+                  offset: Offset(0, isBotanical ? 8 : 12),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(navRadius),
+              child: Theme(
+                data: theme.copyWith(
+                  navigationBarTheme: theme.navigationBarTheme.copyWith(
+                    labelTextStyle: WidgetStateProperty.all(
+                      theme.textTheme.labelSmall?.copyWith(
+                        fontSize: 11,
+                        letterSpacing: isBotanical ? 0.6 : 0.0,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              child: NavigationBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                height: 80,
-                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-                selectedIndex: primaryIndex,
-                onDestinationSelected: (index) {
-                  if (hasMore && index == primaryItems.length) {
-                    _showMoreDestinations(context, ref, moreItems);
-                    return;
-                  }
-                  context.go(primaryItems[index].route);
-                },
-                destinations: [
-                  for (var index = 0; index < primaryItems.length; index++)
-                    NavigationDestination(
-                      icon: _buildNavItemIcon(ref, primaryItems[index]),
-                      label: primaryItems[index].mobileLabel,
-                    ),
-                  if (hasMore)
-                    NavigationDestination(
-                      icon: const Icon(Icons.more_horiz),
-                      label: l10n.t('more'),
-                    ),
-                ],
+                child: NavigationBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  height: 80,
+                  labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+                  selectedIndex: primaryIndex,
+                  onDestinationSelected: (index) {
+                    if (hasMore && index == primaryItems.length) {
+                      _showMoreDestinations(context, ref, moreItems);
+                      return;
+                    }
+                    context.go(primaryItems[index].route);
+                  },
+                  destinations: [
+                    for (var index = 0; index < primaryItems.length; index++)
+                      NavigationDestination(
+                        icon: _buildNavItemIcon(ref, primaryItems[index]),
+                        label: primaryItems[index].mobileLabel,
+                      ),
+                    if (hasMore)
+                      NavigationDestination(
+                        icon: const Icon(Icons.more_horiz),
+                        label: l10n.t('more'),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -545,27 +547,22 @@ class _DrawerFooter extends StatelessWidget {
 
 Widget _buildNavItemIcon(WidgetRef ref, _NavItem item) {
   if (item.route == AlertsScreen.route) {
-    final alertsAsync = ref.watch(alertsProvider);
-    return alertsAsync.maybeWhen(
-      data: (alerts) {
-        final openCount = alerts.where((a) => !a.isResolved).length;
-        if (openCount > 0) {
-          return Builder(
-            builder: (context) {
-              final theme = Theme.of(context);
-              final themeExt = theme.extension<IvraThemeExtension>();
-              return Badge(
-                backgroundColor: themeExt?.warning ?? theme.colorScheme.error,
-                label: Text('$openCount'),
-                child: Icon(item.icon),
-              );
-            },
+    final openCount = ref.watch(alertsProvider.select((s) =>
+        s.valueOrNull?.where((a) => !a.isResolved).length ?? 0));
+    if (openCount > 0) {
+      return Builder(
+        builder: (context) {
+          final theme = Theme.of(context);
+          final themeExt = theme.extension<IvraThemeExtension>();
+          return Badge(
+            backgroundColor: themeExt?.warning ?? theme.colorScheme.error,
+            label: Text('$openCount'),
+            child: Icon(item.icon),
           );
-        }
-        return Icon(item.icon);
-      },
-      orElse: () => Icon(item.icon),
-    );
+        },
+      );
+    }
+    return Icon(item.icon);
   }
   return Icon(item.icon);
 }

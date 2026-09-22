@@ -115,51 +115,53 @@ class _FluidLiquidGaugeState extends State<FluidLiquidGauge>
 
     final radius = widget.borderRadius ?? BorderRadius.circular(widget.height / 2);
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final effectiveWidth = widget.width ?? constraints.maxWidth;
+    return RepaintBoundary(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final effectiveWidth = widget.width ?? constraints.maxWidth;
 
-        return SizedBox(
-          width: effectiveWidth,
-          height: widget.height,
-          child: ClipRRect(
-            borderRadius: radius,
-            child: Container(
-              color: trackColor,
-              child: (_waveController != null && widget.showWave && !disableAnimations)
-                  ? AnimatedBuilder(
-                      animation: _waveController!,
-                      builder: (context, _) => CustomPaint(
+          return SizedBox(
+            width: effectiveWidth,
+            height: widget.height,
+            child: ClipRRect(
+              borderRadius: radius,
+              child: Container(
+                color: trackColor,
+                child: (_waveController != null && widget.showWave && !disableAnimations)
+                    ? AnimatedBuilder(
+                        animation: _waveController!,
+                        builder: (context, _) => CustomPaint(
+                          size: Size(effectiveWidth, widget.height),
+                          painter: _FluidLiquidPainter(
+                            percentage: clampedPercentage,
+                            liquidColor: liquidColor,
+                            wavePhase: _waveController!.value,
+                            showWave: true,
+                            showGlassGleam: widget.showGlassGleam,
+                            threshold: widget.threshold,
+                            isBotanical: isBotanical,
+                            isDark: isDark,
+                          ),
+                        ),
+                      )
+                    : CustomPaint(
                         size: Size(effectiveWidth, widget.height),
                         painter: _FluidLiquidPainter(
                           percentage: clampedPercentage,
                           liquidColor: liquidColor,
-                          wavePhase: _waveController!.value,
-                          showWave: true,
+                          wavePhase: 0.0,
+                          showWave: false,
                           showGlassGleam: widget.showGlassGleam,
                           threshold: widget.threshold,
                           isBotanical: isBotanical,
                           isDark: isDark,
                         ),
                       ),
-                    )
-                  : CustomPaint(
-                      size: Size(effectiveWidth, widget.height),
-                      painter: _FluidLiquidPainter(
-                        percentage: clampedPercentage,
-                        liquidColor: liquidColor,
-                        wavePhase: 0.0,
-                        showWave: false,
-                        showGlassGleam: widget.showGlassGleam,
-                        threshold: widget.threshold,
-                        isBotanical: isBotanical,
-                        isDark: isDark,
-                      ),
-                    ),
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

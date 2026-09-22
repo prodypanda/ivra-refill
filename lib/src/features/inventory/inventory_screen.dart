@@ -801,14 +801,15 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
     final statusColor =
         lowStock ? theme.colorScheme.error : theme.colorScheme.primary;
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedScale(
-        scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
-        duration: const Duration(milliseconds: 200),
-        curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
-        child: Container(
+    return RepaintBoundary(
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedScale(
+          scale: _isHovered ? (isBotanical ? 1.006 : 1.02) : 1.0,
+          duration: const Duration(milliseconds: 200),
+          curve: isBotanical ? Curves.easeOutCubic : Curves.easeOutBack,
+          child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(
                 themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 28.0)),
@@ -1202,8 +1203,9 @@ class _PremiumInventoryCardState extends ConsumerState<_PremiumInventoryCard> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _VisualStockBar extends StatelessWidget {

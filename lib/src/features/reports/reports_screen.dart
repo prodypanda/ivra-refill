@@ -912,7 +912,8 @@ class _TrendChart extends StatelessWidget {
             const SizedBox(height: 24),
             SizedBox(
               height: 200,
-              child: BarChart(
+              child: RepaintBoundary(
+                child: BarChart(
                 swapAnimationDuration: MediaQuery.maybeOf(context)?.disableAnimations == true
                     ? Duration.zero
                     : const Duration(milliseconds: 350),
@@ -1032,6 +1033,7 @@ class _TrendChart extends StatelessWidget {
                 ),
               ),
             ),
+          ),
           ],
         ),
       ),

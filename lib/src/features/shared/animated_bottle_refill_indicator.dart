@@ -182,35 +182,37 @@ class _AnimatedBottleRefillIndicatorState
     final finalAccentColor = widget.accentColor ??
         (isDark ? Colors.cyanAccent.shade400 : Colors.teal.shade400);
 
-    return AnimatedBuilder(
-      animation: Listenable.merge([
-        _waveController,
-        _oldLiquidController,
-        _newLiquidController,
-        _sloshController,
-      ]),
-      builder: (context, child) {
-        return CustomPaint(
-          size: Size(widget.width, widget.height),
-          painter: _BottlePainter(
-            oldLiquidPercentage: _oldLiquidAnimation.value,
-            newLiquidPercentage: _newLiquidAnimation.value,
-            targetRefillPercentage: widget.refillPercentage,
-            isInteracting: widget.isInteracting,
-            bottleVolumeMl: widget.bottleVolumeMl,
-            waveValue: disableAnimations ? 0.0 : _waveController.value,
-            sloshProgress: disableAnimations ? 1.0 : _sloshController.value,
-            sloshIntensity: disableAnimations ? 0.0 : _sloshIntensity,
-            baseColor: finalBaseColor,
-            accentColor: finalAccentColor,
-            isDark: isDark,
-            isBotanical: isBotanical,
-            disableAnimations: disableAnimations,
-            existingLabel: widget.existingLabel ?? "Existing",
-            toAddLabel: widget.toAddLabel ?? "To Add",
-          ),
-        );
-      },
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: Listenable.merge([
+          _waveController,
+          _oldLiquidController,
+          _newLiquidController,
+          _sloshController,
+        ]),
+        builder: (context, child) {
+          return CustomPaint(
+            size: Size(widget.width, widget.height),
+            painter: _BottlePainter(
+              oldLiquidPercentage: _oldLiquidAnimation.value,
+              newLiquidPercentage: _newLiquidAnimation.value,
+              targetRefillPercentage: widget.refillPercentage,
+              isInteracting: widget.isInteracting,
+              bottleVolumeMl: widget.bottleVolumeMl,
+              waveValue: disableAnimations ? 0.0 : _waveController.value,
+              sloshProgress: disableAnimations ? 1.0 : _sloshController.value,
+              sloshIntensity: disableAnimations ? 0.0 : _sloshIntensity,
+              baseColor: finalBaseColor,
+              accentColor: finalAccentColor,
+              isDark: isDark,
+              isBotanical: isBotanical,
+              disableAnimations: disableAnimations,
+              existingLabel: widget.existingLabel ?? "Existing",
+              toAddLabel: widget.toAddLabel ?? "To Add",
+            ),
+          );
+        },
+      ),
     );
   }
 }

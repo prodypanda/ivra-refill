@@ -1423,18 +1423,19 @@ class _CompactRoomTile extends ConsumerWidget {
       overallIcon = Icons.hourglass_empty_rounded;
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(tileRadius),
-        boxShadow: [
-          BoxShadow(
-            color: overallColor.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
+    return RepaintBoundary(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(tileRadius),
+          boxShadow: [
+            BoxShadow(
+              color: overallColor.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
@@ -1549,7 +1550,8 @@ class _CompactRoomTile extends ConsumerWidget {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 }
 
@@ -2785,10 +2787,11 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
       return name.contains(query) || sku.contains(query);
     }).toList();
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedScale(
+    return RepaintBoundary(
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedScale(
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutBack,
@@ -3158,7 +3161,8 @@ class _RoomCardState extends ConsumerState<_RoomCard> {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 }
 
@@ -3998,6 +4002,7 @@ class _MarkDamagedDialogState extends ConsumerState<_MarkDamagedDialog> {
                                     child: Image.network(
                                       _selectedImage!.path,
                                       fit: BoxFit.cover,
+                                      cacheWidth: 600,
                                     ),
                                   ),
                                   Positioned(
@@ -4980,7 +4985,9 @@ class _RefillHistoryDialog extends ConsumerWidget {
                                           children: [
                                             InteractiveViewer(
                                               child: Image.network(
-                                                  event.proofPhotoUrl!),
+                                                event.proofPhotoUrl!,
+                                                cacheWidth: 1200,
+                                              ),
                                             ),
                                             IconButton(
                                               icon: const Icon(Icons.close,

@@ -916,26 +916,25 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
     final effectiveRadius =
         themeExt?.cardBorderRadius ?? (isBotanical ? 8.0 : 16.0);
 
-    final productsAsync = ref.watch(productsProvider);
-    final product = productsAsync.valueOrNull
+    final product = ref.watch(productsProvider.select((s) => s.valueOrNull
         ?.where((p) => p.id == widget.alert.productId)
-        .firstOrNull;
+        .firstOrNull));
 
     final (title, body) = widget.alert.localizedStrings(l10n, lang, product);
 
-    final hotelsAsync = ref.watch(hotelsProvider);
-    final hotel = hotelsAsync.valueOrNull
+    final hotel = ref.watch(hotelsProvider.select((s) => s.valueOrNull
         ?.where((h) => h.id == widget.alert.hotelId)
-        .firstOrNull;
+        .firstOrNull));
     final hotelName = hotel?.name ?? '';
 
     // Muted opacity for resolved alerts
     final contentOpacity = isResolved ? 0.45 : 1.0;
 
-    return Dismissible(
-      key: ValueKey(widget.alert.id),
-      direction:
-          isResolved ? DismissDirection.none : DismissDirection.endToStart,
+    return RepaintBoundary(
+      child: Dismissible(
+        key: ValueKey(widget.alert.id),
+        direction:
+            isResolved ? DismissDirection.none : DismissDirection.endToStart,
       onDismissed: (_) {
         HapticFeedback.lightImpact();
         widget.onResolve(widget.alert.id);
@@ -1181,7 +1180,8 @@ class _AlertCardState extends ConsumerState<_AlertCard> {
                                   ),
                                 ],
                               ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),

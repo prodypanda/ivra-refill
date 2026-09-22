@@ -59,27 +59,29 @@ class GlassCard extends StatelessWidget {
           ),
         ];
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(effectiveRadius),
-        boxShadow: finalShadows,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(effectiveRadius),
-        clipBehavior: clipBehavior,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
-          child: Container(
-            padding: padding ?? const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: finalColor,
-              borderRadius: BorderRadius.circular(effectiveRadius),
-              border: Border.all(
-                color: finalBorderColor,
-                width: borderWidth,
+    return RepaintBoundary(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(effectiveRadius),
+          boxShadow: finalShadows,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(effectiveRadius),
+          clipBehavior: clipBehavior,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
+            child: Container(
+              padding: padding ?? const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: finalColor,
+                borderRadius: BorderRadius.circular(effectiveRadius),
+                border: Border.all(
+                  color: finalBorderColor,
+                  width: borderWidth,
+                ),
               ),
+              child: child,
             ),
-            child: child,
           ),
         ),
       ),
