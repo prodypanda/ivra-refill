@@ -1712,5 +1712,16 @@
         "type": "String"
       }
     }
+  },
+  "noPermissionsFound": "No permissions found.",
+  "featureLabel": "Feature",
+  "whatsNewLabel": "What's New",
+  "currentVersionLabel": "Current Version: v{appVersion}",
+  "@currentVersionLabel": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String"
+      }
+    }
   }
 }

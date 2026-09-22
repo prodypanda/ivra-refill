@@ -2421,7 +2421,11 @@ class AppL10nEn extends AppL10n {
 
   @override
   String inventoryEnforceTemplateContent(
-      String total, String product, String current, String needed) {
+    String total,
+    String product,
+    String current,
+    String needed,
+  ) {
     return 'Placing $total bottle(s) of $product requires stock. Store Stock only has $current. Would you like to automatically add $needed bottle(s) to the store stock and proceed?';
   }
 
@@ -2432,7 +2436,10 @@ class AppL10nEn extends AppL10n {
 
   @override
   String housekeeperReplaceGetFromHotel(
-      String product, String room, String count) {
+    String product,
+    String room,
+    String count,
+  ) {
     return 'Replacing $product in Room $room requires 1 full bottle, but you do not have it in your inventory. However, $count bottles are available in the hotel inventory. Would you like to take 1 bottle from the hotel inventory and proceed?';
   }
 
@@ -2453,7 +2460,10 @@ class AppL10nEn extends AppL10n {
 
   @override
   String housekeeperRefillGetFromHotel(
-      String product, String room, String count) {
+    String product,
+    String room,
+    String count,
+  ) {
     return 'Refilling $product in Room $room requires 1 full bidon, but you do not have any open or full bidon in your inventory. However, $count bidons are available in the hotel inventory. Would you like to take 1 bidon from the hotel inventory and proceed?';
   }
 
@@ -2998,5 +3008,19 @@ class AppL10nEn extends AppL10n {
   @override
   String hkDeleteWithStockMessage(String userName) {
     return 'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'$userName\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.';
+  }
+
+  @override
+  String get noPermissionsFound => 'No permissions found.';
+
+  @override
+  String get featureLabel => 'Feature';
+
+  @override
+  String get whatsNewLabel => 'What\'s New';
+
+  @override
+  String currentVersionLabel(String appVersion) {
+    return 'Current Version: v$appVersion';
   }
 }
