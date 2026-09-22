@@ -230,10 +230,19 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
         context.go('/rooms?hotelId=$hotelId&floorNumber=$floor&roomNumber=$room');
       }
     } else {
+      final l10n = AppLocalizations.of(context);
+      final isFrench = Localizations.localeOf(context).languageCode == 'fr';
+      final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+      final errorMsg = isFrench
+          ? 'Format de code QR non reconnu. Veuillez scanner un code QR IVRA valide.'
+          : (isArabic
+              ? 'تنسيق رمز QR غير معروف. يرجى مسح رمز QR صالح لـ IVRA.'
+              : 'Unrecognized QR code format. Please scan a valid IVRA QR code.');
       PremiumSnackbar.show(
         context,
-        'Invalid QR format. Use: /q/hotel/floor/room[/sku]',
-        icon: Icons.error_outline,
+        errorMsg,
+        icon: Icons.qr_code_scanner_outlined,
+        isError: true,
       );
     }
   }
@@ -1466,14 +1475,44 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                       else ...[
                         // Primary Actions
                         if (matchedItem.product.isRefillable) ...[
+                          if (matchedItem.canRefill) ...[
+                            FilledButton.icon(
+                              key: const ValueKey('quick_refill_100_button'),
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                backgroundColor: theme.colorScheme.primary,
+                                foregroundColor: theme.colorScheme.onPrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    theme.ivraExt?.buttonBorderRadius ?? 16,
+                                  ),
+                                ),
+                              ),
+                              onPressed: isAuthorized
+                                  ? () => _executeRefill(context, matchedItem, quickPercentage: 100)
+                                  : null,
+                              icon: const Icon(Icons.flash_on_rounded),
+                              label: Text(
+                                l10n.t('roomsBtnQuickRefill100') ?? 'Quick Refill (100%)',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                           FilledButton.icon(
                             key: const ValueKey('refill_button'),
                             style: FilledButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: const Color(0xFF267D65),
-                              foregroundColor: Colors.white,
+                              backgroundColor: matchedItem.canRefill && isAuthorized
+                                  ? theme.colorScheme.secondaryContainer
+                                  : theme.colorScheme.surfaceContainerHighest,
+                              foregroundColor: matchedItem.canRefill && isAuthorized
+                                  ? theme.colorScheme.onSecondaryContainer
+                                  : theme.colorScheme.onSurfaceVariant,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(
+                                  theme.ivraExt?.buttonBorderRadius ?? 16,
+                                ),
                               ),
                             ),
                             onPressed: isAuthorized && matchedItem.canRefill
@@ -1498,10 +1537,12 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                                   : theme.colorScheme.outlineVariant,
                             ),
                             foregroundColor: isAuthorized
-                                  ? theme.colorScheme.error
-                                  : theme.colorScheme.onSurfaceVariant,
+                                ? theme.colorScheme.error
+                                : theme.colorScheme.onSurfaceVariant,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(
+                                theme.ivraExt?.buttonBorderRadius ?? 16,
+                              ),
                             ),
                           ),
                           onPressed: isAuthorized && matchedItem.status != BottleStatus.recycled
@@ -1563,6 +1604,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     final l10n = AppLocalizations.of(context);
     final language = Localizations.localeOf(context).languageCode;
     final isSuccess = _actionResult == ActionResult.success;
+    final successColor = theme.ivraExt?.success ?? colorScheme.primary;
 
     return GlassCard(
       padding: const EdgeInsets.all(24),
@@ -1579,17 +1621,17 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   height: 72,
                   decoration: BoxDecoration(
                     color: isSuccess
-                        ? const Color(0xFF267D65).withValues(alpha: 0.15)
+                        ? successColor.withValues(alpha: 0.15)
                         : colorScheme.error.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSuccess ? const Color(0xFF267D65) : colorScheme.error,
+                      color: isSuccess ? successColor : colorScheme.error,
                       width: 3,
                     ),
                   ),
                   child: Icon(
                     isSuccess ? Icons.check_rounded : Icons.close_rounded,
-                    color: isSuccess ? const Color(0xFF267D65) : colorScheme.error,
+                    color: isSuccess ? successColor : colorScheme.error,
                     size: 40,
                   ),
                 ),
@@ -1598,7 +1640,7 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
                   isSuccess ? (l10n.t('qrActionSuccess') ?? 'Action Successful') : (l10n.t('qrActionFailed') ?? 'Action Failed'),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isSuccess ? const Color(0xFF267D65) : colorScheme.error,
+                    color: isSuccess ? successColor : colorScheme.error,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -2394,12 +2436,15 @@ class _QrActionScreenState extends ConsumerState<QrActionScreen>
     return statusText;
   }
 
-  Future<void> _executeRefill(BuildContext context, RoomProduct item) async {
+  Future<void> _executeRefill(BuildContext context, RoomProduct item, {int? quickPercentage}) async {
     final percentageEnabled = ref.read(percentageRefillEnabledProvider);
     final int refillPercentage;
     final String notes;
 
-    if (percentageEnabled) {
+    if (quickPercentage != null) {
+      refillPercentage = quickPercentage;
+      notes = '';
+    } else if (percentageEnabled) {
       final result = await RefillPercentageDialog.show(context, item);
       if (result == null) return; // cancelled or closed
       refillPercentage = result.refillPercentage;

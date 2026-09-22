@@ -33,7 +33,7 @@ class _AnalyticsData {
   final int weekly;
   final int monthly;
   final int attentionRoomsCount;
-  final List<({String productName, int? days})> forecastsData;
+  final List<({String productName, int? days, int currentStock, double dailyRate})> forecastsData;
   final Map<String, int> productUsage;
   final Map<int, int> floorUsageData;
 }
@@ -90,7 +90,12 @@ final _analyticsDataProvider = Provider.autoDispose.family<_AnalyticsData,
     final monthlyUsage = productUsage[productName] ?? 0;
     final avgDaily = monthlyUsage <= 0 ? 0.0 : monthlyUsage / 30.0;
     final days = avgDaily <= 0 ? null : (item.fullBottles / avgDaily).floor();
-    return (productName: productName, days: days);
+    return (
+      productName: productName,
+      days: days,
+      currentStock: item.fullBottles,
+      dailyRate: avgDaily,
+    );
   }).toList();
 
   return _AnalyticsData(
@@ -472,9 +477,10 @@ class _OperationsAnalyticsPanel extends ConsumerWidget {
                         return Padding(
                           padding: const EdgeInsets.only(top: 2, bottom: 4),
                           child: StockVelocitySparkline(
-                            currentStock: 24,
+                            currentStock: f.currentStock,
                             daysRemaining: f.days,
-                            dailyConsumptionRate: 1.2,
+                            dailyConsumptionRate: f.dailyRate > 0 ? f.dailyRate : 1.0,
+                            productLabel: f.productName,
                             height: 28,
                             showScrubber: true,
                           ),

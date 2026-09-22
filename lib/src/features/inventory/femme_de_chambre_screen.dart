@@ -39,13 +39,14 @@ class _FemmeDeChambreScreenState extends ConsumerState<FemmeDeChambreScreen> {
     final isDark = theme.brightness == Brightness.dark;
     
     // Aesthetic gradient background
-    final backgroundGradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: isDark
-          ? [const Color(0xFF111827), const Color(0xFF1F2937), const Color(0xFF111827)]
-          : [const Color(0xFFF9FAFB), const Color(0xFFF3F4F6), const Color(0xFFE5E7EB)],
-    );
+    final backgroundGradient = themeExt?.backgroundGradient ??
+        LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [theme.colorScheme.surface, theme.colorScheme.surfaceContainerHighest]
+              : [theme.colorScheme.surface, theme.colorScheme.surfaceContainerLow],
+        );
 
     final currentUser = ref.watch(currentUserProvider.select((s) => s.valueOrNull));
     if (currentUser == null) {
