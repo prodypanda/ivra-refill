@@ -59,36 +59,36 @@ class AppL10nIt extends AppL10n {
 
   @override
   String confirmDeleteHotel(String hotelName) {
-    return 'Sei sicuro di voler eliminare l\'hotel \'$hotelName\'? Questa azione è permanente, non può essere annullata ed eliminerà tutte le camere, assegnazioni del personale e record associati.';
+    return 'È sicuro di voler eliminare l\'hotel \'$hotelName\'? Questa azione è permanente, non può essere annullata ed eliminerà tutte le camere, assegnazioni del personale e record associati.';
   }
 
   @override
   String confirmDeleteRoom(String roomNumber) {
-    return 'Sei sicuro di voler eliminare la camera \'$roomNumber\'? Questa azione è permanente, non può essere annullata ed eliminerà tutti i prodotti e la cronologia associati.';
+    return 'È sicuro di voler eliminare la camera \'$roomNumber\'? Questa azione è permanente, non può essere annullata ed eliminerà tutti i prodotti e la cronologia associati.';
   }
 
   @override
   String confirmDeleteFloor(String floorNumber) {
-    return 'Sei sicuro di voler eliminare il piano \'$floorNumber\' e tutte le sue camere? Questa azione è permanente e non può essere annullata.';
+    return 'È sicuro di voler eliminare il piano \'$floorNumber\' e tutte le sue camere? Questa azione è permanente e non può essere annullata.';
   }
 
   @override
   String confirmDeleteUser(String userName) {
-    return 'Sei sicuro di voler eliminare il membro del team \'$userName\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.';
+    return 'È sicuro di voler eliminare il membro del team \'$userName\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.';
   }
 
   @override
   String confirmDeleteProduct(String productName) {
-    return 'Sei sicuro di voler eliminare il prodotto \'$productName\'? Questa azione è permanente, non può essere annullata e influirà sul tracciamento dell\'stock magazzino.';
+    return 'È sicuro di voler eliminare il prodotto \'$productName\'? Questa azione è permanente, non può essere annullata e influirà sul tracciamento dell\'stock magazzino.';
   }
 
   @override
   String get confirmDeleteAlert =>
-      'Sei sicuro di voler eliminare questo avviso? Questa azione è permanente e non può essere annullata.';
+      'È sicuro di voler eliminare questo avviso? Questa azione è permanente e non può essere annullata.';
 
   @override
   String get confirmDeleteAllAlerts =>
-      'Sei sicuro di voler eliminare tutti gli avvisi? Questa azione è permanente, non può essere annullata e cancellerà tutte le notifiche correnti.';
+      'È sicuro di voler eliminare tutti gli avvisi? Questa azione è permanente, non può essere annullata e cancellerà tutte le notifiche correnti.';
 
   @override
   String get clearAuditLogs => 'Cancella registri';
@@ -98,7 +98,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get confirmClearLogs =>
-      'Sei sicuro di voler cancellare tutti i registri di controllo? Questa azione è permanente e non può essere annullata.';
+      'È sicuro di voler cancellare tutti i registri di controllo? Questa azione è permanente e non può essere annullata.';
 
   @override
   String get btnConfirm => 'Conferma';
@@ -616,7 +616,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get errorPermissionDenied =>
-      'Non hai il permesso per eseguire questa azione.';
+      'Non ha il permesso per eseguire questa azione.';
 
   @override
   String get errorGeneric => 'Si è verificato un errore imprevisto. Riprova.';
@@ -922,12 +922,12 @@ class AppL10nIt extends AppL10n {
 
   @override
   String roomsScanConfirmFromCart(String product, String count) {
-    return 'Il prodotto \"$product\" non è attualmente assegnato a questa camera, ma ne hai $count nel carrello. Vuoi prenderne 1 dal carrello e assegnarlo a questa camera?';
+    return 'Il prodotto \"$product\" non è attualmente assegnato a questa camera, ma ne ha $count nel carrello. Vuole prenderne 1 dal carrello e assegnarlo a questa camera?';
   }
 
   @override
   String roomsScanConfirmFromHotel(String product, String count) {
-    return 'Il prodotto \"$product\" non è in questa camera. Ci sono $count bottiglie nell\'inventario dell\'hotel. Vuoi prenderne 1 e assegnarlo a questa camera?';
+    return 'Il prodotto \"$product\" non è in questa camera. Ci sono $count bottiglie nell\'inventario dell\'hotel. Vuole prenderne 1 e assegnarlo a questa camera?';
   }
 
   @override
@@ -1305,11 +1305,11 @@ class AppL10nIt extends AppL10n {
       'Scansiona solo i codici allineati al centro del mirino';
 
   @override
-  String get settingsTapToScanTitle => 'Tocca per scansionare';
+  String get settingsTapToScanTitle => 'Toccare per scansionare';
 
   @override
   String get settingsTapToScanSubtitle =>
-      'Tocca sulla casella del codice QR rilevato per scansionarlo';
+      'Toccare sulla casella del codice QR rilevato per scansionarlo';
 
   @override
   String get qrConfirmAssignTitle => 'Prodotto non posizionato';
@@ -1349,7 +1349,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get scanAssignDescription =>
-      'Questo prodotto non è ancora assegnato a questa stanza. Tocca qui sotto per assegnarlo.';
+      'Questo prodotto non è ancora assegnato a questa stanza. Toccare qui sotto per assegnarlo.';
 
   @override
   String get scanAssignButton => 'Assegna alla stanza';
@@ -1362,7 +1362,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String scanAssignAutoAddMessage(String product) {
-    return 'Il prodotto \"$product\" è esaurito. Vuoi aggiungere automaticamente 1 unità all\'inventario e assegnarla a questa stanza?';
+    return 'Il prodotto \"$product\" è esaurito. Vuole aggiungere automaticamente 1 unità all\'inventario e assegnarla a questa stanza?';
   }
 
   @override
@@ -1375,7 +1375,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get qrMultipleDetected =>
-      'Rilevati più codici QR. Tocca per selezionare:';
+      'Rilevati più codici QR. Toccare per selezionare:';
 
   @override
   String qrUnknownSku(String sku) {
@@ -2261,7 +2261,7 @@ class AppL10nIt extends AppL10n {
   String get teamCancelInvitation => 'Annulla l\'invito';
 
   @override
-  String get teamCannotInviteSelf => 'Non puoi invitare te stesso';
+  String get teamCannotInviteSelf => 'Non può invitare te stesso';
 
   @override
   String get btnUpdate => 'Aggiorna';
@@ -2446,44 +2446,44 @@ class AppL10nIt extends AppL10n {
   @override
   String inventoryEnforceTemplateContent(
       String total, String product, String current, String needed) {
-    return 'Posizionare $total bottiglia/e di $product richiede scorte. L\'stock magazzino ha solo $current. Vuoi aggiungere automaticamente $needed bottiglia/e all\'stock magazzino e procedere?';
+    return 'Posizionare $total bottiglia/e di $product richiede scorte. L\'stock magazzino ha solo $current. Vuole aggiungere automaticamente $needed bottiglia/e all\'stock magazzino e procedere?';
   }
 
   @override
   String inventoryEnforceReplaceContent(String product, String room) {
-    return 'Sostituire la bottiglia di $product in Camera $room richiede 1 bottiglia piena. L\'stock magazzino ha 0. Vuoi aggiungere automaticamente 1 bottiglia all\'stock magazzino e procedere?';
+    return 'Sostituire la bottiglia di $product in Camera $room richiede 1 bottiglia piena. L\'stock magazzino ha 0. Vuole aggiungere automaticamente 1 bottiglia all\'stock magazzino e procedere?';
   }
 
   @override
   String housekeeperReplaceGetFromHotel(
       String product, String room, String count) {
-    return 'Sostituire $product in Camera $room richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario. Tuttavia, sono disponibili $count bottiglie nell\'inventario dell\'hotel. Vuoi prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?';
+    return 'Sostituire $product in Camera $room richiede 1 bottiglia piena, ma non l\'ha nel tuo inventario. Tuttavia, sono disponibili $count bottiglie nell\'inventario dell\'hotel. Vuole prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?';
   }
 
   @override
   String housekeeperReplaceNotifyManager(String product, String room) {
-    return 'Sostituire $product in Camera $room richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.';
+    return 'Sostituire $product in Camera $room richiede 1 bottiglia piena, ma non l\'ha nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.';
   }
 
   @override
   String housekeeperAddGetFromHotel(String product, String room, String count) {
-    return 'Aggiungere $product in Camera $room richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario. Tuttavia, sono disponibili $count bottiglie nell\'inventario dell\'hotel. Vuoi prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?';
+    return 'Aggiungere $product in Camera $room richiede 1 bottiglia piena, ma non l\'ha nel tuo inventario. Tuttavia, sono disponibili $count bottiglie nell\'inventario dell\'hotel. Vuole prendere 1 bottiglia dall\'inventario dell\'hotel e procedere?';
   }
 
   @override
   String housekeeperAddNotifyManager(String product, String room) {
-    return 'Aggiungere $product in Camera $room richiede 1 bottiglia piena, ma non l\'hai nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.';
+    return 'Aggiungere $product in Camera $room richiede 1 bottiglia piena, ma non l\'ha nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.';
   }
 
   @override
   String housekeeperRefillGetFromHotel(
       String product, String room, String count) {
-    return 'Ricaricare $product in Camera $room richiede 1 tanica piena, ma non hai alcuna tanica aperta o piena nel tuo inventario. Tuttavia, sono disponibili $count taniche nell\'inventario dell\'hotel. Vuoi prendere 1 tanica dall\'inventario dell\'hotel e procedere?';
+    return 'Ricaricare $product in Camera $room richiede 1 tanica piena, ma non ha alcuna tanica aperta o piena nel tuo inventario. Tuttavia, sono disponibili $count taniche nell\'inventario dell\'hotel. Vuole prendere 1 tanica dall\'inventario dell\'hotel e procedere?';
   }
 
   @override
   String housekeeperRefillNotifyManager(String product, String room) {
-    return 'Ricaricare $product in Camera $room richiede 1 tanica piena, ma non hai alcuna tanica aperta o piena nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.';
+    return 'Ricaricare $product in Camera $room richiede 1 tanica piena, ma non ha alcuna tanica aperta o piena nel tuo inventario e non è disponibile nemmeno nell\'inventario dell\'hotel. Si prega di informare il direttore dell\'hotel.';
   }
 
   @override
@@ -2505,7 +2505,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String inventoryEnforceOnboardingContent(String total) {
-    return 'Trattandosi di un nuovo hotel, non ci sono prodotti in stock magazzino. Vuoi inizializzare automaticamente l\'stock magazzino con $total bottiglie da posizionare nelle camere?';
+    return 'Trattandosi di un nuovo hotel, non ci sono prodotti in stock magazzino. Vuole inizializzare automaticamente l\'stock magazzino con $total bottiglie da posizionare nelle camere?';
   }
 
   @override
@@ -2774,7 +2774,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String roomsConfirmRemoveProduct(String productName, String roomNumber) {
-    return 'Sei sicuro di voler rimuovere il prodotto \'$productName\' dalla camera \'$roomNumber\'?';
+    return 'È sicuro di voler rimuovere il prodotto \'$productName\' dalla camera \'$roomNumber\'?';
   }
 
   @override
@@ -2985,14 +2985,14 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get helpContextInventoryDesc =>
-      'Gestisci i livelli delle scorte dei tuoi prodotti. Tocca una scheda prodotto per visualizzare i dettagli o regolare le quantità.';
+      'Gestisci i livelli delle scorte dei tuoi prodotti. Toccare una scheda prodotto per visualizzare i dettagli o regolare le quantità.';
 
   @override
   String get helpContextRoomsTitle => 'Stato delle Camere';
 
   @override
   String get helpContextRoomsDesc =>
-      'Visualizza tutte le camere e lo stato dei loro prodotti. Tocca una camera per ricaricare o sostituire le bottiglie, oppure scansiona un codice QR per passare direttamente alla camera corretta.';
+      'Visualizza tutte le camere e lo stato dei loro prodotti. Toccare una camera per ricaricare o sostituire le bottiglie, oppure scansiona un codice QR per passare direttamente alla camera corretta.';
 
   @override
   String get helpContextReportsTitle => 'Rapporti ed Esportazioni';
@@ -3019,7 +3019,7 @@ class AppL10nIt extends AppL10n {
 
   @override
   String get hkDeactivateWithStockMessage =>
-      'Questa governante ha dell\'inventario attivo nel suo carrello. Vuoi restituire questo inventario al magazzino centrale dell\'hotel prima di disattivare il suo account?';
+      'Questa governante ha dell\'inventario attivo nel suo carrello. Vuole restituire questo inventario al magazzino centrale dell\'hotel prima di disattivare il suo account?';
 
   @override
   String get btnReturnAndDeactivate => 'Restituisci e Disattiva';
@@ -3029,6 +3029,9 @@ class AppL10nIt extends AppL10n {
 
   @override
   String hkDeleteWithStockMessage(String userName) {
-    return 'Questa governante ha dell\'inventario attivo nel suo carrello. L\'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell\'hotel.\n\nSei sicuro di voler eliminare il membro del team \'$userName\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.';
+    return 'Questa governante ha dell\'inventario attivo nel suo carrello. L\'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell\'hotel.\n\nÈ sicuro di voler eliminare il membro del team \'$userName\'? Questa azione è permanente, non può essere annullata e perderà immediatamente l\'accesso all\'applicazione.';
   }
+
+  @override
+  String get rolePermissionsEmpty => 'Nessun permesso trovato.';
 }

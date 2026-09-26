@@ -2328,7 +2328,7 @@ class AppL10nFr extends AppL10n {
   String get pdfHeader1LBottles => 'Bouteilles 1L';
 
   @override
-  String get pdfHeader5LBidons => 'Bidons 5L';
+  String get pdfHeader5LBidons => 'Bouteilles de recharge 5L';
 
   @override
   String get pdfHeaderRecycle => 'Recycler';
@@ -2340,13 +2340,13 @@ class AppL10nFr extends AppL10n {
   String get pdfHeaderEmptyBottles => 'Bouteilles vides';
 
   @override
-  String get pdfHeaderFullBidons => 'Bidons pleins';
+  String get pdfHeaderFullBidons => 'Bouteilles de recharge pleins';
 
   @override
-  String get pdfHeaderOpenBidons => 'Bidons ouverts';
+  String get pdfHeaderOpenBidons => 'Bouteilles de recharge ouverts';
 
   @override
-  String get pdfHeaderEmptyBidons => 'Bidons vides';
+  String get pdfHeaderEmptyBidons => 'Bouteilles de recharge vides';
 
   @override
   String get pdfHeaderSeverity => 'Sévérité';
@@ -2488,12 +2488,12 @@ class AppL10nFr extends AppL10n {
   @override
   String housekeeperRefillGetFromHotel(
       String product, String room, String count) {
-    return 'Remplir $product dans la chambre $room nécessite 1 bidon plein, mais vous n\'avez pas de bidon ouvert ou plein dans votre inventaire. Cependant, $count bidons sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bidon de l\'inventaire de l\'hôtel et continuer ?';
+    return 'Remplir $product dans la chambre $room nécessite 1 bouteille de recharge plein, mais vous n\'avez pas de bouteille de recharge ouvert ou plein dans votre inventaire. Cependant, $count bouteilles de recharge sont disponibles dans l\'inventaire de l\'hôtel. Souhaitez-vous prendre 1 bouteille de recharge de l\'inventaire de l\'hôtel et continuer ?';
   }
 
   @override
   String housekeeperRefillNotifyManager(String product, String room) {
-    return 'Remplir $product dans la chambre $room nécessite 1 bidon plein, mais vous n\'avez pas de bidon ouvert ou plein dans votre inventaire et il n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.';
+    return 'Remplir $product dans la chambre $room nécessite 1 bouteille de recharge plein, mais vous n\'avez pas de bouteille de recharge ouvert ou plein dans votre inventaire et il n\'est pas disponible non plus dans l\'inventaire de l\'hôtel. Veuillez en informer le responsable de l\'hôtel.';
   }
 
   @override
@@ -2768,7 +2768,7 @@ class AppL10nFr extends AppL10n {
 
   @override
   String housekeeperHotelStockAvailable(String bottles, String bidons) {
-    return 'Inventaire de l\'hôtel : $bottles bouteilles pleines, $bidons bidons pleins disponibles';
+    return 'Inventaire de l\'hôtel : $bottles bouteilles pleines, $bidons bouteilles de recharge pleines disponibles';
   }
 
   @override
@@ -3042,4 +3042,7 @@ class AppL10nFr extends AppL10n {
   String hkDeleteWithStockMessage(String userName) {
     return 'Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l\'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l\'équipe \'$userName\' ? Cette action est irréversible et il perdra immédiatement l\'accès à l\'application.';
   }
+
+  @override
+  String get rolePermissionsEmpty => 'Aucune permission trouvée.';
 }
