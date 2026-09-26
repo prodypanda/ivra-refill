@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Added `# TODO: Major update available (11.2.0)` for flutter_secure_storage.
 - Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and
