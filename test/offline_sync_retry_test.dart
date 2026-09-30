@@ -49,8 +49,8 @@ void main() {
       expect(NetworkErrorClassifier.isRetriable(const SocketException('x')),
           isTrue);
       expect(NetworkErrorClassifier.isRetriable(TimeoutException('x')), isTrue);
-      expect(NetworkErrorClassifier.isRetriable(const HttpException('x')),
-          isTrue);
+      expect(
+          NetworkErrorClassifier.isRetriable(const HttpException('x')), isTrue);
       expect(
         NetworkErrorClassifier.isRetriable(
           const PostgrestException(message: 'jwt expired', code: 'PGRST301'),
@@ -257,6 +257,30 @@ void main() {
 
       final terminal = justFailed.copyWith(isDeadLetter: true);
       expect(terminal.isInBackoff(now), isFalse);
+    });
+
+    test('network recovery with 50+ backlogged operations', () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      final service = OfflineSyncService();
+
+      // Enqueue 55 items
+      for (var i = 0; i < 55; i++) {
+        await service.enqueue(
+          type: SyncActionType.refill,
+          payload: {'roomProductId': 'rp_$i'},
+        );
+      }
+
+      final pendingBefore = await service.pendingActions();
+      expect(pendingBefore.length, 55);
+
+      final repo = _ThrowingRepository(null);
+      await service.syncPendingDetailed(repo);
+
+      final pendingAfter = await service.pendingActions();
+      expect(pendingAfter.length, 0);
+      expect(repo.recordRefillCalls, 55);
     });
   });
 }
