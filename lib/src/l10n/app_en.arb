@@ -1712,5 +1712,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "whatsNew": "What's New",
+  "feature": "Feature",
+  "noPermissionsFound": "No permissions found."
 }
