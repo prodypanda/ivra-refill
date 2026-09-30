@@ -1,7 +1,9 @@
 # Changelog
 
 ## Unreleased
-- Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
+- Updated safe package dependencies (`firebase_core`, `firebase_messaging`, `supabase_flutter`, `gotrue`, `realtime_client`, `supabase`).
+- Performed security advisory scan on transitive dependencies (upgraded `_flutterfire_internals`).
+- Audited pinned dependencies: `path_provider_android: 2.2.17` is still required to compile successfully on Android.
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and
   the UI isolate each cached their own `SharedPreferences` copy, so queued
