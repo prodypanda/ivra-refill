@@ -2,7 +2,7 @@
 name: ivra_refill
 description: Ivra hotel refill operations app for Android and web.
 publish_to: none
-version: 1.2.0+76
+version: 1.2.1+77
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -63,6 +63,7 @@ dev_dependencies:
 # after each supabase_flutter / path_provider_android upgrade). Keep the pin
 # until then to avoid breaking Android builds.
 dependency_overrides:
+# TRACKING: path_provider_android build failed on 2026-07-21. Cannot remove pin yet.
   path_provider_android: 2.2.17
 
 flutter:
