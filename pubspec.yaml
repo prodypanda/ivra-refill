@@ -2,7 +2,7 @@
 name: ivra_refill
 description: Ivra hotel refill operations app for Android and web.
 publish_to: none
-version: 1.2.0+76
+version: 1.2.1+77
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -14,11 +14,11 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  app_links: ^6.3.2
+  app_links: ^6.3.2 # TODO: Major update available (7.2.1)
   collection: ^1.18.0
-  csv: ^6.0.0
+  csv: ^6.0.0 # TODO: Major update available (8.0.0)
   cupertino_icons: ^1.0.8
-  flutter_riverpod: ^2.6.1
+  flutter_riverpod: ^2.6.1 # TODO: Major update available (3.3.2)
   go_router: ^14.6.2
   http: ^1.2.0
   intl: ^0.20.2
@@ -36,13 +36,13 @@ dependencies:
   workmanager: ^0.9.0+3
   firebase_core: ^4.9.0
   firebase_messaging: ^16.2.2
-  flutter_local_notifications: ^21.0.0
+  flutter_local_notifications: ^21.0.0 # TODO: Major update available (22.1.0)
   image_picker: ^1.2.2
-  device_info_plus: ^12.4.0
+  device_info_plus: ^12.4.0 # TODO: Major update available (13.2.0)
   cached_network_image: ^3.4.1
   mobile_scanner: ^7.2.0
   home_widget: ^0.9.1
-  flutter_secure_storage: ^9.2.4
+  flutter_secure_storage: ^9.2.4 # TODO: Major update available (10.3.1)
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -61,7 +61,7 @@ dev_dependencies:
 # TRACKING: this is a workaround, not a fix. Remove this override once a clean
 # `flutter build apk` succeeds with the unpinned transitive version (re-test
 # after each supabase_flutter / path_provider_android upgrade). Keep the pin
-# until then to avoid breaking Android builds.
+# until then to avoid breaking Android builds. (Tested on 2026-07-24: build still fails).
 dependency_overrides:
   path_provider_android: 2.2.17
 
