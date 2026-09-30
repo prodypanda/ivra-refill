@@ -1,3 +1,4 @@
+import 'package:ivra_refill/src/domain/models.dart';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -212,6 +213,33 @@ void main() {
     expect(after.refillCount, before.refillCount);
   });
 
+
+
+  test('undoRefill boundary check - exactly 29 minutes succeeds', () {
+    final event = RefillEvent(
+      id: 'e-1',
+      roomProductId: 'rp-1',
+      type: RefillEventType.refill,
+      previousRefillCount: 0,
+      newRefillCount: 1,
+      occurredAt: DateTime.now().subtract(const Duration(minutes: 29)),
+      performedBy: 'u-1',
+    );
+    expect(event.canUndo(DateTime.now(), 'u-1'), isTrue);
+  });
+
+  test('undoRefill boundary check - exactly 31 minutes fails', () {
+    final event = RefillEvent(
+      id: 'e-1',
+      roomProductId: 'rp-1',
+      type: RefillEventType.refill,
+      previousRefillCount: 0,
+      newRefillCount: 1,
+      occurredAt: DateTime.now().subtract(const Duration(minutes: 31)),
+      performedBy: 'u-1',
+    );
+    expect(event.canUndo(DateTime.now(), 'u-1'), isFalse);
+  });
   test('client request ids make undo refill idempotent', () async {
     final repository = MockIvraRepository();
     final before = (await repository.roomProducts()).first;

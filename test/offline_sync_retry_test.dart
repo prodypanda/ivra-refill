@@ -221,6 +221,32 @@ void main() {
     });
   });
 
+
+    test('simulate network recovery with 50+ backlogged operations', () async {
+      SharedPreferences.setMockInitialValues({});
+      final service = OfflineSyncService();
+      final repo = _ThrowingRepository(null); // No error, simulates recovered network
+
+      for (var i = 0; i < 55; i++) {
+        await service.enqueue(
+          type: SyncActionType.refill,
+          payload: {'roomProductId': 'rp-$i'},
+        );
+      }
+
+      final actionsBefore = await service.pendingActions();
+      expect(actionsBefore.length, 55);
+
+      final summary = await service.syncPendingDetailed(repo);
+
+      expect(summary.synced, 55);
+      expect(summary.failed, 0);
+      expect(repo.recordRefillCalls, 55);
+
+      final actionsAfter = await service.pendingActions();
+      expect(actionsAfter, isEmpty);
+    });
+
   group('OfflineAction backoff math', () {
     test('exponential backoff grows and is capped', () {
       final base = OfflineAction(
