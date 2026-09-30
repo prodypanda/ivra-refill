@@ -1,7 +1,8 @@
 # Changelog
 
 ## Unreleased
-- Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
+- Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.). Deferred major updates (e.g., flutter_secure_storage 11.0.0) with TODO comments.
+- Re-applied `path_provider_android: 2.2.17` override to fix Android build issues with JniPlugin.
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and
   the UI isolate each cached their own `SharedPreferences` copy, so queued
