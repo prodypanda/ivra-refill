@@ -1712,5 +1712,20 @@
         "type": "String"
       }
     }
-  }
+  },
+  "noPermissionsFound": "No permissions found.",
+  "featureLabel": "Feature",
+  "whatsNew": "What's New",
+  "currentVersion": "Current Version: v{version}",
+  "@currentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "langEn": "English",
+  "langFr": "Français",
+  "langAr": "العربية",
+  "langIt": "Italiano"
 }
