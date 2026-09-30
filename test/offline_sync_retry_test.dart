@@ -258,5 +258,32 @@ void main() {
       final terminal = justFailed.copyWith(isDeadLetter: true);
       expect(terminal.isInBackoff(now), isFalse);
     });
+
+    test('simulate network recovery with 50+ backlogged operations', () async {
+      SharedPreferences.setMockInitialValues({});
+      final service = OfflineSyncService();
+      final repo = _ThrowingRepository(null); // Success repo
+
+      // Enqueue 60 operations
+      for (int i = 0; i < 60; i++) {
+        await service.enqueue(
+          type: SyncActionType.refill,
+          payload: {'roomProductId': 'rp-$i'},
+        );
+      }
+
+      // Verify they are pending
+      var pending = await service.pendingActions();
+      expect(pending.length, 60);
+
+      // Simulate network recovery
+      await service.syncPending(repo);
+
+      // All 60 operations should have succeeded
+      expect(repo.recordRefillCalls, 60);
+
+      pending = await service.pendingActions();
+      expect(pending, isEmpty);
+    });
   });
 }
