@@ -259,4 +259,32 @@ void main() {
       expect(terminal.isInBackoff(now), isFalse);
     });
   });
+  test('simulate network recovery with 50+ backlogged operations to check for overflow issues', () async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    final service = OfflineSyncService();
+
+    // Enqueue 55 operations
+    for (var i = 0; i < 55; i++) {
+      await service.enqueue(
+        type: SyncActionType.refill,
+        payload: {'roomProductId': 'rp$i', 'clientRequestId': 'crq$i'},
+      );
+    }
+
+    final initialQueue = await service.pendingActions();
+    expect(initialQueue.length, 55);
+
+    final repository = _ThrowingRepository(null);
+    final processed = await service.syncPending(repository);
+
+    // Assert that all 55 operations were sent to the repository and removed from the queue
+    expect(processed, 55);
+    expect(repository.recordRefillCalls, 55);
+
+    final finalQueue = await service.pendingActions();
+    expect(finalQueue.length, 0);
+  });
+
 }
