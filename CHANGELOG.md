@@ -1,7 +1,7 @@
 # Changelog
 
 ## Unreleased
-- Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
+- Updated safe package dependencies (firebase_core to 4.12.1, firebase_messaging to 16.4.3, flutter_secure_storage to 10.3.1, supabase_flutter to 2.16.0).
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and
   the UI isolate each cached their own `SharedPreferences` copy, so queued
