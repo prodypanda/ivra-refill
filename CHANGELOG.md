@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Bi-weekly dependency security audit: updated safe packages (`firebase_core`, `firebase_messaging`, `google_fonts`, `local_auth`, `mobile_scanner`, `supabase_flutter`, `uuid`).
 - Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and
