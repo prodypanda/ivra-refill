@@ -66,7 +66,7 @@ class RolePermissionsScreen extends ConsumerWidget {
                 headingRowColor: WidgetStateProperty.resolveWith((states) => theme.colorScheme.surfaceContainerHighest),
                 columnSpacing: 24,
                 columns: [
-                  DataColumn(label: Text('Feature', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text(l10n.t('featureTitle'), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))),
                   for (final role in roles)
                     DataColumn(
                       label: Text(

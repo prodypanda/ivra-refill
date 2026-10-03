@@ -5497,6 +5497,66 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'This housekeeper has active inventory in their cart. Deleting this housekeeper will automatically return all of their inventory to the hotel\'s central inventory.\n\nAre you sure you want to delete team member \'{userName}\'? This action is permanent, cannot be undone, and they will immediately lose access to the application.'**
   String hkDeleteWithStockMessage(String userName);
+
+  /// Title for the feature column in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Feature'**
+  String get featureTitle;
+
+  /// Shows the current app version
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version: v{version}'**
+  String currentVersion(String version);
+
+  /// Language selector: English
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// Language selector: French
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get languageFrench;
+
+  /// Language selector: Arabic
+  ///
+  /// In en, this message translates to:
+  /// **'العربية'**
+  String get languageArabic;
+
+  /// Language selector: Italiano
+  ///
+  /// In en, this message translates to:
+  /// **'Italiano'**
+  String get languageItalian;
+
+  /// Short code for French
+  ///
+  /// In en, this message translates to:
+  /// **'FR'**
+  String get languageShortFr;
+
+  /// Short code for English
+  ///
+  /// In en, this message translates to:
+  /// **'EN'**
+  String get languageShortEn;
+
+  /// Short code for Italian
+  ///
+  /// In en, this message translates to:
+  /// **'IT'**
+  String get languageShortIt;
+
+  /// Short code for Arabic
+  ///
+  /// In en, this message translates to:
+  /// **'AR'**
+  String get languageShortAr;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
