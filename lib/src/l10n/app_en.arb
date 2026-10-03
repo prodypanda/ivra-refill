@@ -18,8 +18,8 @@
   },
   "percentageRefillTitle": "Percentage Refill",
   "percentageRefillSubtitle": "Allow recording refill levels as percentages (1-100%)",
-  "expressQrTitle": "Express QR Scanning",
-  "expressQrSubtitle": "Instantly register bottle refills when scanning QR code",
+  "expressQrTitle": "Express QR Management",
+  "expressQrSubtitle": "Allow direct scanning of dispenser-level QR codes",
   "markAsRead": "Mark as Read",
   "confirmDeleteHotel": "Are you sure you want to delete the hotel '{hotelName}'? This action is permanent, cannot be undone, and will permanently remove all associated rooms, staff assignments, and records.",
   "@confirmDeleteHotel": {
@@ -492,8 +492,6 @@
   "roomsRecentClear": "Clear",
   "roomsGestionExpressQr": "Express QR Management",
   "roomsGestionQr": "QR Code Management",
-  "expressQrTitle": "Express QR Management",
-  "expressQrSubtitle": "Allow direct scanning of dispenser-level QR codes",
   "roomsSelectHotelFirst": "Select a hotel...",
   "roomsViewDetailed": "Detailed View",
   "roomsViewCompact": "Compact View",
@@ -1712,5 +1710,51 @@
         "type": "String"
       }
     }
+  },
+  "featureTitle": "Feature",
+  "@featureTitle": {
+    "description": "Title for the feature column in settings"
+  },
+  "currentVersion": "Current Version: v{version}",
+  "@currentVersion": {
+    "description": "Shows the current app version",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Language selector: English"
+  },
+  "languageFrench": "Français",
+  "@languageFrench": {
+    "description": "Language selector: French"
+  },
+  "languageArabic": "العربية",
+  "@languageArabic": {
+    "description": "Language selector: Arabic"
+  },
+  "languageItalian": "Italiano",
+  "@languageItalian": {
+    "description": "Language selector: Italiano"
+  },
+  "languageShortFr": "FR",
+  "@languageShortFr": {
+    "description": "Short code for French"
+  },
+  "languageShortEn": "EN",
+  "@languageShortEn": {
+    "description": "Short code for English"
+  },
+  "languageShortIt": "IT",
+  "@languageShortIt": {
+    "description": "Short code for Italian"
+  },
+  "languageShortAr": "AR",
+  "@languageShortAr": {
+    "description": "Short code for Arabic"
   }
 }
