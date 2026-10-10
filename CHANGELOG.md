@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- Performed bi-weekly security audit and updated safe package dependencies.
+  - Upgraded patch/minor versions for cross_file, dbus, file_selector_*, firebase_core, firebase_messaging, flutter_cache_manager, functions_client, google_fonts, gotrue, home_widget, html, image, image_picker_*, local_auth_*, mime, mobile_scanner, objective_c, octo_image, passkeys_platform_interface, posix, postgrest, pub_semver, realtime_client, shared_preferences, storage_client, supabase_flutter, url_launcher_*, uuid, vm_service, workmanager, yaml.
 - Updated safe package dependencies (firebase_core, firebase_messaging, supabase_flutter, etc.).
 
 - Fixed an offline sync data-loss race: the workmanager background isolate and
