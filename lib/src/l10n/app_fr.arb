@@ -11,8 +11,8 @@
   "themeSwitchSuccess": "Le thème de l'application a été changé mondialement en {themeName}",
   "percentageRefillTitle": "Recharge en pourcentage",
   "percentageRefillSubtitle": "Autoriser l'enregistrement des niveaux de recharge en pourcentage (1-100%)",
-  "expressQrTitle": "Scan QR Express",
-  "expressQrSubtitle": "Enregistrer instantanément les recharges de bouteilles lors du scan du code QR",
+  "expressQrTitle": "Gestion Express (QR)",
+  "expressQrSubtitle": "Autoriser le scan direct des QR codes au niveau du distributeur",
   "markAsRead": "Marquer comme lu",
   "confirmDeleteHotel": "Voulez-vous vraiment supprimer l'hôtel '{hotelName}' ? Cette action est irréversible et supprimera définitivement toutes les chambres, affectations de personnel et enregistrements associés.",
   "confirmDeleteRoom": "Voulez-vous vraiment supprimer la chambre '{roomNumber}' ? Cette action est irréversible et supprimera définitivement tous les produits et l'historique associés.",
@@ -323,8 +323,6 @@
   "roomsRecentClear": "Effacer",
   "roomsGestionExpressQr": "Gestion Express (QR)",
   "roomsGestionQr": "Gestion des QR Codes",
-  "expressQrTitle": "Gestion Express (QR)",
-  "expressQrSubtitle": "Autoriser le scan direct des QR codes au niveau du distributeur",
   "roomsSelectHotelFirst": "Sélectionner un hôtel...",
   "roomsViewDetailed": "Vue détaillée",
   "roomsViewCompact": "Vue compacte",
@@ -900,5 +898,16 @@
   "hkDeactivateWithStockMessage": "Cette femme de chambre a des produits dans son chariot. Voulez-vous retourner cet inventaire au stock central de l'hôtel avant de désactiver son compte ?",
   "btnReturnAndDeactivate": "Retourner et désactiver",
   "btnJustDeactivate": "Juste désactiver",
-  "hkDeleteWithStockMessage": "Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l'équipe '{userName}' ? Cette action est irréversible et il perdra immédiatement l'accès à l'application."
+  "hkDeleteWithStockMessage": "Cette femme de chambre a des produits dans son chariot. La suppression de cette femme de chambre retournera automatiquement tout son inventaire au stock central de l'hôtel.\n\nVoulez-vous vraiment supprimer le membre de l'équipe '{userName}' ? Cette action est irréversible et il perdra immédiatement l'accès à l'application.",
+  "rolePermissionsNoPermissionsFound": "Aucune autorisation trouvée.",
+  "rolePermissionsFeature": "Fonctionnalité",
+  "settingsWhatsNew": "Nouveautés",
+  "settingsCurrentVersion": "Version actuelle : v{appVersion}",
+  "@settingsCurrentVersion": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String"
+      }
+    }
+  }
 }

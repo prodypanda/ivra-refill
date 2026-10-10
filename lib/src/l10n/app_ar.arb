@@ -11,8 +11,8 @@
   "themeSwitchSuccess": "تم تغيير سمة التطبيق عالمياً إلى {themeName}",
   "percentageRefillTitle": "إعادة التعبئة بالنسبة المئوية",
   "percentageRefillSubtitle": "السماح بتسجيل مستويات التعبئة كنسب مئوية (1-100%)",
-  "expressQrTitle": "المسح السريع للرمز QR",
-  "expressQrSubtitle": "تسجيل إعادة تعبئة القوارير فوراً بمجرد مسح رمز الاستجابة السريعة",
+  "expressQrTitle": "الإدارة السريعة (QR)",
+  "expressQrSubtitle": "السماح بالمسح المباشر لرموز QR الخاصة بالموزع",
   "markAsRead": "تحديد كمقروء",
   "confirmDeleteHotel": "هل أنت متأكد من رغبتك في حذف الفندق '{hotelName}'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع الغرف المرتبطة، وتعيينات الموظفين، والسجلات بشكل نهائي.",
   "confirmDeleteRoom": "هل أنت متأكد من رغبتك في حذف الغرفة '{roomNumber}'؟ لا يمكن التراجع عن هذا الإجراء وسيتم إزالة جميع المنتجات والسجلات المرتبطة بشكل نهائي.",
@@ -323,8 +323,6 @@
   "roomsRecentClear": "مسح",
   "roomsGestionExpressQr": "الإدارة السريعة (QR)",
   "roomsGestionQr": "إدارة رموز QR",
-  "expressQrTitle": "الإدارة السريعة (QR)",
-  "expressQrSubtitle": "السماح بالمسح المباشر لرموز QR الخاصة بالموزع",
   "roomsSelectHotelFirst": "اختر فندقاً...",
   "roomsViewDetailed": "عرض تفصيلي",
   "roomsViewCompact": "عرض مبسط",
@@ -900,5 +898,16 @@
   "hkDeactivateWithStockMessage": "تحتوي عربة عاملة النظافة هذه على مخزون نشط. هل ترغب في إعادة هذا المخزون إلى المخزون المركزي للفندق قبل إلغاء تنشيط حسابها؟",
   "btnReturnAndDeactivate": "إرجاع وإلغاء التنشيط",
   "btnJustDeactivate": "إلغاء التنشيط فقط",
-  "hkDeleteWithStockMessage": "تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق '{userName}'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور."
+  "hkDeleteWithStockMessage": "تحتوي عربة عاملة النظافة هذه على مخزون نشط. سيؤدي حذف عاملة النظافة هذه إلى إرجاع جميع مخزونها تلقائيًا إلى مخزون الفندق المركزي.\n\nهل أنت متأكد من رغبتك في حذف عضو الفريق '{userName}'؟ لا يمكن التراجع عن هذا الإجراء وسيفقد إمكانية الوصول إلى التطبيق على الفور.",
+  "rolePermissionsNoPermissionsFound": "لم يتم العثور على أذونات.",
+  "rolePermissionsFeature": "ميزة",
+  "settingsWhatsNew": "ما الجديد",
+  "settingsCurrentVersion": "الإصدار الحالي: v{appVersion}",
+  "@settingsCurrentVersion": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String"
+      }
+    }
+  }
 }
