@@ -11,8 +11,8 @@
   "themeSwitchSuccess": "Tema dell'app modificato a livello globale in {themeName}",
   "percentageRefillTitle": "Ricarica in percentuale",
   "percentageRefillSubtitle": "Consenti la registrazione dei livelli di ricarica in percentuale (1-100%)",
-  "expressQrTitle": "Scansione QR Express",
-  "expressQrSubtitle": "Registra istantaneamente le ricariche delle bottiglie durante la scansione del codice QR",
+  "expressQrTitle": "Gestione Espressa (QR)",
+  "expressQrSubtitle": "Consenti la scansione diretta dei codici QR del distributore",
   "markAsRead": "Segna come letto",
   "confirmDeleteHotel": "Sei sicuro di voler eliminare l'hotel '{hotelName}'? Questa azione è permanente, non può essere annullata ed eliminerà tutte le camere, assegnazioni del personale e record associati.",
   "confirmDeleteRoom": "Sei sicuro di voler eliminare la camera '{roomNumber}'? Questa azione è permanente, non può essere annullata ed eliminerà tutti i prodotti e la cronologia associati.",
@@ -323,8 +323,6 @@
   "roomsRecentClear": "Cancella",
   "roomsGestionExpressQr": "Gestione Espressa (QR)",
   "roomsGestionQr": "Gestione Codici QR",
-  "expressQrTitle": "Gestione Espressa (QR)",
-  "expressQrSubtitle": "Consenti la scansione diretta dei codici QR del distributore",
   "roomsSelectHotelFirst": "Seleziona hotel...",
   "roomsViewDetailed": "Vista dettagliata",
   "roomsViewCompact": "Vista compatta",
@@ -900,5 +898,16 @@
   "hkDeactivateWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. Vuoi restituire questo inventario al magazzino centrale dell'hotel prima di disattivare il suo account?",
   "btnReturnAndDeactivate": "Restituisci e Disattiva",
   "btnJustDeactivate": "Solo Disattiva",
-  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione."
+  "hkDeleteWithStockMessage": "Questa governante ha dell'inventario attivo nel suo carrello. L'eliminazione di questa governante restituirà automaticamente tutto il suo inventario al magazzino centrale dell'hotel.\n\nSei sicuro di voler eliminare il membro del team '{userName}'? Questa azione è permanente, non può essere annullata e perderà immediatamente l'accesso all'applicazione.",
+  "rolePermissionsNoPermissionsFound": "Nessuna autorizzazione trovata.",
+  "rolePermissionsFeature": "Funzionalità",
+  "settingsWhatsNew": "Novità",
+  "settingsCurrentVersion": "Versione attuale: v{appVersion}",
+  "@settingsCurrentVersion": {
+    "placeholders": {
+      "appVersion": {
+        "type": "String"
+      }
+    }
+  }
 }
