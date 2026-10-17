@@ -44,7 +44,7 @@ import 'app_settings_screen.dart';
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("What's New", style: theme.textTheme.headlineSmall),
+                          Text(l10n.t('whatsNew'), style: theme.textTheme.headlineSmall),
                           IconButton(
                             icon: const Icon(Icons.close),
                             onPressed: () => Navigator.of(context).pop(),
