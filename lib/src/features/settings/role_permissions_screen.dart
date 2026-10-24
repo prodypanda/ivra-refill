@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme.dart';
-import '../../data/ivra_repository.dart';
-import '../../domain/app_enums.dart';
 import '../../l10n/app_localizations.dart';
 import '../../state/app_state.dart';
 import '../shared/async_value_view.dart';
@@ -36,7 +34,6 @@ class RolePermissionsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final combinedAsync = ref.watch(rolePermissionsCombinedProvider);
-    final isMobile = MediaQuery.sizeOf(context).width < 720;
 
     return PageScaffold(
       title: l10n.t('rolePermissionsGuide'),
@@ -47,7 +44,7 @@ class RolePermissionsScreen extends ConsumerWidget {
           final permissions = data.permissions;
           
           if (roles.isEmpty || permissions.isEmpty) {
-             return const Center(child: Text("No permissions found."));
+             return Center(child: Text(l10n.t('rolePermissionsNoPermissions')));
           }
 
           // Convert sets to a distinct list of all possible permissions
@@ -66,7 +63,7 @@ class RolePermissionsScreen extends ConsumerWidget {
                 headingRowColor: WidgetStateProperty.resolveWith((states) => theme.colorScheme.surfaceContainerHighest),
                 columnSpacing: 24,
                 columns: [
-                  DataColumn(label: Text('Feature', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text(l10n.t('rolePermissionsFeature'), style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold))),
                   for (final role in roles)
                     DataColumn(
                       label: Text(
