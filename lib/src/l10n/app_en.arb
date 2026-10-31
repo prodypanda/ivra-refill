@@ -18,8 +18,8 @@
   },
   "percentageRefillTitle": "Percentage Refill",
   "percentageRefillSubtitle": "Allow recording refill levels as percentages (1-100%)",
-  "expressQrTitle": "Express QR Scanning",
-  "expressQrSubtitle": "Instantly register bottle refills when scanning QR code",
+  "expressQrTitle": "Express QR Management",
+  "expressQrSubtitle": "Allow direct scanning of dispenser-level QR codes",
   "markAsRead": "Mark as Read",
   "confirmDeleteHotel": "Are you sure you want to delete the hotel '{hotelName}'? This action is permanent, cannot be undone, and will permanently remove all associated rooms, staff assignments, and records.",
   "@confirmDeleteHotel": {
@@ -492,8 +492,6 @@
   "roomsRecentClear": "Clear",
   "roomsGestionExpressQr": "Express QR Management",
   "roomsGestionQr": "QR Code Management",
-  "expressQrTitle": "Express QR Management",
-  "expressQrSubtitle": "Allow direct scanning of dispenser-level QR codes",
   "roomsSelectHotelFirst": "Select a hotel...",
   "roomsViewDetailed": "Detailed View",
   "roomsViewCompact": "Compact View",
@@ -1711,6 +1709,15 @@
       "userName": {
         "type": "String"
       }
+    }
+  },
+  "rolePermissionsFeature": "Feature",
+  "noPermissionsFound": "No permissions found.",
+  "whatsNew": "What's New",
+  "currentVersion": "Current Version: v{version}",
+  "@currentVersion": {
+    "placeholders": {
+      "version": {}
     }
   }
 }
